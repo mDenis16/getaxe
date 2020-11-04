@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -14,7 +14,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{AF041675-F00D-4A72-B40F-78D0C4BB72D9}</ProjectGuid>
     <RootNamespace>csgo-cheat</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <ProjectName>weekend</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -52,8 +52,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\output\debug\</OutDir>
     <IntDir>.\intermediates\</IntDir>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>F:\includes\dx9\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\includes\dx9\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -92,6 +92,7 @@
     <ClCompile Include="core\features\misc\events\events.cpp" />
     <ClCompile Include="core\features\misc\hitmarker\hitmarker.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
+    <ClCompile Include="core\features\misc\movement_recorder.cpp" />
     <ClCompile Include="core\features\nade prediction\nade_prediction.cpp" />
     <ClCompile Include="core\features\ragebot\antiaim.cpp" />
     <ClCompile Include="core\features\ragebot\autostop.cpp" />
@@ -105,10 +106,20 @@
     <ClCompile Include="core\features\setup\shot_processor.cpp" />
     <ClCompile Include="core\features\visuals\chams.cpp" />
     <ClCompile Include="core\features\visuals\hurt_log.cpp" />
+    <ClCompile Include="core\features\visuals\notifications.cpp" />
+    <ClCompile Include="core\features\visuals\player.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\hooks\hooks.cpp" />
+    <ClCompile Include="core\menu\elements\aimbot.cpp" />
+    <ClCompile Include="core\menu\elements\visuals_menu.cpp" />
+    <ClCompile Include="core\menu\ImGui\imgui.cpp" />
+    <ClCompile Include="core\menu\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="core\menu\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="core\menu\ImGui\impl\imgui_impl_dx9.cpp" />
+    <ClCompile Include="core\menu\ImGui\impl\imgui_impl_win32.cpp" />
     <ClCompile Include="core\menu\menu.cpp" />
-    <ClCompile Include="core\menu\zgui\zgui.cpp" />
+    <ClCompile Include="core\menu\render\menu_render.cpp" />
+    <ClCompile Include="core\render\render.cpp" />
     <ClCompile Include="dependencies\minhook\buffer.c" />
     <ClCompile Include="dependencies\minhook\hde\hde32.c" />
     <ClCompile Include="dependencies\minhook\hde\hde64.c" />
@@ -119,7 +130,6 @@
     <ClCompile Include="dependencies\utilities\console\console.cpp" />
     <ClCompile Include="dependencies\utilities\csgo.cpp" />
     <ClCompile Include="dependencies\utilities\netvars\netvars.cpp" />
-    <ClCompile Include="dependencies\utilities\renderer\renderer.cpp" />
     <ClCompile Include="dependencies\utilities\utilities.cpp" />
     <ClCompile Include="core\main.cpp" />
     <ClCompile Include="source-sdk\math\vector3d.cpp" />
@@ -130,9 +140,18 @@
     <ClInclude Include="core\features\misc\events\events.hpp" />
     <ClInclude Include="core\features\nade prediction\nade_prediction.hpp" />
     <ClInclude Include="core\hooks\hooks.hpp" />
+    <ClInclude Include="core\menu\ImGui\imconfig.h" />
+    <ClInclude Include="core\menu\ImGui\imgui.h" />
+    <ClInclude Include="core\menu\ImGui\imgui_internal.h" />
+    <ClInclude Include="core\menu\ImGui\impl\imgui_impl_dx9.h" />
+    <ClInclude Include="core\menu\ImGui\impl\imgui_impl_win32.h" />
+    <ClInclude Include="core\menu\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="core\menu\ImGui\imstb_textedit.h" />
+    <ClInclude Include="core\menu\ImGui\imstb_truetype.h" />
     <ClInclude Include="core\menu\menu.hpp" />
+    <ClInclude Include="core\menu\render\menu_render.hpp" />
     <ClInclude Include="core\menu\variables.hpp" />
-    <ClInclude Include="core\menu\zgui\zgui.hpp" />
+    <ClInclude Include="dependencies\common_includes.hpp" />
     <ClInclude Include="dependencies\interfaces\i_hud_chat.hpp" />
     <ClInclude Include="dependencies\interfaces\i_weapon_system.hpp" />
     <ClInclude Include="dependencies\minhook\buffer.h" />
@@ -177,6 +196,7 @@
     <ClInclude Include="dependencies\utilities\csgo.hpp" />
     <ClInclude Include="dependencies\utilities\singleton.hpp" />
     <ClInclude Include="dependencies\utilities\utilities.hpp" />
+    <ClInclude Include="dependencies\utilities\weapon_icons.h" />
     <ClInclude Include="source-sdk\classes\client_class.hpp" />
     <ClInclude Include="source-sdk\classes\collideable.hpp" />
     <ClInclude Include="source-sdk\classes\convar.hpp" />

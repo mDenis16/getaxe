@@ -279,51 +279,42 @@ std::vector< int > ragebot::hitscan_list( player_t* entity, bool extrapolation =
 {
 	auto best_hitbox = prioritize_hitbox( );
 	std::vector<int> hitscan;
-	if ( (variables::ragebot::double_tap && tickbase_system::m_shift_data.m_needs_recharge == 0) || extrapolation ) {
+	
+	hitscan.push_back ( variables::ragebot::prioritize_hitbox == 0 ? hitbox_head : hitbox_body );
 
-		hitscan.push_back( ( int ) hitboxes::hitbox_upper_chest );
-
-		hitscan.push_back( ( int ) hitboxes::hitbox_chest );
-
-		hitscan.push_back( ( int ) hitboxes::hitbox_pelvis );
+	if ( variables::ragebot::head_scan ) {
+		hitscan.push_back ( ( int ) hitboxes::hitbox_head );
+		hitscan.push_back ( ( int ) hitboxes::hitbox_neck );
 	}
-	else {
-		hitscan.push_back( best_hitbox );
+	if ( variables::ragebot::body_scan ) {
+		hitscan.push_back ( ( int ) hitboxes::hitbox_upper_chest );
 
-	//	if ( resolver::resolver_data [ entity->index( ) ].missed_shots == 0 )
-	//	{
-			hitscan.push_back( ( int ) hitboxes::hitbox_head );
+		hitscan.push_back ( ( int ) hitboxes::hitbox_chest );
 
-			hitscan.push_back( ( int ) hitboxes::hitbox_neck );
-	//	}
-
-		hitscan.push_back( ( int ) hitboxes::hitbox_upper_chest );
-
-		hitscan.push_back( ( int ) hitboxes::hitbox_chest );
-
-		hitscan.push_back( ( int ) hitboxes::hitbox_pelvis );
-
-		if ( ( !resolver::resolver_data [ entity->index( ) ].is_using_desync ) )
-		{
-			if ( entity->velocity( ).Length2D( ) < 0.25f )
-			{
-				hitscan.push_back( ( int ) hitboxes::hitbox_left_foot );
-				hitscan.push_back( ( int ) hitboxes::hitbox_right_foot );
-				hitscan.push_back( ( int ) hitboxes::hitbox_right_thigh );
-				hitscan.push_back( ( int ) hitboxes::hitbox_left_thigh );
-				hitscan.push_back( ( int ) hitboxes::hitbox_left_calf );
-				hitscan.push_back( ( int ) hitboxes::hitbox_right_calf );
-
-				hitscan.push_back( ( int ) hitboxes::hitbox_right_upper_arm );
-				hitscan.push_back( ( int ) hitboxes::hitbox_left_upper_arm );
-				hitscan.push_back( ( int ) hitboxes::hitbox_left_forearm );
-				hitscan.push_back( ( int ) hitboxes::hitbox_right_forearm );
-				hitscan.push_back( ( int ) hitboxes::hitbox_left_hand );
-				hitscan.push_back( ( int ) hitboxes::hitbox_right_hand );
+		hitscan.push_back ( ( int ) hitboxes::hitbox_pelvis );
+	}
+	if ( ( !resolver::resolver_data [ entity->index ( ) ].is_using_desync ) ) {
+		if ( entity->velocity ( ).Length2D ( ) < 0.25f ) {
+			if ( variables::ragebot::feet_scan ) {
+				hitscan.push_back ( ( int ) hitboxes::hitbox_left_foot );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_right_foot );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_right_thigh );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_left_thigh );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_left_calf );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_right_calf );
+			}
+			if ( variables::ragebot::arms_scan ) {
+				hitscan.push_back ( ( int ) hitboxes::hitbox_right_upper_arm );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_left_upper_arm );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_left_forearm );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_right_forearm );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_left_hand );
+				hitscan.push_back ( ( int ) hitboxes::hitbox_right_hand );
 			}
 		}
-
 	}
+
+
 	
 	std::sort( hitscan.begin( ), hitscan.end( ) );
 	hitscan.erase( std::unique( hitscan.begin( ), hitscan.end( ) ), hitscan.end( ) );
@@ -779,7 +770,7 @@ void ragebot::createmove( c_usercmd* cmd, bool& send_packet ) {
 					sleep_ticks = 0;
 					//	if ( variables::ragebot::double_tap )
 						//	tickbase_system::m_shift_data.m_ticks_to_shift = math::time_to_ticks(variables::cheat:interval_per_tick, 0.2f );
-					visuals::capsule_overlay( best_target.entity, 1.7f, best_target.backtrack?player_manager::best_tick_global [ best_target.entity->index( ) ].bone:csgo::player_bones [ best_target.entity->index( ) ] );
+					//visuals::capsule_overlay( best_target.entity, 1.7f, best_target.backtrack?player_manager::best_tick_global [ best_target.entity->index( ) ].bone:csgo::player_bones [ best_target.entity->index( ) ] );
 
 				}
 				if ( best_target.extrapolation )

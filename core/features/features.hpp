@@ -2,7 +2,10 @@
 #include "../../dependencies/utilities/csgo.hpp"
 #include "../menu/variables.hpp"
 #include "misc/events/events.hpp"
+#include "../menu/ImGui/imgui.h"
+#include "../menu/ImGui/imgui_internal.h"
 #include <optional>
+
 
 static int hitmarker_alpha = 0;
 
@@ -400,10 +403,68 @@ namespace tickbase_system {
 	void post_movement( );
 }
 namespace visuals {
-	namespace glow {
-		void think( );
-	};
 
+	
+	struct box {
+		int x, y, w, h;
+		box( ) = default;
+		box( int x, int y, int w, int h ) {
+			this->x = x;
+			this->y = y;
+			this->w = w;
+			this->h = h;
+		}
+	};
+	namespace notifications {
+		struct notify {
+			std::string text;
+			float time;
+			float shown_time;
+			float width =  300.f;
+			float max_width = 700.f;
+			float height = 10;
+			bool seen = false;
+
+			float from_start = -width;
+			float to_end = 0.0f;
+			float current = from_start;
+			float seen_time = 0.f;
+			ImVec2 min;
+			ImVec2 max;
+		};
+		extern std::vector<notify> list;
+
+		void fne ( );
+		void present ( );
+		void add ( std::string _text );
+	}
+	
+	namespace player {
+
+		struct data {
+			visuals::box box_data;
+			bool ready = false;
+			std::string weapon_icon;
+			std::string weapon_name;
+			int health;
+			player_info_t player_info;
+		};
+
+		extern std::vector< visuals::player::data > m_data;
+
+		void name( data _data );
+
+		void box( data _data);
+
+		void health( visuals::player::data _data );
+
+		void weapon( visuals::player::data _data );
+
+		void present( );
+
+		void paint_traverse( void );
+	};
+	
 	namespace chams {
 		enum class shader_type_t {
 			VertexLitGeneric = 0,
@@ -413,24 +474,13 @@ namespace visuals {
 		i_material* create_material( shader_type_t shade, bool ignorez, bool wireframe );
 		void run( i_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix_t* bone_to_world );
 	};
-	struct loginfo
-	{
-		loginfo( std::string text, color color, float time ) {
-			this->text = text;
-			this->color = color;
-			this->time = time;
-		}
+	
 
-		std::string text;
-		color color;
-		float time;
-	};
+	
 
-	extern std::deque<loginfo>event_;
-	void think( );
-	void player( player_t* entity );
-	bool calculate_box( entity_t* ent, bbox_t& box );
-	void capsule_overlay( player_t* entity, float duration, matrix_t pBoneToWorldOut [ 128 ] );
+	
+	std::string weapon_to_icon( const int id );
+
 }
 
 namespace misc {
@@ -439,6 +489,51 @@ namespace misc {
 		void auto_strafer( c_usercmd* cmd );
 		void strafe( c_usercmd* cmd );
 		void bunny_hop(c_usercmd* cmd);
+
+		namespace recorder {
+			enum recording_state {
+			   state_idle,
+			   state_playing,
+			   state_recording
+			};
+			struct custom_cmd {
+				vec3_t			viewangles;
+				vec3_t			pos;
+				float			forwardmove;
+				float			sidemove;
+				float			upmove;
+				int				buttons;
+				int step;
+			};
+
+			struct movement_data {
+
+				std::string map;
+				vec3_t start_position;
+				vec3_t end_position;
+				vec3_t name;
+				std::vector< custom_cmd > cmds;
+
+
+			};
+
+			struct global_data {
+				recording_state state;
+
+				int step = 0;
+				movement_data current_playing;
+				movement_data current_recording;
+			};
+			extern global_data m_global_data;
+
+			void recording ( c_usercmd * cmd );
+			void playing ( c_usercmd * cmd );
+			void run ( c_usercmd * cmd );
+			void apply_cmd ( c_usercmd * cmd, custom_cmd & cmd_copy );
+			void read_cmd ( c_usercmd * cmd, custom_cmd & cmd_copy );
+			void handle_input ( );
+		}
+		
 	};
 	namespace removals {
 		void remove_smoke( );
@@ -457,4 +552,9 @@ namespace misc {
 		void player_hurt( i_game_event* event );
 		void item_purchase( i_game_event* event );
 	};
+	namespace render {
+		void setup_render( );
+
+	}
 }
+

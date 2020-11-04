@@ -10,10 +10,11 @@ namespace variables {
 		inline bool antiaim_dirrection = false;
 		inline bool should_update_anims = false;
 		inline float goal_feet = 0.f;
-		inline vec3_t real_angle = vec3_t( );
+	
 		inline bool in_update_client_side_animation = false;
 	}
 	namespace antiaim {
+		inline bool enable = false;
 		inline int yaw = 0;
 		inline int pitch = 0;
 		inline float jitter = 0;
@@ -67,6 +68,10 @@ namespace variables {
 		inline bool safe_point = false;
 		inline bool resolver = false;
 		inline int prioritize_hitbox = 0;
+		inline bool head_scan = false;
+		inline bool body_scan = false;
+		inline bool feet_scan = false;
+		inline bool arms_scan = false;
 		inline bool prioritize_pitch_flip = false;
 		inline bool enabled = false;
 		inline bool extrapolate = false;
@@ -86,26 +91,36 @@ namespace variables {
 		inline int max_targets = 2;
 	}
 	namespace visuals {
-		inline int activation_type = 0;
-		inline float circle_rotate = 0;
-		inline bool teammates = false;
-		inline int esp_key = 0x46;
-		inline bool dormant = false;
-		inline bool nade_prediction = false;
+		namespace enemy {
+			inline bool enabled = false;
+			inline bool name = false;
+			inline bool box = false;
+			inline bool health = false;
+			inline bool weapon = false;
+		}
+		namespace team {
+			inline bool enabled = false;
+			inline bool name = false;
+			inline bool box = false;
+			inline bool health = false;
+			inline bool weapon = false;
+		}
+		namespace modulation {
+			namespace enemy {
+				inline bool visible;
+				inline bool xyz;
+				inline bool glow;
+				inline bool enabled = false;
+			}
+			namespace team {
+				inline bool visible;
+				inline bool xyz;
+				inline bool glow;
+				inline bool enabled = false;
+			}
 
-		inline bool box = false;
-		inline bool name = false;
-		inline bool health = false;
-		inline bool weapon = false;
-		inline bool flags = false;
-		inline bool distance = false;
-		inline bool money = false;
-		inline bool glow = false;
-		inline float fov = 0.f;
-		inline bool hitmarker = false;
-		inline bool hitmarker_sound = false;
-		
-		namespace chams {
+		}
+		/*namespace chams {
 			inline int material = 0;
 			inline bool view_backtrack = false;
 			inline bool enemy_chams = false;
@@ -116,7 +131,7 @@ namespace variables {
 			inline color team_color = { 0, 255, 0, 255 };
 			inline color team_color_visible = { 55, 255, 33, 255 };
 			inline bool xyz = false;
-		}
+		}*/
 	}
 
 	namespace misc {

@@ -57,7 +57,7 @@ bool interfaces::initialize() {
 	globals = **reinterpret_cast< c_global_vars_base*** >( ( *reinterpret_cast< uintptr_t** >( client ) ) [ 11 ] + 10 );
 
 	clientstate = **(i_client_state ***)(utilities::pattern_scan("engine.dll", sig_client_state) + 1);
-	printf( "clientstate ptr = %p \n", clientstate );
+
 	directx = **(IDirect3DDevice9***)(utilities::pattern_scan("shaderapidx9.dll", sig_directx) + 1);
 	input = *(i_input**)(utilities::pattern_scan("client.dll", sig_input) + 1);
 	glow_manager = (glow_manager_t*)(*(uintptr_t*)(utilities::pattern_scan("client.dll", sig_glow_manager) + 3));

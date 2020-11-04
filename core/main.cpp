@@ -4,14 +4,17 @@
 unsigned long WINAPI initialize(void* instance) {
 	while (!GetModuleHandleA("serverbrowser.dll"))
 		Sleep(10000);
+	while ( !( csgo::window = FindWindowA( "Valve001", nullptr ) ) )
+		Sleep( 100 );
+	//if ( csgo::window )
+		//csgo::old_window = ( WNDPROC ) SetWindowLongPtr( csgo::window, GWL_WNDPROC, ( LONG_PTR ) Hooked_WndProc );
 
-#ifdef _DEBUG
 	console::initialize("csgo-cheat console");
-#endif
+
 
 	try {
 		interfaces::initialize();
-		render::initialize();
+		//render::initialize();
 		hooks::initialize();
 	}
 
@@ -29,9 +32,8 @@ unsigned long WINAPI initialize(void* instance) {
 unsigned long WINAPI release() {
 	hooks::release();
 
-#ifdef _DEBUG
+
 	console::release();
-#endif
 
 	return TRUE;
 }

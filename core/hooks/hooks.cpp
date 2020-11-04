@@ -3,6 +3,12 @@
 #include "../features/features.hpp"
 #include "../../core/features/nade prediction/nade_prediction.hpp"
 #include "../menu/menu.hpp"
+#include "../menu/render/menu_render.hpp"
+
+#include <d3dx9.h>
+#include "../menu/ImGui/imgui.h"
+#include "../menu/ImGui/impl/imgui_impl_dx9.h"
+
 
 hooks::frame_stage::fn frame_stage_original = nullptr;
 hooks::create_move::fn create_move_original = nullptr;
@@ -23,7 +29,13 @@ hooks::write_user_cmd::fn write_user_cmd_original = nullptr;
 hooks::override_view::fn override_view_original = nullptr;
 hooks::cl_move::fn cl_move_original = nullptr;
 hooks::run_commmand::fn run_commmand_original = nullptr;
+hooks::present::fn present_original = nullptr;
+hooks::reset::fn reset_original = nullptr;
 void* do_procedural_foot_plant_original = nullptr;
+
+HWND hooks::window;
+WNDPROC hooks::wndproc_original = NULL;
+
 
 static constexpr auto BONE_USED_BY_SERVER = BONE_USED_BY_HITBOX | BONE_USED_BY_VERTEX_LOD0 | BONE_USED_BY_VERTEX_LOD1 | BONE_USED_BY_VERTEX_LOD2
 | BONE_USED_BY_VERTEX_LOD3 | BONE_USED_BY_VERTEX_LOD4 | BONE_USED_BY_VERTEX_LOD5 | BONE_USED_BY_VERTEX_LOD6 | BONE_USED_BY_VERTEX_LOD7;
@@ -35,8 +47,11 @@ bool hooks::initialize( ) {
 		"55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 89 7C 24 0C" ) ) + 0x47;
 
 	void* pt = reinterpret_cast< void* >( c_cs_player_table );
+
+	printf( "c_cs_player_table ptr = %p \n", pt );
 	static const auto _sbf = utilities::pattern_scan( "client.dll", ( "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 89 7C 24 0C" ) ) + 0x4E;
 	void* sbf = reinterpret_cast< void* > ( _sbf );
+	auto d3d_device = **( void*** ) ( ( uintptr_t ) utilities::pattern_scan( "shaderapidx9.dll", "A1 ? ? ? ? 50 8B 08 FF 51 0C" ) + 0x1 );
 	auto frame_stage_target = reinterpret_cast< void* >( get_virtual( interfaces::client, 37 ) );
 	auto create_move_target = reinterpret_cast< void* >( get_virtual( interfaces::clientmode, 24 ) );
 	auto paint_traverse_target = reinterpret_cast< void* >( get_virtual( interfaces::panel, 41 ) );
@@ -52,13 +67,17 @@ bool hooks::initialize( ) {
 	auto render_smoke_overlay_target = reinterpret_cast< void* >( get_virtual( interfaces::render_view, 41 ) );
 	auto trace_ray_target = reinterpret_cast< void* >( get_virtual( interfaces::trace_ray, 8 ) );
 	auto fire_event_target = reinterpret_cast< void* >( get_virtual( interfaces::engine, 59 ) ); // working
-	auto eye_angles_target = reinterpret_cast< void* >( get_virtual( pt, 164 ) );
+	//auto eye_angles_target = reinterpret_cast< void* >( get_virtual( pt, 164 ) );
 	auto override_view_target = reinterpret_cast< void* >( get_virtual( interfaces::clientmode, 18 ) );
 	auto write_user_cmd_target = reinterpret_cast< void* >( get_virtual( interfaces::client, 24 ) );
 	auto cl_move_target = reinterpret_cast< void* >( utilities::pattern_scan( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 56 57 8B 3D ? ? ? ? 8A" ) );
 	auto run_commmand_target = reinterpret_cast< void* >( get_virtual( interfaces::prediction, 19 ) );
 	auto crc_server_check_target = reinterpret_cast< void* >( utilities::pattern_scan( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 8B D9 89 5D F8 80" ) );
 	auto file_system_target = reinterpret_cast< void* >( get_virtual( interfaces::file_system, 128 ) );
+	auto present_target = reinterpret_cast< void* >( get_virtual( d3d_device, 42) );
+	auto reset_target = reinterpret_cast< void* >( get_virtual( d3d_device, 16 ) );
+
+	printf( "do_extra_bone_processing_target ptr = %p \n", do_extra_bone_processing_target );
 
 	if ( MH_Initialize( ) != MH_OK ) {
 		throw std::runtime_error( "failed to initialize MH_Initialize." );
@@ -69,10 +88,10 @@ bool hooks::initialize( ) {
 		throw std::runtime_error( "failed to initialize frame_stage. (outdated index?)" );
 		return false;
 	}
-	if ( MH_CreateHook( crc_server_check_target, &crc_server_check::hook, reinterpret_cast< void** >( &crc_server_check_original ) ) != MH_OK ) {
+	/*if ( MH_CreateHook( crc_server_check_target, &crc_server_check::hook, reinterpret_cast< void** >( &crc_server_check_original ) ) != MH_OK ) {
 		throw std::runtime_error( "failed to initialize crc_server_check. (outdated index?)" );
 		return false;
-	}
+	}*/
 	if ( MH_CreateHook( create_move_target, &create_move::hook, reinterpret_cast< void** >( &create_move_original ) ) != MH_OK ) {
 		throw std::runtime_error( "failed to initialize create_move. (outdated index?)" );
 		return false;
@@ -82,25 +101,30 @@ bool hooks::initialize( ) {
 		throw std::runtime_error( "failed to initialize paint_traverse. (outdated index?)" );
 		return false;
 	}
-
+	
 	if ( MH_CreateHook( post_screen_space_fx, &post_screen_space_fx::hook, reinterpret_cast< void** >( &post_screen_space_original ) ) != MH_OK ) {
 		throw std::runtime_error( "failed to initialize post_screen_space_fx. (outdated index?)" );
 		return false;
 	}
 
-	if ( MH_CreateHook( draw_model_execute_target, &draw_model_execute::hook, reinterpret_cast< void** >( &draw_model_execute_original ) ) != MH_OK ) {
+	/*if ( MH_CreateHook( draw_model_execute_target, &draw_model_execute::hook, reinterpret_cast< void** >( &draw_model_execute_original ) ) != MH_OK ) {
 		throw std::runtime_error( "failed to initialize draw_model_execute. (outdated index?)" );
 		return false;
-	}
-
-	/*if ( MH_CreateHook( scene_end_target, &scene_end::hook, reinterpret_cast< void** >( &scene_end_original ) ) != MH_OK ) {
-		throw std::runtime_error( "failed to initialize scene_end. (outdated index?)" );
-		return false;
 	}*/
+
+   if ( MH_CreateHook( present_target, &present::hook, reinterpret_cast< void** >( &present_original ) ) != MH_OK ) {
+		throw std::runtime_error( "failed to initialize present. (outdated index?)" );
+		return false;
+	}
+	if ( MH_CreateHook( reset_target, &reset::hook, reinterpret_cast< void** >( &reset_original ) ) != MH_OK ) {
+		throw std::runtime_error( "failed to initialize reset. (outdated index?)" );
+		return false;
+	}
 	if ( MH_CreateHook( setup_bones_target, &setup_bones::hook, reinterpret_cast< void** >( &setup_bones_original ) ) != MH_OK ) {
 		throw std::runtime_error( "failed to initialize setup_bones. (outdated index?)" );
 		return false;
 	}
+	
 	if ( MH_CreateHook( do_procedural_foot_plant_target, &do_procedural_foot_plant::hook, ( void** ) &do_procedural_foot_plant_original ) != MH_OK )
 	{
 		throw std::runtime_error( "failed to initialize prodcedural foot plant. (outdated index?)" );
@@ -139,6 +163,7 @@ bool hooks::initialize( ) {
 		throw std::runtime_error( "failed to initialize cl move. (outdated index?)" );
 		return false;
 	}
+	
 	if ( MH_CreateHook( run_commmand_target, &run_commmand::hook, reinterpret_cast< void** >( &run_commmand_original ) ) != MH_OK ) {
 		throw std::runtime_error( "failed to initialize run_commmand. (outdated index?)" );
 		return false;
@@ -154,8 +179,12 @@ bool hooks::initialize( ) {
 		return false;
 	}
 
+
 	events.setup( );
 
+	window = FindWindow( "Valve001", NULL );
+
+	wndproc_original = ( WNDPROC ) SetWindowLongPtrA( window, GWL_WNDPROC, ( LONG ) hooks::wnd_proc::hook );
 
 	console::log( "[setup] hooks initialized!\n" );
 	return true;
@@ -205,9 +234,7 @@ void __stdcall hooks::frame_stage::hook( int frame_stage ) {
 		static auto blur = interfaces::material_system->find_material( "dev/scope_bluroverlay", TEXTURE_GROUP_OTHER );
 		blur->set_material_var_flag( material_var_no_draw, true );
 		csgo::m_rate = ( int ) std::round( 1.f / interfaces::globals->interval_per_tick );
-	//	misc::removals::remove_flash( );
-//		misc::removals::remove_smoke( );
-		
+
 		break;
 	case FRAME_RENDER_END:
 		break;
@@ -243,18 +270,19 @@ void __stdcall hooks::frame_stage::hook( int frame_stage ) {
 	
 }
 
+
 void __fastcall hooks::override_view::hook( void* _this, void* _edx, view_setup_t* setup ) {
-	if ( interfaces::engine->is_in_game( ) ) {
+	/*if ( interfaces::engine->is_in_game( ) ) {
 		if ( csgo::local_player && csgo::local_player->is_alive( ) && variables::visuals::fov > 0 )
 			setup->fov = 90 + variables::visuals::fov;
-	}
+	}*/
 
 	misc::thirdperson::think( );
 
 	override_view_original( interfaces::clientmode, _this, setup );
 }
 bool __fastcall hooks::create_move::hook( void* ecx, void* edx, int input_sample_frametime, c_usercmd* cmd ) {
-	create_move_original( input_sample_frametime, cmd );
+
 
 	if ( !cmd || !cmd->command_number )
 		return create_move_original( input_sample_frametime, cmd );
@@ -376,6 +404,56 @@ bool __fastcall hooks::create_move::hook( void* ecx, void* edx, int input_sample
 	return false;
 }
 
+static bool initialized = false;
+long __stdcall hooks::present::hook( IDirect3DDevice9* device, RECT* source_rect, RECT* dest_rect, HWND dest_window_override, RGNDATA* dirty_region ) {
+	if ( !initialized ) {
+		c_menu::get( ).apply_fonts( );
+		 
+		c_menu::get( ).setup_resent( device );
+		initialized = true;
+	}
+	if ( initialized ) {
+		c_menu::get( ).pre_render( device );
+		c_menu::get( ).post_render( );
+
+	//	c_menu::get( ).run_popup( );
+		c_menu::get( ).run( );
+		c_menu::get().run_visuals( );
+		c_menu::get( ).end_present( device );
+	}
+
+	return present_original( device, source_rect, dest_rect, dest_window_override, dirty_region );
+}
+
+long __stdcall hooks::reset::hook( IDirect3DDevice9* device, D3DPRESENT_PARAMETERS* present_parameters ) {
+	if ( !initialized )
+		reset_original( device, present_parameters );
+
+	c_menu::get( ).invalidate_objects( );
+	long hr = reset_original( device, present_parameters );
+	c_menu::get( ).create_objects( device );
+
+	return hr;
+}
+extern LRESULT ImGui_ImplDX9_WndProcHandler( HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam );
+
+LRESULT __stdcall hooks::wnd_proc::hook( HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam ) {
+	static bool pressed = false;
+
+	if ( !pressed && GetAsyncKeyState( VK_INSERT ) ) {
+		pressed = true;
+	}
+	else if ( pressed && !GetAsyncKeyState( VK_INSERT ) ) {
+		pressed = false;
+
+		c_menu::get( ).opened = !c_menu::get( ).opened;
+	}
+
+	if ( c_menu::get( ).opened && ImGui_ImplDX9_WndProcHandler( hwnd, message, wparam, lparam ) )
+		return true;
+
+	return CallWindowProcA( wndproc_original, hwnd, message, wparam, lparam );
+}
 void __stdcall hooks::paint_traverse::hook( unsigned int panel, bool force_repaint, bool allow_force ) {
 	auto panel_to_draw = fnv::hash( interfaces::panel->get_panel_name( panel ) );
 
@@ -384,59 +462,20 @@ void __stdcall hooks::paint_traverse::hook( unsigned int panel, bool force_repai
 	switch ( panel_to_draw ) {
 	case fnv::hash( "MatSystemTopPanel" ):
 	{
-		render::draw_text_string( 10, 10, render::fonts::watermark_font, "csgo-cheat", false, color::white( 255 ) );
+		//render::draw_text_string( 10, 10, render::fonts::watermark_font, "csgo-cheat", false, color::white( 255 ) );
 
-		visuals::think( );
-		nade_pred.draw( );
-		misc::hitmarker::think( );
+		//visuals::think( );
+		//nade_pred.draw( );
+		//misc::hitmarker::think( );
 
-		menu::render( );
-		/*if ( interfaces::engine->is_connected( ) && interfaces::engine->is_in_game( ) && csgo::local_player && csgo::local_player->is_alive( ) )
-		{
-			vec3_t src3D, dst3D, forward, src, dst;
-			trace_t tr;
-			ray_t ray;
-			trace_filter_skip_one_entity filter( csgo::local_player );
-
-			forward = math::angle_vector( vec3_t( 0, csgo::real_angle.y, 0 ) );
-			src3D = csgo::local_player->origin( );
-			dst3D = src3D + ( forward * 50.f ); //replace 50 with the length you want the line to have
-
-			ray.initialize( src3D, dst3D );
-
-			interfaces::trace_ray->trace_ray( ray, 0, &filter, &tr );
-
-			if ( !math::world_to_screen( src3D, src ) || !math::world_to_screen( tr.end, dst ) )
-				return;
-
-			render::draw_line( src.x, src.y, dst.x, dst.y, color::red( ) );
-
-			forward = math::angle_vector( vec3_t( 0, resolver::server_feet_yaw( csgo::local_player ), 0 ) );
-			dst3D = src3D + ( forward * 50.f ); //replace 50 with the length you want the line to have
-
-			ray.initialize( src3D, dst3D );
-
-			interfaces::trace_ray->trace_ray( ray, 0, &filter, &tr );
-
-			if ( !math::world_to_screen( src3D, src ) || !math::world_to_screen( tr.end, dst ) )
-				return;
-
-			render::draw_line( src.x, src.y, dst.x, dst.y, color::green( ) );
-			if ( !math::world_to_screen( src3D, src ) || !math::world_to_screen( tr.end, dst ) )
-				return;
-
-			render::draw_line( src.x, src.y, dst.x, dst.y, color::white( ) );
-
-
-
-
-		}*/
+		visuals::player::paint_traverse( );
+		visuals::notifications::fne ( );
 	}
 	break;
 
 	case fnv::hash( "FocusOverlayPanel" ):
-		interfaces::panel->set_keyboard_input_enabled( panel, variables::menu::opened );
-		interfaces::panel->set_mouse_input_enabled( panel, variables::menu::opened );
+		interfaces::panel->set_keyboard_input_enabled( panel, c_menu::get().opened );
+		interfaces::panel->set_mouse_input_enabled( panel, c_menu::get ( ).opened );
 		break;
 	}
 
@@ -490,26 +529,28 @@ bool __fastcall hooks::post_screen_space_fx::hook( uintptr_t ecx, uintptr_t edx,
 	if ( !csgo::local_player )
 		return post_screen_space_original( ecx, setup );
 
-	visuals::glow::think( );
 
 	return post_screen_space_original( ecx, setup );
 }
 
 void _fastcall hooks::do_extra_bone_processing::hook( void* ecx, uint32_t, void* hdr, vec3_t* pos, void* q, void* matrix, uint8_t* bone_computed, void* context ) {
 	auto player = ( player_t* ) ecx;
+	
+	
+	//if ( player->m_fEffects( ) & 8 )
+		//return;
+	//printf( " player->m_fEffects( ) ptr = %i \n", player->m_fEffects( ) );
+	const auto state =  player->get_anim_state( );
 
-	if ( player->m_fEffects( ) & 8 )
-		return;
-
-	const auto state = uint32_t( player->get_anim_state( ) );
+	 bool old_on_ground = state->m_bOnGround;
 
 	if ( !state )
 		return do_extra_bone_processing_original( player, hdr, pos, q, matrix, bone_computed, context );
+	state->m_bOnGround = false;
 
-	const auto backup_tickcount = *reinterpret_cast< int32_t* >( state + 8 );
-	*reinterpret_cast< int32_t* >( state + 8 ) = 0;
 	do_extra_bone_processing_original( player, hdr, pos, q, matrix, bone_computed, context );
-	*reinterpret_cast< int32_t* >( state + 8 ) = backup_tickcount;
+
+	state->m_bOnGround = old_on_ground;
 }
 
 void _fastcall hooks::standard_blending_rules::hook( player_t* player, uint32_t, c_studio_hdr* hdr, vec3_t* pos, quaternion_t* q, const float time, int mask )
@@ -910,3 +951,4 @@ int __fastcall hooks::file_system::hook( void* ecx, void* edx ) {
 
 	return 1; //return 1 to allow loading of chams materials
 }
+

@@ -21,7 +21,6 @@
 #include "../../source-sdk/sdk.hpp"
 #include "../../core/hooks/hooks.hpp"
 #include "../../dependencies/math/math.hpp"
-#include "../../dependencies/utilities/renderer/renderer.hpp"
 #include "../../dependencies/utilities/console/console.hpp"
 #include "../utilities/csgo.hpp"
 
@@ -64,6 +63,7 @@ namespace csgo {
 	extern int m_rate;
 
 	extern bool bFirstSendMovePack;
+	extern  HWND old_window;
 	extern float proper_abs;
 	extern   vec3_t            m_angle;
 	
@@ -76,6 +76,7 @@ namespace csgo {
 	extern vec3_t m_rotation;
 	extern bool send_packet;
 	extern float choke_yaw;
+	extern HWND window;
 	extern bool in_trace;
 	extern  bool fresh_tick;
 	extern vec3_t real_angle;

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <ProjectOutputs>G:\csgo cheat - Copy\output\debug\weekend.dll</ProjectOutputs>
-  <ContentFiles>G:\csgo cheat - Copy\dependencies\interfaces\i_player_movement.hpp</ContentFiles>
+  <ProjectOutputs>C:\Users\topor\source\repos\getaxe\output\debug\weekend.dll</ProjectOutputs>
+  <ContentFiles>C:\Users\topor\source\repos\getaxe\dependencies\interfaces\i_player_movement.hpp</ContentFiles>
   <SatelliteDlls></SatelliteDlls>
   <NonRecipeFileRefs></NonRecipeFileRefs>
 </Project>

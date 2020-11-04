@@ -122,7 +122,7 @@ enum item_definition_indexes {
 	weapon_mag7 = 27,
 	weapon_negev = 28,
 	weapon_sawedoff = 29,
-	weapon_tec9 = 30,
+	 weapon_tec9 = 30,
 	weapon_taser = 31,
 	weapon_hkp2000 = 32,
 	weapon_mp7 = 33,

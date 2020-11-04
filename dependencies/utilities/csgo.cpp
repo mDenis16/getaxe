@@ -39,6 +39,8 @@ namespace csgo {
 	  int m_rate;
 	  int		  m_shot_command_number;
 	  int		  m_shot_tickbase;
+	  HWND window;
+	  HWND old_window;
 	  bool m_update = false;
 	  int m_tick;
 	  bool bFirstSendMovePack;

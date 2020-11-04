@@ -1,9 +1,12 @@
 #pragma once
+#include <d3dx9.h>
 
 namespace hooks {
 	bool initialize();
 	void release();
 
+	extern WNDPROC wndproc_original;
+	extern HWND window;
 	
 
 	
@@ -72,7 +75,20 @@ namespace hooks {
 		using fn = void( __thiscall* )( iv_model_render*, i_mat_render_context*, const draw_model_state_t&, const model_render_info_t&, matrix_t* );
 		static void __stdcall hook( i_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix_t* bone_to_world );
 	}
+	namespace present {
 
+
+		using fn = long( __stdcall* )( LPDIRECT3DDEVICE9, RECT* , RECT* , HWND , RGNDATA*  );
+		static long __stdcall  hook( LPDIRECT3DDEVICE9 device, RECT* source_rect, RECT* dest_rect, HWND dest_window_override, RGNDATA* dirt_region );
+	}
+	namespace reset {
+		using fn = long( __stdcall* )( IDirect3DDevice9*, D3DPRESENT_PARAMETERS* );
+		static long __stdcall  hook( IDirect3DDevice9* thisptr, D3DPRESENT_PARAMETERS* params );
+	}
+	namespace wnd_proc {
+		using fn = WNDPROC;
+		static LRESULT __stdcall  hook( HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam );
+	}
 	namespace run_commmand {
 		using fn = void( __thiscall* )( void*, player_t* , c_usercmd*, player_move_helper*  );
 		static void _fastcall hook( void* prediction, void* edx, player_t* player, c_usercmd* cmd, player_move_helper* move_helper );
@@ -105,4 +121,5 @@ namespace hooks {
 	namespace file_system {
 		int __fastcall hook( void* ecx, void* edx );
 	}
+	
 }

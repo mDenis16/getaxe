@@ -167,10 +167,10 @@ void c_nade_prediction::draw( ) {
 			vec3_t start2d = vec3_t( );
 			vec3_t center_2d = vec3_t( );
 			if ( interfaces::debug_overlay->world_to_screen( position, center_2d ) && interfaces::debug_overlay->world_to_screen( start, start2d ) ) {
-				if ( !prev_scr_pos.is_zero( ) ) {
-					render::draw_line( prev_scr_pos.x, prev_scr_pos.y, start2d.x, start2d.y, color );
+				//if ( !prev_scr_pos.is_zero( ) ) {
+					//render::draw_line( prev_scr_pos.x, prev_scr_pos.y, start2d.x, start2d.y, color );
 
-				}
+				//}
 				prev_scr_pos = start2d;
 
 			}
@@ -184,16 +184,16 @@ void c_nade_prediction::draw( ) {
 				break;
 
 			auto nade_prediction_color = color::green( );
-			if ( math::world_to_screen( p.m_start, start ) && math::world_to_screen( p.m_end, end ) ) {
-				render::draw_line( start.x, start.y, end.x, end.y, nade_prediction_color );
+			//if ( math::world_to_screen( p.m_start, start ) && math::world_to_screen( p.m_end, end ) ) {
+			//	render::draw_line( start.x, start.y, end.x, end.y, nade_prediction_color );
 
-				if ( p.m_detonate || p.m_plane )
-					render::draw_rect( start.x - 2, start.y - 2, 5, 5, p.m_detonate ? color( 255, 0, 0 ) :  color( 255, 255, 255 ) );
+				//if ( p.m_detonate || p.m_plane )
+					//render::draw_rect( start.x - 2, start.y - 2, 5, 5, p.m_detonate ? color( 255, 0, 0 ) :  color( 255, 255, 255 ) );
 
-				if ( p.m_detonate )
-					draw_3d_circle( p.m_end, 30, 15, color::red( ) );
+			//	if ( p.m_detonate )
+					//draw_3d_circle( p.m_end, 30, 15, color::red( ) );
 			
-			}
+			//}
 		}
 	}
 }

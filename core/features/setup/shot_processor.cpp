@@ -208,14 +208,15 @@ void shot_processor::manage_shots( ) {
 					interfaces::console->console_printf( "[lua debug] Missed shot due resolver. " );
 					std::stringstream ss;
 					ss << "Missed  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage due to bad lagcomp [ " << math::time_to_ticks(entity->simulation_time() - shot->backtrack.simtime) << " ] "   << "curtime " << interfaces::globals->cur_time;
-					visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
-					
+				//	visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
+					visuals::notifications::add ( ss.str ( ));
 				}
 				else {
 					interfaces::console->console_printf( "[lua debug] Missed shot due resolver. " );
 					std::stringstream ss;
 					ss << "Missed  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage due to resolver.";
-					visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
+					//visuals::event_.push_front( visuals::/loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
+					visuals::notifications::add ( ss.str ( ) );
 					resolver::resolver_data [ shot->enemy_index ].missed_shots++;
 				}
 				
@@ -224,7 +225,8 @@ void shot_processor::manage_shots( ) {
 			{
 				std::stringstream ss;
 				ss << "Missed  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage due to spread.";
-				visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
+				visuals::notifications::add ( ss.str ( ) );
+				//visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
 			}
 			else if ( shot->hurt && shot->hit )
 			{
@@ -236,8 +238,8 @@ void shot_processor::manage_shots( ) {
 				}else
 					ss << "Hit  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage.";
 				
-				
-				visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
+				visuals::notifications::add ( ss.str ( ) );
+				//visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
 			}
 		//	interfaces::debug_overlay->add_line_overlay( shot->shotpos, shot->hitpos, 255, 0, 0, false, 0.5f );
 			shot->approved = true;
