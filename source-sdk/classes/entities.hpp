@@ -514,6 +514,7 @@ public:
 	NETVAR( "DT_CSPlayer", "m_nTickBase", get_tick_base, int );
 	OFFSET( int, get_mneffects, 0xE8 );
 	NETVAR( "DT_BaseEntity", "m_fEffects", m_fEffects, int );
+	OFFSET ( vec3_t, get_abs_velocity, 0x94 );
 	OFFSET( int, get_eflags, 0x44 );
 	NETVAR( "CBaseAnimating", "m_bClientSideAnimation", get_clientside_animation, bool )
 		animationlayer* get_anim_overlays( void ) {

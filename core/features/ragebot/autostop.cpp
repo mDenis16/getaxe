@@ -321,7 +321,6 @@ void autostop::auto_peek( c_usercmd* cmd ) {
 
 
 void autostop::autostop( c_usercmd* cmd ) {
-	return;
 
 	if ( variables::ragebot::autostop )
 	{

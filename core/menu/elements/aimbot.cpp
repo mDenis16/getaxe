@@ -12,8 +12,10 @@ namespace menu {
 			option_slider ( "Min damage", "Minimum damage of hitspot", 0.f, 100.f, variables::ragebot::min_dmg );
 			option_slider ( "Head Scale", "Head Scale of  multipoint", 0.f, 100.f, variables::ragebot::head_scale );
 			option_slider ( "Body Scale", "Body Scale of  multipoint", 0.f, 100.f, variables::ragebot::point_scale );
-			option_single ( "Safe point", "Shoot only at safe points", variables::ragebot::safe_point );
+			//option_single ( "Safe point", "Shoot only at safe points", variables::ragebot::safe_point );
 			option_single ( "Resolver", "Shoot only at safe points", variables::ragebot::resolver );
+			option_single ( "Auto peek ", "Stop between shots", variables::ragebot::autostop );
+		
 			option_combobox ( "Hitbox priority", "Where you aimbot shot", std::vector<std::string>{"head", "body"}, variables::ragebot::prioritize_hitbox );
 			
 			option_multicombobox ( "Hitscan selection", "Where your aimbot scan", {{ "head", &variables::ragebot::head_scan }, { "body", &variables::ragebot::body_scan },{ "feet", &variables::ragebot::feet_scan },{ "arms scan", &variables::ragebot::arms_scan } } );
@@ -31,6 +33,7 @@ namespace menu {
 		}, 300, variables::antiaim::enable );
 		option ( "Exploits", "Gives you a big advatage", [ = ] ( ) {
 			option_single ( "Doubletap", "Allows you to shoot twice at the same time", variables::ragebot::double_tap );
+			option_slider_int ( "ticks ", "db tap ticks", 0, 14, variables::antiaim::db_tap_ticks );
 		}, 100, variables::antiaim::enable );
 	
 	}

@@ -122,7 +122,7 @@ public:
 	
 
 	inline float Length2D( ) const {
-		return std::sqrt( ( x * x ) + ( y * y ) );
+		return std::sqrt ( ( x * x ) + ( y * y ) );
 	}
 	float dot_product( const vec3_t& vec ) const {
 		return ( x * vec.x + y * vec.y + z * vec.z );

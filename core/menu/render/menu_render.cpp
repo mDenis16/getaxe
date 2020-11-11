@@ -97,8 +97,10 @@ void c_menu::run_visuals( ) {
 	ImGui::SetNextWindowSize( ImVec2( 1920, 1080 ) );
 	ImGui::Begin( "##espp", &show_popup, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground );
 	draw =  ImGui::GetWindowDrawList( );
+
 	visuals::player::present( );
 	visuals::notifications::present ( );
+	visuals::draw_debug_points ( );
 	ImGui::End( );
 }
 

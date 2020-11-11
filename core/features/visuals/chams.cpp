@@ -48,9 +48,8 @@ void visuals::chams::run( i_mat_render_context* ctx, const draw_model_state_t& s
 	if ( !csgo::local_player )
 		return;
 
-	draw_model_execute_original( interfaces::model_render, ctx, state, info, bone_to_world );
-}
-	/*
+
+	
 		static i_material* mat = nullptr;
 		static i_material* zmat = nullptr;
 
@@ -64,12 +63,13 @@ void visuals::chams::run( i_mat_render_context* ctx, const draw_model_state_t& s
 		static i_material* zwire = create_material( shader_type_t::UnlitGeneric, true, true );
 
 
-		switch ( variables::visuals::chams::material ) {
-		case 1:
-			mat = norm;
-			zmat = znorm;
-			break;
-		case 2:
+	//	switch ( variables::visuals::chams::material ) {
+		//case 1:
+			mat = interfaces::material_system->find_material ( "debug/debugambientcube", nullptr );
+			zmat = interfaces::material_system->find_material ( "debug/debugambientcube", nullptr );
+			zmat->set_material_var_flag ( material_var_flags_t::material_var_ignorez, true );
+			//break;
+	/*	case 2:
 			mat = flat;
 			zmat = zflat;
 			break;
@@ -82,6 +82,7 @@ void visuals::chams::run( i_mat_render_context* ctx, const draw_model_state_t& s
 			zmat = znorm;
 			break;
 		}
+		*/
 
 		auto model_name = interfaces::model_info->get_model_name( ( model_t* ) info.model );
 		auto entity = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( info.entity_index ) );
@@ -89,94 +90,34 @@ void visuals::chams::run( i_mat_render_context* ctx, const draw_model_state_t& s
 			return;
 
 		if ( model_name && strstr( model_name, "models/player" ) ) {
+			bool should_draw_visible = entity->is_enemy ( ) ? variables::visuals::modulation::enemy::visible : variables::visuals::modulation::team::visible;
+			bool should_draw_xyz = entity->is_enemy ( ) ? variables::visuals::modulation::enemy::visible : variables::visuals::modulation::team::visible;
 
-			if ( variables::visuals::chams::view_backtrack ) {
+			auto color_visible = entity->is_enemy ( ) ? variables::visuals::modulation::enemy::visible_color : variables::visuals::modulation::team::visible_color;
+			auto color_xyz = entity->is_enemy ( ) ? variables::visuals::modulation::enemy::xyz_color : variables::visuals::modulation::team::xyz_color;
+			
 
-				if ( !csgo::local_player->is_alive( ) )
-					return;
-				float backtrack_color [ 4 ] { variables::visuals::chams::backtrack_colro.r, variables::visuals::chams::backtrack_colro.g,variables::visuals::chams::backtrack_colro.b, variables::visuals::chams::backtrack_colro.a };
+				if ( should_draw_visible ) {
+				
 
-				if ( entity && entity->is_alive( ) && !entity->dormant( ) ) {
-					int i = entity->index( );
+					interfaces::render_view->modulate_color ( color_visible );
+					interfaces::render_view->set_blend ( color_visible [ 3 ] );
+					interfaces::model_render->override_material ( mat );
 
-					if ( csgo::local_player&& csgo::local_player->is_alive( ) && entity->team( ) != csgo::local_player->team( ) ) {
+					draw_model_execute_original ( interfaces::model_render, ctx, state, info, player_manager::best_tick_global [ entity->index() ].bone );
+				}
+				if ( should_draw_xyz ) {
+				
+					interfaces::render_view->modulate_color ( color_xyz );
+					interfaces::render_view->set_blend ( color_xyz [ 3 ] );
+					interfaces::model_render->override_material ( zmat );
 
-						auto record = player_manager::best_tick_global [ info.entity_index ];
-
-
-						if ( record.simtime > 0.f && record.bone  ) {
-							interfaces::render_view->modulate_color( backtrack_color );
-							interfaces::render_view->set_blend( variables::visuals::chams::backtrack_colro.a);
-							interfaces::model_render->override_material( mat );
-
-							draw_model_execute_original( interfaces::model_render, ctx, state, info, record.bone );
-						}
-					}
+					draw_model_execute_original ( interfaces::model_render, ctx, state, info, bone_to_world );
 				}
 			}
-			if ( variables::visuals::chams::enemy_chams ) {
-
-				if ( entity->is_enemy( ) ) {
-
-					if ( variables::visuals::chams::xyz ) {
-						float enemy_color [ 4 ] { variables::visuals::chams::enemy_color.r, variables::visuals::chams::enemy_color.g,variables::visuals::chams::enemy_color.b, variables::visuals::chams::enemy_color.a };
-						interfaces::render_view->modulate_color( enemy_color );
-						interfaces::render_view->set_blend( enemy_color [ 3 ] );
-						interfaces::model_render->override_material( zmat );
-
-						draw_model_execute_original( interfaces::model_render, ctx, state, info, bone_to_world );
-					}
-					if ( entity->get_anim_state( ) ) {
-
-						auto goal_feet_yaw = entity->get_anim_state( )->m_flGoalFeetYaw;
-						auto left = goal_feet_yaw + 58.f;
-						auto right = goal_feet_yaw - 58.f;
-						left = math::normalize_yaw( left );
-						right = math::normalize_yaw( right );
-						matrix_t left_matrix [ MAXSTUDIOBONES ];
-						ragebot::get_rotated_matrix( entity, 24.f, left_matrix );
-						float enemy_left_matrix [ 4 ] { 255, 0, 0, 150 };
-						interfaces::render_view->modulate_color( enemy_left_matrix );
-						interfaces::render_view->set_blend( enemy_left_matrix [ 3 ] );
-						interfaces::model_render->override_material( mat );
-
-						draw_model_execute_original( interfaces::model_render, ctx, state, info, csgo::left_player_bones [ entity->index( ) ] );
-
-
-						matrix_t right_matrix [ MAXSTUDIOBONES ];
-						ragebot::get_rotated_matrix( entity, -24.f, right_matrix );
-						float enemy_right_matrix [ 4 ] { 255, 0, 255, 150 };
-						interfaces::render_view->modulate_color( enemy_right_matrix );
-						interfaces::render_view->set_blend( enemy_right_matrix [ 3 ] );
-						interfaces::model_render->override_material( mat );
-
-						draw_model_execute_original( interfaces::model_render, ctx, state, info, csgo::right_player_bones [ entity->index( ) ] );
-					}
-				}
-			}
-			if ( variables::visuals::chams::teammate_chams ) {
-
-				if ( !entity->is_enemy( ) ) {
-					float team_color [ 4 ] { variables::visuals::chams::team_color.r, variables::visuals::chams::team_color.g,variables::visuals::chams::team_color.b, variables::visuals::chams::team_color.a };
-					float team_color_visible [ 4 ] { variables::visuals::chams::team_color_visible.r, variables::visuals::chams::team_color_visible.g,variables::visuals::chams::team_color_visible.b, variables::visuals::chams::team_color_visible.a };
-					if ( variables::visuals::chams::xyz ) {
-						interfaces::render_view->modulate_color( team_color );
-						interfaces::render_view->set_blend( team_color [ 3 ] );
-						interfaces::model_render->override_material( zmat );
-
-						draw_model_execute_original( interfaces::model_render, ctx, state, info, bone_to_world );
-					}
-
-					interfaces::render_view->modulate_color( team_color_visible );
-					interfaces::render_view->set_blend( team_color_visible [ 3 ] );
-					interfaces::model_render->override_material( mat );
-
-					draw_model_execute_original( interfaces::model_render, ctx, state, info, bone_to_world );
-
-				}
-			}
-
-			/*if ( !entity->is_alive( ) || !entity->is_alive( ) || entity->client_class( )->class_id == ccsragdoll ) {
+			
+		
+			if ( !entity->is_alive( ) || !entity->is_alive( ) || entity->client_class( )->class_id == ccsragdoll ) {
 				int x = 0.5;
 				float clr_chams_dead [ 4 ] { x,x,x,x };
 
@@ -185,7 +126,7 @@ void visuals::chams::run( i_mat_render_context* ctx, const draw_model_state_t& s
 				interfaces::model_render->override_material( mat );
 
 				draw_model_execute_original( interfaces::model_render, ctx, state, info, bone_to_world );
-			}*/
+			}
 
-//}
+}
 

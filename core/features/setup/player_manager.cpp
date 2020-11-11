@@ -120,7 +120,6 @@ player_manager::backtrack_records_t player_manager::find_best_tick( player_t* en
 		if ( record.shoot )
 		{
 			best_tick = record;
-			printf( "ONSHOT RECORD \n" );
 			return best_tick;
 
 		}
@@ -367,6 +366,12 @@ void player_manager::recieve_record( player_t* entity, backtrack_records_t& reco
 			shot [ index ] = entity->active_weapon( )->m_fLastShotTime( );
 		}
 	}
+	if ( record.shoot ) {
+		auto angle_to_me = math::calc_angle ( entity->get_hitbox_position(hitbox_head), csgo::local_player->get_hitbox_position (hitbox_head ) ).y;
+		angle_to_me = math::normalize_yaw ( angle_to_me );
+
+		get_rotated_matrix ( record, angle_to_me, record.bone );
+	}
 	get_rotated_matrix( record, -25.f, record.bone_left );
 	get_rotated_matrix( record, 25.f, record.bone_right );
 }
@@ -466,18 +471,7 @@ void player_manager::setup_records( ) {
 		if ( player->team( ) == csgo::local_player->team( ) )
 			continue;
 
-		if ( records [ i ].size( ) > 0 )
-		{
-			for ( int t = 0; t < records [ i ].size( ); t++ )
-				if ( player->dormant( ) && !player->health( ) > 0 )
-					records [ i ].clear( );
-				else
-					if ( !is_tick_valid( records [ i ].at( t ) ) )
-						records [ i ].erase( records [ i ].begin( ) + t );
-
-
-
-		}
+	
 
 
 
@@ -485,20 +479,42 @@ void player_manager::setup_records( ) {
 
 		auto count = *( std::uint32_t* ) ( ( std::uint32_t ) player->get_renderable( ) + 0x2918 );
 		std::memcpy( csgo::player_bones [ player->index( ) ], *( void** ) ( ( std::uint32_t ) player->get_renderable( ) + 0x290C ), sizeof( matrix_t ) * count );
-		ragebot::get_rotated_matrix( player, resolver::resolver_data [ i ].extended_desync?-58.f:-28.f, csgo::left_player_bones [ player->index( ) ] );
-		ragebot::get_rotated_matrix( player, resolver::resolver_data [ i ].extended_desync?58.f:28.f, csgo::right_player_bones [ player->index( ) ] );
 
+		ragebot::get_rotated_matrix( player, -resolver::resolver_data [ player->index ( ) ].brute_angle, csgo::left_player_bones [ player->index( ) ] );
+		ragebot::get_rotated_matrix( player, resolver::resolver_data [ player->index ( ) ].brute_angle, csgo::right_player_bones [ player->index( ) ] );
+	
 		player_manager::backup_player( player );
 		backtrack_records_t record;
 		backtrack_records_t extrapolate_record;
 
 		recieve_record( player, record );
 		records [ i ].push_back( record );
-	//	extrapolate::extrapolate_player( player, extrapolate_record );
-	//	extrapolate::extrapolate_records [ i ] = extrapolate_record;
+		//printf ( "BRUTE SIDE %i \n", resolver::resolver_data [ player->index ( ) ].brute_side );
+
+		/*switch ( resolver::resolver_data [ player->index ( ) ].brute_side ) {
+		case 1:
+			std::memcpy ( csgo::player_bones [ player->index ( ) ], csgo::left_player_bones [ player->index ( ) ], sizeof ( csgo::left_player_bones [ player->index ( ) ] ) );
+			break;
+
+		case 2:
+			std::memcpy ( csgo::player_bones [ player->index ( ) ], csgo::right_player_bones [ player->index ( ) ], sizeof ( csgo::right_player_bones [ player->index ( ) ] ) );
+			break;
+		default:
+			break;
+		}*/
+
+
+		if ( records [ i ].size ( ) > 0 ) {
+			for ( int t = 0; t < records [ i ].size ( ); t++ )
+				if ( player->dormant ( ) && !player->health ( ) > 0 )
+					records [ i ].clear ( );
+				else
+					if ( !is_tick_valid ( records [ i ].at ( t ) ) )
+						records [ i ].erase ( records [ i ].begin ( ) + t );
 
 
 
+		}
 
 
 

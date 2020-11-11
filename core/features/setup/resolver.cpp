@@ -1,5 +1,289 @@
 #include "../features.hpp"
 resolver::resolve_info resolver::resolver_data [ 65 ];
+std::deque<resolver::resolve_shot> resolver::shots;
+void resolver::event_logs::weapon_fire ( i_game_event * event ) {
+	if ( !event )
+		return;
+
+	if ( !interfaces::engine->is_connected ( ) && !interfaces::engine->is_in_game ( ) )
+		return;
+
+	auto local_player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+	if ( !local_player )
+		return;
+
+	auto entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_player_for_user_id ( event->get_int ( "userid" ) ) ) );
+	if ( !entity )
+		return;
+	
+	if ( entity == local_player )
+		return;
+
+
+	if ( !entity )
+		return;
+
+
+	if ( entity->is_enemy ( ) )
+		return;
+
+	
+
+	resolve_shot shot;
+     shot.hit = false; 
+     shot.tick = interfaces::globals->tick_count;
+	 shot.hurt = false;
+	 shot.attacker_index = entity->index ( );
+	 shot.enemy_index = 0;
+ 	shot.shotpos = entity->get_eye_pos();
+	shot.approved = false;
+	shot.curtime = interfaces::globals->cur_time;
+
+	shots.push_back ( shot );
+}
+void resolver::event_logs::player_hurt ( i_game_event * event ) {
+	if ( !event )
+		return;
+
+	if ( !interfaces::engine->is_connected ( ) && !interfaces::engine->is_in_game ( ) )
+		return;
+
+	auto local_player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+	if ( !local_player )
+		return;
+
+	auto victim_index = interfaces::engine->get_player_for_user_id ( event->get_int ( "userid" ));
+	if ( !victim_index )
+		return;
+
+	auto victim = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_player_for_user_id ( event->get_int ( "userid" ) ) ) );
+	if ( !victim )
+		return;
+
+	auto attacker = reinterpret_cast< player_t * >(interfaces::entity_list->get_client_entity ( interfaces::engine->get_player_for_user_id ( event->get_int ( "attacker" ) ) ));
+
+	if ( !attacker )
+		return;
+
+	if ( attacker != local_player ) {
+	
+
+
+		auto hitbox = event->get_int ( "hitgroup" );
+		if ( !hitbox )
+			return;
+
+		auto damage = event->get_int ( "dmg_health" );
+		if ( !damage )
+			return;
+
+		auto health = event->get_int ( "health" );
+
+		if ( !health && health != 0 )
+			return;
+
+		if ( attacker->team ( ) != local_player->team ( ) )
+			return;
+
+
+		auto shot = closest_shot ( interfaces::globals->tick_count, attacker );
+		if ( shot ) {
+			float angle_at_attacker = math::calc_angle ( victim->get_eye_pos ( ), attacker->get_eye_pos ( ) ).y - 180.f;
+			angle_at_attacker = math::clamp_yaw ( angle_at_attacker );
+
+			shot->hurt = true;
+			shot->hit = true;
+			shot->enemy_index = victim->index();
+			shot->angle = victim->get_anim_state ( )->m_flGoalFeetYaw;
+
+			shot->hit_info.damage = damage;
+			shot->hit_info.hitgroup = hitbox;
+			shot->hit_info.victim = victim_index;
+
+
+		
+		}
+
+
+	}
+
+}
+player_t*  resolver::get_closest_player_by_point ( vec3_t from,  vec3_t point ) {
+	player_t * closest = nullptr;
+	auto distance = 6.5f;
+	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
+		player_t * entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
+
+		if ( !entity )
+			continue;
+
+		if ( entity->dormant ( ) )
+			continue;
+
+		if ( !entity->is_enemy ( ) )
+			continue;
+
+		if ( entity->health ( ) <= 0 )
+			continue;
+
+		auto angle_bullet = math::calc_angle ( from, point ); math::clamp ( angle_bullet );
+		auto angle_enemy = math::calc_angle ( from, entity->get_hitbox_position(hitbox_body )); math::clamp ( angle_enemy );
+
+		auto angDelta = ( angle_enemy - angle_bullet ).Length2D ( );
+		
+		if ( angDelta < distance ) {
+			closest = entity;
+			distance = angDelta;
+		}
+
+
+	}
+	return closest;
+}
+
+resolver::resolve_shot * resolver::closest_shot ( int tickcount, player_t * player ) {
+	resolve_shot * closest_shot = nullptr;
+	auto closest_diff = 64;
+	for ( auto & shot :  shots ) {
+		if ( shot.attacker_index == player->index ( ) ) {
+			const auto diff = abs ( tickcount - shot.tick );
+			if ( diff <= closest_diff ) {
+				//	interfaces::console->console_printf( "DIF TICKCOUNT %i \n", diff );
+				closest_shot = &shot;
+				closest_diff = diff;
+			}
+		}
+
+	}
+
+	return closest_shot;
+}
+std::string resolver::side_name ( int side ) {
+	switch ( side ) {
+	case 0:
+		return "low delta";
+	case 1:
+		return "left";
+	case 2:
+		return "right";
+	}
+}
+int resolver::get_desync_side ( vec3_t from, vec3_t to, player_t* entity, int hitbox ) {
+	auto VectorTransform_Wrapper = [ ] ( const vec3_t & in1, const matrix_t & in2, vec3_t & out ) {
+		auto VectorTransform = [ ] ( const float * in1, const matrix_t & in2, float * out ) {
+			auto DotProducts = [ ] ( const float * v1, const float * v2 ) {
+				return v1 [ 0 ] * v2 [ 0 ] + v1 [ 1 ] * v2 [ 1 ] + v1 [ 2 ] * v2 [ 2 ];
+			};
+			out [ 0 ] = DotProducts ( in1, in2 [ 0 ] ) + in2 [ 0 ][ 3 ];
+			out [ 1 ] = DotProducts ( in1, in2 [ 1 ] ) + in2 [ 1 ][ 3 ];
+			out [ 2 ] = DotProducts ( in1, in2 [ 2 ] ) + in2 [ 2 ][ 3 ];
+		};
+		VectorTransform ( &in1.x, in2, &out.x );
+	};
+
+	studio_hdr_t * pStudioModel = interfaces::model_info->get_studio_model ( entity->model ( ) );
+	studio_hitbox_set_t * set = pStudioModel->hitbox_set ( 0 );
+	studio_box_t * _hitbox = set->hitbox ( hitbox );
+
+	vec3_t max;
+	vec3_t min;
+	const auto mod = _hitbox->radius != -1.f ? _hitbox->radius : 0.f;
+	VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x + mod, _hitbox->maxs.y + mod, _hitbox->maxs.z + mod ), csgo::right_player_bones [entity->index()][ _hitbox->bone ], max );
+	VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x - mod, _hitbox->mins.y - mod, _hitbox->mins.z - mod ), csgo::right_player_bones [ entity->index ( ) ][ _hitbox->bone ], min );
+
+
+	vec3_t max2;
+	vec3_t min2;
+
+	VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x + mod, _hitbox->maxs.y + mod, _hitbox->maxs.z + mod ), csgo::left_player_bones [ entity->index ( ) ][ _hitbox->bone ], max2 );
+	VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x - mod, _hitbox->mins.y - mod, _hitbox->mins.z - mod ), csgo::left_player_bones [ entity->index ( ) ][ _hitbox->bone ], min2 );
+
+	if ( auto intersection = ragebot::get_intersect_point ( from, to, min, max, _hitbox->radius ); intersection ) 
+		return 2;
+	if ( auto intersection = ragebot::get_intersect_point ( from, to, min2, max2, _hitbox->radius ); intersection )
+		return 1;
+	return 0;
+}
+void resolver::event_logs::bullet_impact ( i_game_event * event ) {
+	static int last_time_shoot [ 64 ];
+	auto userid = event->get_int ( "userid" );
+	if ( !userid )
+		return;
+
+	if ( !interfaces::engine->is_connected ( ) && !interfaces::engine->is_in_game ( ) )
+		return;
+
+	auto engine_userid = interfaces::engine->get_player_for_user_id ( userid );
+	if ( !engine_userid )
+		return;
+
+	if ( engine_userid == interfaces::engine->get_local_player ( ) )
+		return;
+
+	auto entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( engine_userid ) );
+
+	if ( !entity )
+		return;
+
+
+	if ( entity->dormant ( ) )
+		return;
+
+	if ( entity->is_enemy ( ) )
+		return;
+
+
+	vec3_t bullet_impact = vec3_t ( event->get_float ( "x" ), event->get_float ( "y" ), event->get_float ( "z" ) );
+
+	if (last_time_shoot [ entity->index ( ) ] != interfaces::globals->tick_count ) {
+		auto shot = closest_shot ( interfaces::globals->tick_count, entity );
+		if ( shot ) {
+			auto target = get_closest_player_by_point ( entity->get_eye_pos ( ), bullet_impact );
+
+			auto weapon = entity->active_weapon ( );
+			if ( !weapon )
+				return;
+
+			auto weapon_data = weapon->get_weapon_data ( );
+			if ( !weapon_data )
+				return;
+
+			if ( target ) {
+				shot->enemy_index = target->index ( );
+				
+				trace_t tr;
+				ray_t ray;
+
+				const auto angles = math::calc_angle ( shot->shotpos, bullet_impact );
+				vec3_t direction = math::angle_vector ( angles );
+				direction.normalize ( );
+
+
+				ray.initialize ( shot->shotpos, shot->shotpos + direction * weapon_data->flRange );
+				interfaces::trace_ray->clip_ray_to_entity ( ray, MASK_SHOT_HULL | CONTENTS_HITBOX, target, &tr );
+				if ( tr.entity == target ) {
+					shot->hitpos = tr.end;
+					shot->hit = true;
+				}
+
+
+				shot->desync_side = get_desync_side ( shot->shotpos, shot->shotpos + direction * weapon_data->flRange, target, hitbox_head );
+				resolver_data [ shot->enemy_index ].brute_side = shot->desync_side;
+				if ( shot->desync_side > 0 ) {
+					shot->hit = true;
+				}
+
+				
+
+
+
+
+			}
+			last_time_shoot [ entity->index ( ) ] = interfaces::globals->tick_count;
+		}
+	}
+
+}
 bool resolver::get_desync_side( player_t* entity ) {
 	float Back, Right, Left;
 
@@ -66,7 +350,15 @@ float resolver::server_feet_yaw( player_t* entity )
 	auto speed = std::fmin( abs_velocity.length( ), 260.0f );
 
 	auto goal_feet_yaw = animstate->m_flGoalFeetYaw;
-
+	/*static float shot [ 64 ];
+	if ( entity->active_weapon ( ) ) {
+		if ( shot [ entity->index ( ) ] != entity->active_weapon ( )->m_fLastShotTime ( ) ) {
+			
+			shot [ entity->index ( ) ] = entity->active_weapon ( )->m_fLastShotTime ( );
+			printf ( "DETECteD SHOOT STOpeD goal feeet calculation" );
+			return goal_feet_yaw;
+		}
+	}*/
 	auto angle_diff = [ ] ( float destAngle, float srcAngle ) -> float
 	{
 		auto delta = 0.f;
@@ -120,10 +412,7 @@ float resolver::server_feet_yaw( player_t* entity )
 	}
 	else
 	{
-		goal_feet_yaw = math::fl_approach_angle(
-			entity->lower_body_yaw( ),
-			goal_feet_yaw,
-			animstate->m_flLastClientSideAnimationUpdateTime * 100.0f );
+		goal_feet_yaw = entity->lower_body_yaw ( );
 	}
 
 	if ( goal_feet_yaw > 5000 || goal_feet_yaw < -5000 )
@@ -243,6 +532,76 @@ float resolver::get_real_head( player_t* entity ) {
 	}
 	return final_angle;
 }
+void resolver::manage_shots ( ) {
+	for ( size_t i = 0; i < shots.size ( ); i++ ) {
+		auto shot = &shots.at ( i );
+		if ( !shot->approved && abs ( shot->tick - interfaces::globals->tick_count ) < 64 ) {
+			if ( ( interfaces::globals->cur_time - shot->curtime ) > 5.f )
+				shots.erase ( shots.begin ( ) + i );
+
+			if ( !shot->enemy_index )
+				continue;
+
+
+			auto enemy = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( shot->enemy_index ) );
+
+			if ( !enemy )
+				return;
+
+			auto attacker = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( shot->attacker_index ) );
+
+			if ( !attacker )
+				return;
+
+			std::string name = attacker->get_info ( ).name;
+
+			if ( name.length ( ) > 17 )
+				name = name.substr ( 0, 17 ) + "...";
+
+			std::transform ( name.begin ( ), name.end ( ), name.begin ( ), tolower );
+
+
+
+			std::string victim_name = enemy->get_info ( ).name;
+
+			if ( victim_name.length ( ) > 17 )
+				victim_name = victim_name.substr ( 0, 17 ) + "...";
+
+			std::transform ( victim_name.begin ( ), victim_name.end ( ), victim_name.begin ( ), tolower );
+
+
+			if ( shot->hit && !shot->hurt ) {
+
+				float angle_at_teammate = math::calc_angle ( enemy->get_hitbox_position ( hitbox_head ), attacker->get_eye_pos() ).y - 180.f; math::normalize_yaw ( angle_at_teammate );
+				float dif = math::angle_diff ( enemy->get_anim_state ( )->m_flGoalFeetYaw, angle_at_teammate );
+				std::clamp ( dif, -58.f, 58.f );
+
+				std::stringstream ss;
+				ss << "Teammate " << name << "misssed  " << victim_name << " due resolver side ( " << side_name ( shot->desync_side ) << " ) dif (" << dif << " ).";
+
+				resolver::resolver_data [ shot->enemy_index ].last_hit_angle_related_to_me.push_back ( dif );
+				visuals::notifications::add ( ss.str ( ) );
+				resolver::resolver_data [ shot->enemy_index ].last_side_change = interfaces::globals->cur_time;
+				resolver_data [ enemy->index ( ) ].desync_side = shot->desync_side;
+
+			}
+			else if ( shot->hurt && shot->hit ) {
+
+
+				std::stringstream ss;
+				ss << "Teammate " << name << "hit  " << name << " in " << " for " << shot->hit_info.damage << " damage.";
+
+				visuals::notifications::add ( ss.str ( ) );
+				//visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
+			}
+			//	interfaces::debug_overlay->add_line_overlay( shot->shotpos, shot->hitpos, 255, 0, 0, false, 0.5f );
+			shot->approved = true;
+		}
+	
+
+	}
+
+}
 void resolver::frame_stage( ) {
 	if ( !interfaces::engine->is_connected( ) )
 		return;
@@ -254,6 +613,7 @@ void resolver::frame_stage( ) {
 		return;
 	if ( !variables::ragebot::resolver )
 		return;
+	manage_shots ( );
 
 	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
 		player_t* entity = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( i ) );
@@ -267,15 +627,24 @@ void resolver::frame_stage( ) {
 			continue;
 		if ( entity->health( ) <= 0 )
 			continue;
+		std::string entity_name = entity->get_info ( ).name;
+
+		if ( entity_name.length ( ) > 17 )
+			entity_name = entity_name.substr ( 0, 17 ) + "...";
+
+		std::transform ( entity_name.begin ( ), entity_name.end ( ), entity_name.begin ( ), tolower );
+
+		if ( resolver::resolver_data [ i ].last_hit_angle_related_to_me.size ( ) > 16 )resolver::resolver_data [ i ].last_hit_angle_related_to_me.pop_back ( );
 
 		resolver_data [ i ].max_desync_delta = max_desync_delta( entity );
-		resolver_data [ i ].server_goal_feet = server_feet_yaw( entity );
+		//resolver_data [ i ].server_goal_feet = server_feet_yaw( entity );
 		if ( ( interfaces::globals->cur_time - resolver_data [ i ].last_reset_time ) > 20.f ) {
 			resolver_data [ i ].is_using_desync = false;
 			resolver_data [ i ].last_reset_time = interfaces::globals->cur_time;
-			resolver_data [ i ].missed_shots = 0;
+
 
 		}
+		resolver_data [ i ].goal_feet_yaw = entity->get_anim_state ( )->m_flGoalFeetYaw;
 		//entity->get_anim_state( )->m_flGoalFeetYaw = entity->get_anim_state( )->m_flGoalFeetYaw + 58.f;
 		
 		if ( player_manager::records [ i ].size( ) > 0 )
@@ -314,10 +683,21 @@ void resolver::frame_stage( ) {
 				}
 
 			}
-			float orig_goal_feet = entity->get_anim_state( )->m_flGoalFeetYaw;
-			float angle_at_me = math::calc_angle( entity->get_eye_pos( ), csgo::local_player->get_eye_pos( ) ).y - 180.f; math::normalize_yaw( angle_at_me );
+			float orig_goal_feet = server_feet_yaw ( entity );
+		//	if ( entity->simulation_time ( ) != entity->get_old_simulation_time ( ) && csgo::cmd )
+		//		resolver_data [ i ].last_networked_time = math::get_estimate_server_time(csgo::cmd);
+
 			resolver_data [ i ].extended_desync = currentLayer.cycle == 0.f && currentLayer.weight == 0.f;
-			if ( resolver_data [ i ].is_using_desync  && resolver_data [ i ].missed_shots  > 0) {
+			resolver::resolver_data [ i ].brute_angle = resolver_data [ i ].extended_desync ? resolver_data [ i ].max_desync_delta : resolver_data [ i ].max_desync_delta / 2.f;
+		
+			if ( resolver::resolver_data [ i ].last_hit_angle_related_to_me.size ( ) > 0 )
+				resolver::resolver_data [ i ].first_shoot_correction = resolver::resolver_data [ i ].last_hit_angle_related_to_me.at(0);
+		
+			if ( std::fabs ( resolver::resolver_data [ i ].last_side_change - interfaces::globals->cur_time ) > 6.f ) 				{
+				resolver::resolver_data [ i ].brute_side = 0;
+			}
+		
+		/*	if ( resolver_data [ i ].is_using_desync  && resolver_data [ i ].missed_shots  > 0) {
 				switch ( resolver_data [ i ].missed_shots % 3 )
 				{
 				case 0:
@@ -333,8 +713,9 @@ void resolver::frame_stage( ) {
 				default:
 					break;
 				}
-				entity->get_anim_state( )->m_flGoalFeetYaw = resolver_data [ i ].final_goal_feet;
+				
 			}
+			*/
 		}
 	}
 }

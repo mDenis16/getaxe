@@ -8,6 +8,7 @@ int* prediction_player;
 engine_prediction::Misc_t engine_prediction::Misc;
 engine_prediction::Variables_t engine_prediction::m_stored_variables;
  vec3_t engine_prediction::unpredicted_eye;
+ vec3_t engine_prediction::unpredicted_velocity;
 void engine_prediction::initialize( player_t* player, c_usercmd* cmd ) {
 	if ( !interfaces::engine->is_connected( ) )
 		return;
@@ -21,9 +22,14 @@ void engine_prediction::initialize( player_t* player, c_usercmd* cmd ) {
 		return;
 	if ( !move_data )
 		move_data = std::malloc( 182 );
+	static auto oldorigin = csgo::local_player->origin ( );
 	engine_prediction::unpredicted_eye = player->get_eye_pos( );
+	engine_prediction::unpredicted_velocity=  ( csgo::local_player->origin ( ) - oldorigin ) * ( 1.0 / interfaces::globals->interval_per_tick );
+	oldorigin = csgo::local_player->origin ( );
+
 	old_cur_time = interfaces::globals->cur_time;
 	old_frame_time = interfaces::globals->frame_time;
+
 	if ( m_stored_variables.m_flVelocityModifier < 1.0 ) {
 		*reinterpret_cast< int* >( reinterpret_cast< uintptr_t >( interfaces::prediction + 0x24 ) ) = 1;
 	}

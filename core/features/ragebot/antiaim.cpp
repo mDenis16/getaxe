@@ -2,6 +2,8 @@
 
 bool need_to_flip = false;
 bool choke_next_tick;
+ static float last_hp = 100;
+ static bool desync_side = false;
 std::vector<anti_aim::freestand_point> anti_aim::points;
 float get_curtime( c_usercmd* ucmd ) {
 	auto local_player = csgo::local_player;
@@ -90,7 +92,12 @@ void anti_aim::real_animation_fix( ) {
 	if (!csgo::m_rotation.is_zero() )
 	local->set_abs_angles( csgo::m_rotation );
 }
+static int last_user_id = -1;
+static int shots_on_me = 0;
+static float last_angle_bullet_impact = 0.0f;
+
 void anti_aim::event_logs::bullet_impact( i_game_event* event ) {
+	static int last_time_shoot[64];
 	auto userid = event->get_int( "userid" );
 	if ( !userid )
 		return;
@@ -108,28 +115,33 @@ void anti_aim::event_logs::bullet_impact( i_game_event* event ) {
 
 	if ( !entity )
 		return;
-//	if ( !entity->is_alive( ) )
-///		return;
-///	if ( entity->dormant( ) )
-//		return;
-	
-//	if (!entity->is_enemy( ) )
-	//	return;
+	if ( !entity->is_alive( ) )
+		return;
+	if ( entity->dormant( ) )
+		return;
 
+	if (!entity->is_enemy( ) )
+		return;
 
+   
 	vec3_t bullet_impact = vec3_t( event->get_float( "x" ), event->get_float( "y" ), event->get_float( "z" ) );
 
-	auto angle_bullet = math::calc_angle( entity->get_eye_pos( ), bullet_impact );
-	auto angle_head = math::calc_angle( entity->get_eye_pos( ), csgo::local_player->get_hitbox_position( hitbox_head ) );
+	auto angle_bullet = math::calc_angle ( entity->get_eye_pos ( ), bullet_impact ); math::clamp ( angle_bullet );
+	auto angle_head = math::calc_angle( entity->get_eye_pos( ), csgo::local_player->get_eye_pos() ); 
 
-	vec3_t angDelta = angle_head - angle_bullet;
-	angDelta.y += 180;
-	if ( angDelta.y > 360 ) angDelta.y = fmodf( angDelta.y, 360 );
-	angDelta.y -= 180;
-	float fovDifference = angDelta.Length2D( );
-	interfaces::console->console_printf( "[ANTI BRUTE] Bullet fov to you %f \n ", fovDifference );
+	math::clamp ( angle_head );
+	
+
+	auto angDelta = (angle_head - angle_bullet).Length2D();
+	
+	if ( angDelta < 3.0f && last_time_shoot [ entity->index ( ) ] != interfaces::globals->tick_count) {
+		visuals::notifications::add ( "Enemy missed shot." );
+		desync_side = !desync_side;
+		last_time_shoot [ entity->index ( ) ] = interfaces::globals->tick_count;
+	}
 
 }
+
 bool should_predict( )
 {
 
@@ -558,26 +570,29 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 	if ( !allow( cmd, send_packet ) )
 		return;
 
-
+	static int last_tick_check = 0;
+	if ( std::abs ( last_tick_check - interfaces::globals->tick_count ) > 64 ) {
+		last_hp = csgo::local_player->health ( );
+		last_tick_check = interfaces::globals->tick_count;
+	}
 	switch ( variables::antiaim::pitch ) {
 	case 1: cmd->viewangles.x = 89.9f; break;
 	case 2: cmd->viewangles.x = 0; break;
 	case 3: cmd->viewangles.x = -89.9f; break;
 	}
 
-	static bool dir = false;
+	
 	static int tick = 0;
 	if ( interfaces::inputsystem->is_button_down( button_code_t::KEY_V ) && tick != interfaces::globals->tick_count )
 	{
-		dir = !dir;
+		desync_side = !desync_side;
 		tick = interfaces::globals->tick_count;
 		printf( "changed dirrection \n" );
 	}
 /*	if ( autostop::m_autostop_data.state == 0 ) {
 		dir = !dir;
 	}*/
-	static bool jitter = false;
-	jitter = !jitter;
+
 	switch ( variables::antiaim::yaw ) {
 	case 1:
 	{
@@ -589,13 +604,13 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 		viewangle.angle_normalize( ); viewangle.angle_clamp( ); cmd->viewangles.y = viewangle.y;
 	
 
-		if ( jitter )
+		if ( desync_side )
 			cmd->viewangles.y += 120.f;
 		else
 			cmd->viewangles.y -= 120.f;
 
 		if ( should_predict( ) ) {
-			if ( dir )
+			if ( desync_side )
 				cmd->viewangles.y -= 120;
 			else
 				cmd->viewangles.y += 120;
@@ -603,7 +618,7 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 		
 		}
 		else if ( !send_packet ) {
-			if ( dir )
+			if ( desync_side )
 				cmd->viewangles.y += 120.f;
 			else
 				cmd->viewangles.y -= 120.f;
@@ -630,14 +645,14 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 	
 
 		if ( should_predict( ) ) {
-			if ( !dir )
+			if ( !desync_side )
 				cmd->viewangles.y -= 120;
 			else
 				cmd->viewangles.y += 120;
 			send_packet = false;
 		}
 		else if ( !send_packet ) {
-			if ( !dir )
+			if ( !desync_side )
 				cmd->viewangles.y -= cmd->command_number % 2?30:60;
 			else
 				cmd->viewangles.y += cmd->command_number % 2?30:60;

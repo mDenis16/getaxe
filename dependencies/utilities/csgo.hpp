@@ -78,6 +78,7 @@ namespace csgo {
 	extern float choke_yaw;
 	extern HWND window;
 	extern bool in_trace;
+	extern  vec3_t original_viewangle;
 	extern  bool fresh_tick;
 	extern vec3_t real_angle;
 

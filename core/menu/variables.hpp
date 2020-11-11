@@ -97,6 +97,11 @@ namespace variables {
 			inline bool box = false;
 			inline bool health = false;
 			inline bool weapon = false;
+
+			inline float name_color [ 4 ] = { 0,0,0, 255 };
+			inline float box_color [ 4 ] = { 0,24,0, 255 };
+			inline float health_color [ 4 ] = { 0,24,0, 255 };
+			inline float weapon_color [ 4 ] = { 0,24,0, 255 };
 		}
 		namespace team {
 			inline bool enabled = false;
@@ -104,6 +109,11 @@ namespace variables {
 			inline bool box = false;
 			inline bool health = false;
 			inline bool weapon = false;
+
+			inline float name_color [ 4 ] = { 0,0,0, 255 };
+			inline float box_color [ 4 ] = { 0,24,0, 255 };
+			inline float health_color [ 4 ] = { 0,24,0, 255 };
+			inline float weapon_color [ 4 ] = { 0,24,0, 255 };
 		}
 		namespace modulation {
 			namespace enemy {
@@ -111,12 +121,18 @@ namespace variables {
 				inline bool xyz;
 				inline bool glow;
 				inline bool enabled = false;
+				inline float visible_color [ 4 ];
+				inline float xyz_color [ 4 ];
+				inline float glow_color [ 4 ];
 			}
 			namespace team {
 				inline bool visible;
 				inline bool xyz;
 				inline bool glow;
 				inline bool enabled = false;
+				inline float visible_color [ 4 ];
+				inline float xyz_color [ 4 ];
+				inline float glow_color [ 4 ];
 			}
 
 		}

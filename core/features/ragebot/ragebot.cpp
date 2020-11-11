@@ -67,83 +67,7 @@ bool ragebot::is_point_is_safe( player_t* entity, vec3_t from, vec3_t point, int
 	}
 	return false;
 }
-float g_CapsuleVertices [ ][ 3 ] =
-{
-	{ -0.01f, -0.01f, 1.00f },
-	{ 0.51f, 0.00f, 0.86f },
-	{ 0.44f, 0.25f, 0.86f },
-	{ 0.25f, 0.44f, 0.86f },
-	{ -0.01f, 0.51f, 0.86f },
-	{ -0.26f, 0.44f, 0.86f },
-	{ -0.45f, 0.25f, 0.86f },
-	{ -0.51f, 0.00f, 0.86f },
-	{ -0.45f, -0.26f, 0.86f },
-	{ -0.26f, -0.45f, 0.86f },
-	{ -0.01f, -0.51f, 0.86f },
-	{ 0.25f, -0.45f, 0.86f },
-	{ 0.44f, -0.26f, 0.86f },
-	{ 0.86f, 0.00f, 0.51f },
-	{ 0.75f, 0.43f, 0.51f },
-	{ 0.43f, 0.75f, 0.51f },
-	{ -0.01f, 0.86f, 0.51f },
-	{ -0.44f, 0.75f, 0.51f },
-	{ -0.76f, 0.43f, 0.51f },
-	{ -0.87f, 0.00f, 0.51f },
-	{ -0.76f, -0.44f, 0.51f },
-	{ -0.44f, -0.76f, 0.51f },
-	{ -0.01f, -0.87f, 0.51f },
-	{ 0.43f, -0.76f, 0.51f },
-	{ 0.75f, -0.44f, 0.51f },
-	{ 1.00f, 0.00f, 0.01f },
-	{ 0.86f, 0.50f, 0.01f },
-	{ 0.49f, 0.86f, 0.01f },
-	{ -0.01f, 1.00f, 0.01f },
-	{ -0.51f, 0.86f, 0.01f },
-	{ -0.87f, 0.50f, 0.01f },
-	{ -1.00f, 0.00f, 0.01f },
-	{ -0.87f, -0.50f, 0.01f },
-	{ -0.51f, -0.87f, 0.01f },
-	{ -0.01f, -1.00f, 0.01f },
-	{ 0.49f, -0.87f, 0.01f },
-	{ 0.86f, -0.51f, 0.01f },
-	{ 1.00f, 0.00f, -0.02f },
-	{ 0.86f, 0.50f, -0.02f },
-	{ 0.49f, 0.86f, -0.02f },
-	{ -0.01f, 1.00f, -0.02f },
-	{ -0.51f, 0.86f, -0.02f },
-	{ -0.87f, 0.50f, -0.02f },
-	{ -1.00f, 0.00f, -0.02f },
-	{ -0.87f, -0.50f, -0.02f },
-	{ -0.51f, -0.87f, -0.02f },
-	{ -0.01f, -1.00f, -0.02f },
-	{ 0.49f, -0.87f, -0.02f },
-	{ 0.86f, -0.51f, -0.02f },
-	{ 0.86f, 0.00f, -0.51f },
-	{ 0.75f, 0.43f, -0.51f },
-	{ 0.43f, 0.75f, -0.51f },
-	{ -0.01f, 0.86f, -0.51f },
-	{ -0.44f, 0.75f, -0.51f },
-	{ -0.76f, 0.43f, -0.51f },
-	{ -0.87f, 0.00f, -0.51f },
-	{ -0.76f, -0.44f, -0.51f },
-	{ -0.44f, -0.76f, -0.51f },
-	{ -0.01f, -0.87f, -0.51f },
-	{ 0.43f, -0.76f, -0.51f },
-	{ 0.75f, -0.44f, -0.51f },
-	{ 0.51f, 0.00f, -0.87f },
-	{ 0.44f, 0.25f, -0.87f },
-	{ 0.25f, 0.44f, -0.87f },
-	{ -0.01f, 0.51f, -0.87f },
-	{ -0.26f, 0.44f, -0.87f },
-	{ -0.45f, 0.25f, -0.87f },
-	{ -0.51f, 0.00f, -0.87f },
-	{ -0.45f, -0.26f, -0.87f },
-	{ -0.26f, -0.45f, -0.87f },
-	{ -0.01f, -0.51f, -0.87f },
-	{ 0.25f, -0.45f, -0.87f },
-	{ 0.44f, -0.26f, -0.87f },
-	{ 0.00f, 0.00f, -1.00f },
-};
+
 std::vector<ragebot::point> ragebot::multi_point( player_t* entity, const int& hit_box ) {
 
 
@@ -194,16 +118,16 @@ std::vector<ragebot::point> ragebot::multi_point( player_t* entity, const int& h
 
 	if ( hit_box == hitbox_head ) {
 	
-		for ( auto i = 0; i < 5; ++i )
+		for ( auto i = 0; i < 6; ++i )
 		{
-			vecArray.emplace_back( center );
+			vecArray.push_back( center );
 		}
 		vec3_t middle = ( Top - Bot );
-		vecArray [ 0 ].point += vec3_t( Right.x, Right.y, Top.z) * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
-		vecArray [ 1 ].point += vec3_t( Left.x, Left.y, Top.z ) * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
-		vecArray [ 2 ].point += vec3_t( Right.x, Right.y, middle.z ) * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
-		vecArray [ 3 ].point += vec3_t( Left.x, Left.y, middle.z ) * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
-		vecArray [ 4 ].point += Top * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
+		vecArray [ 1 ].point += vec3_t( Right.x, Right.y, Top.z) * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
+		vecArray [ 2 ].point += vec3_t( Left.x, Left.y, Top.z ) * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
+		vecArray [ 3 ].point += vec3_t( Right.x, Right.y, middle.z ) * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
+		vecArray [ 4 ].point += vec3_t( Left.x, Left.y, middle.z ) * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
+		vecArray [ 5 ].point += Top * ( hitbox->radius * ( variables::ragebot::head_scale / 100.f ) );
 		
 
 /*		for ( double angle = 0.0; angle <= 2 * M_PI; angle += ( 2 * M_PI ) / 30 ) {
@@ -233,17 +157,20 @@ std::vector<ragebot::point> ragebot::multi_point( player_t* entity, const int& h
 		vecArray.emplace_back( center ); 
 
 	
-	
-	
+	if ( hit_box == hitbox_head )
+	resolver::resolver_data [ entity->index ( ) ].safe_points = 0;
 	for ( size_t i = 0; i < vecArray.size(); i++ )
 	{
-		vecArray.at( i ).is_safe = is_point_is_safe( entity, engine_prediction::unpredicted_eye, vecArray.at( i ).point, hit_box, csgo::left_player_bones [ entity->index( ) ] ) || is_point_is_safe( entity, engine_prediction::unpredicted_eye, vecArray.at( i ).point, hit_box, csgo::right_player_bones [ entity->index( ) ] );
+		vecArray.at( i ).is_safe = is_point_is_safe( entity, engine_prediction::unpredicted_eye, vecArray.at( i ).point, hit_box, csgo::left_player_bones [ entity->index( ) ] ) && is_point_is_safe( entity, engine_prediction::unpredicted_eye, vecArray.at( i ).point, hit_box, csgo::right_player_bones [ entity->index( ) ] );
 
-		if ( vecArray.at( i ).is_safe ) {
-			interfaces::console->console_printf( "FOUND SAFEPOINT FOR HITBOX %i \n", hit_box );
-		}
+		if ( hit_box == hitbox_head && vecArray.at ( i ).is_safe )
+			resolver::resolver_data [ entity->index ( ) ].safe_points++;
+
+		//if ( vecArray.at( i ).is_safe ) {
+		//	interfaces::console->console_printf( "FOUND SAFEPOINT FOR HITBOX %i \n", hit_box );
+		//}
 	}
-
+	resolver::resolver_data [ entity->index ( ) ].safety = resolver::resolver_data [ entity->index ( ) ].safe_points / 6 * 100;
 	return vecArray;
 }
 
@@ -293,7 +220,7 @@ std::vector< int > ragebot::hitscan_list( player_t* entity, bool extrapolation =
 
 		hitscan.push_back ( ( int ) hitboxes::hitbox_pelvis );
 	}
-	if ( ( !resolver::resolver_data [ entity->index ( ) ].is_using_desync ) ) {
+	if ( ( !resolver::resolver_data [ entity->index ( ) ].brute_side ) ) {
 		if ( entity->velocity ( ).Length2D ( ) < 0.25f ) {
 			if ( variables::ragebot::feet_scan ) {
 				hitscan.push_back ( ( int ) hitboxes::hitbox_left_foot );
@@ -393,8 +320,10 @@ vec3_t ragebot::weapon_shot_pos( vec3_t target )
 	return vec3_t( );
 }
 
-bool ragebot::hit_chance( vec3_t point, int hit_box, vec3_t angle, player_t* ent, float hitchance, int hitbox, matrix_t matrix [ MAXSTUDIOBONES ] ) {
-
+bool ragebot::hit_chance( vec3_t point, int hit_box, vec3_t angle, player_t* ent, float hitchance, int hitbox, matrix_t matrix [ MAXSTUDIOBONES ], float& radius, vec3_t&mins, vec3_t& maxs ) {
+	constexpr int   SEED_MAX = 255;
+	constexpr float HITCHANCE_MAX = 100.f;
+	
 	if (m_shoot_next_tick)
 		hitchance = 25;
 	auto local_player = csgo::local_player;
@@ -402,7 +331,7 @@ bool ragebot::hit_chance( vec3_t point, int hit_box, vec3_t angle, player_t* ent
 
 	if ( !local_player ) return false;
 	int traces_hit = 0;
-	int needed_hits = static_cast< int >( 150.f * ( hitchance / 100.f ) );
+	int needed_hits = static_cast< int >( SEED_MAX * ( hitchance / 100.f ) );
 	vec3_t forward, right, up;
 	const vec3_t eye_position = engine_prediction::unpredicted_eye;
 	math::angle_vectors( angle, &forward, &right, &up );
@@ -411,7 +340,12 @@ bool ragebot::hit_chance( vec3_t point, int hit_box, vec3_t angle, player_t* ent
 	if ( !weapon )
 		return false;
 
-	weapon->update_accuracy_penalty( );
+	auto backupvel = csgo::local_player->velocity ( );
+	auto backupabsvel = csgo::local_player->get_abs_velocity ( );
+	csgo::local_player->get_abs_velocity ( ) = csgo::local_player->velocity ( ) = engine_prediction::unpredicted_velocity;
+	weapon->update_accuracy_penalty ( );
+	csgo::local_player->velocity ( ) = backupvel;
+	csgo::local_player->get_abs_velocity ( ) = backupabsvel;
 	float weapon_spread = weapon->get_spread( );
 	float weapon_cone = weapon->inaccuracy( );
 
@@ -435,19 +369,24 @@ bool ragebot::hit_chance( vec3_t point, int hit_box, vec3_t angle, player_t* ent
 	studio_hitbox_set_t* set = pStudioModel->hitbox_set( 0 );
 	studio_box_t* _hitbox = set->hitbox( hitbox );
 
-	vec3_t max;
-	vec3_t min;
-	const auto mod = _hitbox->radius != -1.f?_hitbox->radius:0.f;
-	VectorTransform_Wrapper( vec3_t( _hitbox->maxs.x + mod, _hitbox->maxs.y + mod, _hitbox->maxs.z + mod ), matrix [ _hitbox->bone ], max );
-	VectorTransform_Wrapper( vec3_t( _hitbox->mins.x - mod, _hitbox->mins.y - mod, _hitbox->mins.z - mod ), matrix [ _hitbox->bone ], min );
+	radius = _hitbox->radius != -1.f?_hitbox->radius:0.f;
+
+	VectorTransform_Wrapper( vec3_t( _hitbox->maxs.x + radius, _hitbox->maxs.y + radius, _hitbox->maxs.z + radius ), matrix [ _hitbox->bone ], maxs );
+	VectorTransform_Wrapper( vec3_t( _hitbox->mins.x - radius, _hitbox->mins.y - radius, _hitbox->mins.z - radius ), matrix [ _hitbox->bone ], mins );
+	static std::vector<seed> preseed;
+	if ( preseed.size ( ) == 0 ) 		{
+		for ( int i { }; i <= SEED_MAX; ++i )
+			preseed.push_back ( { math::random_float ( 0.f, 1.f ), math::random_float ( 0.f, 2.f * M_PI ),math::random_float ( 0.f, 1.f ),math::random_float ( 0.f, 2.f * M_PI ) } );
+
+	}
+
 	const auto get_bullet_location = [ & ] ( int seed ) {
 
-		math::random_seed( seed );
-
-		float a = math::random_float( 0.f, 1.f );
-		float b = math::random_float( 0.f, 2.f * M_PI );
-		float c = math::random_float( 0.f, 1.f );
-		float d = math::random_float( 0.f, 2.f * M_PI );
+		
+		float a = preseed.at ( seed ).a;
+		float b = preseed.at ( seed ).b;
+		float c = preseed.at ( seed ).c;
+		float d = preseed.at ( seed ).d;
 
 		const float generated_spread = a * weapon_spread;
 		const float generated_cone = c * weapon_cone;
@@ -461,7 +400,7 @@ bool ragebot::hit_chance( vec3_t point, int hit_box, vec3_t angle, player_t* ent
 		return vec3_t( forward + right * -spread.x + up * -spread.y ).normalized( );
 	};
 
-	for ( int i = 1; i < 150; i++ ) {
+	for ( int i { }; i <= SEED_MAX; ++i ) {
 		vec3_t spread_angle;
 		vec3_t bullet_end;
 		auto a = get_bullet_location( i );
@@ -470,77 +409,91 @@ bool ragebot::hit_chance( vec3_t point, int hit_box, vec3_t angle, player_t* ent
 
 	
 
-		if ( auto intersection = get_intersect_point( eye_position, eye_position + bullet_end * weapon->get_weapon_data( )->flRange, min, max, _hitbox->radius ); intersection )
+		if ( auto intersection = get_intersect_point( eye_position, eye_position + bullet_end * weapon->get_weapon_data( )->flRange, mins, maxs, _hitbox->radius ); intersection )
 			++traces_hit;
 
 
-		if ( static_cast< int >( ( static_cast< float >( traces_hit ) / 150.f ) * 100.f ) >= hitchance )
+		if ( traces_hit >= needed_hits )
 			return true;
 
-		if ( ( 150 - i + traces_hit ) < needed_hits )
+		if ( ( SEED_MAX - i + traces_hit ) < needed_hits )
 			return false;
 	}
 
 	return false;
 }
 
-ragebot::target_data ragebot::find_best_point_backtrack( player_t* entity ) {
-	auto index = entity->index( );
+ragebot::target_data ragebot::find_best_point_backtrack ( player_t * entity ) {
+	auto index = entity->index ( );
 	ragebot::target_data data;
 	data.backtrack = true;
 	data.extrapolation = false;
 
-	data.dmg = 0.0; data.aimpos = vec3_t( ); data.entity = entity;
-	auto best_record = player_manager::find_best_tick( entity );
+	data.dmg = 0.0; data.aimpos = vec3_t ( ); data.entity = entity;
+	auto best_record = player_manager::find_best_tick ( entity );
 	if ( best_record.simtime <= 0.0f )
 		return data;
+	auto active_weapon = csgo::local_player->active_weapon ( );
+	if ( !active_weapon )
+		return data;
+	auto wpn_data = active_weapon->get_weapon_data ( );
+
+	if ( !wpn_data )
+		return data;
+
 	player_manager::best_tick_global [ index ] = best_record;
 	autowall::FireBulletData_t awall = { };
-	player_manager::restore_record( entity, best_record );
-	bool ignore_onshot = variables::ragebot::double_tap && (&tickbase_system::shift_data::m_needs_recharge == 0);
+	player_manager::restore_record ( entity, best_record );
+	bool ignore_onshot = variables::ragebot::double_tap && ( &tickbase_system::shift_data::m_needs_recharge == 0 );
 
 	if ( best_record.shoot && !ignore_onshot ) {
-		auto onshot_possible_points = player_manager::on_shot_safe( entity, best_record );
+		auto onshot_possible_points = player_manager::on_shot_safe ( entity, best_record );
 		for ( auto point : onshot_possible_points ) {
-			float dmg = autowall::GetDamage( csgo::local_player, point, awall );
+			auto point = entity->get_hitbox_position ( hitbox_head, best_record.bone );
+			float dmg = autowall::GetDamage ( csgo::local_player, point, awall );
 
-			if ( dmg >= entity->health( ) / 2 )
-			{
+			if ( dmg >= entity->health ( ) / 2 ) {
 				data.aimpos = point;
 				data.entity = entity;
 				data.dmg = dmg;
 				data.hitbox = hitbox_head;
-				player_manager::restore_player( entity );
+				player_manager::restore_player ( entity );
 				return data;
 			}
 		}
-		
-
 	}
 
-	for ( auto hitbox : hitscan_list( entity ) )
-	{
-		auto point = entity->get_hitbox_position( hitbox, best_record.bone );
-	
-			 
-		bool is_safe = is_point_is_safe( entity, engine_prediction::unpredicted_eye, point, hitbox, best_record.bone_left) || is_point_is_safe( entity, engine_prediction::unpredicted_eye, point, hitbox, best_record.bone_right  );
-
-		
-
-		float dmg = autowall::GetDamage( csgo::local_player, point, awall );
+	for ( auto hitbox : hitscan_list ( entity ) ) {
+		auto point = entity->get_hitbox_position ( hitbox, best_record.bone );
 
 
-		if ( is_safe && ( dmg >= ( data.dmg + 10 ) ) && dmg >= ( variables::ragebot::double_tap && tickbase_system::m_shift_data.m_needs_recharge == 0 && entity->health( ) < 50?50.f:variables::ragebot::min_dmg ) )
-		{
+		bool is_safe = is_point_is_safe ( entity, engine_prediction::unpredicted_eye, point, hitbox, best_record.bone_left ) && is_point_is_safe ( entity, engine_prediction::unpredicted_eye, point, hitbox, best_record.bone_right );
+
+
+
+		float dmg = autowall::GetDamage ( csgo::local_player, point, awall );
+
+		int fatal_min_dmg = entity->health ( ) / wpn_data->iDamage;
+		bool fatal_hit = ( dmg >= entity->health ( ) + 5 ) && hitbox != hitbox_head;
+		float min_dmg = variables::ragebot::min_dmg;
+		if ( variables::ragebot::double_tap && !tickbase_system::m_shift_data.m_needs_recharge )
+			min_dmg = wpn_data->iDamage / 2 + 5.f;
+
+		if ( dmg >= ( data.dmg + 10 ) && ( dmg >= min_dmg || fatal_hit ) && is_safe ) {
 			data.aimpos = point;
 			data.entity = entity;
 			data.dmg = dmg;
 			data.hitbox = hitbox;
 
+			if ( fatal_hit ) {
+				player_manager::restore_player ( entity );
+				return data;
+			}
 		}
-
 	}
-	player_manager::restore_player( entity );
+
+	player_manager::restore_player ( entity );
+
 	return data;
 }
 ragebot::target_data ragebot::find_best_point( player_t* entity ) {
@@ -550,24 +503,31 @@ ragebot::target_data ragebot::find_best_point( player_t* entity ) {
 	data.extrapolation = false;
 	data.dmg = 0.0; data.aimpos = vec3_t( ); data.entity = nullptr;
 	autowall::FireBulletData_t awall = { };
+	auto active_weapon = csgo::local_player->active_weapon ( );
+	if ( !active_weapon )
+		return data;
+	auto wpn_data = active_weapon->get_weapon_data ( );
 
-	for ( auto hitbox : hitscan_list( entity ) )
-	{
-		for ( auto point : multi_point( entity, hitbox ) )
-		{
+	if ( !wpn_data )
+		return data;
 
-			 ragebot::hitscan_points.push_back( point );
-			
-			int dmg = autowall::GetDamage( csgo::local_player, point.point, awall );
+	for ( auto hitbox : hitscan_list ( entity ) ) {
+		for ( auto point : multi_point ( entity, hitbox ) ) {
 
-			if ( ( dmg >= ( data.dmg + 10 ) ) && dmg >= ( variables::ragebot::double_tap && tickbase_system::m_shift_data.m_needs_recharge == 0 && entity->health() < 50 ?  50.f :variables::ragebot::min_dmg )  && point.is_safe )
-			{
+			ragebot::hitscan_points.push_back ( point );
+
+			int dmg = autowall::GetDamage ( csgo::local_player, point.point, awall );
+			int fatal_min_dmg = entity->health ( ) / wpn_data->iDamage;
+			bool fatal_hit = ( dmg >= entity->health ( ) + 5 ) && hitbox != hitbox_head;
+			float min_dmg = variables::ragebot::min_dmg;
+			if ( variables::ragebot::double_tap && !tickbase_system::m_shift_data.m_needs_recharge )
+				min_dmg = wpn_data->iDamage / 2 + 5.f;
+			if ( ( ( dmg >= ( data.dmg + 10 ) && ( dmg >= min_dmg || fatal_hit ) ) && point.is_safe ) ) {
 				data.aimpos = point.point;
 				data.entity = entity;
 				data.dmg = dmg;
 				data.hitbox = hitbox;
-				if ( static_cast< int32_t >( dmg ) >= entity->health( ) )
-				{
+				if ( fatal_hit ) {
 					return data;
 					break;
 				}
@@ -645,35 +605,33 @@ void ragebot::sort_targets( )
 	} targetSort;
 
 	std::sort( targets.begin( ), targets.end( ), targetSort );
-	if ( targets.size( ) > variables::ragebot::max_targets )
-		targets.erase( targets.begin( ) + variables::ragebot::max_targets, targets.end( ) );
+	if ( targets.size( ) > 6 )
+		targets.erase( targets.begin( ) +  6, targets.end( ) );
 }
 
 int sleep_ticks = 0;
 int since_use = 0;
-void ragebot::createmove( c_usercmd* cmd, bool& send_packet ) {
+void ragebot::createmove ( c_usercmd * cmd, bool & send_packet ) {
 
-	
+
 	static bool shot = false;
-	static player_t* last_target = nullptr;
+	static player_t * last_target = nullptr;
 
 	if ( !variables::ragebot::enabled )
 		return;
 
-	if (!tickbase_system::m_shift_data.m_did_shift_before && !tickbase_system::m_shift_data.m_should_be_ready)
+	if ( !tickbase_system::m_shift_data.m_did_shift_before && !tickbase_system::m_shift_data.m_should_be_ready )
 		m_shoot_next_tick = false;
-	sort_targets( );
+	sort_targets ( );
 
-	ragebot::target_data best_target; best_target.aimpos = vec3_t( ); best_target.dmg = 0.f; best_target.entity = nullptr;
+	ragebot::target_data best_target; best_target.aimpos = vec3_t ( ); best_target.dmg = 0.f; best_target.entity = nullptr;
 	best_target.backtrack = false;
 	best_target.extrapolation = false;
-	for ( auto ent : targets )
-	{
+	for ( auto ent : targets ) {
 
-		auto target_data = get_target_data( ent );
+		auto target_data = get_target_data ( ent );
 
-		if (  !target_data.aimpos.is_zero( ) && best_target.dmg <= target_data.dmg  )
-		{
+		if ( !target_data.aimpos.is_zero ( ) && best_target.dmg <= target_data.dmg ) {
 			best_target.dmg = target_data.dmg;
 			best_target.aimpos = target_data.aimpos;
 			best_target.entity = ent;
@@ -685,59 +643,60 @@ void ragebot::createmove( c_usercmd* cmd, bool& send_packet ) {
 	}
 
 
-	if ( !best_target.aimpos.is_zero( ) && best_target.dmg != float {} ) {
+	if ( !best_target.aimpos.is_zero ( ) && best_target.dmg != float {} ) {
 
 
 
 		//	printf( "SET BT SIMTIME %f (%f) PLAYER SIMTIME  TICKS: %i\n", player_manager::best_tick_global [ best_target.entity->index( ) ].simtime, sim_time,  math::time_to_ticks(variables::cheat:interval_per_tick, best_target.entity->simulation_time( ) - player_manager::best_tick_global [ best_target.entity->index( ) ].simtime ) );
 
 		//printf( "SIMTIME %f \n", player_manager::best_tick_global [ best_target.entity->index//( ) ].simtime );
-		bool using_scout = csgo::local_player->active_weapon( )->item_definition_index( ) == weapon_ssg08;
-		if ( variables::ragebot::autostop && csgo::local_player->flags( ) & fl_onground )
-		{
-			if ( using_scout )
-			{
-				if ( best_target.dmg >= best_target.entity->health( ) && csgo::local_player->can_shoot( false ) )
-				{
+	/*	bool using_scout = csgo::local_player->active_weapon ( )->item_definition_index ( ) == weapon_ssg08;
+		if ( variables::ragebot::autostop && csgo::local_player->flags ( ) & fl_onground ) {
+			if ( using_scout ) {
+				if ( best_target.dmg >= best_target.entity->health ( ) && csgo::local_player->can_shoot ( false ) ) {
 					cmd->sidemove = 0;
-					cmd->forwardmove = csgo::local_player->velocity( ).Length2D( ) > 20.f?450.f:0.f;
+					cmd->forwardmove = csgo::local_player->velocity ( ).Length2D ( ) > 20.f ? 450.f : 0.f;
 
 
-					autostop::rotate_movement( cmd, math::calc_angle( vec3_t( 0, 0, 0 ), csgo::local_player->velocity( ) ).y + 180.f );
+					autostop::rotate_movement ( cmd, math::calc_angle ( vec3_t ( 0, 0, 0 ), csgo::local_player->velocity ( ) ).y + 180.f );
 				}
 			}
-			else
-			{
+			else {
 				cmd->sidemove = 0;
-				cmd->forwardmove = csgo::local_player->velocity( ).Length2D( ) > 20.f?450.f:0.f;
+				cmd->forwardmove = csgo::local_player->velocity ( ).Length2D ( ) > 20.f ? 450.f : 0.f;
 
-				autostop::rotate_movement( cmd, math::calc_angle( vec3_t( 0, 0, 0 ), csgo::local_player->velocity( ) ).y + 180.f );
+				autostop::rotate_movement ( cmd, math::calc_angle ( vec3_t ( 0, 0, 0 ), csgo::local_player->velocity ( ) ).y + 180.f );
 			}
-		}
+		}*/
 
 
 
 
-		auto ang = math::calc_angle( engine_prediction::unpredicted_eye, best_target.aimpos );
-		ang -= csgo::local_player->aim_punch_angle( ) * 2.f;
-		math::clamp( ang );
+		auto ang = math::calc_angle ( engine_prediction::unpredicted_eye, best_target.aimpos );
+		ang -= csgo::local_player->aim_punch_angle ( ) * 2.f;
+		math::clamp ( ang );
 
 		float sim_time = 0.f;
 
-		if ( best_target.backtrack || best_target.extrapolation )
-			player_manager::restore_record( best_target.entity, best_target.record );
-		
-		best_target.simtime = best_target.backtrack || best_target.extrapolation ? best_target.record.simtime :best_target.entity->simulation_time( );
-		if (!best_target.extrapolation )
-	     	best_target.simtime += player_manager::get_lerp_time( );
+		//if ( best_target.backtrack || best_target.extrapolation )
+		//	player_manager::restore_record( best_target.entity, best_target.record );
+
+		best_target.simtime = best_target.backtrack || best_target.extrapolation ? best_target.record.simtime : best_target.entity->simulation_time ( );
+		if ( !best_target.extrapolation )
+			best_target.simtime += player_manager::get_lerp_time ( );
 		else
-	    	interfaces::console->console_printf( "EXTRAPOLATING ... %b", best_target.extrapolation );
-		if ( hit_chance( best_target.aimpos, best_target.hitbox,  ang, best_target.entity, variables::ragebot::hitchance, best_target.hitbox, (best_target.backtrack || best_target.extrapolation) ? best_target.record.bone :  csgo::player_bones [ best_target.entity->index( ) ] ))
-		{
+			interfaces::console->console_printf ( "EXTRAPOLATING ... %b", best_target.extrapolation );
+		if ( best_target.backtrack )
+			std::memcpy ( best_target.bones, best_target.record.bone, sizeof ( best_target.record.bone ));
+		else
+				std::memcpy ( best_target.bones, csgo::player_bones [ best_target.entity->index ( ) ], sizeof ( csgo::player_bones [ best_target.entity->index ( ) ] ));
+
+
+		if ( hit_chance ( best_target.aimpos, best_target.hitbox, ang, best_target.entity, variables::ragebot::hitchance, best_target.hitbox, best_target.bones, best_target.radius, best_target.mins, best_target.maxs ) ) {
 
 			sleep_ticks++;
 			if ( !variables::ragebot::silent_aim )
-				interfaces::engine->set_view_angles( ang );
+				interfaces::engine->set_view_angles ( ang );
 			/*if ( !tickbase_system::m_shift_data.m_should_attempt_shift || ( ( csgo::m_goal_shift == 12 || tickbase_system::m_shift_data.m_should_disable ) && tickbase_system::m_shift_data.m_should_attempt_shift ) || ( csgo::m_goal_shift == 7 && tickbase_system::m_shift_data.m_should_attempt_shift && !( tickbase_system::m_shift_data.m_prepare_recharge || tickbase_system::m_shift_data.m_did_shift_before && !tickbase_system::m_shift_data.m_should_be_ready ) ) ) {
 				{
 					if (variables::ragebot::auto_fire && csgo::local_player->can_shoot(false))
@@ -747,26 +706,24 @@ void ragebot::createmove( c_usercmd* cmd, bool& send_packet ) {
 
 				}
 			}*/
-			
-			if ( variables::ragebot::auto_fire && csgo::local_player->can_shoot( variables::ragebot::double_tap ) )
+
+			if ( variables::ragebot::auto_fire && csgo::local_player->can_shoot ( variables::ragebot::double_tap ) )
 				cmd->buttons |= ( int ) in_attack;
-			else if ( variables::ragebot::auto_fire && !csgo::local_player->can_shoot( variables::ragebot::double_tap ) )
+			else if ( variables::ragebot::auto_fire && !csgo::local_player->can_shoot ( variables::ragebot::double_tap ) )
 				cmd->buttons &= ~( int ) in_attack;
 
-			if ( cmd->buttons & ( int ) in_attack )
-			{
+			if ( cmd->buttons & ( int ) in_attack ) {
 
-				cmd->tick_count = math::time_to_ticks( best_target.simtime );
+				cmd->tick_count = math::time_to_ticks ( best_target.simtime );
 				//interfaces::console->console_printf( "SIMTIME BETWEEN SHOTS %f \n", fabs( ragebot::get_last_target.simtime - best_target.simtime ) );
 				cmd->viewangles = ang;
 				send_packet = true;
 				ragebot::get_last_target = best_target;
-				ragebot::last_target_index = best_target.entity->index();
-				if (m_shoot_next_tick)
+				ragebot::last_target_index = best_target.entity->index ( );
+				if ( m_shoot_next_tick )
 					m_shoot_next_tick = false;
 
-				if ( sleep_ticks > 20 )
-				{
+				if ( sleep_ticks > 20 ) {
 					sleep_ticks = 0;
 					//	if ( variables::ragebot::double_tap )
 						//	tickbase_system::m_shift_data.m_ticks_to_shift = math::time_to_ticks(variables::cheat:interval_per_tick, 0.2f );
@@ -774,19 +731,19 @@ void ragebot::createmove( c_usercmd* cmd, bool& send_packet ) {
 
 				}
 				if ( best_target.extrapolation )
-				interfaces::console->console_printf( "EXTRAPOLATED %b \n", best_target.extrapolation );
+					interfaces::console->console_printf ( "EXTRAPOLATED %b \n", best_target.extrapolation );
 				csgo::choke_next_tick = true;
-				if (!m_shoot_next_tick && csgo::m_goal_shift == 12 && tickbase_system::m_shift_data.m_should_attempt_shift && !(tickbase_system::m_shift_data.m_prepare_recharge || tickbase_system::m_shift_data.m_did_shift_before && !tickbase_system::m_shift_data.m_should_be_ready)) {
+				if ( !m_shoot_next_tick && csgo::m_goal_shift == variables::antiaim::db_tap_ticks && tickbase_system::m_shift_data.m_should_attempt_shift && !( tickbase_system::m_shift_data.m_prepare_recharge || tickbase_system::m_shift_data.m_did_shift_before && !tickbase_system::m_shift_data.m_should_be_ready ) ) {
 					m_shoot_next_tick = true;
-				}
+				}/*
+				 if ( auto intersection = get_intersect_point( eye_position, eye_position + bullet_end * weapon->get_weapon_data( )->flRange, mins, maxs, _hitbox->radius ); intersection )
+				 */
 				if ( autostop::m_autostop_data.state == 1 )
 					autostop::m_autostop_data.state = 2;
+
 			}
 		}
 
-		if ( best_target.backtrack ) player_manager::restore_player( best_target.entity );
-
-
+		//if ( best_target.backtrack ) player_manager::restore_player( best_target.entity );
 	}
 }
-

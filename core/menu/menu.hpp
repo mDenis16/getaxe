@@ -4,7 +4,7 @@
 #include <functional>
 #include <iostream>
 namespace menu {
-	void start( HWND window , IDirect3DDevice9* device );
+	
 	void start( IDirect3DDevice9* device );
 
 	void option_slider ( const char * name, const char * description, float min, float max, float & value );
@@ -21,13 +21,15 @@ namespace menu {
 
 	void option_combobox ( const char * name, const char * description, std::vector<std::string> items, int & value );
 
+	
 	void option_combobox ( const char * name, const char * description, char * items[] , int & value );
 
-	void option_single ( const char * name, const char * description, bool & value, void * color = nullptr );
+	void option_single ( const char * name, const char * description, bool & value, float color [ 4 ] = nullptr );
 
 
 
-	void option ( const char * name, const char * description, std::function<void ( )> func, int max_height, bool & value, void * color = nullptr );
+
+	void option ( const char * name, const char * description, std::function<void ( )> func, int max_height, bool & value, float color [ 4 ] = nullptr);
 
 	void ragebot ( );
 
@@ -60,5 +62,7 @@ namespace menu {
 		 bool enable = false;
 		 bool in_transition = false;
 	};
-	extern option_data m_option_data[1024];
+	extern  BYTE left_arrow [ ];
+	extern IDirect3DTexture9 * buttonimage;
+	extern option_data m_option_data[100];
 }

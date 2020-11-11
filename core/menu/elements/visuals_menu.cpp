@@ -10,29 +10,31 @@
 		static bool asd2 = false;
 		static bool asd3 = false;
 		
-		static float color [ 3 ] = { 255, 0,0 };
+		static float color [ 4 ] = { 255, 0,0, 255 };
 
 		option ( "Enemy Assist", "Shows you enemyes on esp", [ = ] ( ) {
-			option_single ( "Name", "Draws a name on top of head", variables::visuals::enemy::name, static_cast< void * >( color ) );
-			option_single ( "Box", "Draws a box on enemy", variables::visuals::enemy::box, static_cast< void * >( color ) );
-			option_single ( "Health", "Draw health at left ", variables::visuals::enemy::health, static_cast< void * >( color ) );
-			option_single ( "Weapon", "Draw weapon of player ", variables::visuals::enemy::weapon, static_cast< void * >( color ) );
+			option_single ( "Name", "Draws a name on top of head", variables::visuals::enemy::name, variables::visuals::enemy::name_color );
+			option_single ( "Box", "Draws a box on enemy", variables::visuals::enemy::box, variables::visuals::enemy::box_color );
+			option_single ( "Health", "Draw health at left ", variables::visuals::enemy::health, variables::visuals::enemy::health_color );
+			option_single ( "Weapon", "Draw weapon of player ", variables::visuals::enemy::weapon, variables::visuals::enemy::weapon_color );
 		}, 400, variables::visuals::enemy::enabled );
+
 		option ( "Team Assist", "Shows you enemyes on esp", [ = ] ( ) {
-			option_single ( "Name", "Draws a name on top of head", variables::visuals::team::name, static_cast< void * >( color ) );
-			option_single ( "Box", "Draws a box on enemy", variables::visuals::team::box, static_cast< void * >( color ) );
-			option_single ( "Health", "Draw health at left ", variables::visuals::team::health, static_cast< void * >( color ) );
-			option_single ( "Weapon", "Draw weapon of player ", variables::visuals::team::weapon, static_cast< void * >( color ) );
+			option_single ( "Name", "Draws a name on top of head", variables::visuals::team::name, variables::visuals::team::name_color );
+			option_single ( "Box", "Draws a box on team", variables::visuals::team::box, variables::visuals::team::box_color );
+			option_single ( "Health", "Draw health at left ", variables::visuals::team::health, variables::visuals::team::health_color );
+			option_single ( "Weapon", "Draw weapon of player ", variables::visuals::team::weapon, variables::visuals::team::weapon_color );
 		}, 400, variables::visuals::team::enabled );
+
 		option ( "Enemy Modulation", "Shows you enemyes on esp", [ = ] ( ) {
-			option_single ( "Visible", "Draw player visible", variables::visuals::modulation::enemy::visible, static_cast< void * >( color ) );
-			option_single ( "XYZ", "Draw player visible", variables::visuals::modulation::enemy::visible, static_cast< void * >( color ) );
-			option_single ( "Glow", "Draw player visible", variables::visuals::modulation::enemy::glow, static_cast< void * >( color ) );
+			option_single ( "Visible", "Draw player visible", variables::visuals::modulation::enemy::visible, variables::visuals::modulation::enemy::visible_color);
+			option_single ( "XYZ", "Draw player invisible", variables::visuals::modulation::enemy::xyz, variables::visuals::modulation::enemy::xyz_color );
+			option_single ( "Glow", "Draw player visible", variables::visuals::modulation::enemy::glow, variables::visuals::modulation::enemy::glow_color );
 		}, 300, variables::visuals::modulation::enemy::enabled );
 		option ( "Team Modulation", "Shows you enemyes on esp", [ = ] ( ) {
-			option_single ( "Visible", "Draw player visible", variables::visuals::modulation::team::visible, static_cast< void * >( color ) );
-			option_single ( "XYZ", "Draw player visible", variables::visuals::modulation::team::visible, static_cast< void * >( color ) );
-			option_single ( "Glow", "Draw player visible", variables::visuals::modulation::team::glow, static_cast< void * >( color ) );
+			option_single ( "Visible", "Draw player visible", variables::visuals::modulation::team::visible, variables::visuals::modulation::team::visible_color );
+			option_single ( "XYZ", "Draw player invisible", variables::visuals::modulation::team::visible, variables::visuals::modulation::team::visible_color );
+			option_single ( "Glow", "Draw player visible", variables::visuals::modulation::team::glow, variables::visuals::modulation::team::glow_color );
 		}, 300, variables::visuals::modulation::team::enabled );
 
 

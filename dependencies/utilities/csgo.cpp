@@ -35,6 +35,7 @@ namespace csgo {
 	  float            m_real_poses [ 24 ];
 	  vec3_t            m_angle;
 	  vec3_t m_rotation;
+	  vec3_t original_viewangle;
 	  float choke_yaw;
 	  int m_rate;
 	  int		  m_shot_command_number;

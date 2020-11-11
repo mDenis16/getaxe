@@ -88,7 +88,7 @@ namespace visuals {
 				c_menu::get ( ).draw->AddRectFilled (notification.min, notification.max, ImColor( 4, 19, 37,255) );
 				c_menu::get ( ).draw->AddRectFilled ( ImVec2( notification.max.x - 3, notification.min.y), notification.max, ImColor ( 255, 255, 255, 100 ) );
 				c_menu::get ( ).draw->AddRect ( notification.min, notification.max, ImColor ( 0, 0, 0, 15 ) );
-				auto text_pos = ImVec2 ( notification.min.x + 5.f, ( notification.min.y + notification.max.y ) / 2.f );
+				auto text_pos = ImVec2 ( notification.min.x + 6.f, ( notification.min.y + notification.max.y ) / 2.f );
 				
 				text_pos.y -= textSize.y / 2;
 

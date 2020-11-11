@@ -101,6 +101,7 @@
     <ClCompile Include="core\features\ragebot\net_data.cpp" />
     <ClCompile Include="core\features\ragebot\ragebot.cpp" />
     <ClCompile Include="core\features\ragebot\tickbase_shift.cpp" />
+    <ClCompile Include="core\features\setup\event_manager.cpp" />
     <ClCompile Include="core\features\setup\player_manager.cpp" />
     <ClCompile Include="core\features\setup\resolver.cpp" />
     <ClCompile Include="core\features\setup\shot_processor.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="core\menu\render\menu_render.hpp" />
     <ClInclude Include="core\menu\variables.hpp" />
     <ClInclude Include="dependencies\common_includes.hpp" />
+    <ClInclude Include="dependencies\interfaces\engine_sounds.hpp" />
     <ClInclude Include="dependencies\interfaces\i_hud_chat.hpp" />
     <ClInclude Include="dependencies\interfaces\i_weapon_system.hpp" />
     <ClInclude Include="dependencies\minhook\buffer.h" />

@@ -364,6 +364,7 @@ float math::get_estimate_server_time( c_usercmd* cmd )
 	return v3 + v4 + math::ticks_to_time( 1 ) + math::ticks_to_time( cmd->tick_count );
 }
 
+
 void math::vector_substract( const vec3_t& a, const vec3_t& b, vec3_t& c ) {
 	c.x = a.x - b.x;
 	c.y = a.y - b.y;

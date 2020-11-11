@@ -17,18 +17,50 @@ namespace legit_bot {
 	vec3_t get_closest_bone( player_t* target, vec3_t view );
 
 }
+namespace event_manager {
+	void round_prestart ( i_game_event * event );
+	void round_end ( i_game_event * event );
+}
 namespace resolver {
 	enum desync_type
 	{
 		none,
 		balance,
-		jitter
+		jitter,
+		antibrute
 	};
-	
+	namespace event_logs {
+		void bullet_impact ( i_game_event * event );
+		void weapon_fire ( i_game_event * event );
+		void player_hurt ( i_game_event * event );
+	};
+	struct resolve_shot {
+		float angle_shot;
+		int attacker_index;
+		int desync_side;
+
+		float angle;
+		float angle_related_to_me;
+		int tick;
+		int enemy_index;
+
+		struct {
+			int victim = -1;
+			int damage = -1;
+			int hitgroup = -1;
+		}hit_info;
+
+		vec3_t shotpos;
+		vec3_t hitpos;
+		float curtime;
+		bool hurt = false;
+		bool hit = false;
+		bool approved = false;
+	};
 	struct resolve_info {
 		float max_desync_delta = 0.f;
 		float server_goal_feet = 0.f;
-		bool desync_side = false;
+		int desync_side = false;
 		bool resolved = false;
 		bool will_peek = false;
 		float real_head = 0.f;
@@ -40,18 +72,35 @@ namespace resolver {
 		float last_stopped_moving_goal_feet;
 		float final_goal_feet;
 		int choke_ticks = 0;
+		std::vector<float> last_hit_angle_related_to_me;
+		std::vector<float> last_feet_miss;
 		float last_reset_time;
+		float goal_feet_yaw;
 		std::string resolve_type;
 		int side = 0;
 		desync_type type;
+		int safe_points = 0;
+		int brute_side = 0;
+		float last_side_change = 0.f;
+		int safety = 0;
+		float brute_angle = 0.f;
+		float first_shoot_correction = 0.f;
+		float last_networked_time;
+
 	};
+	extern std::deque<resolve_shot> shots;
 	extern resolve_info resolver_data [ 65 ];
+	player_t * get_closest_player_by_point ( vec3_t from, vec3_t point );
+	resolver::resolve_shot * closest_shot ( int tickcount, player_t* player );
+	std::string side_name ( int side );
+	int get_desync_side ( vec3_t from, vec3_t to, player_t * entity, int hitbox );
 	bool get_desync_side( player_t* entity );
 	float server_feet_yaw( player_t* entity );
 	float max_desync_delta( player_t* entity );
 	bool is_player_peeking( player_t* player );
 	void create_move( c_usercmd* cmd );
 	float get_real_head( player_t* entity );
+	void manage_shots ( );
 	void frame_stage( );
 	void frame_stage( c_usercmd* cmd );
 }
@@ -71,6 +120,7 @@ namespace engine_prediction {
 		bool m_bOverrideModifier;
 	}; extern Misc_t Misc;
 	extern vec3_t unpredicted_eye;
+	extern vec3_t unpredicted_velocity;
 	void initialize( player_t* player, c_usercmd* cmd );
 	void unload( player_t* player );
 }
@@ -143,9 +193,11 @@ namespace anti_aim {
 		float number;
 		angle_data( const float angle, const float thickness, const float curtime, const int number ) : angle( angle ), thickness( thickness ), curtime( curtime ), number( number ) {}
 	};
+
 	namespace event_logs {
 		void bullet_impact( i_game_event* event );
 	};
+
 	struct freestand_point
 	{
 		vec3_t end;
@@ -156,6 +208,7 @@ namespace anti_aim {
 		bool original = false;
 		
 	};
+
 	void real_animation_fix( );
 	void update_local_animations( );
 
@@ -230,6 +283,9 @@ namespace ragebot {
 		bool extrapolation;
 		float simtime;
 		float dmg;
+		vec3_t mins, maxs;
+		float radius;
+		matrix_t bones [ 128 ];
 	};
 	struct point {
 		vec3_t point;
@@ -257,7 +313,9 @@ namespace ragebot {
 	std::vector< int > hitscan_list( player_t* entity, bool extrapolation );
 	void modify_eye_pos( anim_state* animstate, vec3_t* pos );
 	vec3_t weapon_shot_pos( vec3_t target );
-	bool hit_chance( vec3_t point, int hit_box, vec3_t angle, player_t* ent, float hitchance, int hitbox, matrix_t matrix [ MAXSTUDIOBONES ] );
+
+	bool hit_chance ( vec3_t point, int hit_box, vec3_t angle, player_t * ent, float hitchance, int hitbox, matrix_t matrix [ MAXSTUDIOBONES ], float & radius, vec3_t & mins, vec3_t & maxs );
+
 	void get_rotated_matrix( player_t* entity, float angle, matrix_t new_matrix [ MAXSTUDIOBONES ] );
 	extern vec3_t weapon_shoot_pos;
 	std::pair<vec3_t, float> get_best_point_backtrack( player_t* entity, float min_dmg );
@@ -284,7 +342,9 @@ namespace ragebot {
 	
 	void createmove( c_usercmd* cmd, bool& send_packet );
 	extern std::deque<player_t*> targets;
-
+	struct seed {
+		float a, b, c, d;
+	};
 }
 
 namespace autowall {
@@ -333,17 +393,22 @@ namespace shot_processor {
 			int damage = -1;
 			int hitgroup = -1;
 		}hit_info;
+		hitboxes hitbox;
 		int tick;
 		int enemy_index;
-		bool is_backtrack = false;
-		player_manager::backtrack_records_t backtrack;
+		vec3_t mins;
+		vec3_t maxs;
+		float radius;
+		matrix_t matrix [ 128 ];
 
 	};
 	extern std::deque<shot_processor::shot_data> shots;
 	void hurt_event( i_game_event* event );
 	void weapon_fire( i_game_event* event );
 	void bullet_impact( i_game_event* event );
-	void add_shot( const vec3_t shotpos, const int& entity_index, bool backtrack, player_manager::backtrack_records_t record );
+
+	
+	void add_shot ( const vec3_t shotpos, const int & entity_index, hitboxes hitbox, matrix_t matrix [ 128 ], vec3_t mins, vec3_t maxs, float radius );
 	shot_data* closest_shot( int tickcount );
 	void manage_shots( );
 	void update_missed_shots( const client_frame_stage_t& stage );
@@ -404,7 +469,11 @@ namespace tickbase_system {
 }
 namespace visuals {
 
-	
+	struct data {
+		float width, height;
+	};
+	void draw_debug_points ( );
+	extern data m_data;
 	struct box {
 		int x, y, w, h;
 		box( ) = default;
@@ -444,13 +513,22 @@ namespace visuals {
 		struct data {
 			visuals::box box_data;
 			bool ready = false;
+			int index;
 			std::string weapon_icon;
 			std::string weapon_name;
 			int health;
+			bool alive;
+			bool on_screen;
+			bool valid;
+			bool dormant;
+			bool enemy;
+			vec3_t origin, mins, maxs;
 			player_info_t player_info;
 		};
 
-		extern std::vector< visuals::player::data > m_data;
+		extern visuals::player::data m_data[65];
+
+		void player_death ( i_game_event * event );
 
 		void name( data _data );
 
@@ -460,7 +538,11 @@ namespace visuals {
 
 		void weapon( visuals::player::data _data );
 
+		void arrow ( visuals::player::data _data );
+
 		void present( );
+
+		void sound ( );
 
 		void paint_traverse( void );
 	};
