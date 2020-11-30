@@ -10,5 +10,6 @@
 #include "structs/dlight.hpp"
 #include "structs/weaponinfo.hpp"
 #include "classes/view_setup.h"
+#include "classes/basehandle.h"
 #include "classes/entities.hpp"
 #include "structs/animstate.hpp"

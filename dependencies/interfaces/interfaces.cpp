@@ -29,6 +29,7 @@ i_weapon_system* interfaces::weapon_system = nullptr;
 i_hud_chat* interfaces::chat_element = nullptr;
 c_physics_api* interfaces::physics = nullptr;
 iv_engine_sound * interfaces::engine_sound = nullptr;
+IMemAlloc * interfaces::memalloc = nullptr;
 
 void* interfaces::model_cache = nullptr;
 void* interfaces::file_system = nullptr;
@@ -78,6 +79,7 @@ bool interfaces::initialize() {
 
 	model_cache = reinterpret_cast< void* >( utilities::grab_interface( "datacache.dll", "MDLCache", true ) );
 
+	
 	/*custom interfaces*/
 	clientmode = **reinterpret_cast<i_client_mode * **>((*reinterpret_cast<uintptr_t * *>(client))[10] + 5);
 
@@ -96,6 +98,8 @@ bool interfaces::initialize() {
 	weapon_system = *(i_weapon_system**)(utilities::pattern_scan("client.dll", sig_weapon_data) + 2);
 
 	file_system = get_interface<void, interface_type::index>( "filesystem_stdio.dll", "VFileSystem017" );
+
+	memalloc = *reinterpret_cast< IMemAlloc ** > ( GetProcAddress ( GetModuleHandleA ( "tier0.dll" ), "g_pMemAlloc" ) );
 
 	console::log("[setup] interfaces initialized!\n");
 

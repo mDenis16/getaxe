@@ -38,12 +38,9 @@ namespace menu {
 
 	void render_visuals( );
 
-	
 
-	
-	void aimbot( );
 	void visuals( );
-
+	void legitbot ( );
 	inline bool init_style = false;
 
 	struct menu_data {

@@ -111,8 +111,6 @@ void misc::movement::auto_strafer( c_usercmd* cmd ) {
 	cmd->sidemove = ndir.y * wishspeed;*/
 void misc::movement::strafe( c_usercmd* cmd ) {
 
-	if ( csgo::local_player->flags( ) & fl_onground && !( cmd->buttons & in_jump ) )
-		return;
 	float speed = csgo::local_player->velocity( ).Length2D( );
 	auto velocity = csgo::local_player->velocity( );
 	float yawVelocity = RAD2DEG( atan2( velocity.y, velocity.x ) );
@@ -124,14 +122,77 @@ void misc::movement::strafe( c_usercmd* cmd ) {
 		cmd->sidemove = ( cmd->mousedx < 0.f )?-sideSpeed:sideSpeed;
 		return;
 	}
+	auto m_buttons = cmd->buttons;
+	auto pressing_move = ( m_buttons & ( in_left ) || m_buttons & ( in_forward ) || m_buttons & ( in_back ) ||
+		m_buttons & ( in_right ) || m_buttons & ( in_moveleft ) || m_buttons & ( in_moveright ) ||
+		m_buttons & ( in_jump ) );
 
-	if ( cmd->buttons & in_back )
-		cmd->viewangles.y -= 180.f;
-	else if (cmd->buttons & in_moveleft )
-		cmd->viewangles.y -= 90.f;
-	else if (cmd->buttons & in_moveright )
-		cmd->viewangles.y += 90.f;
+	// disable strafing while pressing shift.
+	if ( ( cmd->buttons & in_speed ) || ( csgo::local_player->flags ( ) & fl_onground ) )
+		return;
 
+	float wish_dir { };
+	if ( pressing_move ) {
+		// took this idea from stacker, thank u !!!!
+		enum EDirections {
+			FORWARDS = 0,
+			BACKWARDS = 180,
+			LEFT = 90,
+			RIGHT = -90,
+			BACK_LEFT = 135,
+			BACK_RIGHT = -135
+		};
+
+
+
+		// get our key presses.
+		bool holding_w = interfaces::inputsystem->is_button_down(button_code_t::KEY_W);
+		bool holding_a = interfaces::inputsystem->is_button_down ( button_code_t::KEY_A );
+		bool holding_s = interfaces::inputsystem->is_button_down ( button_code_t::KEY_S );
+		bool holding_d = interfaces::inputsystem->is_button_down ( button_code_t::KEY_D );
+
+		// move in the appropriate direction.
+		if ( holding_w ) {
+			//	forward left
+			if ( holding_a ) {
+				wish_dir += ( EDirections::LEFT / 2 );
+			}
+			//	forward right
+			else if ( holding_d ) {
+				wish_dir += ( EDirections::RIGHT / 2 );
+			}
+			//	forward
+			else {
+				wish_dir += EDirections::FORWARDS;
+			}
+		}
+		else if ( holding_s ) {
+			//	back left
+			if ( holding_a ) {
+				wish_dir += EDirections::BACK_LEFT;
+			}
+			//	back right
+			else if ( holding_d ) {
+				wish_dir += EDirections::BACK_RIGHT;
+			}
+			//	back
+			else {
+				wish_dir += EDirections::BACKWARDS;
+			}
+
+			cmd->forwardmove = 0;
+		}
+		else if ( holding_a ) {
+			//	left
+			wish_dir += EDirections::LEFT;
+		}
+		else if ( holding_d ) {
+			//	right
+			wish_dir += EDirections::RIGHT;
+		}
+	}
+	printf ( "wish_dir %f\n", wish_dir );
+		csgo::m_strafe_angles.y += math::normalize_yaw ( wish_dir );
 	if ( !speed > 0.5f || speed == NAN || speed == INFINITE ) {
 
 		cmd->forwardmove = 450.f;
@@ -144,30 +205,78 @@ void misc::movement::strafe( c_usercmd* cmd ) {
 		cmd->forwardmove = 0.f;
 
 	cmd->sidemove = ( velocityDelta > 0.0f )?-sideSpeed:sideSpeed;
-	cmd->viewangles.y = math::normalize_yaw( cmd->viewangles.y - velocityDelta );
+	csgo::m_strafe_angles.y = math::normalize_yaw( csgo::m_strafe_angles.y );
 }
 void misc::movement::bunny_hop(c_usercmd* cmd) {
 	
 
-	static bool last_jumped = false, should_fake = false;
+	static bool bLastJumped = false;
+	static bool bShouldFake = false;
 
-	if (!last_jumped && should_fake) {
-		should_fake = false;
+	if ( !bLastJumped && bShouldFake ) {
+		bShouldFake = false;
 		cmd->buttons |= in_jump;
 	}
-	else if (cmd->buttons & in_jump) {
-		if (csgo::local_player->flags() & fl_onground) {
-			last_jumped = true;
-			should_fake = true;
+	else if ( cmd->buttons & in_jump ) {
+		if ( csgo::local_player->flags ( ) & fl_onground ) {
+			bShouldFake = bLastJumped = true;
 		}
 		else {
 			cmd->buttons &= ~in_jump;
-			last_jumped = false;
+			bLastJumped = false;
 		}
 	}
 	else {
-		last_jumped = false;
-		should_fake = false;
+		bShouldFake = bLastJumped = false;
+	}
+	if ( csgo::local_player->move_type() == movetype_noclip || csgo::local_player->move_type ( )  == movetype_ladder )
+		return;
+
+	if ( cmd->buttons & in_speed && csgo::local_player->velocity ( ).Length2D ( ) < 1.f )
+		return; // doesn't allow strafe when you hold shift and you're not moving
+
+	static float yaw_add = 0.f;
+	static const auto cl_sidespeed = interfaces::console->get_convar ( "cl_sidespeed" );
+	if ( !( csgo::local_player->flags ( ) & fl_onground ) ) {
+		bool back = cmd->buttons & in_back;
+		bool forward = cmd->buttons & in_forward;
+		bool right = cmd->buttons & in_moveleft;
+		bool left = cmd->buttons & in_moveright;
+
+		if ( back ) {
+			yaw_add = -180.f;
+			if ( right )
+				yaw_add -= 45.f;
+			else if ( left )
+				yaw_add += 45.f;
+		}
+		else if ( right ) {
+			yaw_add = 90.f;
+			if ( back )
+				yaw_add += 45.f;
+			else if ( forward )
+				yaw_add -= 45.f;
+		}
+		else if ( left ) {
+			yaw_add = -90.f;
+			if ( back )
+				yaw_add -= 45.f;
+			else if ( forward )
+				yaw_add += 45.f;
+		}
+		else {
+			yaw_add = 0.f;
+		}
+
+		csgo::m_strafe_angles.y += yaw_add;
+		cmd->forwardmove = 0.f;
+		cmd->sidemove = 0.f;
+
+		const auto delta = math::normalize_yaw ( csgo::m_strafe_angles.y - RAD2DEG ( atan2 ( csgo::local_player->velocity().y, csgo::local_player->velocity ( ).x ) ) );
+
+		cmd->sidemove = delta > 0.f ? -cl_sidespeed->get_float ( ) : cl_sidespeed->get_float ( );
+
+		csgo::m_strafe_angles.y = math::normalize_yaw ( csgo::m_strafe_angles.y - delta );
 	}
 };
 void misc::thirdperson::pre_framestagenotify(  ) {

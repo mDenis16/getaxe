@@ -37,96 +37,94 @@ i_material* visuals::chams::create_material( shader_type_t shade, bool ignorez, 
 
 	return interfaces::material_system->create_material( material_name.c_str( ), kv );
 }
-
-void visuals::chams::run( i_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix_t* bone_to_world ) {
-
-	static auto draw_model_execute_original = reinterpret_cast< hooks::draw_model_execute::fn >( hooks::get_virtual( interfaces::model_render, 21 ) );
-
-	if ( !interfaces::engine->is_connected( ) && !interfaces::engine->is_in_game( ) )
+void visuals::chams::think ( ) {
+	if ( !csgo::local_player || !interfaces::engine->is_connected ( ) && !interfaces::engine->is_in_game ( ) )
 		return;
 
-	if ( !csgo::local_player )
-		return;
-
+	/*if ( csgo::local_player->is_alive ( ) ) {
 
 	
-		static i_material* mat = nullptr;
-		static i_material* zmat = nullptr;
+		static auto solid = interfaces::material_system->find_material ( "debug/debugdrawflat", TEXTURE_GROUP_MODEL );
+		float color [ 3 ] = { variables::visuals::modulation::enemy::xyz_color [ 0 ], variables::visuals::modulation::enemy::xyz_color [ 1 ], variables::visuals::modulation::enemy::xyz_color [ 2 ] };
+		interfaces::render_view->modulate_color ( color );
+		interfaces::render_view->set_blend ( 1.0f );
+		solid->set_material_var_flag ( material_var_ignorez, false );
+		interfaces::model_render->override_material ( solid );
+		vec3_t backup_abs_angles = csgo::local_player->abs_angles ( );
+		csgo::local_player->set_abs_angles ( animations::m_data.fake_rotation );
+		csgo::local_player->draw_model ( 1, 255 );
+		csgo::local_player->set_abs_angles ( backup_abs_angles );
 
-		static i_material* norm = create_material( shader_type_t::VertexLitGeneric, false, false );
-		static i_material* znorm = create_material( shader_type_t::VertexLitGeneric, true, false );
+	}*/
+	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
+		auto entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
 
-		static i_material* flat = create_material( shader_type_t::UnlitGeneric, false, false );
-		static i_material* zflat = create_material( shader_type_t::UnlitGeneric, true, false );
+		if ( !entity || entity == csgo::local_player || entity->health ( ) <= 0 )
+			continue;
 
-		static i_material* wire = create_material( shader_type_t::UnlitGeneric, false, true );
-		static i_material* zwire = create_material( shader_type_t::UnlitGeneric, true, true );
+		bool is_teammate = entity->team ( ) == csgo::local_player->team ( );
+		bool is_enemy = entity->team ( ) != csgo::local_player->team ( );
+
+		static i_material * material = nullptr;
+		static auto default_ = interfaces::material_system->find_material ( "reflective", TEXTURE_GROUP_MODEL );
+		static auto solid = interfaces::material_system->find_material ( "debug/debugdrawflat", TEXTURE_GROUP_MODEL );
+
+	//	default_->increment_reference_count ( );
+		//solid->increment_reference_count ( );
+
+		material = solid;
+
+		if ( is_enemy ) {
 
 
-	//	switch ( variables::visuals::chams::material ) {
-		//case 1:
-			mat = interfaces::material_system->find_material ( "debug/debugambientcube", nullptr );
-			zmat = interfaces::material_system->find_material ( "debug/debugambientcube", nullptr );
-			zmat->set_material_var_flag ( material_var_flags_t::material_var_ignorez, true );
-			//break;
-	/*	case 2:
-			mat = flat;
-			zmat = zflat;
-			break;
-		case 3:
-			mat = wire;
-			zmat = zwire;
-			break;
-		default:
-			mat = norm;
-			zmat = znorm;
-			break;
+			if ( variables::visuals::modulation::enemy::visible ) {
+				float color [ 3 ] = { variables::visuals::modulation::enemy::xyz_color [ 0 ], variables::visuals::modulation::enemy::xyz_color [ 1 ], variables::visuals::modulation::enemy::xyz_color [ 2 ] };
+				interfaces::render_view->modulate_color ( color );
+				interfaces::render_view->set_blend ( 1.0f );
+				material->set_material_var_flag ( material_var_ignorez, false );
+				interfaces::model_render->override_material ( solid );
+				entity->draw_model ( 1, 255 );
+			}
+
+			if ( variables::visuals::modulation::enemy::xyz ) {
+				auto record = player_manager::best_tick_global [ entity->index ( ) ];
+				if ( record.simtime > 0.f ) {
+					float color [ 3 ] = { variables::visuals::modulation::enemy::xyz_color [ 0 ], variables::visuals::modulation::enemy::xyz_color [ 1 ], variables::visuals::modulation::enemy::xyz_color [ 2 ] };
+					interfaces::render_view->modulate_color ( color );
+					interfaces::render_view->set_blend ( 1.0f );
+					vec3_t abs_origin = entity->abs_origin ( );
+					material->set_material_var_flag ( material_var_ignorez, true );
+					interfaces::model_render->override_material ( solid );
+					entity->set_abs_origin ( record.origin );
+						entity->draw_model ( 1, 255 );
+						entity->set_abs_origin ( abs_origin );
+				}
+			}
 		}
-		*/
 
-		auto model_name = interfaces::model_info->get_model_name( ( model_t* ) info.model );
-		auto entity = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( info.entity_index ) );
-		if ( !model_name || !entity )
-			return;
-
-		if ( model_name && strstr( model_name, "models/player" ) ) {
-			bool should_draw_visible = entity->is_enemy ( ) ? variables::visuals::modulation::enemy::visible : variables::visuals::modulation::team::visible;
-			bool should_draw_xyz = entity->is_enemy ( ) ? variables::visuals::modulation::enemy::visible : variables::visuals::modulation::team::visible;
-
-			auto color_visible = entity->is_enemy ( ) ? variables::visuals::modulation::enemy::visible_color : variables::visuals::modulation::team::visible_color;
-			auto color_xyz = entity->is_enemy ( ) ? variables::visuals::modulation::enemy::xyz_color : variables::visuals::modulation::team::xyz_color;
-			
-
-				if ( should_draw_visible ) {
+		if ( is_teammate ) {
+			if ( variables::visuals::modulation::team::visible ) {
+				float color [ 3 ] = { variables::visuals::modulation::team::visible_color [ 0 ], variables::visuals::modulation::team::visible_color [ 1 ], variables::visuals::modulation::team::visible_color [ 2 ] };
 				
-
-					interfaces::render_view->modulate_color ( color_visible );
-					interfaces::render_view->set_blend ( color_visible [ 3 ] );
-					interfaces::model_render->override_material ( mat );
-
-					draw_model_execute_original ( interfaces::model_render, ctx, state, info, player_manager::best_tick_global [ entity->index() ].bone );
-				}
-				if ( should_draw_xyz ) {
-				
-					interfaces::render_view->modulate_color ( color_xyz );
-					interfaces::render_view->set_blend ( color_xyz [ 3 ] );
-					interfaces::model_render->override_material ( zmat );
-
-					draw_model_execute_original ( interfaces::model_render, ctx, state, info, bone_to_world );
-				}
-			}
-			
-		
-			if ( !entity->is_alive( ) || !entity->is_alive( ) || entity->client_class( )->class_id == ccsragdoll ) {
-				int x = 0.5;
-				float clr_chams_dead [ 4 ] { x,x,x,x };
-
-				interfaces::render_view->modulate_color( clr_chams_dead );
-				interfaces::render_view->set_blend( clr_chams_dead [ 3 ] );
-				interfaces::model_render->override_material( mat );
-
-				draw_model_execute_original( interfaces::model_render, ctx, state, info, bone_to_world );
+				interfaces::render_view->modulate_color ( color );
+				interfaces::render_view->set_blend ( variables::visuals::modulation::team::visible_color [ 3 ] );
+				material->set_material_var_flag ( material_var_ignorez, false );
+				interfaces::model_render->override_material ( solid );
+				entity->draw_model ( 1, 255 );
 			}
 
+
+			if ( variables::visuals::modulation::team::xyz ) {
+				float color [ 3 ] = { variables::visuals::modulation::team::xyz_color [ 0 ], variables::visuals::modulation::team::xyz_color [ 1 ], variables::visuals::modulation::team::xyz_color [ 2 ] };
+				interfaces::render_view->modulate_color ( color );
+				interfaces::render_view->set_blend ( 1.0 );
+				material->set_material_var_flag ( material_var_ignorez, true );
+				interfaces::model_render->override_material ( solid );
+				entity->draw_model ( 1, 255 );
+			}
+		}
+
+		interfaces::model_render->override_material ( nullptr );
+
+	}
 }
-

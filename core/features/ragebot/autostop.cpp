@@ -28,15 +28,19 @@ void autostop::clamp_movement_speed( c_usercmd* cmd, float speed ) {
 		}
 	}
 }
+autostop::slow_data autostop::m_slow_data;
 void autostop::slow_walk( c_usercmd* cmd, bool override = false ) {
 
+	if ( m_slow_data.called_this_tick )
+		return;
 	if ( interfaces::inputsystem->is_button_down( button_code_t::KEY_LSHIFT ) )
 		override = true;
 	if ( override && csgo::local_player && csgo::local_player->active_weapon( ) && csgo::local_player->active_weapon( )->get_weapon_data( ) ) {
 		// get the max possible speed whilest we are still accurate.
+		m_slow_data.called_this_tick = true;
 		float flMaxSpeed = csgo::local_player->is_scoped( ) > 0?csgo::local_player->active_weapon( )->get_weapon_data( )->flMaxSpeedAlt:csgo::local_player->active_weapon( )->get_weapon_data( )->flMaxSpeed;
 		float flDesiredSpeed = ( flMaxSpeed * 0.33000001 );
-
+		cmd->buttons &= ~( int ) in_walk;
 		clamp_movement_speed( cmd, flDesiredSpeed );
 	}
 }
@@ -301,28 +305,12 @@ int autostop::ticks_to_stop( vec3_t velocity )
 
 void autostop::auto_peek( c_usercmd* cmd ) {
 
-	if ( !csgo::local_player->get_anim_state( ) )
-		return;
-	auto animstate = csgo::local_player->get_anim_state( );
-	int dir = anti_aim::get_desync_dirrection( );
-	std::vector<vec3_t> posible_points;
-	vec3_t cur_angles = vec3_t( ); interfaces::engine->get_view_angles( cur_angles );
-	cur_angles.y = math::normalize_yaw( cur_angles.y - 90.f );
-	auto left = math::angle_vector( cur_angles );
-
-	vec3_t Head = { csgo::local_player->origin( ).x, csgo::local_player->origin( ).y, ( csgo::local_player->get_hitbox_position( 0 ).z + 10.f ) };
-	points_to_draw.clear( );
-	draw_point dp;
-	dp.name = "left";
-	dp.pos = left;
-	points_to_draw.push_back( dp );
-	vec3_t HeadExtr = ( Head + ( csgo::local_player->velocity( ) * math::ticks_to_time( 22 ) ) );
 }
 
 
 void autostop::autostop( c_usercmd* cmd ) {
 
-	if ( variables::ragebot::autostop )
+	/*if ( variables::ragebot::autostop )
 	{
 
 		if ( !csgo::local_player )
@@ -483,28 +471,39 @@ void autostop::autostop( c_usercmd* cmd ) {
 			autostop::m_autostop_data.standby = true;
 		}
 
-	}
+	}*/
 }
 
 
 void autostop::auto_slow_down( c_usercmd* cmd ) {
-	if ( !variables::ragebot::auto_slow_down )
+	/*if ( !variables::ragebot::auto_slow_down )
 		return;
+	int ticks_to_stop = math::ticks_to_stop ( engine_prediction::unpredicted_velocity );
+	int ticks_after_shot = interfaces::globals->tick_count - math::time_to_ticks ( csgo::local_player->active_weapon ( )->m_fLastShotTime ( ) );
+	bool delay = false;
+	if ( ticks_after_shot > 0 && ticks_after_shot <= 25 ) {
+		return;
+	}
+	bool found = false;
 	for ( auto ent : ragebot::targets )
 	{
 
 
-		vec3_t EnemyHead = { ent->origin( ).x, ent->origin( ).y, ( ent->get_hitbox_position( 0 ).z + 10.f ) };
+	 
+		vec3_t EnemyHead = { ent.player->origin( ).x, ent.player->origin( ).y, ( ent.player->get_hitbox_position( 0 ).z + 10.f ) };
 
 		vec3_t Head = { csgo::local_player->origin( ).x, csgo::local_player->origin( ).y, ( csgo::local_player->get_hitbox_position( 0 ).z + 10.f ) };
-		vec3_t HeadExtr = ( Head + ( csgo::local_player->velocity( ) * math::ticks_to_time(16 ) ) );
-		vec3_t OriginExtr = ( ( csgo::local_player->origin( ) + ( csgo::local_player->velocity( ) * math::ticks_to_time( 16 ) ) ) + vec3_t( 0, 0, 8 ) );
+		vec3_t HeadExtr = ( Head + ( csgo::local_player->velocity( ) * math::ticks_to_time( ticks_to_stop ) ) );
+		vec3_t OriginExtr = ( ( csgo::local_player->origin( ) + ( csgo::local_player->velocity( ) * math::ticks_to_time( ticks_to_stop ) ) ) + vec3_t( 0, 0, 8 ) );
 
 		if ( fabs( csgo::local_player->velocity( ).Length2D( ) ) > .1f && ( autowall::can_hit_float_point( HeadExtr, EnemyHead ) || autowall::can_hit_float_point( OriginExtr, EnemyHead ) ) )
 		{
-			slow_walk( cmd, true );
-			interfaces::console->console_printf( "[AUTO SLOW WALK] TRIGGERED. \n" );
+			found = true;
+			break;
 		}
 	}
-
+	if ( found ) {
+		slow_walk ( cmd, true );
+		interfaces::console->console_printf ( "[AUTO SLOW WALK] TRIGGERED. \n" );
+	}*/
 }

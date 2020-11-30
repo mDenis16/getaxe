@@ -17,6 +17,7 @@ namespace hooks {
 		using fn = void( __thiscall* )( i_base_client_dll*, int frame_stage );
 		static void __stdcall hook( int frame_stage );
 	}
+	
 	namespace crc_server_check {
 		using fn = void( __thiscall* )( void*, void* );
 		void __fastcall hook( void*, void* );
@@ -30,14 +31,22 @@ namespace hooks {
 		using fn = void(__thiscall*)(i_panel*, unsigned int, bool, bool);
 		static void __stdcall hook(unsigned int panel, bool force_repaint, bool allow_force);
 	}
+	namespace update_animation_state {
+		using fn = void ( __vectorcall * )( void *, void *, float, float, float, void * );
+		static void __vectorcall  hook ( void * ecx, void* edx, float z, float y, float x, void* unknown1 );
+	} 
+	namespace is_hltv {
+		using fn = bool ( __thiscall * )( void * );
+		static bool __fastcall hook ( void * ecx, void * edx );
+	}
 
 	namespace post_screen_space_fx {
 		using fn = bool( __thiscall* )( uintptr_t, const view_setup_t* );
 		static bool __fastcall hook( uintptr_t ecx, uintptr_t edx, const view_setup_t* setup );
 	}
 	namespace setup_bones {
-		using fn = bool( __thiscall*  )( void*, matrix_t*, int, int, float );
-		static bool __fastcall hook( void* ecx, void* edx, matrix_t* bone_to_world_out, int max_bones, int bone_mask, float curtime );
+		using fn = bool( __thiscall*  )( void*, matrix_t *, int, int, float );
+		static bool __fastcall hook( void* ecx, void* edx, matrix_t *bone_to_world_out, int max_bones, int bone_mask, float curtime );
 		
 	}
 	namespace accumulate_layers {
@@ -45,11 +54,35 @@ namespace hooks {
 		static void __fastcall hook( uintptr_t* player, uintptr_t edx, void* setup, vec3_t* pos, float time, quaternion_t* q );
 
 	}
-	namespace do_extra_bone_processing {
-		using fn = void( __thiscall* )( void*, void*, vec3_t*, void*,  void*, uint8_t*, void* );
-		
-		static void _fastcall hook( void* ecx, uint32_t, void* hdr, vec3_t* pos, void* q, void* matrix, uint8_t* bone_computed, void* context );
+	namespace check_for_sequence_change {
+		using fn = void ( __thiscall * )( uintptr_t * , uintptr_t * , uintptr_t * , int , bool , bool  );
+		static void __fastcall hook ( uintptr_t * ecx, uintptr_t * edx, uintptr_t * hdr, int cur_sequence, bool force_new_sequence, bool interpolate );
+
+
+
+
 	}
+	
+	namespace build_transformations {
+		using fn = void ( __fastcall * ) ( void *, void *, int, int, int, int, int, int );
+		static void __fastcall hook ( void * ecx, void * edx, int a2, int a3, int a4, int a5, int a6, int a7 );
+	}
+	namespace should_skip_animation_frame {
+
+		static	bool __fastcall hook ( void * ecx, void * edx );
+	}
+	
+	namespace modify_eye_position {
+		using fn = void( __thiscall* )( void * , void * , vec3_t &  );
+		static void __fastcall hook ( void * ecx, void * edx, vec3_t & input_eye_position );
+	}
+	namespace calculate_view {
+		using fn = void ( __thiscall * )( void *, void * , vec3_t & , vec3_t & , float & , float & , float &  );
+		static void __fastcall hook ( void * ecx, void * edx, vec3_t & eye_origin, vec3_t & eye_angles, float & z_near, float & z_far, float & fov );
+	}
+	/*
+	void __fastcall hooks::calculate_view::hook ( void * this_pointer, void * edx, vec3_t & eye_origin, vec3_t & eye_angles, float & z_near, float & z_far, float & fov )
+	*/
 	namespace do_procedural_foot_plant {
 	
 		static	void __fastcall hook( void* a1, void* _edx, int a2, int a3, int a4, int a5 );
@@ -78,13 +111,14 @@ namespace hooks {
 	namespace present {
 
 
-		using fn = long( __stdcall* )( LPDIRECT3DDEVICE9, RECT* , RECT* , HWND , RGNDATA*  );
-		static long __stdcall  hook( LPDIRECT3DDEVICE9 device, RECT* source_rect, RECT* dest_rect, HWND dest_window_override, RGNDATA* dirt_region );
+		using fn = long ( __stdcall * )( IDirect3DDevice9 * device );
+		static long __stdcall  hook( IDirect3DDevice9 * device );
 	}
 	namespace reset {
 		using fn = long( __stdcall* )( IDirect3DDevice9*, D3DPRESENT_PARAMETERS* );
 		static long __stdcall  hook( IDirect3DDevice9* thisptr, D3DPRESENT_PARAMETERS* params );
 	}
+	
 	namespace wnd_proc {
 		using fn = WNDPROC;
 		static LRESULT __stdcall  hook( HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam );
@@ -97,13 +131,14 @@ namespace hooks {
 		using fn = void( __thiscall* )( void*, bool );
 		static void __stdcall hook( void* ctx, bool a );
 	}
-	namespace eye_angles {
-		using fn = vec3_t * ( __thiscall* )( void* );
-		static vec3_t* __fastcall hook( void* ecx, void* edx );
-	}
+
 	namespace override_view {
 		using fn = void* ( __fastcall* )( i_client_mode*, void* _this, view_setup_t* setup );
 		static void __fastcall hook( void* _this, void* _edx, view_setup_t* setup );
+	}
+	namespace get_eye_angles {
+		using fn = vec3_t * ( __fastcall * )( void *, void * );
+		static vec3_t * __fastcall hook ( void * ecx, void * edx );
 	}
 	namespace cl_move {
 		using fn = void* ( __thiscall* )( void*  );

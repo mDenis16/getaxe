@@ -41,6 +41,7 @@ namespace csgo {
 	extern matrix_t player_bones[ 65 ][ 128 ];
 	extern matrix_t fake_matrix[ 128 ];
 	extern matrix_t real_matrix [ 128 ];
+	extern vec3_t m_strafe_angles;
 	extern matrix_t right_player_bones [ 65 ][ 128 ];
 	extern matrix_t left_player_bones [ 65 ][ 128 ];
 	extern vec3_t last_origin;
@@ -59,6 +60,9 @@ namespace csgo {
 	extern   animationlayer m_real_layers [ 13 ];
 	extern float            m_real_poses [ 24 ];
 
+	extern 	int screen_height;
+	extern int screen_width;
+	extern view_matrix_t screen_matrix;
 	extern bool m_animate;
 	extern int m_rate;
 
@@ -76,6 +80,7 @@ namespace csgo {
 	extern vec3_t m_rotation;
 	extern bool send_packet;
 	extern float choke_yaw;
+	extern 	 bool should_setup_bones;
 	extern HWND window;
 	extern bool in_trace;
 	extern  vec3_t original_viewangle;

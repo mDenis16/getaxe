@@ -3,6 +3,9 @@
 vec3_t fake_lag::peek_position = vec3_t( );
 void fake_lag::on_peek( c_usercmd* cmd, bool& send_packet ) {
 
+	if ( csgo::local_player->health ( ) <= 0 )
+		return;
+
 	static bool Hitinit = false;
 	bool SkipTick = false;
 	static bool canHit = false;
@@ -11,14 +14,14 @@ void fake_lag::on_peek( c_usercmd* cmd, bool& send_packet ) {
 	if ( variables::antiaim::on_peek && !variables::ragebot::double_tap )
 	{
 		vec3_t peek_position_temp = vec3_t();
-		for ( auto ent : ragebot::targets )
+		for ( auto ent : aimbot::targets )
 		{
 
 
-			vec3_t EnemyHead = { ent->origin( ).x, ent->origin( ).y, ( ent->get_hitbox_position( 0 ).z + 10.f ) };
+			vec3_t EnemyHead = { ent.player->origin( ).x, ent.player->origin( ).y, ( ent.player->get_hitbox_position( 0 ).z + 10.f ) };
 
 			vec3_t Head = { csgo::local_player->origin( ).x, csgo::local_player->origin( ).y, ( csgo::local_player->get_hitbox_position( 0 ).z + 10.f ) };
-			vec3_t HeadExtr = ( Head + ( csgo::local_player->velocity( ) * math::ticks_to_time( 22 ) ) );
+			vec3_t HeadExtr = ( Head + ( csgo::local_player->velocity( ) * math::ticks_to_time( 14 ) ) );
 			vec3_t OriginExtr = ( ( csgo::local_player->origin( ) + ( csgo::local_player->velocity( ) * math::ticks_to_time( 22 ) ) ) + vec3_t( 0, 0, 8 ) );
 		
 			if ( fabs( csgo::local_player->velocity( ).Length2D( ) ) > .1f && ( autowall::can_hit_float_point( HeadExtr, EnemyHead ) || autowall::can_hit_float_point( OriginExtr, EnemyHead ) ) )
@@ -47,7 +50,7 @@ void fake_lag::on_peek( c_usercmd* cmd, bool& send_packet ) {
 
 		if ( csgo::lagPeek && !SkipTick )
 		{
-			if ( (interfaces::engine->get_net_channel( )->choked_packets < 22))
+			if ( (interfaces::engine->get_net_channel( )->choked_packets < 14))
 			{
 				//tickbase_system::m_shift_data.m_needs_recharge = csgo::m_goal_shift;
 				send_packet = false;

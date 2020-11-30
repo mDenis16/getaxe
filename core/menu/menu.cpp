@@ -199,7 +199,9 @@ void menu::option ( const char * name, const char * description, std::function< 
 		ImGui::PopFont ( );
 		
 		hovered = ImGui::IsMouseHoveringRect ( rect_left, rect_right );
+		ImGui::BeginChild ( name, ImVec2 ( 0, 0 ), true, m_window_flags );
 		func ( );
+		ImGui::EndChild ( );
 
 	}
 
@@ -233,15 +235,7 @@ void menu::option ( const char * name, const char * description, std::function< 
 
 
 }
-void menu::ragebot ( ) {
-	option ( "Aimlock", "Turn aim on enemy", [ = ] ( ) {
-		option_single ( "Name", "Draws a name on top of head", variables::visuals::enemy::name );
-		option_single ( "Health", "Draws a health", variables::visuals::enemy::health );
-		option_single ( "Box", "Draws a health", variables::visuals::enemy::box );
-		option_single ( "Weapon", "Draws a health", variables::visuals::enemy::weapon );
 
-	}, 400, variables::visuals::enemy::enabled );
-}
 	 static int tab_index = 0;
 void menu::render_menu( )
 {
@@ -253,7 +247,7 @@ void menu::render_menu( )
 	const ImGuiWindowFlags m_window_flags =  ImGuiWindowFlags_NoCollapse |ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoTitleBar;;
 
 	//ImGui::SetNextWindowPos( ImVec2( 0, 0 ), ImGuiCond_Appearing );
-	//ImGui::SetNextWindowSize( ImVec2( 800, 600 ), ImGuiCond_Always );
+	  ImGui::SetNextWindowSize( ImVec2( 800, 600 ), ImGuiCond_Always );
 
 	
 		 int element_index = 0;
@@ -330,11 +324,78 @@ void menu::render_menu( )
 			static float asddd [ 3 ] = { 255, 0,0 };//c_menu::get( ).opened 
 			switch ( tab_index ) {
 			case 0:
-				aimbot ( );
+				option ( "Aimbot enemy", "Aimbot your enemy", [ = ] ( ) {
+					option_single ( "Auto fire", "Makes your aimbot to shot automatically", variables::ragebot::auto_fire );
+					option_single ( "Silent aim", "Makes your aimbot silent local", variables::ragebot::silent_aim );
+					option_slider ( "Hitchance", "Hitchance of hitting target", 0.f, 100.f, variables::ragebot::hitchance );
+					option_slider ( "Min damage", "Minimum damage of hitspot", 0.f, 100.f, variables::ragebot::min_dmg );
+					option_slider ( "Head Scale", "Head Scale of  multipoint", 0.f, 100.f, variables::ragebot::head_scale );
+					option_slider ( "Body Scale", "Body Scale of  multipoint", 0.f, 100.f, variables::ragebot::point_scale );
+					option_single ( "No Spread", "Assit recoil", variables::ragebot::nospread );
+					//option_single ( "Resolver", "Shoot only at safe points", variables::ragebot::resolver );
+					option_combobox ( "Safepoint", "Prefer safepoint", std::vector<std::string>{"none", "minimal", "average", "restrict"}, variables::ragebot::safe_point );
+
+					option_combobox ( "Record priority", "Where you backtrack shot", std::vector<std::string>{"last", "safest", "min velocity", "highest damage"}, variables::ragebot::prioritize_record );
+
+					option_combobox ( "Hitbox priority", "Where you aimbot shot", std::vector<std::string>{"head", "body"}, variables::ragebot::prioritize_hitbox );
+
+					option_multicombobox ( "Hitscan selection", "Where your aimbot scan", { { "head", &variables::ragebot::head_scan }, { "body", &variables::ragebot::body_scan },{ "feet", &variables::ragebot::feet_scan },{ "arms scan", &variables::ragebot::arms_scan } } );
+
+
+				}, ImGui::GetWindowHeight ( ), variables::ragebot::enabled );
+				option ( "Anti aim", "Makes getting hit harder", [ = ] ( ) {
+
+					option_combobox ( "Pitch", "Where you aimbot shot", std::vector<std::string>{"none", "down", "up"}, variables::antiaim::pitch );
+					option_combobox ( "Yaw", "Where you aimbot shot", std::vector<std::string>{"none", "freestanding", "backwards"}, variables::antiaim::yaw );
+
+					option_slider_int ( "Fakelag", "Amount of fakelag", 0, 16, variables::antiaim::fakelag );
+					option_single ( "Fakelag on peek", "Teleports you in front of enemy", variables::antiaim::on_peek );
+					option_single ( "Yaw Shoot", "Changes yaw after shoot", variables::antiaim::antiaimAfterShoot );
+				}, 500, variables::antiaim::enable );
+				option ( "Exploits", "Gives you a big advatage", [ = ] ( ) {
+					option_single ( "Doubletap", "Allows you to shoot twice at the same time", variables::ragebot::double_tap );
+					option_slider_int ( "ticks ", "db tap ticks", 2, 18, variables::antiaim::db_tap_ticks );
+				}, 300, variables::antiaim::enable );
 				break;
 
 			case 1:
+				if ( aimbot::targets.size ( ) > 0 ) {
+					for ( int i = 0; i < 13; i++ ) {
+						std::stringstream created_string;
+						created_string << "LAYER NUMBER " << i << std::endl;
+						ImGui::Text ( created_string.str().c_str() );
+						auto anim_layer = player_manager::records [ aimbot::targets.front ( ).index ].back ( ).anim_layer [ i ];
+						std::vector<std::string> props;
+				
 
+						created_string << "order " << anim_layer.order << std::endl;
+						props.push_back ( created_string.str ( ) );
+
+						created_string << "sequence " << anim_layer.sequence << std::endl;
+						props.push_back ( created_string.str ( ) );
+
+						created_string << "previous_cycle " << anim_layer.previous_cycle << std::endl;
+						props.push_back ( created_string.str ( ) );
+
+						created_string << "weight " << anim_layer.weight << std::endl;
+						props.push_back ( created_string.str ( ) );
+
+						created_string << "weight_delta_rate " << anim_layer.weight_delta_rate << std::endl;
+						props.push_back ( created_string.str ( ) );
+
+						created_string << "playback_rate " << anim_layer.playback_rate << std::endl;
+						props.push_back ( created_string.str ( ) );
+
+
+						created_string << "cycle " << anim_layer.cycle << std::endl;
+						props.push_back ( created_string.str ( ) );
+
+						for ( auto p : props )
+							ImGui::Text ( p.c_str ( ) );
+
+						ImGui::Text ( "-----------------------" );
+					}
+				}
              
 				break;
 

@@ -21,16 +21,16 @@ void shot_processor::weapon_fire( i_game_event* event ) {
 	if ( entity != interfaces::engine->get_local_player( ) )
 		return;
 	
-	if ( ragebot::last_target_index == -1 )
-		return;
-	if ( !ragebot::get_last_target.entity )
-		return;
+	//if ( ragebot::last_target_index == -1 )
+	//	return;
+	//if ( !ragebot::get_last_target.entity )
+	//	return;
 	
-	shot_processor::add_shot( csgo::local_player->get_eye_pos( ), ragebot::last_target_index, (hitboxes)ragebot::get_last_target.hitbox,
+//	shot_processor::add_shot( csgo::local_player->get_eye_pos( ), ragebot::last_target_index, (hitboxes)ragebot::get_last_target.hitbox,
 		
-		ragebot::get_last_target.bones, ragebot::get_last_target.mins, ragebot::get_last_target.maxs, ragebot::get_last_target.radius );
-	ragebot::get_last_target.entity = nullptr;
-	ragebot::last_target_index = -1;
+	//	ragebot::get_last_target.bones, ragebot::get_last_target.mins, ragebot::get_last_target.maxs, ragebot::get_last_target.radius );
+	//ragebot::get_last_target.entity = nullptr;
+//	ragebot::last_target_index = -1;
 }
 void shot_processor::hurt_event( i_game_event* event ) {
 	if ( !event )
@@ -91,50 +91,47 @@ void shot_processor::hurt_event( i_game_event* event ) {
 
 }
 
-void shot_processor::bullet_impact( i_game_event* event ) {
-	auto userid = event->get_int( "userid" );
+void shot_processor::bullet_impact ( i_game_event * event ) {
+	auto userid = event->get_int ( "userid" );
 	if ( !userid )
 		return;
 
-	if ( !interfaces::engine->is_connected( ) && !interfaces::engine->is_in_game( ) )
+	if ( !interfaces::engine->is_connected ( ) && !interfaces::engine->is_in_game ( ) )
 		return;
 
-	auto engine_userid = interfaces::engine->get_player_for_user_id( userid );
-	
+	auto engine_userid = interfaces::engine->get_player_for_user_id ( userid );
+
 	if ( !engine_userid )
 		return;
 
-	if ( engine_userid != interfaces::engine->get_local_player( ) )
+	if ( engine_userid != interfaces::engine->get_local_player ( ) )
 		return;
 
 
 
 
-	vec3_t bullet_impact = vec3_t( event->get_float( "x" ), event->get_float( "y" ), event->get_float( "z" ) );
+	vec3_t bullet_impact = vec3_t ( event->get_float ( "x" ), event->get_float ( "y" ), event->get_float ( "z" ) );
 
-	auto shot = closest_shot( interfaces::globals->tick_count );
+	auto shot = closest_shot ( interfaces::globals->tick_count );
 	if ( shot ) {
 		shot->hitpos = bullet_impact;
 		if ( shot->hit )
 			return;
-		auto entity = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( shot->enemy_index ) );
+		auto entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( shot->enemy_index ) );
 
 		if ( !entity )
 			return;
-		if ( !entity->is_alive( ) )
+		if ( !entity->is_alive ( ) )
 			return;
-		if ( entity->dormant( ) )
+		if ( entity->dormant ( ) )
 			return;
 
-	//	if ( shot->is_backtrack )
-		//	player_manager::restore_record(entity, shot->backtrack );
-		if ( auto intersection = ragebot::get_intersect_point ( shot->shotpos, bullet_impact, shot->mins, shot->maxs, shot->radius ); intersection ) 			{
-			shot->hit = true;
-			shot->hitpos = *intersection;
-		}
-
+		//	if ( shot->is_backtrack )
+			//	player_manager::restore_record(entity, shot->backtrack );
+			//if ( auto intersection = ragebot::get_intersect_point ( shot->shotpos, bullet_impact, shot->mins, shot->maxs, shot->radius ); intersection ) 			{
+		//		shot->hit = true;
+			//	shot->hitpos = *intersection;
 	}
-
 }
 
 void shot_processor::add_shot( const vec3_t shotpos, const int& entity_index, hitboxes hitbox, matrix_t matrix [ 128 ], vec3_t mins, vec3_t maxs, float radius) {
@@ -264,8 +261,10 @@ void shot_processor::manage_shots( ) {
 					//visuals::event_.push_front( visuals::/loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
 					visuals::notifications::add ( ss.str ( ) );
 					resolver::resolver_data [ shot->enemy_index ].last_side_change = interfaces::globals->cur_time;
-			
-			
+					interfaces::debug_overlay->capsule_overlay ( shot->mins, shot->maxs, shot->radius, 255,0,255, 200, 2.f );
+				//	visuals::capsule_overlay ( shot.e, 1.7f, color ( 255, 0, 0, 200 ), best_target.bones );
+				//	visuals::capsule_overlay ( best_target_ent, 1.7f, color ( 0, 0, 255, 200 ), csgo::left_player_bones [ best_target.entity->index ( ) ] );
+				//	visuals::capsule_overlay ( best_target_ent, 1.7f, color ( 0, 0, 255, 200 ), csgo::right_player_bones [ best_target.entity->index ( ) ] );
 				//}
 				
 			}

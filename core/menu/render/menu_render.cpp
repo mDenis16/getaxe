@@ -7,7 +7,6 @@
 #include <vector>
 #include <pplwin.h>
 
-
 #define UNLEN 256
 IDirect3DStateBlock9* state_block;
 bool reverse = false;
@@ -90,6 +89,8 @@ void c_menu::run( ) {
 
 	menu::render_menu( );
 	
+	
+
 }
 
 void c_menu::run_visuals( ) {
@@ -101,6 +102,8 @@ void c_menu::run_visuals( ) {
 	visuals::player::present( );
 	visuals::notifications::present ( );
 	visuals::draw_debug_points ( );
+	visuals::local_esp ( );
+	visuals::projectiles::draw ( );
 	ImGui::End( );
 }
 

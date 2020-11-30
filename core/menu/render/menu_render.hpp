@@ -2,6 +2,7 @@
 
 #include "../../../dependencies/common_includes.hpp"
 #include "../../menu/menu.hpp"
+#include "../../../source-sdk/math/view_matrix.hpp"
 extern IDirect3DStateBlock9* state_block;
 
 
@@ -2942,6 +2943,7 @@ public:
 	ImFont* bigf;
 	ImFont* smallf;
 	ImFont* weapon_icons;
+	
 	ImDrawList* draw;
 	IDirect3DTexture9 * tImage;
 	bool opened = false;

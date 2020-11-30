@@ -18,6 +18,7 @@ public:
 	}
 
 	vec3_t m_start, m_end, m_normal;
+	vec3_t m_start_2, m_end_2, m_normal_2;
 	bool m_valid, m_plane, m_detonate;
 };
 
@@ -33,11 +34,12 @@ class c_nade_prediction
 {
 	std::array< c_nadepoint, 500 >	_points{ };
 	bool		 _predicted = false;
-
+	bool         _w2s = false;
 	void predict( c_usercmd* user_cmd );
 	bool detonated( weapon_t* weapon, float time, trace_t& trace );
 public:
 	void trace( c_usercmd* user_cmd );
+	void paint_traverse ( );
 	void draw( );
 };
 

@@ -2,7 +2,7 @@
 #include "../../menu/render/menu_render.hpp"
 #include "../../menu/ImGui/imgui.h"
 #include "../../menu/ImGui/imgui_internal.h"
-
+#include "../../../dependencies/interfaces/i_memalloc.h"
 class RadarPlayer_t {
 public:
 	vec3_t pos; //0x0000 
@@ -53,8 +53,8 @@ void visuals::player::player_death ( i_game_event * event ) {
 	resolver::resolver_data [ entity->index ( ) ].missed_shots = 0;
 	
 }
+std::array<visuals::player::data, 65> visuals::player::m_data;
 
- visuals::player::data visuals::player::m_data[65];
 std::map<int, char> weapon_icons =
 {
 { weapon_deagle, 'A' },
@@ -167,10 +167,10 @@ std::map<int, char> weapon_icons =
 
 	return true;
 }
-float dsdsDrawText( ImFont* pFont, const std::string& text, const ImVec2& pos, float size, float const * color, float shadow, bool center, bool bold )
+float dsdsDrawText( ImFont* pFont,  const std::string text, const ImVec2& pos, float size, float const * color, float shadow, bool center, bool bold )
 {
 	ImGuiWindow* window = ImGui::GetCurrentWindow( );
-
+	
 
 	std::stringstream stream( text );
 	std::string line;
@@ -178,7 +178,8 @@ float dsdsDrawText( ImFont* pFont, const std::string& text, const ImVec2& pos, f
 	float y = 0.0f;
 	int i = 0;
 
-	while ( std::getline( stream, line ) )
+
+   while ( std::getline ( stream, line ) && line.length ( ) != 0 )
 	{
 		ImVec2 textSize = pFont->CalcTextSizeA( size, FLT_MAX, 0.0f, line.c_str( ) );
 
@@ -219,28 +220,23 @@ void visuals::player::name( visuals::player::data _data ) {
 	auto x = ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f );
 
 	//c_menu::get( ).draw->AddText( c_menu::get( ).smallf, 15, ImVec2( x, _data.box_data.y - 15 ), ImColor( 167, 24, 71, 255 ), print.data( ) );
-	dsdsDrawText( c_menu::get( ).smallf, print, ImVec2( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y  ), 15, _data.enemy ? variables::visuals::enemy::name_color : variables::visuals::team::name_color, 0.1f ,true , false);
+	dsdsDrawText( c_menu::get( ).smallf, print, ImVec2( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y - 15  ), 15, _data.enemy ? variables::visuals::enemy::name_color : variables::visuals::team::name_color, 0.1f ,true , false);
 
-	dsdsDrawText ( c_menu::get ( ).smallf, resolver::side_name(resolver::resolver_data[_data.index].brute_side), ImVec2 ( right + 2.f, _data.box_data.y + 5 ), 11, _data.enemy ? variables::visuals::enemy::name_color : variables::visuals::team::name_color, 0.1f, false, false );
-	dsdsDrawText ( c_menu::get ( ).smallf, std::string( resolver::resolver_data [ _data.index ].extended_desync ? "full" : "low"), ImVec2 ( right + 2.f, _data.box_data.y + 10 ), 11, _data.enemy ? variables::visuals::enemy::name_color : variables::visuals::team::name_color, 0.1f, false, false );
 	std::stringstream ss;
-	ss << "safety " << resolver::resolver_data [ _data.index ].safety << "%";
+	ss << "delta " << resolver::resolver_data [ _data.index ].predicted_delta << "";
 
 	dsdsDrawText ( c_menu::get ( ).smallf, ss.str(), ImVec2 ( right + 2.f, _data.box_data.y + 20 ), 11, _data.enemy ? variables::visuals::enemy::name_color : variables::visuals::team::name_color, 0.1f, false, false );
 
-
-	std::stringstream hit_feet;
-	hit_feet << "correction " << resolver::resolver_data [ _data.index ].first_shoot_correction << "";
-	if ( resolver::resolver_data [ _data.index ].first_shoot_correction > 0.f )
-	dsdsDrawText ( c_menu::get ( ).smallf, hit_feet.str ( ), ImVec2 ( right + 2.f, _data.box_data.y + 30 ), 11, _data.enemy ? variables::visuals::enemy::name_color : variables::visuals::team::name_color, 0.1f, false, false );
 	
 }
 void visuals::player::box( visuals::player::data _data ) {
 
 	auto clr = _data.enemy ? variables::visuals::enemy::box_color : variables::visuals::team::box_color;
 
-	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x - 0.5 - 1, _data.box_data.y - 0.5 ), ImVec2( _data.box_data.x + _data.box_data.w + 0.5, _data.box_data.y + _data.box_data.h  - 0.5 ), ImColor( 0, 0, 0, 155 ), 0.0f );
-	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x - 1, _data.box_data.y ), ImVec2( _data.box_data.x + _data.box_data.w, _data.box_data.y + _data.box_data.h ), ImColor( clr[0], clr[1], clr[2], clr[3] ), 0.0f );
+	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x - 0.5f, _data.box_data.y - 0.5f ), ImVec2( _data.box_data.x + _data.box_data.w + 0.5, _data.box_data.y + _data.box_data.h  + 0.5 ), ImColor( 0, 0, 0, 155 ), 0.0f );
+
+	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x, _data.box_data.y ), ImVec2( _data.box_data.x + _data.box_data.w, _data.box_data.y + _data.box_data.h ), ImColor( clr[0], clr[1], clr[2], clr[3] ), 0.0f );
+
 
 }
 void visuals::player::health( visuals::player::data _data ) {
@@ -274,7 +270,7 @@ void visuals::player::health( visuals::player::data _data ) {
 	auto clr_h = _data.enemy ? variables::visuals::enemy::health_color : variables::visuals::team::health_color;
 
 	c_menu::get( ).draw->AddRectFilled( ImVec2( _data.box_data.x  - 6, _data.box_data.y - 0.5f  ), ImVec2( _data.box_data.x - 2.5f, ( _data.box_data.y + ( _data.box_data.h  * ( ( float ) _data.health / 100.0f )  ) ) + 0.5f ), get_health_clr_1(_data.health) );
-	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x - 6 - 0.5, _data.box_data.y - 0.5f ), ImVec2( _data.box_data.x - 2.5f, ( _data.box_data.y + _data.box_data.h ) ), ImColor( clr_h[0], clr_h[1], clr_h[2], clr_h[3] ) );
+	c_menu::get( ).draw->AddRect( ImVec2 ( _data.box_data.x - 6, _data.box_data.y - 0.5f ), ImVec2 ( _data.box_data.x - 2.5f, ( _data.box_data.y + ( _data.box_data.h * ( ( float ) _data.health / 100.0f ) ) ) + 0.5f ),  ImColor( clr_h[0], clr_h[1], clr_h[2], clr_h[3] ) );
 
 
 }
@@ -303,14 +299,17 @@ void visuals::player::present( ) {
 	bool is_atleast_one = variables::visuals::enemy::enabled || variables::visuals::team::enabled;
 	if ( !( is_atleast_one ) )
 		return;
+
+
 	for ( size_t i = 1; i <= 64; i++ ) {
-		auto data = m_data [ i ];
-		if ( data.alive && data.valid ) {
+		auto data = m_data.at ( i );
+		if ( data.alive && data.valid && !data.out_of_pov ) {
 			if ( data.on_screen ) {
 				visuals::player::name ( data );
 				visuals::player::box ( data );
 				visuals::player::health ( data );
 				visuals::player::weapon ( data );
+				visuals::player::aimbot ( data );
 			}
 			else {
 				visuals::player::arrow ( data );
@@ -331,19 +330,22 @@ std::string visuals::weapon_to_icon( const int id )
 	return "";
 }
 void visuals::player::sound ( ) {
-	std::vector<sound_info> sound_list;
+	static CUtlVector<sound_info> sound_list;
 
 	interfaces::engine_sound->get_active_sounds ( sound_list );
-	auto sound_size = sound_list.size ( );
-	if ( sound_size > 128 )
-		sound_size = 128;
+	auto sound_size = sound_list.Count();
+
 	for ( int i = 0; i < sound_size; i++ ) {
-		if ( !sound_list.at(i).origin )
+		if ( !sound_list[i].origin )
 			continue;
 
-		auto player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( sound_list.at ( i ).sound_source ) );
-	if ( visuals::player::m_data [ player->index ( ) ].dormant )
-		visuals::player::m_data [ player->index ( ) ].origin = *sound_list.at ( i ).origin;
+		auto player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( sound_list [ i ].sound_source ) );
+		if ( sound_list [ i ].m_bUpdatePositions ) {
+			if ( visuals::player::m_data [ player->index ( ) ].dormant ) {
+				visuals::player::m_data [ player->index ( ) ].origin = *sound_list [ i ].origin;
+				visuals::player::m_data [ player->index ( ) ].last_seen_time = interfaces::globals->cur_time;
+			}
+		}
 
 	}
 }
@@ -352,25 +354,46 @@ void visuals::player::paint_traverse ( ) {
 	if ( !( is_atleast_one ) )
 		return;
 
-	visuals::player::sound ( );
+	//visuals::player::sound ( );
 
 	//m_data.clear( );
 	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
 		auto player = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( i ) );
+		if ( player == csgo::local_player )
+			continue;
 
 		data & current_data = m_data [ i ];
-		current_data.valid = true;
+	
 		if ( !player ) {
 			current_data.valid = false;
 			continue;
 		}
-		if ( player == csgo::local_player )
-			continue;
+		current_data.valid = true;
+		current_data.enemy = player->is_enemy ( );
+		current_data.dormant = player->dormant ( );
+		current_data.alive = player->health ( ) > 0;
+		current_data.index = player->index ( );
+
+	
+
+		/*if ( current_data.valid && std::fabs ( current_data.last_seen_time - interfaces::globals->cur_time ) > 10.f ) {
+			current_data.alive = false;
+			current_data.valid = false;
+		}*/
 
 		if ( player->health ( ) <= 0 ) {
 			current_data.alive = false;
 			continue;
 		}
+
+		if ( !current_data.out_of_pov && std::fabs ( interfaces::globals->realtime - current_data.last_seen_time ) > 5.f ) {
+			current_data.alive = false;
+			current_data.dormant = true;
+			current_data.out_of_pov = true;
+			current_data.last_seen_time = 0;
+			continue;
+		}
+
 		if ( player->team( ) == csgo::local_player->team() && !variables::visuals::team::enabled )
 			continue;
 
@@ -379,44 +402,90 @@ void visuals::player::paint_traverse ( ) {
 
 		
 	
-		current_data.enemy = player->is_enemy ( );
-		current_data.dormant = player->dormant ( );
-		current_data.alive = player->health ( ) > 0;
-		current_data.index = player->index();
-		if ( !current_data.dormant ) {
-			current_data.health = player->health ( );
-			current_data.alive = player->health ( ) > 0;
-			interfaces::engine->get_player_info ( player->index ( ), &current_data.player_info );
-			current_data.origin = player->get_absolute_origin ( );
-			current_data.mins = player->collideable ( )->mins ( ) + current_data.origin;
-			current_data.maxs = player->collideable ( )->maxs ( ) + current_data.origin;
+	
+		if ( current_data.alive ) {
 		
+			if ( !current_data.dormant ) {
+				current_data.health = player->health ( );
+				current_data.alive = player->health ( ) > 0;
+				interfaces::engine->get_player_info ( player->index ( ), &current_data.player_info );
+				current_data.origin = player->abs_origin ( );
+				current_data.mins = player->collideable ( )->mins ( ) + current_data.origin;
+				current_data.maxs = player->collideable ( )->maxs ( ) + current_data.origin;
+				
 
-			if ( player->active_weapon ( ) ) {
-				current_data.weapon_icon = weapon_to_icon ( player->active_weapon ( )->item_definition_index ( ) );
-				current_data.weapon_name = player->active_weapon ( )->get_weapon_data ( )->szWeaponName;
+				if ( player->active_weapon ( ) ) {
+					current_data.weapon_icon = weapon_to_icon ( player->active_weapon ( )->item_definition_index ( ) );
+					current_data.weapon_name = player->active_weapon ( )->get_weapon_data ( )->szWeaponName;
+				}
+				current_data.out_of_pov = false;
+				current_data.last_seen_time = interfaces::globals->realtime;
 			}
+			else {
+				
+				static auto FindHudElement = ( DWORD ( __thiscall * )( void *, const char * ) )utilities::pattern_scan ( "client.dll", "55 8B EC 53 8B 5D 08 56 57 8B F9 33 F6 39 77 28" );
+				static auto hud_ptr = *( DWORD ** ) ( utilities::pattern_scan ( "client.dll", "81 25 ? ? ? ? ? ? ? ? 8B 01" ) + 2 );
 
-		}
-		else {
-			static auto FindHudElement = ( DWORD ( __thiscall * )( void *, const char * ) )utilities::pattern_scan ( "client.dll", "55 8B EC 53 8B 5D 08 56 57 8B F9 33 F6 39 77 28" );
-			static auto hud_ptr = *( DWORD ** ) ( utilities::pattern_scan ( "client.dll", "81 25 ? ? ? ? ? ? ? ? 8B 01" ) + 2 );
+				auto radar_base = FindHudElement ( hud_ptr, "CCSGO_HudRadar" );
+				CCSGO_HudRadar * hud_radar = ( CCSGO_HudRadar * ) ( radar_base - 20 );
 
-			auto radar_base = FindHudElement ( hud_ptr, "CCSGO_HudRadar" );
-			CCSGO_HudRadar * hud_radar = ( CCSGO_HudRadar * ) ( radar_base - 20 );
-
-			if ( radar_base && hud_radar ) {
-				const RadarPlayer_t & radar = hud_radar->radar_info [ i ];
-				current_data.origin = radar.pos;
-				current_data.health = radar.health;
-				current_data.alive = current_data.health > 0;
+				if ( radar_base && hud_radar ) {
+					const RadarPlayer_t & radar = hud_radar->radar_info [ i ];
+					current_data.origin = radar.pos;
+					current_data.health = radar.health;
+					//current_data.last_seen_time = interfaces::globals->cur_time;
+  					//current_data.alive = current_data.health > 0;
+					//current_data.out_of_pov = false;
+				}
 			}
+			if (!current_data.out_of_pov )
+			   current_data.on_screen = get_playerbox ( player, current_data.box_data, current_data );
 		}
-
-		if ( current_data.alive )
-	    	current_data.on_screen = get_playerbox ( player, current_data.box_data, current_data );
 		
+	
 
 	}
 
+}
+void visuals::player::aimbot ( visuals::player::data _data ) {
+/*	for ( auto point : ragebot::hitscan_points [ _data.index ] ) {
+		auto w2s = vec3_t ( );
+		if ( interfaces::debug_overlay->world_to_screen ( point.point, w2s ) ) {
+			c_menu::get ( ).draw->AddCircleFilled ( ImVec2 ( w2s.x, w2s.y ), 3.f, !point.is_safe ? ImColor ( 255, 0, 0, 255 ) : ImColor ( 255, 255, 0, 255 ) );
+		}
+	}*/
+}
+
+void visuals::player::think ( ) {
+	for ( int i = 0; i < interfaces::glow_manager->size; i++ ) {
+		if ( interfaces::glow_manager->objects [ i ].unused ( ) || !interfaces::glow_manager->objects [ i ].entity )
+			continue;
+
+		auto & glow_object = interfaces::glow_manager->objects [ i ];
+
+		auto entity = reinterpret_cast< player_t * >( glow_object.entity );
+		if ( !entity || entity->dormant ( ) )
+			continue;
+
+		const auto client_class = entity->client_class ( );
+		if ( !client_class )
+			continue;
+
+		bool is_teammate = entity->team ( ) == csgo::local_player->team ( );
+		bool is_enemy = entity->team ( ) != csgo::local_player->team ( );
+
+		switch ( client_class->class_id ) {
+		case ccsplayer:
+		{
+
+
+			if ( is_enemy && variables::visuals::modulation::enemy::glow )
+				glow_object.set ( variables::visuals::modulation::enemy::glow_color [ 0 ], variables::visuals::modulation::enemy::glow_color [ 1 ], variables::visuals::modulation::enemy::glow_color [ 2 ], 0.8f );
+			else if ( is_teammate && variables::visuals::modulation::team::glow )
+				glow_object.set ( variables::visuals::modulation::team::glow_color [ 0 ], variables::visuals::modulation::team::glow_color [ 1 ], variables::visuals::modulation::team::glow_color [ 2 ], 0.8f );
+
+			break;
+		}
+		}
+	}
 }

@@ -57,6 +57,12 @@ public:
 	vec3_t operator+( const vec3_t& v ) {
 		return vec3_t{ x + v.x, y + v.y, z + v.z };
 	}
+	vec3_t operator+( const float &v ) {
+		return vec3_t { x + v, y + v, z + v };
+	}
+	vec3_t operator-( const float & v ) {
+		return vec3_t { x - v, y - v, z - v };
+	}
 	vec3_t operator+( const vec3_t& v ) const {
 		return vec3_t( x + v.x, y + v.y, z + v.z );
 	}

@@ -1,9 +1,16 @@
 #include "nade_prediction.hpp"
 
+#include "../../menu/render/menu_render.hpp"
+#include "../../menu/ImGui/imgui.h"
+#include "../../menu/ImGui/imgui_internal.h"
+#include "../../../dependencies/interfaces/i_memalloc.h"
 c_nade_prediction nade_pred;
 
 void c_nade_prediction::predict( c_usercmd* user_cmd ) {
 	if ( !interfaces::engine->is_connected( ) && !interfaces::engine->is_in_game( ) )
+		return;
+
+	if ( !variables::visuals::world::grenade_prediction )
 		return;
 
 	constexpr float restitution = 0.45f;
@@ -123,6 +130,7 @@ void c_nade_prediction::trace( c_usercmd* user_cmd ) {
 
 	if ( !( user_cmd->buttons & in_attack ) && !( user_cmd->buttons & in_attack2 ) ) {
 		_predicted = false;
+		_w2s = false;
 		return;
 	}
 
@@ -145,55 +153,71 @@ void c_nade_prediction::trace( c_usercmd* user_cmd ) {
 	_predicted = false;
 }
 
-void c_nade_prediction::draw( ) {
-	if ( !interfaces::engine->is_connected( ) && !interfaces::engine->is_in_game( ) )
-		return;
+void c_nade_prediction::paint_traverse ( ) {
 
-	if ( !csgo::local_player || !csgo::local_player->is_alive( ) )
-		return;
+	if ( _predicted && !_w2s ) {
+
+		for ( auto & p : _points ) {
+			if ( !p.m_valid )
+				break;
+
+
+			if ( interfaces::debug_overlay->world_to_screen ( p.m_start, p.m_start_2 ) && interfaces::debug_overlay->world_to_screen ( p.m_end, p.m_end_2 ) ) {
+				
+				_w2s = true;
+			}
+		}
+
+	}
+}
+void c_nade_prediction::draw ( ) {
+
 	auto draw_3d_circle = [ ] ( vec3_t position, const int points, float radius, color color ) {
-		static int texture = interfaces::surface->create_new_texture_id( true );
+		//static int texture = interfaces::surface->create_new_texture_id ( true );
 
 		unsigned char color_buffer [ 4 ] = { 255, 0, 0, 255 };
 
-		interfaces::surface->set_texture_rgba( texture, color_buffer, 1, 1 );
-		interfaces::surface->set_texture( texture );
-
+		//interfaces::surface->set_texture_rgba ( texture, color_buffer, 1, 1 );
+		//interfaces::surface->set_texture ( texture );
+		//
 		float step = 3.141592654f * 2.0f / points;
-		vec3_t prev_scr_pos = vec3_t( );
+		vec3_t prev_scr_pos = vec3_t ( );
 		int step_count = 0;
 		for ( float a = 0; a < 3.141592654f * 2.0f; a += step ) {
-			vec3_t start( radius * cosf( a ) + position.x, radius * sinf( a ) + position.y, position.z );
-			vec3_t start2d = vec3_t( );
-			vec3_t center_2d = vec3_t( );
-			if ( interfaces::debug_overlay->world_to_screen( position, center_2d ) && interfaces::debug_overlay->world_to_screen( start, start2d ) ) {
-				//if ( !prev_scr_pos.is_zero( ) ) {
+			vec3_t start ( radius * cosf ( a ) + position.x, radius * sinf ( a ) + position.y, position.z );
+			vec3_t start2d = vec3_t ( );
+			vec3_t center_2d = vec3_t ( );
+			if ( interfaces::debug_overlay->world_to_screen ( position, center_2d ) && interfaces::debug_overlay->world_to_screen ( start, start2d ) ) {
+				if ( !prev_scr_pos.is_zero ( ) ) {
 					//render::draw_line( prev_scr_pos.x, prev_scr_pos.y, start2d.x, start2d.y, color );
-
-				//}
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( prev_scr_pos.x, prev_scr_pos.y ), ImVec2 ( start2d.x, start2d.y ), ImColor ( variables::visuals::world::grenade_prediction_color [ 0 ], variables::visuals::world::grenade_prediction_color [ 1 ], variables::visuals::world::grenade_prediction_color [ 2 ], variables::visuals::world::grenade_prediction_color [ 3 ] ) );
+				}
 				prev_scr_pos = start2d;
 
 			}
 		}
 	};
-	
-	vec3_t start, end;
-	if ( _predicted ) {
-		for ( auto& p : _points ) {
+
+
+	if ( _predicted && _w2s ) {
+
+		for ( auto & p : _points ) {
 			if ( !p.m_valid )
 				break;
 
-			auto nade_prediction_color = color::green( );
-			//if ( math::world_to_screen( p.m_start, start ) && math::world_to_screen( p.m_end, end ) ) {
-			//	render::draw_line( start.x, start.y, end.x, end.y, nade_prediction_color );
 
-				//if ( p.m_detonate || p.m_plane )
-					//render::draw_rect( start.x - 2, start.y - 2, 5, 5, p.m_detonate ? color( 255, 0, 0 ) :  color( 255, 255, 255 ) );
+		
+				c_menu::get ( ).draw->AddLine ( ImVec2 ( p.m_start_2.x, p.m_start_2.y ), ImVec2 ( p.m_end_2.x, p.m_end_2.y ), ImColor ( variables::visuals::world::grenade_prediction_color [ 0 ], variables::visuals::world::grenade_prediction_color [ 1 ], variables::visuals::world::grenade_prediction_color [ 2 ], variables::visuals::world::grenade_prediction_color [ 3 ] ) );
 
-			//	if ( p.m_detonate )
-					//draw_3d_circle( p.m_end, 30, 15, color::red( ) );
+				if ( p.m_detonate || p.m_plane )
+					c_menu::get ( ).draw->AddCircleFilled ( ImVec2 ( p.m_start_2.x, p.m_start_2.y ), 2.f, p.m_detonate ? ImColor ( 255, 0, 0 ) : ImColor ( 255, 255, 255 ) );
+
+				if ( p.m_detonate )
+					draw_3d_circle ( p.m_end, 30, 170, color::red ( ) );
+
 			
-			//}
 		}
+		_w2s = false;
 	}
+	
 }

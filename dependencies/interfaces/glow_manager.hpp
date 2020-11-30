@@ -7,9 +7,8 @@ public:
 		color = vec3_t(r, g, b);
 		alpha = a;
 		render_when_occluded = true;
-		render_when_unoccluded = true;
-		bloom_amount = 0.4f;
-		full_bloom_render = true;
+		render_when_unoccluded = false;
+		bloom_amount = 1.0f;
 	}
 	bool unused() {
 		return next_free_slot != -2;

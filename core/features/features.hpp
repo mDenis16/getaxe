@@ -6,17 +6,8 @@
 #include "../menu/ImGui/imgui_internal.h"
 #include <optional>
 
-
 static int hitmarker_alpha = 0;
 
-namespace legit_bot {
-	int find_target( c_usercmd* user_cmd ) noexcept;
-	void think( c_usercmd* cmd );
-	player_t* get_target( );
-
-	vec3_t get_closest_bone( player_t* target, vec3_t view );
-
-}
 namespace event_manager {
 	void round_prestart ( i_game_event * event );
 	void round_end ( i_game_event * event );
@@ -75,6 +66,7 @@ namespace resolver {
 		std::vector<float> last_hit_angle_related_to_me;
 		std::vector<float> last_feet_miss;
 		float last_reset_time;
+		float predicted_delta = 0.f;
 		float goal_feet_yaw;
 		std::string resolve_type;
 		int side = 0;
@@ -83,6 +75,7 @@ namespace resolver {
 		int brute_side = 0;
 		float last_side_change = 0.f;
 		int safety = 0;
+		float safe_point_angle = 0.f;
 		float brute_angle = 0.f;
 		float first_shoot_correction = 0.f;
 		float last_networked_time;
@@ -95,10 +88,13 @@ namespace resolver {
 	std::string side_name ( int side );
 	int get_desync_side ( vec3_t from, vec3_t to, player_t * entity, int hitbox );
 	bool get_desync_side( player_t* entity );
-	float server_feet_yaw( player_t* entity );
+	float server_feet_yaw ( player_t * entity, vec3_t angle );
+
 	float max_desync_delta( player_t* entity );
 	bool is_player_peeking( player_t* player );
 	void create_move( c_usercmd* cmd );
+	float get_safe_point_angle ( int i );
+
 	float get_real_head( player_t* entity );
 	void manage_shots ( );
 	void frame_stage( );
@@ -126,64 +122,59 @@ namespace engine_prediction {
 }
 namespace player_manager {
 
-	struct backtrack_records_t {
-		bool shoot, moving, slow_walking, lby_update;
+	struct lagcomp_t
+	{
+		bool shoot = false, moving = false, slow_walking = false, lby_update = false;
 		int flags;
 
-		float simtime, duckamount, curtime, lby;
+		float simtime = 0.f, duckamount, curtime, lby;
 		std::array< float, 24 > pose_params;
 		vec3_t absorigin, origin, eyeangles, absangles, obbmin, obbmax, velocity;
 		player_t* entity;
 		matrix_t bone [ 128 ];
+		int bone_count = 0;
 		matrix_t bone_left [ 128 ];
 		matrix_t bone_right [ 128 ];
 		anim_state state;
 		resolver::resolve_info resolver;
 		animationlayer anim_layer [ 15 ];
+		float speed = 0.f;
 	};
-
-	namespace extrapolate {
-
-		void extrapolate_player( player_t* entity, backtrack_records_t& record );
-		extern  backtrack_records_t extrapolate_records [ 64 ];
-	}
 
 	player_t* util_player_by_index( int index );
 
-	
-	backtrack_records_t find_best_tick( player_t* entity );
+
 	void update_animations( player_t* entity );
 
 	void manage_bones( );
 
 	void setup_players( void );
 
-
-	void recieve_record( player_t* entity, backtrack_records_t& record );
+	void recieve_record( player_t* entity, lagcomp_t& record );
 
 	namespace event_logs {
 		void bullet_impact( i_game_event* event );
 	};
 
-	extern backtrack_records_t best_tick_global [ 65 ];
+	extern lagcomp_t best_tick_global [ 65 ];
 	float interpolation_time( );
 	float get_lerp_time( );
-	extern std::deque< backtrack_records_t > records [ 64 ];
-	extern 	backtrack_records_t backup_data [ 64 ];
+	extern std::deque< lagcomp_t > records [ 64 ];
+	extern 	lagcomp_t backup_data [ 64 ];
 
-	bool is_tick_valid( backtrack_records_t record );
+	bool is_tick_valid( lagcomp_t record );
 
 
-	void get_rotated_matrix( backtrack_records_t record, float angle, matrix_t new_matrix [ MAXSTUDIOBONES ] );
+	void get_rotated_matrix( lagcomp_t record, float angle, matrix_t new_matrix [ MAXSTUDIOBONES ] );
 
 	void setup_records( );
 
 	void backup_player( player_t* entity );
 
-	void restore_record( player_t* entity, backtrack_records_t record );
+	void restore_record( player_t* entity, lagcomp_t record );
 
 	void restore_player( player_t* entity );
-	std::vector<vec3_t> on_shot_safe( player_t* entity, backtrack_records_t& record );
+
 }
 namespace anti_aim {
 	struct angle_data {
@@ -222,6 +213,33 @@ namespace anti_aim {
 	void fix_call_animation( );
 	extern std::vector<freestand_point> points;
 }
+namespace autopeek {
+	
+	enum class peek_state {
+		standby = 0,
+		going_forward,
+		going_backward
+	};
+	struct peek_data {
+		peek_state state = peek_state::standby;
+		vec3_t backward_position = vec3_t ( );
+		vec3_t forward_position = vec3_t ( );
+		vec3_t moving_position = vec3_t ( );
+		vec3_t origin = vec3_t ( );
+		bool pressed_last_tick = false;
+		bool should_disable = false;
+		bool run = false;
+		bool finished = false;
+	};
+	void run_cm ( c_usercmd * cmd );
+	void search_position ( );
+	void move ( c_usercmd * cmd );
+	void moving_check ( );
+	void reset ( );
+	void key_check ( );
+	
+	extern peek_data m_data;
+}
 namespace autostop {
 	vec3_t calculate_next_stop( );
 	vec3_t calculate_next_stop( player_t* entity );
@@ -230,8 +248,12 @@ namespace autostop {
 	void clamp_movement_speed( c_usercmd* cmd, float speed );
 
 	void slow_walk( c_usercmd* cmd, bool override );
+	struct slow_data {
+		bool called_this_tick;
 
-	
+	};
+	extern slow_data m_slow_data;
+
 	void stop_movement( c_usercmd* cmd );
 
 	void rotate_movement( c_usercmd* cmd, float yaw );
@@ -268,83 +290,104 @@ namespace fake_lag {
 	void on_peek( c_usercmd* cmd, bool& send_packet );
 	void create_move( c_usercmd* cmd, bool& send_packet );
 }
-namespace ragebot {
-	
+namespace accuracy {
+	struct auto_stop {
+		bool searching_spot;
+		int last_time;
+		vec3_t shot_spot;
+		vec3_t shot_origin;
+		
+	};
+	extern auto_stop m_data;
+	void create_move ( c_usercmd* cmd );
+}
+namespace animations {
+	struct anim_data {
+		// animation variables.
+		vec3_t m_rotation;
+		float            m_anim_time;
+		float            m_anim_frame;
+		float            m_real_poses [ 24 ];
+		vec3_t fake_rotation;
+		animationlayer real_layers [ 15 ];
+		animationlayer m_real_layers [ 13 ];
+		float min_delta = 0.f, max_delta = 0.f,
+			stop_to_full_running_fraction = 0.f,
+			feet_speed_stand = 0.f, feet_speed_ducked = 0.f;
+		bool is_standing = false;
+		animationlayer m_layers [ 13 ];
+		bool m_ground = false;
+		float m_speed = 0.f;
+		bool should_update = false;
+		bool m_animate = false;
 
+		bool should_setup_bones = false;
+		bool should_update_client_side_animations = false;
+		int tick_count = 0;
+		float m_poses [ 24 ];
+	};
+	extern anim_data m_data;
+	void update_animations_local ( );
+	void update_animations ( );
+	void update_anim_angle ( anim_state * state, vec3_t ang );
+}
+namespace aimbot {
 	
-	
-	struct target_data
-	{
-		player_t* entity;
-		vec3_t aimpos;
-		int hitbox;
-		player_manager::backtrack_records_t record;
-		bool backtrack;
-		bool extrapolation;
-		float simtime;
-		float dmg;
+	struct collision {
 		vec3_t mins, maxs;
 		float radius;
-		matrix_t bones [ 128 ];
+	};
+	struct bestpoint {
+		vec3_t position = vec3_t ( );
+		vec3_t center = vec3_t ( );
+		float dmg = 0.f;
+		int hitbox = 0;
+		collision col;
 	};
 	struct point {
-		vec3_t point;
-		bool is_safe;
+		vec3_t pos;
+		bool safe;
 	};
-	struct safe_point {
-		vec3_t point;
-		vec3_t point2d;
-	};
-
 	
-	extern bool m_shoot_next_tick;
-	extern int last_target_index;
-
-	vec3_t get_point( player_t* entity, const int& hit_box, matrix_t bone_matrix [ 128 ] );
-
-	std::vector<point> multi_point( player_t* entity, const int& hit_box );
-	std::optional<vec3_t> get_intersect_point( vec3_t start, vec3_t end, vec3_t mins, vec3_t maxs, float radius );
-	bool is_point_is_safe( player_t* entity, vec3_t from, vec3_t point, int hitbox, matrix_t new_matrix [ MAXSTUDIOBONES ] );
-
-	void calculate_safe_points( player_t* entity );
-
-	int prioritize_hitbox( );
-
-	std::vector< int > hitscan_list( player_t* entity, bool extrapolation );
-	void modify_eye_pos( anim_state* animstate, vec3_t* pos );
-	vec3_t weapon_shot_pos( vec3_t target );
-
-	bool hit_chance ( vec3_t point, int hit_box, vec3_t angle, player_t * ent, float hitchance, int hitbox, matrix_t matrix [ MAXSTUDIOBONES ], float & radius, vec3_t & mins, vec3_t & maxs );
-
-	void get_rotated_matrix( player_t* entity, float angle, matrix_t new_matrix [ MAXSTUDIOBONES ] );
-	extern vec3_t weapon_shoot_pos;
-	std::pair<vec3_t, float> get_best_point_backtrack( player_t* entity, float min_dmg );
-
-	std::pair<vec3_t, std::pair<bool, float>> get_best_player( player_t* entity, float min_dmg );
-
-	std::pair<vec3_t, float> get_best_point( matrix_t* matrix, player_t* entity, float min_dmg );
-
-	std::pair<player_manager::backtrack_records_t, bool> find_best_tick( player_t* entity );
-
-	std::pair< vec3_t, float > get_best_point_backtrack( player_t* entity, float min_dmg );
-	extern player_manager::backtrack_records_t best_tick_global [ 65 ];
-	extern target_data get_last_target;
-	extern std::vector<point> hitscan_points;
-    target_data find_best_point( player_t* entity );
-
-	std::vector<vec3_t> get_safe_points( player_t* entity, int hitbox );
-	target_data find_best_point_backtrack( player_t* entity );
-	target_data find_best_point_extrapolation( player_t* entity );
-
-	ragebot::target_data get_target_data( player_t* entity );
-	target_data get_target_data( player_t* entity );
-	void sort_targets( );
-	
-	void createmove( c_usercmd* cmd, bool& send_packet );
-	extern std::deque<player_t*> targets;
-	struct seed {
-		float a, b, c, d;
+	struct multipoint {
+		std::vector<point> points;
+		vec3_t center;
 	};
+
+	struct aim_data {
+		bestpoint best_point;
+		player_manager::lagcomp_t record;
+		vec3_t angle;
+	};
+	struct target {
+		player_t * player = nullptr;
+		int index = -1;
+		float health = 0.f;
+		studio_hitbox_set_t * hitbox_set;
+		aim_data aimbot;
+	};
+	struct visual_debug {
+		vec3_t from, end;
+		vec3_t aimbot_hit, aimbot_hit_2d;
+		vec3_t from_2d, end_2d;
+	};
+	extern visual_debug m_visual_debug;
+	extern target  best_target;
+	bestpoint best_point ( target & entity, player_manager::lagcomp_t & record );
+	bool hitchance ( target & entity );
+	void select_targets ( );
+	void sort_list ( );
+	void update_targets ( );
+	void populate_list ( );
+	void  multi_point ( target & entity, const int & hit_box, player_manager::lagcomp_t & record, multipoint & points, bool should_disable = false );
+	void scan ( target & entity );
+	extern std::vector<target> targets;
+	extern std::vector<int> hitscan_list;
+	std::optional<vec3_t> get_intersect_point ( vec3_t start, vec3_t end, vec3_t mins, vec3_t maxs, float radius );
+	void create_move ( c_usercmd * cmd );
+	void populate_hitscan ( );
+	bool does_point_intersect ( target & entity, vec3_t point, int hitbox, matrix_t bones[128] );
+	void render ( );
 }
 
 namespace autowall {
@@ -467,12 +510,25 @@ namespace tickbase_system {
 	void pre_movement( );
 	void post_movement( );
 }
+
 namespace visuals {
 
 	struct data {
 		float width, height;
 	};
+	struct local_data {
+		bool scoped = false;
+	};
+	extern local_data m_local;
 	void draw_debug_points ( );
+
+	float draw_text ( ImFont * pFont, const std::string text, const ImVec2 & pos, float size, float const * color, float shadow, bool center, bool bold );
+	
+	void draw_noscope ( );
+	void local_esp_think ( );
+	
+	void local_esp ( );
+	void draw_projectile ( );
 	extern data m_data;
 	struct box {
 		int x, y, w, h;
@@ -484,6 +540,148 @@ namespace visuals {
 			this->h = h;
 		}
 	};
+	bool get_playerbox ( entity_t * ent, visuals::box & in );
+	namespace projectiles {
+		class proj_data {
+		public:
+			visuals::box box_data;
+			float distance = 0.f;
+			std::string owner_name;
+			std::string name;
+			bool on_screen = false;
+			virtual bool is_weapon ( ) = 0;
+			virtual bool is_grenade ( ) = 0;
+			virtual std::string get_name ( ) = 0;
+		protected:
+			entity_t * entity;
+		};
+		
+		namespace weapons {
+			class weapon_data : public proj_data {
+			public:
+				std::string weapon_icon;
+			
+				std::string get_name ( ) {
+					if ( !entity )
+						return "weapon";
+					if ( strstr ( entity->client_class ( )->network_name, ( "CWeapon" ) ) ) {
+						std::string data = strstr ( entity->client_class ( )->network_name, ( "CWeapon" ) );
+						std::transform ( data.begin ( ), data.end ( ), data.begin ( ), ::tolower ); //convert dropped weapons names to lowercase, looks cleaner - designer
+						return data;
+					}
+					if ( !entity->client_class ( ) )
+						return "weapon";
+					auto class_id = entity->client_class ( )->class_id;
+					switch ( class_id ) {
+					case cc4:
+						return "c4";
+						break;
+					case cdeagle:
+						return "deagle";
+						break;
+					case cak47:
+						return "ak47";
+						break;
+					default:
+						break;
+					}
+					auto model_name = interfaces::model_info->get_model_name ( entity->model ( ) );
+					if ( strstr ( model_name, "w_defuser" ) )
+						return "defuse kit";
+
+				}
+				bool is_weapon ( ) {
+					return entity->is_weapon ( );
+				}
+				bool is_grenade ( ) {
+					return false;
+				}
+			};
+			extern std::vector<weapon_data> weapons;
+			void think ( weapon_t * weapon );
+			void draw ( );
+		}
+		namespace grenades {
+			enum grenade_type {
+				flashbang,
+				smokegrenade,
+				incendiarygrenade,
+				molotov,
+				fraggrenade,
+				decoy
+			};
+			class grenade_data : public proj_data {
+			public:
+				std::string weapon_icon;
+				std::string get_name ( ) {
+					if ( !entity )
+						return "weapon";
+					if ( strstr ( entity->client_class ( )->network_name, ( "CWeapon" ) ) ) {
+						std::string data = strstr ( entity->client_class ( )->network_name, ( "CWeapon" ) );
+						std::transform ( data.begin ( ), data.end ( ), data.begin ( ), ::tolower ); //convert dropped weapons names to lowercase, looks cleaner - designer
+						return data;
+					}
+					if ( !entity->client_class ( ) )
+						return "weapon";
+					auto class_id = entity->client_class ( )->class_id;
+					switch ( class_id ) {
+					case csmokegrenadeprojectile:
+						return "c4";
+						break;
+					case cdeagle:
+						return "deagle";
+						break;
+					case cak47:
+						return "ak47";
+						break;
+					default:
+						break;
+					}
+					auto model_name = interfaces::model_info->get_model_name ( entity->model ( ) );
+					if ( strstr ( model_name, "w_defuser" ) )
+						return "defuse kit";
+
+				}
+				std::string name;
+				grenade_type get_type ( ) {
+					if ( name.find ( "flashbang" ) != std::string::npos ) {
+						return grenade_type::flashbang;
+					}
+
+					else if ( name.find ( "smokegrenade" ) != std::string::npos ) {
+						return grenade_type::smokegrenade;
+					}
+
+					else if ( name.find ( "incendiarygrenade" ) != std::string::npos ) {
+						return grenade_type::incendiarygrenade;
+					}
+
+					else if ( name.find ( "molotov" ) != std::string::npos ) {
+						return grenade_type::molotov;
+					}
+
+					else if ( name.find ( "fraggrenade" ) != std::string::npos ) {
+						return grenade_type::fraggrenade;
+					}
+
+					else if ( name.find ( "decoy" ) != std::string::npos ) {
+						return grenade_type::decoy;
+					}
+				}
+				bool is_weapon ( ) {
+					return entity->is_weapon ( );
+				}
+				bool is_grenade ( ) {
+					return true;
+				}
+			};
+			extern std::vector<grenade_data> grenades;
+			void think ( entity_t * grenade );
+			void draw ( );
+		}
+		void think ( );
+		void draw ( );
+	}
 	namespace notifications {
 		struct notify {
 			std::string text;
@@ -513,6 +711,7 @@ namespace visuals {
 		struct data {
 			visuals::box box_data;
 			bool ready = false;
+			float distance = 0.f;
 			int index;
 			std::string weapon_icon;
 			std::string weapon_name;
@@ -522,11 +721,13 @@ namespace visuals {
 			bool valid;
 			bool dormant;
 			bool enemy;
+			bool out_of_pov = false;
+			float last_seen_time = 0.f;
 			vec3_t origin, mins, maxs;
 			player_info_t player_info;
 		};
 
-		extern visuals::player::data m_data[65];
+		extern  std::array<visuals::player::data, 65> m_data;
 
 		void player_death ( i_game_event * event );
 
@@ -545,6 +746,10 @@ namespace visuals {
 		void sound ( );
 
 		void paint_traverse( void );
+
+		void aimbot ( visuals::player::data _data );
+	
+		void think ( );
 	};
 	
 	namespace chams {
@@ -554,6 +759,7 @@ namespace visuals {
 			Modulate
 		};
 		i_material* create_material( shader_type_t shade, bool ignorez, bool wireframe );
+		void think ( );
 		void run( i_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix_t* bone_to_world );
 	};
 	
@@ -571,7 +777,25 @@ namespace misc {
 		void auto_strafer( c_usercmd* cmd );
 		void strafe( c_usercmd* cmd );
 		void bunny_hop(c_usercmd* cmd);
+		struct directional_strafer {
+			float  m_speed;
+			float  m_ideal;
+			float  m_ideal2;
+			vec3_t m_mins;
+			vec3_t m_maxs;
+			vec3_t m_origin;
+			float  m_switch_value = 1.f;
+			int    m_strafe_index;
+			float  m_old_yaw;
+			float  m_circle_yaw;
+			bool   m_invert;
+			bool m_slow_motion;
 
+		};
+		extern directional_strafer m_strafer;
+
+		void directional_movement ( c_usercmd * cmd );
+		void fix_mvoe ( c_usercmd * cmd, vec3_t wish_angles );
 		namespace recorder {
 			enum recording_state {
 			   state_idle,
@@ -640,3 +864,35 @@ namespace misc {
 	}
 }
 
+
+
+namespace legit_bot {
+	struct data_t {
+		player_t * current_target = nullptr;
+		vec3_t aimbot_angle;
+		int hitbox;
+		vec3_t hitbox_position;
+		vec3_t hitbox_angle;
+		vec3_t target_angle;
+		
+		vec3_t current_angle;
+		vec3_t random_hitbox_position;
+		vec3_t random_angle;
+		bool shoot_before = false;
+		bool hit_random_angle = false;
+		float random_x = 0.f;
+		float random_y = 0.f;
+		vec3_t last_punch = vec3_t ( );
+		bool attack_last_tick = false;
+
+	};
+	extern data_t m_data;
+	player_t * get_closest_target ( );
+	void run ( c_usercmd * cmd );
+	void validate_target ( );
+	void linear_smooth ( );
+	void calculate_angle ( );
+	void apply_rcs ( );
+	void calculate_hitbox ( );
+	void apply_angle ( c_usercmd * cmd );
+}

@@ -36,6 +36,11 @@
 			option_single ( "XYZ", "Draw player invisible", variables::visuals::modulation::team::visible, variables::visuals::modulation::team::visible_color );
 			option_single ( "Glow", "Draw player visible", variables::visuals::modulation::team::glow, variables::visuals::modulation::team::glow_color );
 		}, 300, variables::visuals::modulation::team::enabled );
-
+		option ( "World Assist", "Assist your gameplay", [ = ] ( ) {
+			option_single ( "Grenade prediction", "Predict your grenade path", variables::visuals::world::grenade_prediction, variables::visuals::world::grenade_prediction_color );
+			
+			option_single ( "Weapons esp", "Show weapons on map", variables::visuals::world::draw_weapons, variables::visuals::world::draw_weapons_color );
+			option_single ( "Grenades esp", "Show grenades on map", variables::visuals::world::draw_grenades, variables::visuals::world::draw_weapons_color );
+		}, 300, variables::visuals::modulation::team::enabled );
 
 	}

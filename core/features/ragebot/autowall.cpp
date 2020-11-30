@@ -48,7 +48,7 @@ float autowall::GetDamage( player_t* pLocal, const vec3_t& vecStart, const vec3_
 	data.vecPosition = vecStart;
 	data.filter.skip = pLocal;
 
-	math::VectorAnglesAwall( vecDelta, angView );
+	math::VectorAnglesAwall ( vecDelta, angView );
 	vecDirection = math::angle_vector( angView );
 	vecDirection.normalize_in_place( );
 	data.vecDir = vecDirection;
@@ -91,7 +91,7 @@ bool autowall::can_hit_float_point( const vec3_t& point, const vec3_t& source )
 
 	data.vecPosition = source;
 	
-	math::VectorAnglesAwall( vecDelta, angView );
+	math::vector_angles( vecDelta, angView );
 	vecDirection = math::angle_vector( angView );
 	vecDirection.normalize_in_place( );
 	data.vecDir = vecDirection;
@@ -472,7 +472,7 @@ void autowall::TraceLine( const vec3_t& vecAbsStart, const vec3_t& vecAbsEnd, un
 	ray_t ray = { };
 	ray.initialize( vecAbsStart, vecAbsEnd );
 	trace_filter_skip_one_entity filter( pSkip );
-	interfaces::trace_ray->trace_ray( ray, fMask, &filter, pTrace );
+	interfaces::trace_ray->trace_ray( ray, fMask, &filter, pTrace ); /*crash */
 }
 float autowall::get_thickness( vec3_t& start, vec3_t& end ) {
 	vec3_t dir = end - start;

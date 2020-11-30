@@ -9,6 +9,7 @@ void event_listener::fire_game_event( i_game_event* event ) {
 		resolver::event_logs::player_hurt ( event );
 		break;
 	case fnv::hash ( "bullet_impact" ):
+		anti_aim::event_logs::bullet_impact ( event );
 		shot_processor::bullet_impact ( event );
 		resolver::event_logs::bullet_impact ( event );
 		break;

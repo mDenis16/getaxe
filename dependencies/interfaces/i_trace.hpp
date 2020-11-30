@@ -149,7 +149,7 @@ public:
 #define	CONTENTS_AREAPORTAL		0x8000		/**< remaining contents are non-visible, and don't eat brushes. */
 #define	CONTENTS_PLAYERCLIP		0x10000
 #define	CONTENTS_MONSTERCLIP	0x20000
-
+#define MASK_SHOT_BRUSHONLY			(CONTENTS_SOLID|CONTENTS_MOVEABLE|CONTENTS_WINDOW|CONTENTS_DEBRIS)
 /**
 * @section currents can be added to any other contents, and may be mixed
 */

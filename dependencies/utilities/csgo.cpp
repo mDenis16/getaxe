@@ -2,17 +2,23 @@
 
 namespace csgo {
 	player_t* local_player = nullptr;
+	int screen_height = 0;
+	view_matrix_t screen_matrix;
+	int screen_width = 0;
 	matrix_t player_bones[ 65 ][ 128 ];
+	matrix_t real_matrix [ 128 ];
 	matrix_t right_player_bones [ 65 ][ 128 ];
 	matrix_t left_player_bones [ 65 ][ 128 ];
 	matrix_t fake_matrix[ 128 ];
-	matrix_t real_matrix [ 128 ];
+
 	bool choke_next_tick = false;
 	vec3_t last_origin;
 	float last_send_time = 0.f;
 	std::array< float, 24 > pose_params;
 	bool in_setup_bones [ 65 ];
 	 bool in_trace = false;
+	 bool should_setup_bones = false;
+	 vec3_t  m_strafe_angles;
 	  bool send_packet = false;
 	 bool fresh_tick = false;
 	 bool lagPeek = false;

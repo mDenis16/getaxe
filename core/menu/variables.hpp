@@ -42,32 +42,21 @@ namespace variables {
 	}
 	namespace legit_bot {
 		inline bool enable = false;
-		inline bool mouse_move = false;
+		inline float curve_factor = 0.f;
 		inline float fov = 0.f;
-		inline float smooth_x = 0.f;
-		inline float smooth_y = 0.f;
-		inline int type = 0;
-		inline int rcs_type = 0;
-		inline float time_y = 0.f;
-		inline float time = 0.f;
-		inline float time_x = 0.f;
-		inline float rcs = 0.f;
-		inline float rcs_x = 0.f;
-		inline float rcs_y = 0.f;
-		inline int smooth_type = 0;
-		inline float cancel_fov = 0.f;
-		inline bool hitscan[ 20 ];
-		inline int hitbox = 0;
-		inline bool backtrack = false;
-		inline bool aim_at_backtrack = false;
-		inline float backtrack_ms = 0.f;
+		inline float  recoil_x = 0.f;
+		inline float recoil_y = 0.f;
+		inline bool recoil = false;
+		inline float smooth = 0.f;
 	}
 	namespace ragebot {
 		inline float point_scale = 0.f;
 		inline float head_scale = 0.f;
-		inline bool safe_point = false;
+		inline bool nospread = false;
+
 		inline bool resolver = false;
 		inline int prioritize_hitbox = 0;
+		inline int safe_point = 0;
 		inline bool head_scan = false;
 		inline bool body_scan = false;
 		inline bool feet_scan = false;
@@ -89,6 +78,7 @@ namespace variables {
 		inline bool multipointhitscan [ 20 ];
 		inline float min_dmg = 0.f;
 		inline int max_targets = 2;
+		inline int record_select = 0;
 	}
 	namespace visuals {
 		namespace enemy {
@@ -135,6 +125,15 @@ namespace variables {
 				inline float glow_color [ 4 ];
 			}
 
+		}
+		namespace world {
+			inline bool grenade_prediction = false;
+			inline float grenade_prediction_color [ 4 ] = { 0,24,0, 255 };
+
+
+			inline bool draw_grenades = false;
+			inline bool draw_weapons = false;
+			inline float draw_weapons_color [ 4 ] = { 255, 255, 255, 255 };
 		}
 		/*namespace chams {
 			inline int material = 0;

@@ -13,7 +13,7 @@ float dsdsDdfdfdffdrawText ( ImFont * pFont, const std::string & text, const ImV
 	float y = 0.0f;
 	int i = 0;
 
-	while ( std::getline ( stream, line ) ) {
+	while ( std::getline ( stream, line ) && line.length ( ) != 0 ) {
 		ImVec2 textSize = pFont->CalcTextSizeA ( size, FLT_MAX, 0.0f, line.c_str ( ) );
 
 		if ( center ) {

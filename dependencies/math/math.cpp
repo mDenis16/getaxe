@@ -1,44 +1,8 @@
 #include "../utilities/csgo.hpp"
+#include "../../core/menu/render/menu_render.hpp"
 
-//aimtux
-void math::correct_movement( vec3_t old_angles, c_usercmd* cmd, float old_forwardmove, float old_sidemove ) {
-	vec3_t vecForward, vecRight, vecUp, vecForwardOld, vecRightOld, vecUpOld;
-   math::angle_vectors ( old_angles, &vecForward, &vecRight, &vecUp );
-   math::angle_vectors( cmd->viewangles, &vecForwardOld, &vecRightOld, &vecUpOld );
 
-	const float flFwdLenght = vecForward.Length2D( );
-	const float flRightLenght = vecRight.Length2D( );
-	const float flUpLenght = std::sqrtf( vecUp.z * vecUp.z );
 
-	const vec3_t vecNormFwd = vec3_t( 1.f / flFwdLenght * vecForward.x, 1.f / flFwdLenght * vecForward.y, 0.f ) * cmd->forwardmove;
-	const vec3_t vecNormRight = vec3_t( 1.f / flRightLenght * vecRight.x, 1.f / flRightLenght * vecRight.y, 0.f ) * cmd->sidemove;
-	const vec3_t vecNormUp = vec3_t( 0.f, 0.f, 1.f / flUpLenght * vecUp.z ) * cmd->upmove;
-
-	const float flFwdOldLenght = vecForwardOld.Length2D( );
-	const float flRightOldLenght = vecRightOld.Length2D( );
-	const float flUpOldLenght = std::sqrtf( vecUpOld.z * vecUpOld.z );
-
-	const vec3_t vecNormFwdOld( 1.f / flFwdOldLenght * vecForwardOld.x, 1.f / flFwdOldLenght * vecForwardOld.y, 0.f );
-	const vec3_t vecNormRightOld( 1.f / flRightOldLenght * vecRightOld.x, 1.f / flRightOldLenght * vecRightOld.y, 0.f );
-	const vec3_t vecNormUpOld( 0.f, 0.f, 1.f / flUpOldLenght * vecUpOld.z );
-
-	const float x = vecNormFwdOld.x * vecNormRight.x + vecNormFwdOld.y * vecNormRight.y + vecNormFwdOld.z * vecNormRight.z
-		+ ( vecNormFwdOld.x * vecNormFwd.x + vecNormFwdOld.y * vecNormFwd.y + vecNormFwdOld.z * vecNormFwd.z )
-		+ ( vecNormFwdOld.y * vecNormUp.x + vecNormFwdOld.x * vecNormUp.y + vecNormFwdOld.z * vecNormUp.z );
-
-	const float y = vecNormRightOld.x * vecNormRight.x + vecNormRightOld.y * vecNormRight.y + vecNormRightOld.z * vecNormRight.z
-		+ ( vecNormRightOld.x * vecNormFwd.x + vecNormRightOld.y * vecNormFwd.y + vecNormRightOld.z * vecNormFwd.z )
-		+ ( vecNormRightOld.x * vecNormUp.y + vecNormRightOld.y * vecNormUp.x + vecNormRightOld.z * vecNormUp.z );
-
-	const float z = vecNormUpOld.x * vecNormRight.y + vecNormUpOld.y * vecNormRight.x + vecNormUpOld.z * vecNormRight.z
-		+ ( vecNormUpOld.x * vecNormFwd.y + vecNormUpOld.y * vecNormFwd.x + vecNormUpOld.z * vecNormFwd.z )
-		+ ( vecNormUpOld.x * vecNormUp.x + vecNormUpOld.y * vecNormUp.y + vecNormUpOld.z * vecNormUp.z );
-
-	// clamp and apply corrected movement
-	cmd->forwardmove = std::clamp( x, -450.f, 450.f );
-	cmd->sidemove = std::clamp( y, -450.f, 450.f );
-	cmd->upmove = std::clamp( z, -450.f, 450.f );
-}
  int math::time_to_ticks( float time ) {
 	 return static_cast< int >( time / interfaces::globals->interval_per_tick + 0.5f );
 }
@@ -63,6 +27,14 @@ void math::correct_movement( vec3_t old_angles, c_usercmd* cmd, float old_forwar
 }
  vec3_t math::get_matrix_position( const matrix_t& src ) {
 	 return vec3_t( src [ 0 ][ 3 ], src [ 1 ][ 3 ], src [ 2 ][ 3 ] );
+ }
+ int math::ticks_to_stop ( vec3_t velocity ) {
+
+	 const float max_speed = 320.f;
+	 const float acceleration = 5.5f;
+	 const float max_accelspeed = acceleration * max_speed * interfaces::globals->interval_per_tick;
+
+	 return velocity.length ( ) / max_accelspeed;
  }
  void math::set_matrix_position( vec3_t pos, matrix_t& matrix ) {
 	 for ( size_t i { }; i < 3; ++i ) {
@@ -258,7 +230,7 @@ vec3_t math::calc_angle( vec3_t src, vec3_t dst ) {
 	auto direction = src - dst;
 
 	math::normalize_num( direction, direction );
-	math::vector_angles( direction, angle );
+	math::vector_angles ( direction, angle );
 	return angle;
 }
 void math::vector_vectors( const vec3_t& forward, vec3_t& right, vec3_t& up )
@@ -452,7 +424,7 @@ vec3_t math::angle_vector( vec3_t angle ) {
 	return vec3_t( cp * cy, cp * sy, -sp );
 }
 
-void math::VectorAnglesAwall( const vec3_t& vecForward, vec3_t& angView )
+/*void math::vector_angles( const vec3_t& vecForward, vec3_t& angView )
 {
 	float flPitch, flYaw;
 
@@ -466,31 +438,26 @@ void math::VectorAnglesAwall( const vec3_t& vecForward, vec3_t& angView )
 		flPitch = std::atan2f( -vecForward .z, vecForward.Length2D( ) ) * 180.f / M_PI;
 
 		if ( flPitch < 0.f )
-			flPitch += 360.f;
+			flPitch += 180.f;
 
 		flYaw = std::atan2f( vecForward .y, vecForward .x ) * 180.f / M_PI;
 
 		if ( flYaw < 0.f )
-			flYaw += 360.f;
+			flYaw += 180.f;
 	}
 
 	angView .x = flPitch;
 	angView .y = flYaw;
 	angView .z = 0.f;
-}
-void math::transform_vector( vec3_t& a, matrix_t& b, vec3_t& out ) {
-	out.x = a.dot( b.mat_val[ 0 ] ) + b.mat_val[ 0 ][ 3 ];
-	out.y = a.dot( b.mat_val[ 1 ] ) + b.mat_val[ 1 ][ 3 ];
-	out.z = a.dot( b.mat_val[ 2 ] ) + b.mat_val[ 2 ][ 3 ];
-}
-
-void math::vector_angles( vec3_t& forward, vec3_t& angles ) {
+}*/
+void math::vector_angles ( vec3_t & forward, vec3_t & angles ) {
 	if ( forward.y == 0.0f && forward.x == 0.0f ) {
-		angles.x = ( forward.z > 0.0f )?270.0f:90.0f;
+		angles.x = ( forward.z > 0.0f ) ? 270.0f : 90.0f;
 		angles.y = 0.0f;
-	} else {
-		angles.x = atan2( -forward.z, vec2_t( forward ).length( ) ) * -180 / static_cast< float >( M_PI );
-		angles.y = atan2( forward.y, forward.x ) * 180 / static_cast< float >( M_PI );
+	}
+	else {
+		angles.x = atan2 ( -forward.z, vec2_t ( forward ).length ( ) ) * -180 / static_cast< float >( M_PI );
+		angles.y = atan2 ( forward.y, forward.x ) * 180 / static_cast< float >( M_PI );
 
 		if ( angles.y > 90 )
 			angles.y -= 180;
@@ -501,6 +468,107 @@ void math::vector_angles( vec3_t& forward, vec3_t& angles ) {
 	}
 
 	angles.z = 0.0f;
+}
+void math::VectorAnglesAwall ( const vec3_t & vecForward, vec3_t & angView ) {
+	float flPitch, flYaw;
+
+	if ( vecForward.x == 0.f && vecForward.y == 0.f ) {
+		flPitch = ( vecForward.z > 0.f ) ? 270.f : 90.f;
+		flYaw = 0.f;
+	}
+	else {
+		flPitch = std::atan2f ( -vecForward.z, vecForward.Length2D ( ) ) * 180.f / M_PI;
+
+		if ( flPitch < 0.f )
+			flPitch += 360.f;
+
+		flYaw = std::atan2f ( vecForward.y, vecForward.x ) * 180.f / M_PI;
+
+		if ( flYaw < 0.f )
+			flYaw += 360.f;
+	}
+
+	angView.x = flPitch;
+	angView.y = flYaw;
+	angView.z = 0.f;
+}
+void math::transform_vector( vec3_t& a, matrix_t& b, vec3_t& out ) {
+	out.x = a.dot( b.mat_val[ 0 ] ) + b.mat_val[ 0 ][ 3 ];
+	out.y = a.dot( b.mat_val[ 1 ] ) + b.mat_val[ 1 ][ 3 ];
+	out.z = a.dot( b.mat_val[ 2 ] ) + b.mat_val[ 2 ][ 3 ];
+}
+
+float math::segment_to_segment ( const vec3_t s1, const vec3_t s2, const vec3_t k1, const vec3_t k2 ) {
+	static auto constexpr epsilon = 0.00000001;
+
+	auto u = s2 - s1;
+	auto v = k2 - k1;
+	const auto w = s1 - k1;
+
+	const auto a = u.dot ( u );
+	const auto b = u.dot ( v );
+	const auto c = v.dot ( v );
+	const auto d = u.dot ( w );
+	const auto e = v.dot ( w );
+	const auto D = a * c - b * b;
+	float sn, sd = D;
+	float tn, td = D;
+
+	if ( D < epsilon ) {
+		sn = 0.0;
+		sd = 1.0;
+		tn = e;
+		td = c;
+	}
+	else {
+		sn = b * e - c * d;
+		tn = a * e - b * d;
+
+		if ( sn < 0.0 ) {
+			sn = 0.0;
+			tn = e;
+			td = c;
+		}
+		else if ( sn > sd ) {
+			sn = sd;
+			tn = e + b;
+			td = c;
+		}
+	}
+
+	if ( tn < 0.0 ) {
+		tn = 0.0;
+
+		if ( -d < 0.0 )
+			sn = 0.0;
+		else if ( -d > a )
+			sn = sd;
+		else {
+			sn = -d;
+			sd = a;
+		}
+	}
+	else if ( tn > td ) {
+		tn = td;
+
+		if ( -d + b < 0.0 )
+			sn = 0;
+		else if ( -d + b > a )
+			sn = sd;
+		else {
+			sn = -d + b;
+			sd = a;
+		}
+	}
+
+	const float sc = abs ( sn ) < epsilon ? 0.0 : sn / sd;
+	const float tc = abs ( tn ) < epsilon ? 0.0 : tn / td;
+
+	m128 n;
+	auto dp = w + u * sc - v * tc;
+	n.f [ 0 ] = dp.dot ( dp );
+	const auto calc = sqrt_ps ( n.v );
+	return reinterpret_cast< const m128 * >( &calc )->f [ 0 ];
 }
 
 void math::angle_vectors( vec3_t& angles, vec3_t* forward, vec3_t* right, vec3_t* up ) {
@@ -564,7 +632,9 @@ vec3_t math::vector_divide( vec3_t& a, vec3_t& b ) {
 }
 
 bool math::screen_transform( const vec3_t& point, vec3_t& screen ) {
-	auto matrix = interfaces::engine->world_to_screen_matrix( );
+	static std::uint32_t pmatrix =  *( std::uint32_t * ) ( ( std::uint32_t ) utilities::pattern_scan( "client.dll", "0F 10 05 ? ? ? ? 8D 85 ? ? ? ? B9" ) + 3 ) + 176;
+	printf ( "pmatrix %i width, height %i %i \n", pmatrix, csgo::screen_width, csgo::screen_height );
+	auto & matrix = *( view_matrix_t * ) pmatrix;
 
 	float w = matrix[ 3 ][ 0 ] * point.x + matrix[ 3 ][ 1 ] * point.y + matrix[ 3 ][ 2 ] * point.z + matrix[ 3 ][ 3 ];
 	screen.x = matrix[ 0 ][ 0 ] * point.x + matrix[ 0 ][ 1 ] * point.y + matrix[ 0 ][ 2 ] * point.z + matrix[ 0 ][ 3 ];
@@ -659,49 +729,43 @@ float math::normalize_yaw( float f ) {
 	while ( f > 180.0f ) f -= 360.0f;
 
 	return f;
+}/*	auto VectorTransform_Wrapper = [ ] ( const vec3_t & in1, const matrix_t & in2, vec3_t & out ) {
+			auto VectorTransform = [ ] ( const float * in1, const matrix_t & in2, float * out ) {
+				auto DotProducts = [ ] ( const float * v1, const float * v2 ) {
+					return v1 [ 0 ] * v2 [ 0 ] + v1 [ 1 ] * v2 [ 1 ] + v1 [ 2 ] * v2 [ 2 ];
+				};
+				out [ 0 ] = DotProducts ( in1, in2 [ 0 ] ) + in2 [ 0 ][ 3 ];
+				out [ 1 ] = DotProducts ( in1, in2 [ 1 ] ) + in2 [ 1 ][ 3 ];
+				out [ 2 ] = DotProducts ( in1, in2 [ 2 ] ) + in2 [ 2 ][ 3 ];
+			};
+			VectorTransform ( &in1.x, in2, &out.x );
+		};*/
+vec3_t math::vector_transform ( const vec3_t & in1, const matrix_t & in2 ) {
+	vec3_t out = vec3_t ( );
+	auto VectorTransform = [ ] ( const float * in1, const matrix_t & in2, float * out ) {
+		auto DotProducts = [ ] ( const float * v1, const float * v2 ) {
+			return v1 [ 0 ] * v2 [ 0 ] + v1 [ 1 ] * v2 [ 1 ] + v1 [ 2 ] * v2 [ 2 ];
+		};
+		out [ 0 ] = DotProducts ( in1, in2 [ 0 ] ) + in2 [ 0 ][ 3 ];
+		out [ 1 ] = DotProducts ( in1, in2 [ 1 ] ) + in2 [ 1 ][ 3 ];
+		out [ 2 ] = DotProducts ( in1, in2 [ 2 ] ) + in2 [ 2 ][ 3 ];
+	};
+	VectorTransform ( &in1.x, in2, &out.x );
+	return out;
 }
 
 bool math::world_to_screen( const vec3_t& origin, vec3_t& screen ) {
-	auto matrix = interfaces::engine->world_to_screen_matrix( );
+	
+	printf ( "w2s called \n" );
+	if ( !screen_transform ( origin, screen ) ) {
 
-	auto find_point = [ ]( vec3_t& point, int screen_w, int screen_h, int degrees ) -> void {
-		float x2 = screen_w * 0.5f;
-		float y2 = screen_h * 0.5f;
+		float x = csgo::screen_width / 2.f;
+		float y = csgo::screen_height / 2.f;
+		x += 0.5f * screen.x * csgo::screen_width + 0.5f;
+		y -= 0.5f * screen.y * csgo::screen_height + 0.5f;
+		screen.x = x;
+		screen.y = y;
 
-		float d = sqrt( pow( ( point.x - x2 ), 2 ) + ( pow( ( point.y - y2 ), 2 ) ) ); //Distance
-		float r = degrees / d; //Segment ratio
-
-		point.x = r * point.x + ( 1 - r ) * x2; //find point that divides the segment
-		point.y = r * point.y + ( 1 - r ) * y2; //into the ratio (1-r):r
-	};
-
-	float w = matrix[ 3 ][ 0 ] * origin.x + matrix[ 3 ][ 1 ] * origin.y + matrix[ 3 ][ 2 ] * origin.z + matrix[ 3 ][ 3 ];
-
-	int screen_width, screen_height;
-	interfaces::engine->get_screen_size( screen_width, screen_height );
-
-	float inverse_width = -1.0f / w;
-	bool behind = true;
-
-	if ( w > 0.01 ) {
-		inverse_width = 1.0f / w;
-		behind = false;
+		return true;
 	}
-
-	screen.x = ( float ) ( ( screen_width / 2 ) + ( 0.5 * ( ( matrix[ 0 ][ 0 ] * origin.x
-		+ matrix[ 0 ][ 1 ] * origin.y
-		+ matrix[ 0 ][ 2 ] * origin.z
-		+ matrix[ 0 ][ 3 ] ) * inverse_width ) * screen_width + 0.5 ) );
-
-	screen.y = ( float ) ( ( screen_height / 2 ) - ( 0.5 * ( ( matrix[ 1 ][ 0 ] * origin.x
-		+ matrix[ 1 ][ 1 ] * origin.y
-		+ matrix[ 1 ][ 2 ] * origin.z
-		+ matrix[ 1 ][ 3 ] ) * inverse_width ) * screen_height + 0.5 ) );
-
-	if ( screen.x > screen_width || screen.x < 0 || screen.y > screen_height || screen.y < 0 || behind ) {
-		find_point( screen, screen_width, screen_height, screen_height / 2 );
-		return false;
-	}
-
-	return !( behind );
 }

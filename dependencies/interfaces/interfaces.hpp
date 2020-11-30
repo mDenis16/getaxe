@@ -16,6 +16,7 @@
 #include "iv_model_render.hpp"
 #include "iv_debug_overlay.hpp"
 #include "i_console.hpp"
+#include "i_memalloc.h"
 #include "i_localize.hpp"
 #include "i_game_event_manager.hpp"
 #include "i_input.hpp"
@@ -27,6 +28,7 @@
 #include "i_weapon_system.hpp"
 #include "i_hud_chat.hpp"
 #include "engine_sounds.hpp"
+
 namespace interfaces {
 	enum class interface_type { index, bruteforce };
 
@@ -74,7 +76,7 @@ namespace interfaces {
 		static auto find_hud_element = reinterpret_cast< int( __thiscall* )( void*, const char* ) >( utilities::pattern_scan( "client.dll", "55 8B EC 53 8B 5D 08 56 57 8B F9 33 F6 39 77 28" ) );
 		return ( T* ) find_hud_element( fn, name );
 	}
-
+	
 	extern i_base_client_dll* client;
 	extern i_input* input;
 	extern i_client_entity_list* entity_list;
@@ -103,6 +105,7 @@ namespace interfaces {
 	extern i_hud_chat* chat_element;
 	extern c_physics_api* physics;
 	extern iv_engine_sound * engine_sound;
+	extern IMemAlloc * memalloc;
 	extern void* model_cache;
 	extern void* file_system;
 

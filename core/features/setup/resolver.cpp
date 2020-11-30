@@ -198,10 +198,10 @@ int resolver::get_desync_side ( vec3_t from, vec3_t to, player_t* entity, int hi
 	VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x + mod, _hitbox->maxs.y + mod, _hitbox->maxs.z + mod ), csgo::left_player_bones [ entity->index ( ) ][ _hitbox->bone ], max2 );
 	VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x - mod, _hitbox->mins.y - mod, _hitbox->mins.z - mod ), csgo::left_player_bones [ entity->index ( ) ][ _hitbox->bone ], min2 );
 
-	if ( auto intersection = ragebot::get_intersect_point ( from, to, min, max, _hitbox->radius ); intersection ) 
-		return 2;
-	if ( auto intersection = ragebot::get_intersect_point ( from, to, min2, max2, _hitbox->radius ); intersection )
-		return 1;
+	//if ( auto intersection = ragebot::get_intersect_point ( from, to, min, max, _hitbox->radius ); intersection ) 
+	//	return 2;
+	///if ( auto intersection = ragebot::get_intersect_point ( from, to, min2, max2, _hitbox->radius ); intersection )
+	//	return 1;
 	return 0;
 }
 void resolver::event_logs::bullet_impact ( i_game_event * event ) {
@@ -328,7 +328,7 @@ bool resolver::get_desync_side( player_t* entity ) {
 	}
 
 }
-float resolver::server_feet_yaw( player_t* entity )
+float resolver::server_feet_yaw( player_t* entity, vec3_t angle )
 {
 	auto animstate = entity->get_anim_state( );
 
@@ -341,11 +341,11 @@ float resolver::server_feet_yaw( player_t* entity )
 	auto ducking_speed = max( 0.f, min( 1.f, *reinterpret_cast< float* > ( animstate + 0xFC ) ) );
 	auto running_speed = max( 0.f, min( *reinterpret_cast< float* > ( animstate + 0xF8 ), 1.f ) );
 	/* offsets */
-	auto backup_eflags = entity->get_eflags( );
+	auto backup_eflags = entity->get_ieflags ( );
 
-	entity->get_eflags( ) = ( 1 << 12 );
+	entity->get_ieflags( ) = ( 1 << 12 );
 	auto abs_velocity = *reinterpret_cast< vec3_t* > ( uintptr_t( entity ) + 0x94 );
-	entity->get_eflags( ) = backup_eflags;
+	entity->get_ieflags ( ) = backup_eflags;
 
 	auto speed = std::fmin( abs_velocity.length( ), 260.0f );
 
@@ -379,7 +379,7 @@ float resolver::server_feet_yaw( player_t* entity )
 		return delta;
 	};
 
-	auto eye_feet_delta = angle_diff( animstate->m_flEyeYaw, goal_feet_yaw );
+	auto eye_feet_delta = angle_diff( angle.y, goal_feet_yaw );
 
 	auto flYawModifier = ( ( ( ground_fraction * -0.3f ) - 0.2f ) * running_speed ) + 1.0f;
 
@@ -405,14 +405,17 @@ float resolver::server_feet_yaw( player_t* entity )
 	if ( speed > 0.1f || fabs( abs_velocity.z ) > 100.0f )
 	{
 		goal_feet_yaw = math::fl_approach_angle(
-			animstate->m_flEyeYaw,
+			angle.y,
 			goal_feet_yaw,
 			( ( ground_fraction * 20.0f ) + 30.0f )
 			* animstate->m_flLastClientSideAnimationUpdateTime );
 	}
 	else
 	{
-		goal_feet_yaw = entity->lower_body_yaw ( );
+		goal_feet_yaw = math::fl_approach_angle (
+			entity->lower_body_yaw ( ),
+			goal_feet_yaw,
+			animstate->m_flLastClientSideAnimationUpdateTime * 100.0f );
 	}
 
 	if ( goal_feet_yaw > 5000 || goal_feet_yaw < -5000 )
@@ -476,62 +479,31 @@ bool resolver::is_player_peeking( player_t* player ) {
 	return peeking;
 }
 void resolver::create_move( c_usercmd* cmd ) {
-	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
-		player_t* entity = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( i ) );
-
-		if ( !entity )
-			continue;
-
-		if ( entity->dormant( ) )
-			continue;
-		if ( !entity->is_enemy( ) )
-			continue;
-		if ( entity->health( ) <= 0 )
-			continue;
-		//resolver_data [ i ].real_head = get_real_head( entity );
-		//resolver_data [ i ].desync_side = get_desync_side( entity );
-	//   resolver_data [ i ].will_peek = is_player_peeking( entity );
-
-	}
+	
 }
-float resolver::get_real_head( player_t* entity ) {
-	float step = M_PI * 2.0 / 8;
-	float lowest_dmg = 99999.F;
-	float final_angle = 0.f;
-	for ( float a = 0; a < ( M_PI * 2.0 ); a += step )
-	{
-		float angle = RAD2DEG( a );
-		vec3_t BonePos;
-		vec3_t OutPos;
-		matrix_t BoneMatrix [ MAXSTUDIOBONES ];
-		for ( int i = 0; i < MAXSTUDIOBONES; i++ )
-		{
-			math::angle_matrix( vec3_t( 0, angle, 0 ), BoneMatrix [ i ] );
-			math::matrix_multiply( BoneMatrix [ i ], csgo::player_bones [ entity->index( ) ][ i ] );
-			BonePos = vec3_t( csgo::player_bones [ entity->index( ) ][ i ][ 0 ][ 3 ], csgo::player_bones [ entity->index( ) ][ i ][ 1 ][ 3 ], csgo::player_bones [ entity->index( ) ][ i ][ 2 ][ 3 ] ) - entity->origin( );
-			math::vector_rotate( BonePos, vec3_t( 0, angle, 0 ), OutPos );
-			OutPos += entity->origin( );
-			BoneMatrix [ i ][ 0 ][ 3 ] = OutPos.x;
-			BoneMatrix [ i ][ 1 ][ 3 ] = OutPos.y;
-			BoneMatrix [ i ][ 2 ][ 3 ] = OutPos.z;
-		}
-
-		auto count = *( std::uint32_t* ) ( ( std::uint32_t ) entity->get_renderable( ) + 0x2918 );
-		std::memcpy( *( void** ) ( ( std::uint32_t ) entity->get_renderable( ) + 0x290C ), BoneMatrix, sizeof( matrix_t ) * count );
-		entity->set_abs_angles( vec3_t(0, angle, 0) );
-		autowall::FireBulletData_t awall = { };
-		autowall::GetDamage( csgo::local_player, entity->get_hitbox_position( hitbox_head, BoneMatrix ), awall );
-		
-		player_manager::restore_player( entity );
-
-		if ( lowest_dmg < awall.flCurrentDamage )
-		{
-			lowest_dmg = awall.flCurrentDamage;
-			final_angle = angle;
-		}
+float resolver::get_safe_point_angle ( int i ) {
+	
+	float safe_point_angle = 0.f;
+	switch ( variables::ragebot::safe_point ) {
+	case 0:
+		safe_point_angle = 0.f;
+		break;
+	case 1:
+		safe_point_angle = resolver::resolver_data [ i ].max_desync_delta / 2.5f;
+		break;
+	case 2:
+		safe_point_angle =  resolver::resolver_data [ i ].extended_desync ?  34.f :  28.f;
+		break;
+	case 3:
+		safe_point_angle = resolver::resolver_data [ i ].max_desync_delta;
+		break;
+	default:
+		break;
 	}
-	return final_angle;
+	std::clamp ( safe_point_angle, 0.f, resolver::resolver_data [ i ].max_desync_delta );
+	return safe_point_angle;
 }
+
 void resolver::manage_shots ( ) {
 	for ( size_t i = 0; i < shots.size ( ); i++ ) {
 		auto shot = &shots.at ( i );
@@ -611,7 +583,7 @@ void resolver::frame_stage( ) {
 
 	if ( !csgo::local_player )
 		return;
-	if ( !variables::ragebot::resolver )
+	if ( !variables::ragebot::enabled )
 		return;
 	manage_shots ( );
 
@@ -659,6 +631,7 @@ void resolver::frame_stage( ) {
 			float currentLayerflcycle = currentLayer.cycle, currentLayerflprevcycle = currentLayer.previous_cycle, currentLayerflweight = currentLayer.weight, currentLayerflweightdatarate = currentLayer.weight_delta_rate;
 			float previousLayerflcycle = previousLayer.cycle, previousLayerflprevcycle = previousLayer.previous_cycle, previousLayerflweight = previousLayer.weight, previousLayerflweightdatarate = previousLayer.weight_delta_rate;
 			uint32_t norder = currentLayer.order;
+			resolver_data [ i ].safe_point_angle = get_safe_point_angle ( i );
 
 			if ( current_layer_activity == 979 ) // the current layer must be triggering 979
 			{
@@ -683,39 +656,24 @@ void resolver::frame_stage( ) {
 				}
 
 			}
-			float orig_goal_feet = server_feet_yaw ( entity );
-		//	if ( entity->simulation_time ( ) != entity->get_old_simulation_time ( ) && csgo::cmd )
-		//		resolver_data [ i ].last_networked_time = math::get_estimate_server_time(csgo::cmd);
+		
+	
+		
+
+			
 
 			resolver_data [ i ].extended_desync = currentLayer.cycle == 0.f && currentLayer.weight == 0.f;
-			resolver::resolver_data [ i ].brute_angle = resolver_data [ i ].extended_desync ? resolver_data [ i ].max_desync_delta : resolver_data [ i ].max_desync_delta / 2.f;
-		
+			resolver::resolver_data [ i ].brute_angle = resolver_data [ i ].extended_desync ? resolver_data [ i ].max_desync_delta : resolver_data [ i ].max_desync_delta / 1.9f;
+		     
 			if ( resolver::resolver_data [ i ].last_hit_angle_related_to_me.size ( ) > 0 )
 				resolver::resolver_data [ i ].first_shoot_correction = resolver::resolver_data [ i ].last_hit_angle_related_to_me.at(0);
 		
-			if ( std::fabs ( resolver::resolver_data [ i ].last_side_change - interfaces::globals->cur_time ) > 6.f ) 				{
+			if ( std::fabs ( resolver::resolver_data [ i ].last_side_change - interfaces::globals->cur_time ) > 3.f ) 				{
 				resolver::resolver_data [ i ].brute_side = 0;
 			}
-		
-		/*	if ( resolver_data [ i ].is_using_desync  && resolver_data [ i ].missed_shots  > 0) {
-				switch ( resolver_data [ i ].missed_shots % 3 )
-				{
-				case 0:
-					resolver_data [ i ].final_goal_feet = angle_at_me;
-					break;
-				case 1:
-					resolver_data [ i ].final_goal_feet = orig_goal_feet + (resolver_data[i].extended_desync ?58.f : 28.f);
-					break;
-				case 2:
-					resolver_data [ i ].final_goal_feet = orig_goal_feet - ( resolver_data [ i ].extended_desync?58.f:28.f );
-					break;
 
-				default:
-					break;
-				}
-				
-			}
-			*/
+
+		
 		}
 	}
 }

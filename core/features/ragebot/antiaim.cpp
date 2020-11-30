@@ -168,61 +168,6 @@ bool should_predict( )
 	return will_update;
 }
 
-void anti_aim::update_local_animations( ) {
-	if ( !csgo::cmd )
-		return;
-
-	auto state = csgo::local_player->get_anim_state( );
-	if ( !state ) {
-		return;
-	}
-
-	if ( !interfaces::clientstate ) {
-		return;
-	}
-	if ( !interfaces::engine )
-	{
-		return;
-	}
-	auto nci = interfaces::engine->get_net_channel( );
-	if ( !nci )
-		return;
-
-
-	// allow re-animating in the same frame.
-	if ( state->m_iLastClientSideAnimationUpdateFramecount == interfaces::globals->frame_count ) {
-		state->m_iLastClientSideAnimationUpdateFramecount -= 1;
-	}
-
-	// update anim update delta as server build.
-	state->m_flUpdateTimeDelta = max( 0.0f, interfaces::globals->cur_time - state->m_flLastClientSideAnimationUpdateTime ); // negative values possible when clocks on client and server go out of sync..
-	static int last_tick = 0;
-	if (!csgo::local_player->get_anim_overlays( ))
-		return;
-	static vec3_t angle = vec3_t( );
-	
-
-		csgo::local_player->update_client_side_animations( );
-
-	
-		float lby_delta = csgo::local_player->lower_body_yaw( ) - csgo::real_angle.y;
-		lby_delta = std::remainderf( lby_delta, 360.f );
-		lby_delta = std::clamp( lby_delta, -60.f, 60.f );
-
-		float feet_yaw = std::remainderf( csgo::real_angle_static.y + lby_delta, 360.f );
-
-		if ( feet_yaw < 0.f ) {
-			feet_yaw += 360.f;
-		}
-		//csgo::local_player->get_anim_state( )->m_flGoalFeetYaw
-		//UpdateAnimationState( state, csgo::real_angle_static );
-	///	if (!csgo::send_packet )
-	///		angle = csgo::cmd->viewangles;
-		//interfaces::console->console_printf( "angleY %f \n", csgo::real_angle_static.y );
-
-	//csgo::local_player->set_abs_angles(vec3_t(0, angle.y, 0)  );
-
-}
 float anti_aim::get_freestanding_angle( ) {
 	static float last_angle = 0.f; static float last_angle_change_time = 0.f;
 
@@ -587,7 +532,7 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 	{
 		desync_side = !desync_side;
 		tick = interfaces::globals->tick_count;
-		printf( "changed dirrection \n" );
+		//printf( "changed dirrection \n" );
 	}
 /*	if ( autostop::m_autostop_data.state == 0 ) {
 		dir = !dir;
@@ -636,9 +581,10 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 		static vec3_t temp_angle = vec3_t( );
 		interfaces::engine->get_view_angles( viewangle );
 		
-
-			viewangle.y += 180.f;
-	
+		viewangle.y += 180.f;
+		if ( aimbot::targets.size()  && aimbot::targets.front().player ) {
+			viewangle.y = math::calc_angle ( csgo::local_player->origin ( ), aimbot::targets.front ( ).player->origin ( ) ).y - 180.f;
+		}
 
 		viewangle.angle_normalize( ); viewangle.angle_clamp( ); 
 		cmd->viewangles.y = viewangle.y;
