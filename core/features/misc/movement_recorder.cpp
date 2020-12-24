@@ -66,7 +66,7 @@ namespace misc::movement::recorder {
 
 	void read_cmd ( c_usercmd * cmd, custom_cmd & cmd_copy ) {
 		cmd_copy.viewangles = cmd->viewangles;
-		cmd_copy.pos = csgo::local_player->origin();
+		cmd_copy.pos = local_player::m_data.pointer->origin();
 		cmd_copy.forwardmove = cmd->forwardmove;
 		cmd_copy.sidemove = cmd->sidemove;
 		cmd_copy.upmove = cmd->upmove;

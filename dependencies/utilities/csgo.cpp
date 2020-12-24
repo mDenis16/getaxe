@@ -6,11 +6,11 @@ namespace csgo {
 	view_matrix_t screen_matrix;
 	int screen_width = 0;
 	matrix_t player_bones[ 65 ][ 128 ];
-	matrix_t real_matrix [ 128 ];
+	BoneArray real_matrix [ 128 ];
 	matrix_t right_player_bones [ 65 ][ 128 ];
 	matrix_t left_player_bones [ 65 ][ 128 ];
 	matrix_t fake_matrix[ 128 ];
-
+	bool override_velocity = false;
 	bool choke_next_tick = false;
 	vec3_t last_origin;
 	float last_send_time = 0.f;
@@ -23,9 +23,11 @@ namespace csgo {
 	 bool fresh_tick = false;
 	 bool lagPeek = false;
 	 inline bool inLagPeek = false;
+	 int tickbase_shift = 0;
 	 int shift = 0;
 	 c_usercmd* cmd = nullptr;
 	 vec3_t real_angle = vec3_t( );
+
 	 inline vec3_t real_angle_static = vec3_t( );
 	 std::vector<vec3_t> points_to_draw;
 	 vec3_t fake_angle = vec3_t( );

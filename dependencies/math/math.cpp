@@ -2,6 +2,8 @@
 #include "../../core/menu/render/menu_render.hpp"
 
 
+#define sin math::fast_sin
+#define cos math::fast_cos
 
  int math::time_to_ticks( float time ) {
 	 return static_cast< int >( time / interfaces::globals->interval_per_tick + 0.5f );
@@ -43,6 +45,56 @@
 	 matrix.invalidate( );
 
  }
+ float math::fast_sin ( float x )  {
+	 x *= float ( 0.159155 );
+	 x -= floor ( x );
+	 const auto xx = x * x;
+	 auto y = -6.87897;
+	 y = y * xx + 33.7755;
+	 y = y * xx - 72.5257;
+	 y = y * xx + 80.5874;
+	 y = y * xx - 41.2408;
+	 y = y * xx + 6.28077;
+	 return float ( x * y );
+ }
+
+  float math::fast_cos ( const float x )  {
+	 return fast_sin ( x + 1.5708f );
+ }
+ void math::angle_matrix ( const vec3_t angles, matrix3x4_t & matrix ) {
+	 float sr, sp, sy, cr, cp, cy;
+
+	 sy = sin ( DEG2RAD ( angles [ 1 ] ) );
+	 cy = cos ( DEG2RAD ( angles [ 1 ] ) );
+
+	 sp = sin ( DEG2RAD ( angles [ 0 ] ) );
+	 cp = cos ( DEG2RAD ( angles [ 0 ] ) );
+
+	 sr = sin ( DEG2RAD ( angles [ 2 ] ) );
+	 cr = cos ( DEG2RAD ( angles [ 2 ] ) );
+
+	 //matrix = (YAW * PITCH) * ROLL
+	 matrix [ 0 ][ 0 ] = cp * cy;
+	 matrix [ 1 ][ 0 ] = cp * sy;
+	 matrix [ 2 ][ 0 ] = -sp;
+
+	 float crcy = cr * cy;
+	 float crsy = cr * sy;
+	 float srcy = sr * cy;
+	 float srsy = sr * sy;
+
+	 matrix [ 0 ][ 1 ] = sp * srcy - crsy;
+	 matrix [ 1 ][ 1 ] = sp * srsy + crcy;
+	 matrix [ 2 ][ 1 ] = sr * cp;
+
+	 matrix [ 0 ][ 2 ] = ( sp * crcy + srsy );
+	 matrix [ 1 ][ 2 ] = ( sp * crsy - srcy );
+	 matrix [ 2 ][ 2 ] = cr * cp;
+
+	 matrix [ 0 ][ 3 ] = 0.0f;
+	 matrix [ 1 ][ 3 ] = 0.0f;
+	 matrix [ 2 ][ 3 ] = 0.0f;
+ }
  void math::angle_matrix( const vec3_t angles, matrix_t& matrix )
  {
 	 float sr, sp, sy, cr, cp, cy;
@@ -79,8 +131,14 @@
 	 matrix [ 2 ][ 3 ] = 0.0f;
  }
 
+
  void  math::matrix_set_column( const vec3_t& in, int column, matrix_t& out )
  {
+	 out [ 0 ][ column ] = in.x;
+	 out [ 1 ][ column ] = in.y;
+	 out [ 2 ][ column ] = in.z;
+ }
+ void  math::matrix_set_column ( const vec3_t & in, int column, matrix3x4_t & out ) {
 	 out [ 0 ][ column ] = in.x;
 	 out [ 1 ][ column ] = in.y;
 	 out [ 2 ][ column ] = in.z;
@@ -90,6 +148,10 @@
  {
 	 angle_matrix( angles, matrix_out );
 	 matrix_set_column( position, 3, matrix_out );
+ }
+ void math::angle_matrix ( const vec3_t & angles, const vec3_t & position, matrix3x4_t & matrix_out ) {
+	 angle_matrix ( angles, matrix_out );
+	 matrix_set_column ( position, 3, matrix_out );
  }
 
  void math::matrix_copy( const matrix_t& source, matrix_t& target )
@@ -371,7 +433,7 @@ void math::smooth_angle( vec3_t src, vec3_t& dst, float factor ) {
 float math::calc_distance( const vec3_t src, const vec3_t dst, bool _2d = false ) {
 	return sqrtf( pow( ( src.y - dst.y ), 2 ) + pow( ( src.x - dst.x ), 2 ) + (_2d ? 1.0 :pow( ( src.z - dst.z ), 2 ) ) );
 }
-
+/*optimize out math functions with precomputed values*/
 void math::sin_cos( float r, float* s, float* c ) {
 	*s = sin( r );
 	*c = cos( r );
@@ -477,12 +539,12 @@ void math::VectorAnglesAwall ( const vec3_t & vecForward, vec3_t & angView ) {
 		flYaw = 0.f;
 	}
 	else {
-		flPitch = std::atan2f ( -vecForward.z, vecForward.Length2D ( ) ) * 180.f / M_PI;
+		flPitch = std::atan2f ( -vecForward.z, vecForward.Length2D ( ) ) * 57.2957795131;
 
 		if ( flPitch < 0.f )
 			flPitch += 360.f;
 
-		flYaw = std::atan2f ( vecForward.y, vecForward.x ) * 180.f / M_PI;
+		flYaw = std::atan2f ( vecForward.y, vecForward.x ) * 57.2957795131;
 
 		if ( flYaw < 0.f )
 			flYaw += 360.f;

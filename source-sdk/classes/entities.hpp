@@ -10,7 +10,8 @@ namespace csgo {
 	extern player_t * local_player;
 
 	extern matrix_t player_bones [ 65 ][ 128 ];
-	extern  bool in_setup_bones [ 65 ];
+	extern  bool in_
+		[ 65 ];
 }
 enum data_update_type_t {
 	DATA_UPDATE_CREATED = 0,
@@ -173,12 +174,50 @@ struct bbox_t {
 		this->h = h;
 	}
 };
+struct RenderableInstance_t {
+	uint8_t m_alpha;
+	__forceinline RenderableInstance_t ( ) : m_alpha { 255ui8 } { }
+};
+
+class IHandleEntity {
+public:
+	virtual ~IHandleEntity ( ) { }
+	virtual void SetRefEHandle ( const void * handle ) = 0;
+	virtual const unsigned long & GetRefEHandle ( ) const = 0;
+};
+
+class IClientUnknown : public IHandleEntity {
+public:
+	virtual void * GetCollideable ( ) = 0;
+	virtual void * GetClientNetworkable ( ) = 0;
+	virtual void * GetClientRenderable ( ) = 0;
+	virtual void * GetIClientEntity ( ) = 0;
+	virtual void * GetBaseEntity ( ) = 0;
+	virtual void * GetClientThinkable ( ) = 0;
+	virtual void * GetClientAlphaProperty ( ) = 0;
+};
 
 class entity_t {
 public:
 	void * animating ( ) {
 		return reinterpret_cast< void * >( uintptr_t ( this ) + 0x4 );
 	}
+	i_client_renderable * get_renderable_virtual ( void ) {
+		return ( i_client_renderable * ) ( ( uintptr_t ) this + 0x4 );
+	}
+	matrix_t & coord_frame ( ) {
+		const static auto m_CollisionGroup = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseEntity" ), fnv::hash ( "m_CollisionGroup" ) );
+
+		auto m_rgflCoordinateFrame = m_CollisionGroup - 0x30;
+
+		return *reinterpret_cast< matrix_t * >( reinterpret_cast< uintptr_t >( this ) + m_rgflCoordinateFrame );
+	}
+
+	
+	NETVAR ( "DT_BaseEntity", "m_vecMins", mins, vec3_t );
+	NETVAR ( "DT_BaseEntity", "m_vecMaxs", maxs, vec3_t );
+	NETVAR ( "DT_SmokeGrenadeProjectile", "m_bDidSmokeEffect", m_bDidSmokeEffect, bool );
+	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", m_nSmokeEffectTickBegin, int );
 	int get_sequence_act ( int sequence ) {
 		const auto model = this->model ( );
 		if ( !model )
@@ -226,6 +265,10 @@ public:
 			CALL DWORD PTR DS : [EAX + 0x28]
 		}
 	}
+	vec3_t  get_render_origin ( ) {
+		using original_fn = vec3_t  ( __thiscall * )( void * );
+		return ( *( original_fn ** ) animating ( ) ) [ 1 ] ( animating ( ) );
+	}
 
 	bool setup_bones ( matrix_t * out, int max_bones, int mask, float time ) {
 		if ( !this )
@@ -233,6 +276,24 @@ public:
 
 		using original_fn = bool ( __thiscall * )( void *, matrix_t *, int, int, float );
 		return ( *( original_fn ** ) animating ( ) ) [ 13 ] ( animating ( ), out, max_bones, mask, time );
+	}
+	bool setup_bones_alternative ( BoneArray * out, int max_bones, int mask, float time ) {
+		if ( !this )
+			return false;
+
+		using original_fn = bool ( __thiscall * )( void *, BoneArray *, int, int, float );
+		return ( *( original_fn ** ) animating ( ) ) [ 13 ] ( animating ( ), out, max_bones, mask, time );
+	}
+
+
+	__forceinline IClientUnknown * GetIClientUnknown ( ) {
+		return utilities::get_virtual_function< IClientUnknown * ( __thiscall * )( void * ) > ( networkable ( ), 0 )( networkable ( ) );
+	}
+	__forceinline unsigned long GetRefEHandle ( ) {
+		if ( !this->GetIClientUnknown ( ) )
+			return NULL;
+
+		return this->GetIClientUnknown ( )->GetRefEHandle ( );
 	}
 	model_t * model ( ) {
 		using original_fn = model_t * ( __thiscall * )( void * );
@@ -290,18 +351,25 @@ public:
 
 		return *( float * ) ( ( uintptr_t ) this + offset + 0x4 );
 	}
+
+	OFFSET ( float, get_spawn_time, 0x20 );
+
 	NETVAR ( "DT_CSPlayer", "m_fFlags", flags, int );
 	OFFSET ( bool, dormant, 0xED );
 	OFFSET ( int, get_take_damage, 0x27C )
-	NETVAR ( "DT_BaseEntity", "m_hOwnerEntity", owner_handle, unsigned long );
+		NETVAR ( "DT_BaseEntity", "m_hOwnerEntity", owner_handle, unsigned long );
 	NETVAR ( "DT_CSPlayer", "m_flSimulationTime", simulation_time, float );
 	OFFSET ( float, m_flVelocityModifier, 0xA38C );
-	NETVAR ( "DT_BasePlayer", "m_vecOrigin", origin, vec3_t );
+	NETVAR ( "DT_BaseEntity", "m_vecOrigin", origin, vec3_t );
 	NETVAR ( "DT_BasePlayer", "m_vecViewOffset[0]", view_offset, vec3_t );
 	NETVAR ( "DT_CSPlayer", "m_iTeamNum", team, int );
 	NETVAR ( "DT_BaseEntity", "m_bSpotted", spotted, bool );
 	NETVAR ( "DT_CSPlayer", "m_nSurvivalTeam", survival_team, int );
+
 	NETVAR ( "DT_CSPlayer", "m_flHealthShotBoostExpirationTime", health_boost_time, float );
+
+
+
 };
 
 class econ_view_item_t {
@@ -463,6 +531,12 @@ public:
 	}
 };
 
+class grenade_t : public entity_t {
+public:
+	NETVAR ( "DT_BaseGrenade", "m_hThrower", thrower, int );
+
+
+};
 class player_t : public entity_t {
 private:
 	template <typename T>
@@ -482,8 +556,9 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_bGunGameImmunity", has_gun_game_immunity, bool );
 	NETVAR ( "DT_CSPlayer", "m_iShotsFired", shots_fired, int );
 	NETVAR ( "DT_CSPlayer", "m_angEyeAngles", eye_angles, vec3_t );
-
-
+	 
+	NETVAR ( "DT_BaseAnimating", "m_bClientSideAnimation", m_bClientSideAnimation, bool );
+	POFFSET ( get_bone_cache, c_bone_cache, 0x2910 ) /*0x2900*/
 
 	NETVAR ( "DT_CSPlayer", "m_ArmorValue", armor, int );
 	NETVAR ( "DT_CSPlayer", "m_bHasHelmet", has_helmet, bool );
@@ -515,88 +590,60 @@ public:
 	NETVAR ( "DT_BaseEntity", "m_fEffects", m_fEffects, int );
 	OFFSET ( vec3_t, get_abs_velocity, 0x94 );
 	OFFSET ( int, Effects, 0xF0 );
-	OFFSET ( int, get_ieflags, 0xE4 );
-	NETVAR ( "CBaseAnimating", "m_bClientSideAnimation", get_clientside_animation, bool )
-		animationlayer * get_anim_overlays ( void ) {
+	OFFSET ( int, get_ieflags, 0xE8 );
 
+	OFFSET ( int, m_iOcclusionFlags, 0xA28 );
+	OFFSET ( int, m_iOcclusionFramecount, 0xA30 );
 
+	NETVAR ( "DT_BaseAnimating", "m_flCycle",  get_cycle, float );
+
+	 std::array<float, 24> & m_flPoseParameter ( ) {
+		 static int _m_flPoseParameter = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseAnimating" ), fnv::hash ( "m_flPoseParameter" ) );
+		 return *( std::array<float, 24> * )( uintptr_t ( this ) + _m_flPoseParameter );
+	 }
+	 bool & get_clientside_animation ( ) {
+		 static auto offset = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseAnimating" ), fnv::hash ( "m_bClientSideAnimation" ) );
+		 return *reinterpret_cast< bool * >( uintptr_t ( this ) + offset );
+	 }
+
+	c_bone_accessor & get_bone_accessor ( ) {
+		return *( c_bone_accessor * ) ( ( uintptr_t ) this + 0x26A8 );
+	}
+	
+
+	animationlayer * get_animoverlays ( ) {
 		return *( animationlayer ** ) ( ( uintptr_t ) this + 0x2980 );
 	}
-	animationlayer & get_anim_overlay ( int index ) {
-		return ( *( animationlayer ** ) ( ( DWORD ) this + 0x2980 ) ) [ index ];
-	}
 
-	void SetAnimLayers ( animationlayer * layers ) {
-		std::memcpy ( get_anim_overlays ( ), layers, sizeof ( animationlayer ) * 15 );
-	}
-	void GetAnimLayers ( animationlayer * layers ) {
-		std::memcpy ( layers, get_anim_overlays ( ), sizeof ( animationlayer ) * 15 );
-	}
-
-	void SetPoseParameters ( float * poses ) {
-		std::memcpy ( m_flPoseParameter ( ), poses, sizeof ( float ) * 24 );
-	}
-
-	void GetPoseParameters ( float * poses ) {
-		std::memcpy ( poses, m_flPoseParameter ( ), sizeof ( float ) * 24 );
-	}
 	void select_item ( const char * string, int sub_type = 0 ) {
 		static auto select_item_fn = reinterpret_cast< void ( __thiscall * )( void *, const char *, int ) >( utilities::pattern_scan ( "client.dll", "55 8B EC 56 8B F1 ? ? ? 85 C9 74 71 8B 06" ) );
 		select_item_fn ( this, string, sub_type );
 	}
 
 	float max_desync ( bool jitter = false ) {
-		float max_desync_angle = 0.f;
+		auto animstate = uintptr_t ( this->get_anim_state ( ) );
 
-		auto anim_state = this->get_anim_state ( );
-		if ( !anim_state )
-			return max_desync_angle;
+		float duckammount = *( float * ) ( animstate + 0xA4 );
+		float speedfraction = std::fmax ( 0, std::fmin ( *reinterpret_cast< float * >( animstate + 0xF8 ), 1 ) );
 
-		float duck_amount = anim_state->m_fDuckAmount;
-		float speed_fraction = std::max< float > ( 0, std::min< float > ( anim_state->m_flFeetSpeedForwardsOrSideWays, 1 ) );
-		float speed_factor = std::max< float > ( 0, std::min< float > ( 1, anim_state->m_flFeetSpeedUnknownForwardOrSideways ) );
+		float speedfactor = std::fmax ( 0, std::fmin ( 1, *reinterpret_cast< float * > ( animstate + 0xFC ) ) );
 
-		float yaw_modifier = ( ( ( anim_state->m_flStopToFullRunningFraction * -0.3f ) - 0.2f ) * speed_fraction ) + 1.0f;
+		float unk1 = ( ( *reinterpret_cast< float * > ( animstate + 0x11C ) * -0.30000001 ) - 0.19999999 ) * speedfraction;
+		float unk2 = unk1 + 1.f;
+		float unk3;
 
-		if ( duck_amount > 0.f ) {
-			yaw_modifier += ( ( duck_amount * speed_factor ) * ( 0.5f - yaw_modifier ) );
+		if ( duckammount > 0 ) {
+
+			unk2 += ( ( duckammount * speedfactor ) * ( 0.5f - unk2 ) );
+
 		}
 
-		max_desync_angle = anim_state->m_vVelocityY * yaw_modifier;
-		auto yaw_feet_delta = anim_state->m_flGoalFeetYaw - anim_state->m_flEyeYaw;
-		if ( jitter ) {
-			if ( yaw_feet_delta < max_desync_angle ) {
-				max_desync_angle = 180.f;
-			}
-		}
+		unk3 = *( float * ) ( animstate + 0x334 ) * unk2;
 
-		return max_desync_angle;
+		return unk3;
 	}
-	auto & get_poseparameter ( void ) {
-		constexpr auto hash = fnv::hash ( "CBaseAnimating" );
-		constexpr auto hash2 = fnv::hash ( "m_flPoseParameter" );
 
-		static uint16_t offset = 0;
 
-		if ( !offset )
-			offset = netvar_manager::get_net_var ( hash, hash2 );
-
-		return *( std::array< float, 24 > * ) ( ( uintptr_t ) this + offset );
-	}
-	__forceinline float * m_flPoseParameter ( ) {
-		constexpr auto hash = fnv::hash ( "CBaseAnimating" );
-		constexpr auto hash2 = fnv::hash ( "m_flPoseParameter" );
-
-		static uint16_t offset = 0;
-
-		if ( !offset )
-			offset = netvar_manager::get_net_var ( hash, hash2 );
-		return ( float * ) ( ( uintptr_t ) this + offset );
-	}
-	void set_pose_angles ( float yaw, float pitch ) {
-		get_poseparameter ( ).at ( 11 ) = ( pitch + 90.0f ) / 180.0f;
-		get_poseparameter ( ).at ( 2 ) = ( yaw + 180.0f ) / 360.0f;
-	}
 
 	weapon_t * active_weapon ( ) {
 		auto active_weapon = read<uintptr_t> ( netvar_manager::get_net_var ( fnv::hash ( "DT_CSPlayer" ), fnv::hash ( "m_hActiveWeapon" ) ) ) & 0xFFF;
@@ -610,15 +657,26 @@ public:
 	UINT * get_weapons ( ) {
 		return ( UINT * ) ( ( uintptr_t ) this + ( netvar_manager::get_net_var ( fnv::hash ( "DT_CSPlayer" ), fnv::hash ( "m_hMyWeapons" ) ) ) );
 	}
+
+	CUtlVector<matrix_t> & GetBoneCache ( ) {
+		static auto m_CachedBoneData = *( DWORD * ) ( utilities::pattern_scan ("client.dll",
+			"FF B7 ?? ?? ?? ?? 52" ) + 0x2 ) + 0x4;
+		return *( CUtlVector<matrix_t> * )( uintptr_t ( this ) + m_CachedBoneData );
+	}
+	void SetBoneCache ( matrix_t * m ) {
+		auto cache = GetBoneCache ( );
+		memcpy ( cache.Base ( ), m, sizeof ( matrix_t ) * cache.Count ( ) );
+	}
+
 	void modify_eye_pos ( anim_state * animstate, vec3_t * pos ) {
 
 
 		static auto lookup_bone_fn = ( int ( __thiscall * )( void *, const char * ) ) utilities::pattern_scan ( "client.dll", "555 8B EC 53 56 8B F1 57 83 BE ?? ?? ?? ?? ?? 75 14" );
-		if ( animstate->m_bInHitGroundAnimation || animstate->m_fDuckAmount != 0.f ) {
-			auto base_entity = animstate->m_pBaseEntity;
+		if ( animstate->m_hit_ground || animstate->m_duck_amount != 0.f ) {
+			auto base_entity = animstate->m_entity;
 
 			auto bone_pos = reinterpret_cast< player_t * >( base_entity )->get_bone_position ( 8 );
-						   
+
 			bone_pos.z += 1.7f;
 
 			if ( ( *pos ).z > bone_pos.z ) {
@@ -635,7 +693,7 @@ public:
 		}
 	}
 
-	
+
 	vec3_t get_eye_pos ( ) {
 
 		/*static auto Weapon_ShootPosition = reinterpret_cast< float * ( __thiscall * )( void *, vec3_t * ) >(
@@ -647,11 +705,11 @@ public:
 		*/
 		vec3_t pos = this->origin ( ) + this->view_offset ( );
 
-		
-			auto anim_state = this->get_anim_state ( );
-			if ( anim_state )
-				modify_eye_pos ( anim_state, &pos );
-	
+
+		auto anim_state = this->get_anim_state ( );
+		if ( anim_state )
+			modify_eye_pos ( anim_state, &pos );
+
 
 		return pos;
 	}
@@ -661,30 +719,8 @@ public:
 		static auto use_new_animation_state_fn = *( uintptr_t * ) ( ( uintptr_t ) utilities::pattern_scan ( "client.dll", "88 87 ? ? ? ? 75" ) + 0x2 );
 		return *( bool * ) ( ( uintptr_t ) this + use_new_animation_state_fn );
 	}
-	inline void get_animation_layers ( animationlayer
-		* layers ) {
 
-		std::memcpy ( layers, get_anim_overlays ( ), sizeof ( animationlayer ) * 13 );
 
-	}
-
-	inline void set_animation_layers ( animationlayer * layers ) {
-
-		std::memcpy ( get_anim_overlays ( ), layers, sizeof ( animationlayer ) * 13 );
-
-	}
-
-	inline void get_pose_parameters ( float * poses ) {
-
-		std::memcpy ( poses, m_flPoseParameter ( ), sizeof ( float ) * 24 );
-
-	}
-
-	inline void set_pose_parameters ( float * poses ) {
-
-		std::memcpy ( m_flPoseParameter ( ), poses, sizeof ( float ) * 24 );
-
-	}
 	inline bool is_enemy ( void ) {
 		return csgo::local_player->team ( ) != team ( );
 	}
@@ -716,7 +752,7 @@ public:
 		if ( !this->is_enemy ( ) )
 			return false;
 
-		if ( this->client_class ( )->class_id != class_ids::ccsplayer )
+		if ( this->client_class ( )->class_id != class_ids::cs_player )
 			return false;
 
 		if ( this == csgo::local_player )
@@ -736,9 +772,9 @@ public:
 		if ( !state )
 			return;
 		using fn = void ( __vectorcall * )( void *, void *, float, float, float, void * );
-		static auto ret = reinterpret_cast< fn >( utilities::pattern_scan ( ( "client.dll" ), "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24" ) );
+		static auto memory_address = reinterpret_cast< fn >( utilities::pattern_scan ( ( "client.dll" ), "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24" ) );
 
-		if ( !ret )
+		if ( !memory_address )
 			return;
 
 		__asm {
@@ -747,7 +783,7 @@ public:
 			movss xmm1, dword ptr [ ang + 4 ]
 			movss xmm2, dword ptr [ ang ]
 
-			call ret
+			call memory_address
 		}
 	}
 	void update_animation_state ( anim_state * state, vec3_t angle ) {
@@ -796,18 +832,39 @@ public:
 		return ( void * ) ( ( uintptr_t ) this + 0x4 );
 	}
 
+	/*BoneAccessor = pattern::find( m_client_dll, XOR( "8D 81 ? ? ? ? 50 8D 84 24" ) ).add( 2 ).to< size_t >( );*/
+
+
+	matrix_t & coord_frame ( ) {
+		const static auto m_CollisionGroup = netvar_manager::get_net_var ( fnv::hash("DT_BaseEntity"), fnv::hash("m_CollisionGroup") );
+
+		auto m_rgflCoordinateFrame = m_CollisionGroup - 0x30;
+
+		return *reinterpret_cast< matrix_t * >( reinterpret_cast< uintptr_t >( this ) + m_rgflCoordinateFrame );
+	}
+
+	c_studio_hdr * get_model_ptr ( ) {
+		return *( c_studio_hdr ** ) ( ( uintptr_t ) this + 0x294C );
+	}
+
 	vec3_t get_bone_position ( int bone, matrix_t bone_matrix [ MAXSTUDIOBONES ] = nullptr ) {
+		if ( !is_alive ( ) )
+			return vec3_t ( );
+
 		if ( bone_matrix == nullptr )
 			bone_matrix = csgo::player_bones [ this->index ( ) ];
-
 		return vec3_t { bone_matrix [ bone ][ 0 ][ 3 ],  bone_matrix [ bone ][ 1 ][ 3 ],  bone_matrix [ bone ][ 2 ][ 3 ] };
 
 	}
 
 	vec3_t get_hitbox_position ( int hitbox_id, matrix_t bone_matrix [ MAXSTUDIOBONES ] = nullptr ) {
+
+		if ( !is_alive ( ) )
+			return vec3_t ( );
+
+
 		if ( bone_matrix == nullptr )
 			bone_matrix = csgo::player_bones [ this->index ( ) ];
-
 
 		auto studio_model = interfaces::model_info->get_studio_model ( model ( ) );
 
@@ -826,25 +883,39 @@ public:
 
 		return vec3_t {};
 	}
-	vec3_t get_hitbox_position ( int hitbox_id, matrix_t bone_matrix [ MAXSTUDIOBONES ], studio_box_t* hitbox ) {
+	vec3_t get_hitbox_position ( int hitbox_id, matrix_t bone_matrix [ MAXSTUDIOBONES ], studio_box_t * hitbox ) {
+		if ( !is_alive ( ) )
+			return vec3_t ( );
 		if ( bone_matrix == nullptr )
 			bone_matrix = csgo::player_bones [ this->index ( ) ];
 
-	
-			if ( hitbox ) {
-			
-				const auto mod = hitbox->radius != -1.f ? hitbox->radius : 0.f;
-				auto max = math::vector_transform ( hitbox->maxs + mod, bone_matrix [ hitbox->bone ] );
-				auto min = math::vector_transform ( hitbox->mins - mod, bone_matrix [ hitbox->bone ] );
 
-				return vec3_t ( ( min.x + max.x ) * 0.5f, ( min.y + max.y ) * 0.5f, ( min.z + max.z ) * 0.5f );
-			}
-		
+		if ( hitbox ) {
+
+			const auto mod = hitbox->radius != -1.f ? hitbox->radius : 0.f;
+			auto max = math::vector_transform ( hitbox->maxs + mod, bone_matrix [ hitbox->bone ] );
+			auto min = math::vector_transform ( hitbox->mins - mod, bone_matrix [ hitbox->bone ] );
+
+			return vec3_t ( ( min.x + max.x ) * 0.5f, ( min.y + max.y ) * 0.5f, ( min.z + max.z ) * 0.5f );
+		}
+
 
 		return vec3_t {};
 	}
 	bool is_alive ( ) {
 		return life_state ( ) == 0;
+	}
+	void create_anim_state ( anim_state * state ) {
+		using create_anim_state_t = void ( __thiscall * ) ( anim_state *, player_t * );
+		static auto create_anim_state = reinterpret_cast< create_anim_state_t > ( utilities::pattern_scan ( "client.dll", "55 8B EC 56 8B F1 B9 ? ? ? ? C7 46" ) );
+
+		if ( !create_anim_state )
+			return;
+
+		if ( !state )
+			return;
+
+		create_anim_state ( state, this );
 	}
 
 	bool is_moving ( ) {
@@ -882,15 +953,18 @@ public:
 	}
 	void invalidate_bone_cache ( void ) {
 		static auto invalidate_bone_bache_fn = utilities::pattern_scan ( "client.dll", "80 3D ? ? ? ? ? 74 16 A1 ? ? ? ? 48 C7 81" );
-
-		*( uintptr_t * ) ( ( uintptr_t ) this + 0x2924 ) = 0xFF7FFFFF;
-		*( uintptr_t * ) ( ( uintptr_t ) this + 0x2690 ) = **( uintptr_t ** ) ( ( uintptr_t ) invalidate_bone_bache_fn + 10 ) - 1;
+		unsigned long g_iModelBoneCounter = **( unsigned long ** ) ( invalidate_bone_bache_fn + 10 );
+		*( unsigned int * ) ( ( DWORD ) this + 0x2924 ) = 0xFF7FFFFF; // m_flLastBoneSetupTime = -FLT_MAX;
+		*( unsigned int * ) ( ( DWORD ) this + 0x2690 ) = ( g_iModelBoneCounter - 1 ); // m_iMostRecentModelBoneCounter = g_iModelBoneCounter - 1;
 	}
-	void set_abs_angles ( const vec3_t & angles ) {
+
+	void set_abs_angles ( vec3_t angles ) {
 		if ( !this )
 			return;
 
-		static auto _set_abs_angles = ( void ( __thiscall * )( void *, const vec3_t & ) )utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 64 53 56 57 8B F1 E8 ?" );
+		
+
+		static auto _set_abs_angles = ( void ( __thiscall * )( void *, const vec3_t & ) )utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 64 53 56 57 8B F1" );
 
 		_set_abs_angles ( this, angles );
 	}
@@ -933,7 +1007,7 @@ public:
 
 		auto weapon = active_weapon ( );
 
-		if ( !weapon || weapon->is_knife ( ) || ( weapon->is_reloading ( ) || !weapon->clip1_count ( ) ) )
+		if ( !weapon )
 			return false;
 
 
@@ -970,6 +1044,18 @@ public:
 	vec3_t & abs_angles ( ) {
 		using original_fn = vec3_t & ( __thiscall * )( void * );
 		return ( *( original_fn ** ) this ) [ 11 ] ( this );;
+	}
+
+	void BuildTransformations ( c_studio_hdr * hdr, vec3_t * pos, quaternion_t * q, const matrix3x4_t & transform, int mask, uint8_t * computed ) {
+		using BuildTransformations_t = void ( __thiscall * )( decltype( this ), c_studio_hdr *, vec3_t *, quaternion_t *, matrix3x4_t const &, int, uint8_t * );
+
+		return utilities::get_virtual_function< BuildTransformations_t > ( this, 189 )( this, hdr, pos, q, transform, mask, computed );
+	}
+
+	void StandardBlendingRules ( c_studio_hdr * hdr, vec3_t * pos, quaternion_t * q, float time, int mask ) {
+		using StandardBlendingRules_t = void ( __thiscall * )( decltype( this ), c_studio_hdr *, vec3_t *, quaternion_t *, float, int );
+
+		return utilities::get_virtual_function< StandardBlendingRules_t > ( this, 205 )( this, hdr, pos, q, time, mask );
 	}
 
 	int move_type ( ) {

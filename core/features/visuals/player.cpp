@@ -49,7 +49,7 @@ void visuals::player::player_death ( i_game_event * event ) {
 		return;
 	
 	m_data [ entity->index ( ) ].alive = false;
-	resolver::resolver_data [ entity->index ( ) ].brute_side = 0;
+
 	resolver::resolver_data [ entity->index ( ) ].missed_shots = 0;
 	
 }
@@ -161,48 +161,84 @@ std::map<int, char> weapon_icons =
 	}
 
 	in.x = ( int ) left;
-	in.y = ( int ) top;
-	in.w = int( right - left );
-	in.h = int( bottom - top );
+	in.y = ( int ) top + 3;
+	in.w = int( right - left ) ;
+	in.h = int( bottom - top ) + 3;
 
 	return true;
 }
-float dsdsDrawText( ImFont* pFont,  const std::string text, const ImVec2& pos, float size, float const * color, float shadow, bool center, bool bold )
-{
-	ImGuiWindow* window = ImGui::GetCurrentWindow( );
-	
+float visuals::draw_name_text ( ImFont * pFont, const std::string text, const ImVec2 & pos, float size, float const * color, float shadow, bool center, bool bold ) {
+	ImGuiWindow * window = ImGui::GetCurrentWindow ( );
 
-	std::stringstream stream( text );
+
+	std::stringstream stream ( text );
 	std::string line;
 
 	float y = 0.0f;
 	int i = 0;
 
 
-   while ( std::getline ( stream, line ) && line.length ( ) != 0 )
-	{
-		ImVec2 textSize = pFont->CalcTextSizeA( size, FLT_MAX, 0.0f, line.c_str( ) );
+	while ( std::getline ( stream, line ) && line.length ( ) != 0 ) {
+		ImVec2 textSize = pFont->CalcTextSizeA ( size, FLT_MAX, 0.0f, line.c_str ( ) );
 
-		if ( center )
-		{
+		if ( center ) {
 			if ( bold ) {
-				window->DrawList->AddText( pFont, size, ImVec2( ( pos.x - textSize.x / 2.0f ) + shadow, ( pos.y + textSize.y * i ) + shadow ), ImColor( 0, 0, 0, (int)color[3] ), line.c_str( ) );
-				window->DrawList->AddText( pFont, size, ImVec2( ( pos.x - textSize.x / 2.0f ) - shadow, ( pos.y + textSize.y * i ) - shadow ), ImColor( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str( ) );
-				window->DrawList->AddText( pFont, size, ImVec2( ( pos.x - textSize.x / 2.0f ) + shadow, ( pos.y + textSize.y * i ) - shadow ), ImColor( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str( ) );
-				window->DrawList->AddText( pFont, size, ImVec2( ( pos.x - textSize.x / 2.0f ) - shadow, ( pos.y + textSize.y * i ) + shadow ), ImColor( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x - textSize.x / 2.0f ) + shadow, ( pos.y + textSize.y * i ) + shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x - textSize.x / 2.0f ) - shadow, ( pos.y + textSize.y * i ) - shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x - textSize.x / 2.0f ) + shadow, ( pos.y + textSize.y * i ) - shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x - textSize.x / 2.0f ) - shadow, ( pos.y + textSize.y * i ) + shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
 
 			}
-			window->DrawList->AddText( pFont, size, ImVec2( pos.x - textSize.x / 2.0f, pos.y + textSize.y * i ), ImColor( color[0], color [ 1 ], color [ 2 ], color [ 3 ] ), line.c_str( ) );
+			window->DrawList->AddText ( pFont, size, ImVec2 ( pos.x - textSize.x / 2.0f, pos.y + textSize.y * i ), ImColor ( color [ 0 ], color [ 1 ], color [ 2 ], color [ 3 ] ), line.c_str ( ) );
 		}
-		else
-		{
+		else {
 			if ( bold ) {
 				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x ) + 1, ( pos.y + textSize.y * i ) + shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
 				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x ) - 1, ( pos.y + textSize.y * i ) - shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
 				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x ) + 1, ( pos.y + textSize.y * i ) - shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
 				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x ) - 1, ( pos.y + textSize.y * i ) + shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
 			}
-			window->DrawList->AddText( pFont, size, ImVec2( pos.x, pos.y + textSize.y * i ), ImColor( color[0], color [ 1 ], color [ 2 ], color[3] ), line.c_str( ) );
+			window->DrawList->AddText ( pFont, size, ImVec2 ( pos.x, pos.y + textSize.y * i ), ImColor ( color [ 0 ], color [ 1 ], color [ 2 ], color [ 3 ] ), line.c_str ( ) );
+		}
+
+		y = pos.y + textSize.y * ( i + 1 );
+		i++;
+	}
+
+	return y;
+}
+float dsdsDrawText ( ImFont * pFont, const std::string text, const ImVec2 & pos, float size, float const * color, float shadow, bool center, bool bold ) {
+	ImGuiWindow * window = ImGui::GetCurrentWindow ( );
+
+
+	std::stringstream stream ( text );
+	std::string line;
+
+	float y = 0.0f;
+	int i = 0;
+
+
+	while ( std::getline ( stream, line ) && line.length ( ) != 0 ) {
+		ImVec2 textSize = pFont->CalcTextSizeA ( size, FLT_MAX, 0.0f, line.c_str ( ) );
+
+		if ( center ) {
+			if ( bold ) {
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x - textSize.x / 2.0f ) + shadow, ( pos.y + textSize.y * i ) + shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x - textSize.x / 2.0f ) - shadow, ( pos.y + textSize.y * i ) - shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x - textSize.x / 2.0f ) + shadow, ( pos.y + textSize.y * i ) - shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x - textSize.x / 2.0f ) - shadow, ( pos.y + textSize.y * i ) + shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+
+			}
+			window->DrawList->AddText ( pFont, size, ImVec2 ( pos.x - textSize.x / 2.0f, pos.y + textSize.y * i ), ImColor ( color [ 0 ], color [ 1 ], color [ 2 ], color [ 3 ] ), line.c_str ( ) );
+		}
+		else {
+			if ( bold ) {
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x ) + 1, ( pos.y + textSize.y * i ) + shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x ) - 1, ( pos.y + textSize.y * i ) - shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x ) + 1, ( pos.y + textSize.y * i ) - shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+				window->DrawList->AddText ( pFont, size, ImVec2 ( ( pos.x ) - 1, ( pos.y + textSize.y * i ) + shadow ), ImColor ( 0, 0, 0, ( int ) color [ 3 ] ), line.c_str ( ) );
+			}
+			window->DrawList->AddText ( pFont, size, ImVec2 ( pos.x, pos.y + textSize.y * i ), ImColor ( color [ 0 ], color [ 1 ], color [ 2 ], color [ 3 ] ), line.c_str ( ) );
 		}
 
 		y = pos.y + textSize.y * ( i + 1 );
@@ -212,26 +248,22 @@ float dsdsDrawText( ImFont* pFont,  const std::string text, const ImVec2& pos, f
 	return y;
 }
 void visuals::player::name( visuals::player::data _data ) {
+	bool should_show = _data.enemy ? config.visuals_enemy_name : config.visuals_team_name;
+	if ( !should_show )   
+		return;
 
 	std::string print( _data.player_info.fakeplayer?std::string( "bot " ).append( _data.player_info.name ).c_str( ):_data.player_info.name );
 	std::transform( print.begin( ), print.end( ), print.begin( ), ::tolower );
 
-	auto right = ( _data.box_data.x + _data.box_data.w );
-	auto x = ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f );
 
-	//c_menu::get( ).draw->AddText( c_menu::get( ).smallf, 15, ImVec2( x, _data.box_data.y - 15 ), ImColor( 167, 24, 71, 255 ), print.data( ) );
-	dsdsDrawText( c_menu::get( ).smallf, print, ImVec2( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y - 15  ), 15, _data.enemy ? variables::visuals::enemy::name_color : variables::visuals::team::name_color, 0.1f ,true , false);
-
-	std::stringstream ss;
-	ss << "delta " << resolver::resolver_data [ _data.index ].predicted_delta << "";
-
-	dsdsDrawText ( c_menu::get ( ).smallf, ss.str(), ImVec2 ( right + 2.f, _data.box_data.y + 20 ), 11, _data.enemy ? variables::visuals::enemy::name_color : variables::visuals::team::name_color, 0.1f, false, false );
-
-	
+	dsdsDrawText ( c_menu::get ( ).smallf, print, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y - 15 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, true, false );
 }
 void visuals::player::box( visuals::player::data _data ) {
+	bool should_show = _data.enemy ? config.visuals_enemy_box : config.visuals_team_box;
+	if ( !should_show )
+		return;
 
-	auto clr = _data.enemy ? variables::visuals::enemy::box_color : variables::visuals::team::box_color;
+	auto clr = _data.enemy ? config.visuals_enemy_box_color : config.visuals_team_box_color;
 
 	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x - 0.5f, _data.box_data.y - 0.5f ), ImVec2( _data.box_data.x + _data.box_data.w + 0.5, _data.box_data.y + _data.box_data.h  + 0.5 ), ImColor( 0, 0, 0, 155 ), 0.0f );
 
@@ -240,7 +272,9 @@ void visuals::player::box( visuals::player::data _data ) {
 
 }
 void visuals::player::health( visuals::player::data _data ) {
-
+	bool should_show = _data.enemy ? config.visuals_enemy_health : config.visuals_team_health;
+	if ( !should_show )
+		return;
 	static auto get_health_clr = [ & ] ( int health ) {
 		return color( static_cast< int >( 255 - ( health * 2.55f ) ), static_cast< int >( health * 2.55f ), 0, 100 );
 	};
@@ -267,20 +301,49 @@ void visuals::player::health( visuals::player::data _data ) {
 		return ImColor(clr.r,clr.g,clr.b);
 	};
 
-	auto clr_h = _data.enemy ? variables::visuals::enemy::health_color : variables::visuals::team::health_color;
 
-	c_menu::get( ).draw->AddRectFilled( ImVec2( _data.box_data.x  - 6, _data.box_data.y - 0.5f  ), ImVec2( _data.box_data.x - 2.5f, ( _data.box_data.y + ( _data.box_data.h  * ( ( float ) _data.health / 100.0f )  ) ) + 0.5f ), get_health_clr_1(_data.health) );
-	c_menu::get( ).draw->AddRect( ImVec2 ( _data.box_data.x - 6, _data.box_data.y - 0.5f ), ImVec2 ( _data.box_data.x - 2.5f, ( _data.box_data.y + ( _data.box_data.h * ( ( float ) _data.health / 100.0f ) ) ) + 0.5f ),  ImColor( clr_h[0], clr_h[1], clr_h[2], clr_h[3] ) );
+	static auto filled_box_outlined = [ ] ( const int x, const int y, const int w, const int h, const ImColor color, const ImColor outline, const int thickness ) {
+		c_menu::get ( ).draw->AddRectFilled ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h), color );
+		c_menu::get ( ).draw->AddRect ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h ), outline, 0, thickness );
+	};
+	static auto filled_box = [ ] ( const int x, const int y, const int w, const int h, const ImColor color) {
+		c_menu::get ( ).draw->AddRectFilled ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h ), color );
+	};
+	auto clr_h = _data.enemy ? config.visuals_enemy_health_color : config.visuals_team_health_color;
 
+	
+
+	int elements = 0;
+
+	auto health = _data.health;
+	health = std::clamp ( health, 0, 100 );
+	auto multiplier = health / 100.f;
+	multiplier = std::clamp ( multiplier, 0.f, 1.f );
+	const auto height = ( _data.box_data.h - 2 ) * multiplier;
+
+	const int red = 255 - health * 2.55;
+	const int green = health * 2.55;
+
+	filled_box_outlined ( _data.box_data.x - 7 - elements * 6, _data.box_data.y - 0.5f, 4, _data.box_data.h + 0.5f, ImColor ( 0, 0, 0, static_cast< int >( 200 * 0.3f ) ), ImColor ( 0, 0, 0, static_cast< int >( 255 ) ), 1 );
+	filled_box ( _data.box_data.x  - 6 - elements * 6, _data.box_data.y + _data.box_data.h - height - 1 - 0.5f, 2, height + 0.5f, ImColor ( red, green, 0, static_cast< int >( 255 ) ) );
+
+	//c_menu::get ( ).draw->AddRectFilled ( ImVec2 ( _data.box_data.x - _data.box_data.w - 4 - elements * 6, _data.box_data.y - 0.5f ), ImVec2 ( _data.box_data.x - 2.5f, ( _data.box_data.y + ( _data.box_data.h * ( ( float ) _data.health / 100.0f ) ) ) + 0.5f ), get_health_clr_1 ( _data.health ) );
+	//_ ( d, "%d" );
+
+//	if ( health != 100 )
+	//	render::get ( ).text ( ImVec2 ( player.top.x - player.width - 3, player.top.y + player.height - height - 5 ), tfm::format ( d, player.health ), Color ( 255, 255, 255, static_cast< int >( player.alpha ) ), fonts::esp_small, c_font::centered_x | c_font::centered_y | c_font::drop_shadow );
+		auto x_p = _data.box_data.x - 6 - elements * 6;
+		auto w_p = 4;
+		dsdsDrawText ( c_menu::get ( ).smallf, std::to_string(_data.health), ImVec2 ( ( x_p + ( ( x_p + w_p ) - x_p ) / 2.0f ),  (_data.box_data.y + _data.box_data.h)  - height ), 10, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, true, false );
 
 }
 void visuals::player::weapon( visuals::player::data _data ) {
 	
-	auto clr_h = _data.enemy ? variables::visuals::enemy::weapon_color : variables::visuals::team::weapon_color;
-
-	dsdsDrawText( c_menu::get( ).weapon_icons, _data.weapon_icon, ImVec2( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y + _data.box_data.h + 10 ), 8, clr_h, 0.1f, true, true );
-
+	auto clr_h = _data.enemy ? config.visuals_enemy_weapon_color : config.visuals_team_weapon_color;
+	auto x = _data.box_data.x - ( _data.box_data.x + _data.box_data.w / 2 );
+	dsdsDrawText ( c_menu::get ( ).weapon_icons, _data.weapon_icon, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y + _data.box_data.h + 5 ), 8, clr_h, 0.1f, true, true );
 }
+
 void visuals::player::arrow ( visuals::player::data _data ) {
 
 	auto arc = [ ] ( float x, float y, float radius, float min_angle, float max_angle, ImColor col, float thickness ) {
@@ -296,10 +359,10 @@ void visuals::player::arrow ( visuals::player::data _data ) {
 
 }
 void visuals::player::present( ) {
-	bool is_atleast_one = variables::visuals::enemy::enabled || variables::visuals::team::enabled;
+	bool is_atleast_one = config.visuals_enemy_enabled || config.visuals_team_enabled;
 	if ( !( is_atleast_one ) )
 		return;
-
+	
 
 	for ( size_t i = 1; i <= 64; i++ ) {
 		auto data = m_data.at ( i );
@@ -329,6 +392,57 @@ std::string visuals::weapon_to_icon( const int id )
 
 	return "";
 }
+
+std::tuple<std::string, std::string> visuals::grenade_name (entity_t* ent, class_ids id ) {
+	std::string name = "";
+	std::string icon = "";
+	switch ( id ) {
+	case class_ids::molotov_projectile:
+		name = "incendiary";
+		icon = "p";
+		break;
+	case class_ids::smoke_grenade_projectile:
+		name = "smoke";
+		icon = "m";
+		break;
+	case class_ids::base_cs_grenade_projectile:
+	{
+		const model_t * model = ent->model ( );
+
+		if ( !model )
+			return std::tuple< std::string, std::string> ( name, icon );
+
+		const auto hdr = interfaces::model_info->get_studio_model ( model );
+		if ( hdr->name_char_array [ 16 ] == 's' ) {
+			name = "flashbang";
+			icon = "k";
+		}
+		else {
+			name = "he grenade";
+			icon = "l";
+		}
+	}
+
+		break;
+	case class_ids::decoy_projectile:
+		name = "decoy";
+		icon = "o";
+		break;
+	default:
+		break;
+	}
+	return std::tuple< std::string, std::string> ( name, icon );
+}
+/*
+{ weapon_flashbang, 'k' },
+{ weapon_hegrenade, 'l' },
+{ weapon_smokegrenade, 'm' },
+{ weapon_molotov, 'n' },
+{ weapon_decoy, 'o' },
+{ weapon_incgrenade, 'p' },
+{ weapon_c4, 'q' },*/
+
+
 void visuals::player::sound ( ) {
 	static CUtlVector<sound_info> sound_list;
 
@@ -350,7 +464,7 @@ void visuals::player::sound ( ) {
 	}
 }
 void visuals::player::paint_traverse ( ) {
-	bool is_atleast_one = variables::visuals::enemy::enabled || variables::visuals::team::enabled;
+	bool is_atleast_one = config.visuals_enemy_enabled || config.visuals_team_enabled;
 	if ( !( is_atleast_one ) )
 		return;
 
@@ -359,7 +473,7 @@ void visuals::player::paint_traverse ( ) {
 	//m_data.clear( );
 	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
 		auto player = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( i ) );
-		if ( player == csgo::local_player )
+		if ( player == local_player::m_data.pointer )
 			continue;
 
 		data & current_data = m_data [ i ];
@@ -394,10 +508,10 @@ void visuals::player::paint_traverse ( ) {
 			continue;
 		}
 
-		if ( player->team( ) == csgo::local_player->team() && !variables::visuals::team::enabled )
+		if ( player->team( ) == local_player::m_data.pointer->team() && !config.visuals_team_enabled )
 			continue;
-
-		if ( player->team ( ) != csgo::local_player->team ( ) && !variables::visuals::enemy::enabled )
+	
+		if ( player->team ( ) != local_player::m_data.pointer->team ( ) && !config.visuals_enemy_enabled )
 			continue;
 
 		
@@ -413,7 +527,7 @@ void visuals::player::paint_traverse ( ) {
 				current_data.mins = player->collideable ( )->mins ( ) + current_data.origin;
 				current_data.maxs = player->collideable ( )->maxs ( ) + current_data.origin;
 				
-
+				current_data.distance = player->abs_origin ( ).distance_to ( local_player::m_data.eye_position );
 				if ( player->active_weapon ( ) ) {
 					current_data.weapon_icon = weapon_to_icon ( player->active_weapon ( )->item_definition_index ( ) );
 					current_data.weapon_name = player->active_weapon ( )->get_weapon_data ( )->szWeaponName;
@@ -457,6 +571,8 @@ void visuals::player::aimbot ( visuals::player::data _data ) {
 }
 
 void visuals::player::think ( ) {
+	if ( !config.visuals_modulation_enemy_enabled )
+		return;
 	for ( int i = 0; i < interfaces::glow_manager->size; i++ ) {
 		if ( interfaces::glow_manager->objects [ i ].unused ( ) || !interfaces::glow_manager->objects [ i ].entity )
 			continue;
@@ -467,22 +583,25 @@ void visuals::player::think ( ) {
 		if ( !entity || entity->dormant ( ) )
 			continue;
 
+		if ( entity == local_player::m_data.pointer )
+			continue;
+
 		const auto client_class = entity->client_class ( );
 		if ( !client_class )
 			continue;
 
-		bool is_teammate = entity->team ( ) == csgo::local_player->team ( );
-		bool is_enemy = entity->team ( ) != csgo::local_player->team ( );
+		bool is_teammate = entity->team ( ) == local_player::m_data.pointer->team ( );
+		bool is_enemy = entity->team ( ) != local_player::m_data.pointer->team ( );
 
 		switch ( client_class->class_id ) {
-		case ccsplayer:
+		case cs_player:
 		{
 
 
-			if ( is_enemy && variables::visuals::modulation::enemy::glow )
-				glow_object.set ( variables::visuals::modulation::enemy::glow_color [ 0 ], variables::visuals::modulation::enemy::glow_color [ 1 ], variables::visuals::modulation::enemy::glow_color [ 2 ], 0.8f );
-			else if ( is_teammate && variables::visuals::modulation::team::glow )
-				glow_object.set ( variables::visuals::modulation::team::glow_color [ 0 ], variables::visuals::modulation::team::glow_color [ 1 ], variables::visuals::modulation::team::glow_color [ 2 ], 0.8f );
+			if ( is_enemy && config.visuals_modulation_enemy_glow )
+				glow_object.set ( config.visuals_modulation_enemy_glow_color [ 0 ], config.visuals_modulation_enemy_glow_color [ 1 ], config.visuals_modulation_enemy_glow_color [ 2 ], 0.8f );
+			else if ( is_teammate && config.visuals_modulation_team_glow_color )
+				glow_object.set ( config.visuals_modulation_team_glow_color [ 0 ], config.visuals_modulation_team_glow_color [ 1 ], config.visuals_modulation_team_glow_color [ 2 ], 0.8f );
 
 			break;
 		}

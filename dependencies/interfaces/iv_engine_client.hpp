@@ -11,8 +11,8 @@ struct player_info_t {
 	union {
 		int64_t xuid;
 		struct {
-			int xuidlow;
-			int xuidhigh;
+			__int32  xuidlow;
+			__int32  xuidhigh;
 		};
 	};
 	char name[128];

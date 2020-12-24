@@ -293,13 +293,13 @@ enum TraceType_t {
 
 class i_trace_filter {
 public:
-	virtual bool ShouldHitEntity(void* pEntity, int contentsMask) = 0;
+	virtual bool ShouldHitEntity(void* pEntity, int ) = 0;
 	virtual TraceType_t GetTraceType() const = 0;
 };
 
 class trace_filter : public i_trace_filter {
 public:
-	bool ShouldHitEntity(void* pEntityHandle, int contentsMask) {
+	bool ShouldHitEntity(void* pEntityHandle, int ) {
 		return (pEntityHandle != skip);
 	}
 
@@ -312,7 +312,7 @@ public:
 
 class trace_filter_one_entity : public i_trace_filter {
 public:
-	bool ShouldHitEntity(void* pEntityHandle, int contentsMask) {
+	bool ShouldHitEntity(void* pEntityHandle, int ) {
 		return (pEntityHandle == pEntity);
 	}
 
@@ -325,7 +325,7 @@ public:
 
 class trace_filter_one_entity2 : public i_trace_filter {
 public:
-	bool ShouldHitEntity(void* pEntityHandle, int contentsMask) {
+	bool ShouldHitEntity(void* pEntityHandle, int ) {
 		return (pEntityHandle == pEntity);
 	}
 
@@ -343,7 +343,7 @@ public:
 		passentity2 = pPassEnt2;
 	}
 
-	virtual bool ShouldHitEntity(void* pEntityHandle, int contentsMask) {
+	virtual bool ShouldHitEntity(void* pEntityHandle, int ) {
 		return !(pEntityHandle == passentity1 || pEntityHandle == passentity2);
 	}
 
@@ -361,7 +361,7 @@ public:
 		passentity1 = pPassEnt1;
 	}
 
-	virtual bool ShouldHitEntity(void* pEntityHandle, int contentsMask) {
+	virtual bool ShouldHitEntity(void* pEntityHandle, int ) {
 		return !(pEntityHandle == passentity1);
 	}
 
@@ -374,7 +374,7 @@ public:
 
 class trace_entity : public i_trace_filter {
 public:
-	bool ShouldHitEntity(void* pEntityHandle, int contentsMask) {
+	bool ShouldHitEntity(void* pEntityHandle, int ) {
 		return !(pEntityHandle == pSkip1);
 	}
 
@@ -387,7 +387,7 @@ public:
 
 class trace_world_only : public i_trace_filter {
 public:
-	bool ShouldHitEntity(void* pEntityHandle, int contentsMask) {
+	bool ShouldHitEntity(void* , int ) {
 		return false;
 	}
 

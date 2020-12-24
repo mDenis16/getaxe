@@ -83,7 +83,10 @@ namespace math {
 	void clamp( vec3_t& angles );
 	void random_seed( int seed );
 	void set_matrix_position( vec3_t pos, matrix_t& matrix );
+	float fast_sin ( float x );
 	void angle_matrix( const vec3_t angles, matrix_t& matrix );
+	float fast_cos ( const float x );
+	void angle_matrix ( const vec3_t angles, matrix3x4_t & matrix );
 	float random_float( float min, float max );
 	int random_int( int min, int max );
 	vec3_t cubic_bezier( const vec3_t& a, const vec3_t& b, const vec3_t& c, const vec3_t& d, const float t );
@@ -92,7 +95,9 @@ namespace math {
 
 	void vector_vectors( const vec3_t& forward, vec3_t& right, vec3_t& up );
 	void matrix_set_column( const vec3_t& in, int column, matrix_t& out );
+	void matrix_set_column ( const vec3_t & in, int column, matrix3x4_t & out );
 	void angle_matrix( const vec3_t& angles, const vec3_t& position, matrix_t& matrix_out );
+	void angle_matrix ( const vec3_t & angles, const vec3_t & position, matrix3x4_t & matrix_out );
 	void matrix_copy( const matrix_t& source, matrix_t& target );
 
 	void matrix_multiply( matrix_t& in1, const matrix_t& in2 );

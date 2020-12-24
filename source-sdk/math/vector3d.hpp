@@ -30,6 +30,11 @@ const float FLOAT32_NAN = bits_to_float( FLOAT32_NAN_BITS );
 #define ASSERT( _exp ) ( (void ) 0 )
 
 
+class quaternion_t {
+public:
+	float x, y, z, w;
+};
+
 class vec3_t
 {
 public:
@@ -172,6 +177,146 @@ inline vec3_t operator*( float lhs, const vec3_t& rhs ) {
 	return vec3_t( rhs.x * lhs, rhs.x * lhs, rhs.x * lhs );
 }
 
+inline int UtlMemory_CalcNewAllocationCount ( int nAllocationCount, int nGrowSize, int nNewSize, int nBytesItem ) {
+	if ( nGrowSize )
+		nAllocationCount = ( ( 1 + ( ( nNewSize - 1 ) / nGrowSize ) ) * nGrowSize );
+	else {
+		if ( !nAllocationCount )
+			nAllocationCount = ( 31 + nBytesItem ) / nBytesItem;
+
+		while ( nAllocationCount < nNewSize )
+			nAllocationCount *= 2;
+	}
+
+	return nAllocationCount;
+}
+
+template< class T, class I = int >
+class CUtlMemory {
+public:
+	T & operator[]( I i ) {
+		return m_pMemory [ i ];
+	}
+
+	T * Base ( ) {
+		return m_pMemory;
+	}
+
+	int NumAllocated ( ) const {
+		return m_nAllocationCount;
+	}
+
+	void Grow ( int num = 1 ) {
+		if ( IsExternallyAllocated ( ) )
+			return;
+
+		int nAllocationRequested = m_nAllocationCount + num;
+		int nNewAllocationCount = UtlMemory_CalcNewAllocationCount ( m_nAllocationCount, m_nGrowSize, nAllocationRequested, sizeof ( T ) );
+
+		if ( ( int ) ( I ) nNewAllocationCount < nAllocationRequested ) {
+			if ( ( int ) ( I ) nNewAllocationCount == 0 && ( int ) ( I ) ( nNewAllocationCount - 1 ) >= nAllocationRequested )
+				--nNewAllocationCount;
+			else {
+				if ( ( int ) ( I ) nAllocationRequested != nAllocationRequested )
+					return;
+
+				while ( ( int ) ( I ) nNewAllocationCount < nAllocationRequested )
+					nNewAllocationCount = ( nNewAllocationCount + nAllocationRequested ) / 2;
+			}
+		}
+
+		m_nAllocationCount = nNewAllocationCount;
+
+		if ( m_pMemory )
+			m_pMemory = ( T * ) realloc ( m_pMemory, m_nAllocationCount * sizeof ( T ) );
+		else
+			m_pMemory = ( T * ) malloc ( m_nAllocationCount * sizeof ( T ) );
+	}
+
+	bool IsExternallyAllocated ( ) const {
+		return m_nGrowSize < 0;
+	}
+
+protected:
+	T * m_pMemory;
+	int m_nAllocationCount;
+	int m_nGrowSize;
+};
+
+template <class T>
+inline T * Construct ( T * pMemory ) {
+	return ::new( pMemory ) T;
+}
+
+template <class T>
+inline void Destruct ( T * pMemory ) {
+	pMemory->~T ( );
+}
+
+template< class T, class A = CUtlMemory<T> >
+class CUtlVector {
+	typedef A CAllocator;
+public:
+	CAllocator m_Memory;
+	int m_Size;
+
+	T & operator[]( int i ) {
+		return m_Memory [ i ];
+	}
+
+	T & Element ( int i ) {
+		return m_Memory [ i ];
+	}
+
+	T * Base ( ) {
+		return m_Memory.Base ( );
+	}
+
+	int Count ( ) const {
+		return m_Size;
+	}
+
+	void RemoveAll ( ) {
+		for ( int i = m_Size; --i >= 0; )
+			Destruct ( &Element ( i ) );
+
+		m_Size = 0;
+	}
+
+	int AddToTail ( ) {
+		return InsertBefore ( m_Size );
+	}
+
+	int InsertBefore ( int elem ) {
+		GrowVector ( );
+		ShiftElementsRight ( elem );
+		Construct ( &Element ( elem ) );
+
+		return elem;
+	}
+
+protected:
+	void GrowVector ( int num = 1 ) {
+		if ( m_Size + num > m_Memory.NumAllocated ( ) )
+			m_Memory.Grow ( m_Size + num - m_Memory.NumAllocated ( ) );
+
+		m_Size += num;
+		ResetDbgInfo ( );
+	}
+
+	void ShiftElementsRight ( int elem, int num = 1 ) {
+		int numToMove = m_Size - elem - num;
+		if ( ( numToMove > 0 ) && ( num > 0 ) )
+			memmove ( &Element ( elem + num ), &Element ( elem ), numToMove * sizeof ( T ) );
+	}
+
+	T * m_pElements;
+
+	inline void ResetDbgInfo ( ) {
+		m_pElements = Base ( );
+	}
+};
+
 struct matrix_t
 {
 	matrix_t( ) { }
@@ -229,4 +374,108 @@ struct matrix_t
 	const float* base( ) const { return &mat_val[ 0 ][ 0 ]; }
 
 	float mat_val[ 3 ][ 4 ];
+};
+
+class matrix3x4_t {
+public:
+	__forceinline matrix3x4_t ( ) { }
+
+	__forceinline matrix3x4_t ( float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23 ) {
+		m_flMatVal [ 0 ][ 0 ] = m00;
+		m_flMatVal [ 0 ][ 1 ] = m01;
+		m_flMatVal [ 0 ][ 2 ] = m02;
+		m_flMatVal [ 0 ][ 3 ] = m03;
+		m_flMatVal [ 1 ][ 0 ] = m10;
+		m_flMatVal [ 1 ][ 1 ] = m11;
+		m_flMatVal [ 1 ][ 2 ] = m12;
+		m_flMatVal [ 1 ][ 3 ] = m13;
+		m_flMatVal [ 2 ][ 0 ] = m20;
+		m_flMatVal [ 2 ][ 1 ] = m21;
+		m_flMatVal [ 2 ][ 2 ] = m22;
+		m_flMatVal [ 2 ][ 3 ] = m23;
+	}
+
+	__forceinline void Init ( const vec3_t & x, const vec3_t & y, const vec3_t & z, const vec3_t & origin ) {
+		m_flMatVal [ 0 ][ 0 ] = x.x;
+		m_flMatVal [ 0 ][ 1 ] = y.x;
+		m_flMatVal [ 0 ][ 2 ] = z.x;
+		m_flMatVal [ 0 ][ 3 ] = origin.x;
+		m_flMatVal [ 1 ][ 0 ] = x.y;
+		m_flMatVal [ 1 ][ 1 ] = y.y;
+		m_flMatVal [ 1 ][ 2 ] = z.y;
+		m_flMatVal [ 1 ][ 3 ] = origin.y;
+		m_flMatVal [ 2 ][ 0 ] = x.z;
+		m_flMatVal [ 2 ][ 1 ] = y.z;
+		m_flMatVal [ 2 ][ 2 ] = z.z;
+		m_flMatVal [ 2 ][ 3 ] = origin.z;
+	}
+
+	__forceinline matrix3x4_t ( const vec3_t & x, const vec3_t & y, const vec3_t & z, const vec3_t & origin ) {
+		m_flMatVal [ 0 ][ 0 ] = x.x;
+		m_flMatVal [ 0 ][ 1 ] = y.x;
+		m_flMatVal [ 0 ][ 2 ] = z.x;
+		m_flMatVal [ 0 ][ 3 ] = origin.x;
+		m_flMatVal [ 1 ][ 0 ] = x.y;
+		m_flMatVal [ 1 ][ 1 ] = y.y;
+		m_flMatVal [ 1 ][ 2 ] = z.y;
+		m_flMatVal [ 1 ][ 3 ] = origin.y;
+		m_flMatVal [ 2 ][ 0 ] = x.z;
+		m_flMatVal [ 2 ][ 1 ] = y.z;
+		m_flMatVal [ 2 ][ 2 ] = z.z;
+		m_flMatVal [ 2 ][ 3 ] = origin.z;
+	}
+
+	__forceinline void SetOrigin ( const vec3_t & p ) {
+		m_flMatVal [ 0 ][ 3 ] = p.x;
+		m_flMatVal [ 1 ][ 3 ] = p.y;
+		m_flMatVal [ 2 ][ 3 ] = p.z;
+	}
+
+	__forceinline vec3_t GetOrigin ( ) {
+		return { m_flMatVal [ 0 ][ 3 ], m_flMatVal [ 1 ][ 3 ], m_flMatVal [ 2 ][ 3 ] };
+	}
+
+	__forceinline float * operator[]( int i ) {
+		return m_flMatVal [ i ];
+	}
+
+	__forceinline const float * operator[]( int i ) const {
+		return m_flMatVal [ i ];
+	}
+
+	__forceinline float * Base ( ) {
+		return &m_flMatVal [ 0 ][ 0 ];
+	}
+
+	__forceinline const float * Base ( ) const {
+		return &m_flMatVal [ 0 ][ 0 ];
+	}
+
+public:
+	float m_flMatVal [ 3 ][ 4 ];
+};
+
+class __declspec( align( 16 ) ) matrix3x4a_t : public matrix3x4_t {
+public:
+	__forceinline matrix3x4a_t & operator=( const matrix3x4_t & src ) {
+		std::memcpy ( Base ( ), src.Base ( ), sizeof ( float ) * 3 * 4 );
+		return *this;
+	};
+};
+
+class BoneArray : public matrix3x4a_t {
+public:
+	bool get_bone ( vec3_t & out, int bone = 0 ) {
+		if ( bone < 0 || bone >= 128 )
+			return false;
+
+		matrix3x4_t * bone_matrix = &this [ bone ];
+
+		if ( !bone_matrix )
+			return false;
+
+		out = { bone_matrix->m_flMatVal [ 0 ][ 3 ], bone_matrix->m_flMatVal [ 1 ][ 3 ], bone_matrix->m_flMatVal [ 2 ][ 3 ] };
+
+		return true;
+	}
 };

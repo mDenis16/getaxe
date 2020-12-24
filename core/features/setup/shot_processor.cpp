@@ -21,16 +21,17 @@ void shot_processor::weapon_fire( i_game_event* event ) {
 	if ( entity != interfaces::engine->get_local_player( ) )
 		return;
 	
-	//if ( ragebot::last_target_index == -1 )
-	//	return;
-	//if ( !ragebot::get_last_target.entity )
-	//	return;
-	
-//	shot_processor::add_shot( csgo::local_player->get_eye_pos( ), ragebot::last_target_index, (hitboxes)ragebot::get_last_target.hitbox,
-		
-	//	ragebot::get_last_target.bones, ragebot::get_last_target.mins, ragebot::get_last_target.maxs, ragebot::get_last_target.radius );
-	//ragebot::get_last_target.entity = nullptr;
-//	ragebot::last_target_index = -1;
+
+	if ( !aimbot::last_target.player )
+		return;
+
+	shot_data shot;
+	shot.tick = interfaces::globals->tick_count;
+	shot.target = aimbot::last_target;
+	shot.enemy_index = aimbot::last_target.player->index ( ); /*crash after map change should reset it ;)*/
+	shot.shotpos = engine_prediction::unpredicted_eye;
+	shots.push_back ( shot );
+	aimbot::last_target = { };
 }
 void shot_processor::hurt_event( i_game_event* event ) {
 	if ( !event )
@@ -126,31 +127,14 @@ void shot_processor::bullet_impact ( i_game_event * event ) {
 		if ( entity->dormant ( ) )
 			return;
 
-		//	if ( shot->is_backtrack )
-			//	player_manager::restore_record(entity, shot->backtrack );
-			//if ( auto intersection = ragebot::get_intersect_point ( shot->shotpos, bullet_impact, shot->mins, shot->maxs, shot->radius ); intersection ) 			{
-		//		shot->hit = true;
-			//	shot->hitpos = *intersection;
+		if ( auto intersection = aimbot::get_intersect_point ( shot->shotpos, bullet_impact, shot->target.aimbot.best_point.col.mins, shot->target.aimbot.best_point.col.maxs, shot->target.aimbot.best_point.col.radius); intersection ) {
+			shot->hit = true;
+			shot->hitpos = *intersection;
+		}
 	}
 }
 
-void shot_processor::add_shot( const vec3_t shotpos, const int& entity_index, hitboxes hitbox, matrix_t matrix [ 128 ], vec3_t mins, vec3_t maxs, float radius) {
-	
-		shot_data shot;
-		std::memcpy ( shot.matrix, matrix, sizeof ( matrix ) );
-	     shot.enemy_index = entity_index; shot.hit = false; 
-	    shot.tick = interfaces::globals->tick_count;
-	    shot.hurt = false;
-		shot.shotpos = shotpos;
-		shot.approved = false;
-		shot.curtime = interfaces::globals->cur_time;
-		shot.radius = radius;
-		shot.mins = mins;
-		shot.hitbox = hitbox;
-		shot.maxs = maxs;
-		shots.push_back( shot );
-	
-}
+
 shot_processor::shot_data* shot_processor::closest_shot( int tickcount )
 {
 	shot_data* closest_shot = nullptr;
@@ -168,7 +152,7 @@ shot_processor::shot_data* shot_processor::closest_shot( int tickcount )
 
 	return closest_shot;
 }//resolver::resolver_data [ shot->enemy_index ].last_hit_angle_related_to_me.push_back ( dif );
-const char * hitbox_text ( hitboxes hitbox ) {
+const char * shot_processor::hitbox_text ( hitboxes hitbox ) {
 	switch ( hitbox ) {
 	case hitbox_head:
 	case hitbox_neck:
@@ -200,8 +184,10 @@ const char * hitbox_text ( hitboxes hitbox ) {
 		return "arm";
 		break;
 	case hitbox_max:
+		return "generic";
 		break;
 	default:
+		return "generic";
 		break;
 	}
 }
@@ -239,33 +225,19 @@ void shot_processor::manage_shots( ) {
 
 			std::transform( name.begin( ), name.end( ), name.begin( ), tolower );
 			auto hitgroup = hitgroup_text( shot->hit_info.hitgroup );
-			auto hitbox = hitbox_text ( shot->hitbox );
+			auto hitbox = hitbox_text ( ( hitboxes ) shot->target.aimbot.best_point.hitbox );
 			if ( shot->hit && !shot->hurt )
 			{
-			/*	if ( shot->is_backtrack ) {
-					interfaces::console->console_printf( "[lua debug] Missed shot due resolver. " );
-					std::stringstream ss;
-					ss << "Missed  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage due to bad lagcomp [ " << math::time_to_ticks(entity->simulation_time() - shot->backtrack.simtime) << " ] "   << "curtime " << interfaces::globals->cur_time;
 
-				
 
-				//	visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
-					visuals::notifications::add ( ss.str ( ));
-				}
-				else {*/
-					interfaces::console->console_printf( "[lua debug] Missed shot due resolver. " );
 					std::stringstream ss;
 					resolver::resolver_data [ shot->enemy_index ].missed_shots++;
-					resolver::resolver_data [ shot->enemy_index ].brute_side = resolver::resolver_data [ shot->enemy_index ].missed_shots % 3;
-					ss << "Missed  " << name << " in " << hitbox << " damage due to resolver. side ( " << resolver::resolver_data [ shot->enemy_index ].brute_side << " ) ";
-					//visuals::event_.push_front( visuals::/loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
+					resolver::resolver_data [ shot->enemy_index ].side = static_cast<resolver::desync_side>(resolver::resolver_data [ shot->enemy_index ].missed_shots % 3);
+					ss << "Missed  " << name << " in " << hitbox << " damage due to resolver.";
+			
 					visuals::notifications::add ( ss.str ( ) );
-					resolver::resolver_data [ shot->enemy_index ].last_side_change = interfaces::globals->cur_time;
-					interfaces::debug_overlay->capsule_overlay ( shot->mins, shot->maxs, shot->radius, 255,0,255, 200, 2.f );
-				//	visuals::capsule_overlay ( shot.e, 1.7f, color ( 255, 0, 0, 200 ), best_target.bones );
-				//	visuals::capsule_overlay ( best_target_ent, 1.7f, color ( 0, 0, 255, 200 ), csgo::left_player_bones [ best_target.entity->index ( ) ] );
-				//	visuals::capsule_overlay ( best_target_ent, 1.7f, color ( 0, 0, 255, 200 ), csgo::right_player_bones [ best_target.entity->index ( ) ] );
-				//}
+					
+
 				
 			}
 			else if ( !shot->hit )
@@ -278,21 +250,15 @@ void shot_processor::manage_shots( ) {
 			else if ( shot->hurt && shot->hit )
 			{
 
-				interfaces::console->console_printf( "[lua debug] Hit entity. " );
 				std::stringstream ss;
-			//	if ( shot->is_backtrack ) {
-			//		ss << "Hit  backtrack " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage. ticks [ " << math::time_to_ticks( entity->simulation_time( ) - shot->backtrack.simtime ) << " ]" << "curtime " << interfaces::globals->cur_time;
-			//	}else
-					ss << "Hit  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage.";
+
+				ss << "Hit  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage.  bt (  "  << math::time_to_ticks ( shot->target.player->simulation_time() - shot->target.aimbot.record.simtime ) << " ) " << std::endl;
 				
 				visuals::notifications::add ( ss.str ( ) );
-				float angle_at_me = math::calc_angle ( entity->get_hitbox_position (hitbox_head ), csgo::local_player->get_eye_pos ( ) ).y - 180.f; math::normalize_yaw ( angle_at_me );
-				float dif = math::angle_diff ( entity->get_anim_state ( )->m_flGoalFeetYaw, angle_at_me );
-				std::clamp ( dif, -58.f, 58.f );
-				resolver::resolver_data [ shot->enemy_index ].last_hit_angle_related_to_me.push_back ( dif );
-				//visuals::event_.push_front( visuals::loginfo( ss.str( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
+			
+				
 			}
-		//	interfaces::debug_overlay->add_line_overlay( shot->shotpos, shot->hitpos, 255, 0, 0, false, 0.5f );
+
 			shot->approved = true;
 		}
 		if ( (interfaces::globals->cur_time - shot->curtime) > 5.f )

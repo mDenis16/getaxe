@@ -1,6 +1,6 @@
 
 #include "../../features.hpp"
-#include "../../../helpers/helpers.h"
+
 #include <optional>
 
 namespace aimbot {
@@ -12,7 +12,7 @@ namespace aimbot {
 	};
 
 	std::optional<vec3_t> get_intersect_point ( vec3_t start, vec3_t end, vec3_t mins, vec3_t maxs, float radius ) {
-		auto sphereRayIntersection = [ start, end, radius ] ( auto && center ) -> std::optional<vec3_t> {
+		auto sphere_intesection = [ start, end, radius ] ( auto && center ) -> std::optional<vec3_t> {
 			auto direction = ( end - start ).normalizedvec ( );
 
 			auto q = vec3_t ( center - start );
@@ -27,25 +27,25 @@ namespace aimbot {
 
 		auto delta = ( maxs - mins ).normalizedvec ( );
 		for ( size_t i {}; i < std::floor ( mins.distance_to ( maxs ) ); ++i ) {
-			if ( auto intersection = sphereRayIntersection ( mins + delta * float ( i ) ); intersection )
+			if ( auto intersection = sphere_intesection ( mins + delta * float ( i ) ); intersection )
 				return intersection;
 		}
 
-		if ( auto intersection = sphereRayIntersection ( maxs ); intersection )
+		if ( auto intersection = sphere_intesection ( maxs ); intersection )
 			return intersection;
 
 		return {};
 	}
 
 	bool hitchance ( target & entity ) {
-		auto angle = math::calc_angle ( engine_prediction::unpredicted_eye, best_target.aimbot.best_point.center );
+		auto angle = math::calc_angle ( engine_prediction::unpredicted_eye, best_target.aimbot.best_point.position );
 		
 
 		constexpr int   SEED_MAX = 255;
 		constexpr float HITCHANCE_MAX = 100.f;
 
-		auto local_player = csgo::local_player;
-		float hitchance = variables::ragebot::hitchance;
+		auto local_player = local_player::m_data.pointer;
+		float hitchance = config.ragebot_hitchance;
 
 		if ( !local_player ) return false;
 		int traces_hit = 0;
@@ -58,12 +58,9 @@ namespace aimbot {
 		if ( !weapon )
 			return false;
 
-		auto backupvel = csgo::local_player->velocity ( );
-		auto backupabsvel = csgo::local_player->get_abs_velocity ( );
-		csgo::local_player->get_abs_velocity ( ) = csgo::local_player->velocity ( ) = engine_prediction::unpredicted_velocity;
+
 		weapon->update_accuracy_penalty ( );
-		csgo::local_player->velocity ( ) = backupvel;
-		csgo::local_player->get_abs_velocity ( ) = backupabsvel;
+
 		float weapon_spread = weapon->get_spread ( );
 		float weapon_cone = weapon->inaccuracy ( );
 
@@ -86,6 +83,9 @@ namespace aimbot {
 
 		VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x , _hitbox->maxs.y , _hitbox->maxs.z  ), entity.aimbot.record.bone [ _hitbox->bone ], maxs );
 		VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x , _hitbox->mins.y , _hitbox->mins.z  ), entity.aimbot.record.bone [ _hitbox->bone ], mins );
+		entity.aimbot.best_point.col.maxs = maxs;
+		entity.aimbot.best_point.col.mins = mins;
+		entity.aimbot.best_point.col.radius = radius;
 		static std::vector<seed> preseed;
 		if ( preseed.size ( ) == 0 ) {
 			for ( int i { }; i <= SEED_MAX; ++i )

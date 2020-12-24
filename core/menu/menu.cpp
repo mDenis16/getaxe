@@ -8,7 +8,7 @@
 #include <string>
 #include <functional>
 #include "../menu/render/menu_render.hpp"
-#include "variables.hpp"
+
 #include "../features/features.hpp"
 
 
@@ -22,6 +22,8 @@ void menu::start( IDirect3DDevice9* device ) {
 
 
 }
+
+
 void menu::option_slider ( const char * name, const char * description, float min, float max, float & value ) {
 
 
@@ -324,85 +326,67 @@ void menu::render_menu( )
 			static float asddd [ 3 ] = { 255, 0,0 };//c_menu::get( ).opened 
 			switch ( tab_index ) {
 			case 0:
-				option ( "Aimbot enemy", "Aimbot your enemy", [ = ] ( ) {
-					option_single ( "Auto fire", "Makes your aimbot to shot automatically", variables::ragebot::auto_fire );
-					option_single ( "Silent aim", "Makes your aimbot silent local", variables::ragebot::silent_aim );
-					option_slider ( "Hitchance", "Hitchance of hitting target", 0.f, 100.f, variables::ragebot::hitchance );
-					option_slider ( "Min damage", "Minimum damage of hitspot", 0.f, 100.f, variables::ragebot::min_dmg );
-					option_slider ( "Head Scale", "Head Scale of  multipoint", 0.f, 100.f, variables::ragebot::head_scale );
-					option_slider ( "Body Scale", "Body Scale of  multipoint", 0.f, 100.f, variables::ragebot::point_scale );
-					option_single ( "No Spread", "Assit recoil", variables::ragebot::nospread );
-					//option_single ( "Resolver", "Shoot only at safe points", variables::ragebot::resolver );
-					option_combobox ( "Safepoint", "Prefer safepoint", std::vector<std::string>{"none", "minimal", "average", "restrict"}, variables::ragebot::safe_point );
-
-					option_combobox ( "Record priority", "Where you backtrack shot", std::vector<std::string>{"last", "safest", "min velocity", "highest damage"}, variables::ragebot::prioritize_record );
-
-					option_combobox ( "Hitbox priority", "Where you aimbot shot", std::vector<std::string>{"head", "body"}, variables::ragebot::prioritize_hitbox );
-
-					option_multicombobox ( "Hitscan selection", "Where your aimbot scan", { { "head", &variables::ragebot::head_scan }, { "body", &variables::ragebot::body_scan },{ "feet", &variables::ragebot::feet_scan },{ "arms scan", &variables::ragebot::arms_scan } } );
-
-
-				}, ImGui::GetWindowHeight ( ), variables::ragebot::enabled );
-				option ( "Anti aim", "Makes getting hit harder", [ = ] ( ) {
-
-					option_combobox ( "Pitch", "Where you aimbot shot", std::vector<std::string>{"none", "down", "up"}, variables::antiaim::pitch );
-					option_combobox ( "Yaw", "Where you aimbot shot", std::vector<std::string>{"none", "freestanding", "backwards"}, variables::antiaim::yaw );
-
-					option_slider_int ( "Fakelag", "Amount of fakelag", 0, 16, variables::antiaim::fakelag );
-					option_single ( "Fakelag on peek", "Teleports you in front of enemy", variables::antiaim::on_peek );
-					option_single ( "Yaw Shoot", "Changes yaw after shoot", variables::antiaim::antiaimAfterShoot );
-				}, 500, variables::antiaim::enable );
-				option ( "Exploits", "Gives you a big advatage", [ = ] ( ) {
-					option_single ( "Doubletap", "Allows you to shoot twice at the same time", variables::ragebot::double_tap );
-					option_slider_int ( "ticks ", "db tap ticks", 2, 18, variables::antiaim::db_tap_ticks );
-				}, 300, variables::antiaim::enable );
+				menu::ragebot ( );
 				break;
 
 			case 1:
-				if ( aimbot::targets.size ( ) > 0 ) {
-					for ( int i = 0; i < 13; i++ ) {
-						std::stringstream created_string;
-						created_string << "LAYER NUMBER " << i << std::endl;
-						ImGui::Text ( created_string.str().c_str() );
-						auto anim_layer = player_manager::records [ aimbot::targets.front ( ).index ].back ( ).anim_layer [ i ];
-						std::vector<std::string> props;
-				
-
-						created_string << "order " << anim_layer.order << std::endl;
-						props.push_back ( created_string.str ( ) );
-
-						created_string << "sequence " << anim_layer.sequence << std::endl;
-						props.push_back ( created_string.str ( ) );
-
-						created_string << "previous_cycle " << anim_layer.previous_cycle << std::endl;
-						props.push_back ( created_string.str ( ) );
-
-						created_string << "weight " << anim_layer.weight << std::endl;
-						props.push_back ( created_string.str ( ) );
-
-						created_string << "weight_delta_rate " << anim_layer.weight_delta_rate << std::endl;
-						props.push_back ( created_string.str ( ) );
-
-						created_string << "playback_rate " << anim_layer.playback_rate << std::endl;
-						props.push_back ( created_string.str ( ) );
-
-
-						created_string << "cycle " << anim_layer.cycle << std::endl;
-						props.push_back ( created_string.str ( ) );
-
-						for ( auto p : props )
-							ImGui::Text ( p.c_str ( ) );
-
-						ImGui::Text ( "-----------------------" );
-					}
-				}
-             
+				menu::legitbot ( );
 				break;
 
 			case 2:
 				menu::visuals ( );
 				break;
+			case 3:
+#undef config
+				ImGui::BeginChild ( "config", ImVec2 ( 409, 268 ), true );
+				{
+					static char entered_config_name [ 64 ] = { 0 };
+					ImGui::SetCursorPosX ( ImGui::GetCursorPosX ( ) + 18 );
+					ImGui::PushItemWidth ( 175 );
+					ImGui::InputText ( ( "##CFG" ), entered_config_name, 64 );
+					static int selected;
+					std::string config;
+					std::vector<std::string> configs = c_config::get ( ).get_configs ( );
+					if ( configs.size ( ) > 0 ) {
+						option_combobox ( "Config", "Select your config", configs, selected );
+						config = configs [ c_config::get ( ).counts ];
+					}
+					c_config::get ( ).counts = selected;
 
+					if ( configs.size ( ) > 0 ) {
+						ImGui::SetCursorPosX ( ImGui::GetCursorPosX ( ) + 18 );
+						if ( ImGui::Button ( ( "load" ), ImVec2 ( 175, 20 ) ) ) {
+							c_config::get ( ).load_config ( config );
+
+						}
+					}
+					if ( configs.size ( ) >= 1 ) {
+						ImGui::SetCursorPosX ( ImGui::GetCursorPosX ( ) + 18 );
+						if ( ImGui::Button ( ( "save" ), ImVec2 ( 175, 20 ) ) ) {
+							c_config::get ( ).save_config ( config );
+					
+						}
+					}
+					ImGui::SetCursorPosX ( ImGui::GetCursorPosX ( ) + 18 );
+					if ( ImGui::Button ( ( "create" ), ImVec2 ( 175, 20 ) ) ) {
+						std::string config_file_name = entered_config_name;
+						if ( config_file_name.size ( ) < 1 ) {
+							config_file_name = ( "settings" );
+						}
+						c_config::get ( ).create_config ( config_file_name );
+
+					}
+					if ( config.size ( ) >= 1 ) {
+						ImGui::SetCursorPosX ( ImGui::GetCursorPosX ( ) + 18 );
+						if ( ImGui::Button ( ( "delete" ), ImVec2 ( 175, 20 ) ) ) {
+							c_config::get ( ).remove_config ( config );
+
+						}
+					}
+
+				}
+				ImGui::EndChild (  );
+				break;
 			}
 		
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "../../dependencies/utilities/csgo.hpp"
-#include "../menu/variables.hpp"
+
 #include "../menu/ImGui/imgui.h"
 #include "../menu/ImGui/imgui_internal.h"
 

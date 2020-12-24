@@ -25,7 +25,7 @@ void misc::hitmarker::event( i_game_event* event ) {
 	if ( !attacker )
 		return;
 
-	if ( attacker == csgo::local_player ) {
+	if ( attacker == local_player::m_data.pointer ) {
 	//	if ( variables::visuals::hitmarker_sound )
 		//	interfaces::surface->play_sound( "buttons\\arena_switch_press_02.wav" );
 

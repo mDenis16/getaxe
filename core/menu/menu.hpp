@@ -54,7 +54,7 @@ namespace menu {
 
 	struct option_data {
 		 int max_height = 310;
-		 int height = 65;
+		 int height = 75;
 		 int cur_height = height;
 		 bool enable = false;
 		 bool in_transition = false;

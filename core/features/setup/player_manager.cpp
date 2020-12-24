@@ -1,4 +1,5 @@
 #include "../features.hpp"
+#include "../../helpers/helpers.h"
 std::deque< player_manager::lagcomp_t > player_manager::records [ 64 ];
 
 player_manager::lagcomp_t player_manager::backup_data [ 64 ];
@@ -71,9 +72,14 @@ player_t* player_manager::util_player_by_index( int index )
 }
 
 void player_manager::manage_bones( ) {
-
-	if ( !csgo::local_player )
+	
+	if ( !local_player::m_data.pointer )
 		return;
+
+	/*if ( local_player::m_data.pointer && local_player::m_data.pointer->is_alive() && local_player::m_data.pointer->active_weapon() ) {
+		
+		interfaces::console->console_printf ( "shott time  %f \n", local_player::m_data.pointer->active_weapon ( )->m_fLastShotTime ( ) );
+	}*/
 
 	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
 		player_t* entity = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( i ) );
@@ -81,12 +87,16 @@ void player_manager::manage_bones( ) {
 		if ( !entity )
 			continue;
 
+		if ( entity == local_player::m_data.pointer )
+			continue;
+
 		if ( entity->dormant( ) )
 			continue;
 
-		if ( entity->health( ) <= 0 )
+		if ( !entity->is_alive() )
 			continue;
 
+		
 
 		static auto set_interpolation_flags = [ ] ( player_t* e, int flag ) {
 			const auto var_map = ( uintptr_t ) e + 36;
@@ -95,9 +105,9 @@ void player_manager::manage_bones( ) {
 			for ( auto index = 0; index < sz_var_map; index++ )
 				*( uintptr_t* ) ( ( *( uintptr_t* ) var_map ) + index * 12 ) = flag;
 		};
-
-
-		set_interpolation_flags( entity, 0 );
+		set_interpolation_flags ( entity, 0 );
+		animations::post_data_end ( entity );
+	
 
 
 	}
@@ -105,8 +115,11 @@ void player_manager::manage_bones( ) {
 
 }
 void player_manager::setup_players( ) {
-	if ( !csgo::local_player )
+	
+
+	if ( !local_player::m_data.pointer )
 		return;
+
 
 	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
 		player_t* player = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( i ) );
@@ -117,14 +130,13 @@ void player_manager::setup_players( ) {
 		if ( player->dormant( ) )
 			continue;
 
-		if ( player->health( ) <= 0 )
+		if ( !player->is_alive() )
 			continue;
 
 
 		float fDuration = -1.f;
 		static uintptr_t pCall = ( uintptr_t ) utilities::pattern_scan( "server.dll", "55 8B EC 81 EC ? ? ? ? 53 56 8B 35 ? ? ? ? 8B D9 57 8B CE" );
-		PVOID pEntity = nullptr;
-		pEntity = util_player_by_index( i );
+		PVOID pEntity  = util_player_by_index( i );
 
 		if ( pEntity )
 		{
@@ -162,20 +174,15 @@ void player_manager::recieve_record( player_t* entity, lagcomp_t& record ) {
 	record.moving = entity->is_moving( );
 	record.velocity = entity->velocity( );
 	
-	record.pose_params = entity->get_poseparameter( );
+	//record.pose_params = entity->get_poseparameter( );
 	record.speed = entity->velocity ( ).length_2d_sqr ( );
 	record.resolver = resolver::resolver_data [ entity->index( ) ];
-
-	std::memcpy( record.anim_layer, entity->get_anim_overlays( ), sizeof( animationlayer ) * 15 );
+	std::memcpy ( record.anim_layer, entity->get_animoverlays ( ), sizeof ( animationlayer ) * 15 );
 
 	auto count = *( std::uint32_t* ) ( ( std::uint32_t ) entity->get_renderable( ) + 0x2918 );
 	std::memcpy( &record.bone, *( void** ) ( ( std::uint32_t ) entity->get_renderable( ) + 0x290C ), sizeof( matrix_t ) * count );
 
-	if ( lby [ index ] != entity->lower_body_yaw( ) || ( entity->flags( ) & ( int ) fl_onground && entity->velocity( ).Length2D( ) > 29.f ) )
-	{
-		record.lby_update = true;
-		lby [ index ] = entity->lower_body_yaw( );
-	}
+
 	record.shoot = false;
 	if ( entity->active_weapon( ) ) {
 		if ( shot [ index ] != entity->active_weapon( )->m_fLastShotTime( ) )
@@ -185,7 +192,7 @@ void player_manager::recieve_record( player_t* entity, lagcomp_t& record ) {
 		}
 	}
 	if ( record.shoot ) {
-		auto angle_to_me = math::calc_angle ( entity->get_hitbox_position(hitbox_head), csgo::local_player->get_hitbox_position (hitbox_head, record.bone )).y;
+		auto angle_to_me = math::calc_angle ( entity->get_eye_pos(), local_player::m_data.pointer->get_eye_pos()).y;
 		angle_to_me = math::normalize_yaw ( angle_to_me );
 
 		get_rotated_matrix ( record, angle_to_me, record.bone );
@@ -248,39 +255,63 @@ void player_manager::get_rotated_matrix( lagcomp_t record, float angle, matrix_t
 	}
 
 }
+
+void player_manager::rotate_matrix ( matrix_t bones[128], float angle ) {
+	vec3_t BonePos;
+	vec3_t OutPos;
+	matrix_t new_matrix [ 128 ];
+	for ( int i = 0; i < MAXSTUDIOBONES; i++ ) {
+		math::angle_matrix ( vec3_t ( 0, angle, 0 ), new_matrix [ i ] );
+		math::matrix_multiply ( new_matrix [ i ], bones [ i ] );
+		BonePos = vec3_t ( bones [ i ][ 0 ][ 3 ], bones [ i ][ 1 ][ 3 ], bones [ i ][ 2 ][ 3 ] ) - local_player::m_data.pointer->abs_origin();
+		math::vector_rotate ( BonePos, vec3_t ( 0, angle, 0 ), OutPos );
+		OutPos += local_player::m_data.pointer->abs_origin ( );
+		new_matrix [ i ][ 0 ][ 3 ] = OutPos.x;
+		new_matrix [ i ][ 1 ][ 3 ] = OutPos.y;
+		new_matrix [ i ][ 2 ][ 3 ] = OutPos.z;
+	}
+	std::memcpy ( bones, new_matrix, sizeof ( new_matrix ) );
+
+}
+
 void player_manager::setup_records ( ) {
 
-	if ( !csgo::local_player )
+
+
+	if ( !local_player::m_data.alive )
 		return;
-	static int old_tick = 0;
+
 	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
 		player_t * player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
 
 		if ( !player )
 			continue;
 
-		if ( player == csgo::local_player )
+		if ( player == local_player::m_data.pointer )
 			continue;
 
-		if ( player->team ( ) == csgo::local_player->team ( ) )
+		if ( player->team ( ) == local_player::m_data.pointer->team ( ) )
 			continue;
 
-		if ( !player->dormant ( ) && player->health ( ) > 0 ) {
+		if ( !player->dormant ( ) && player->is_alive() ) {
+			
 
 
+				player_manager::backup_player ( player );
+				lagcomp_t record;
 
-			player_manager::backup_player ( player );
-			lagcomp_t record;
-
-			recieve_record ( player, record );
-			records [ i ].push_back ( record );
+				recieve_record ( player, record );
+				records [ i ].push_back ( record );
+			
 		}
 
 		if ( records [ i ].size ( ) > 0 ) {
+
+			if ( player->dormant ( ) || !player->is_alive ( ) ) {
+				records [ i ].clear ( );
+				continue;
+			}
 			for ( int t = 0; t < records [ i ].size ( ); t++ )
-				if ( player->dormant ( ) && !player->health ( ) > 0 )
-					records [ i ].clear ( );
-				else
 					if ( !is_tick_valid ( records [ i ].at ( t ) ) )
 						records [ i ].erase ( records [ i ].begin ( ) + t );
 		}
@@ -340,5 +371,6 @@ void player_manager::backup_player( player_t* entity )
 	record.velocity = entity->velocity( );
 	auto count = *( std::uint32_t* ) ( ( std::uint32_t ) entity->get_renderable( ) + 0x2918 );
 	std::memcpy( &record.bone, *( void** ) ( ( std::uint32_t ) entity->get_renderable( ) + 0x290C ), sizeof( matrix_t ) * count );
-
+  
+	std::memcpy ( &csgo::player_bones [ index ], *( void ** ) ( ( std::uint32_t ) entity->get_renderable ( ) + 0x290C ), sizeof ( matrix_t ) * count );
 }

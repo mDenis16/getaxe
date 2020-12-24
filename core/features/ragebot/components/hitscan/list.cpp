@@ -5,20 +5,20 @@ namespace aimbot {
 	std::vector<int> hitscan_list;
 	void populate_hitscan ( ) {
 		hitscan_list.clear ( );
+		int target_hitbox = config.ragebot_prioritize_hitbox == 0 ? hitbox_head : hitbox_chest;
+		hitscan_list.push_back ( target_hitbox );
 
-		hitscan_list.push_back ( variables::ragebot::prioritize_hitbox == 0 ? hitbox_head : hitbox_chest );
-
-		if ( variables::ragebot::head_scan ) {
+		if ( config.ragebot_head_scan ) {
 			hitscan_list.push_back ( (int)hitboxes::hitbox_head );
 		}
 
-		if ( variables::ragebot::body_scan ) {
+		if ( config.ragebot_body_scan ) {
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_upper_chest );
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_chest );
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_pelvis );
 		}
 
-		if ( variables::ragebot::feet_scan ) {
+		if ( config.ragebot_feet_scan ) {
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_left_foot );
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_right_foot );
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_right_thigh );
@@ -26,7 +26,7 @@ namespace aimbot {
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_left_calf );
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_right_calf );
 		}
-		if ( variables::ragebot::arms_scan ) {
+		if ( config.ragebot_arms_scan ) {
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_right_upper_arm );
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_left_upper_arm );
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_left_forearm );
@@ -35,8 +35,13 @@ namespace aimbot {
 			hitscan_list.push_back ( ( int ) hitboxes::hitbox_right_hand );
 		}
 
-		std::sort ( hitscan_list.begin ( ), hitscan_list.end ( ) );
-		hitscan_list.erase ( std::unique ( hitscan_list.begin ( ), hitscan_list.end ( ) ), hitscan_list.end ( ) );
+
+		for ( size_t i = hitscan_list.size ( ) - 1; i >= 0; i-- ) {
+			if ( hitscan_list.at ( i ) == target_hitbox ) {
+				hitscan_list.erase ( hitscan_list.begin ( ) + i );
+				break;
+			}
+		}
 	}
  
 }

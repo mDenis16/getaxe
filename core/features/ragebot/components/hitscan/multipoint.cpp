@@ -42,21 +42,21 @@ namespace aimbot {
 			}
 			vec3_t middle = ( top - bot );
 
-			points.points [ 1 ].pos += vec3_t ( right.x * scale ( variables::ragebot::head_scale, 100.f ), right.y * scale ( variables::ragebot::head_scale, 100.f ), top.z * hitbox->radius * 0.95f );
-			points.points [ 2 ].pos += vec3_t ( left.x * scale ( variables::ragebot::head_scale, 100.f ), left.y * scale ( variables::ragebot::head_scale, 100.f ), top.z * hitbox->radius * 0.95f );
-			points.points [ 3 ].pos += vec3_t ( right.x * scale ( variables::ragebot::head_scale, 100.f ), right.y * scale ( variables::ragebot::head_scale, 100.f ), middle.z );
-			points.points [ 4 ].pos += vec3_t ( left.x * scale ( variables::ragebot::head_scale, 100.f ), left.y * scale ( variables::ragebot::head_scale, 100.f ), middle.z );
+			points.points [ 1 ].pos += vec3_t ( right.x * scale ( config.ragebot_head_scale, 100.f ), right.y * scale ( config.ragebot_head_scale, 100.f ), top.z * hitbox->radius * 0.95f );
+			points.points [ 2 ].pos += vec3_t ( left.x * scale ( config.ragebot_head_scale, 100.f ), left.y * scale ( config.ragebot_head_scale, 100.f ), top.z * hitbox->radius * 0.95f );
+			points.points [ 3 ].pos += vec3_t ( right.x * scale ( config.ragebot_head_scale, 100.f ), right.y * scale ( config.ragebot_head_scale, 100.f ), middle.z );
+			points.points [ 4 ].pos += vec3_t ( left.x * scale ( config.ragebot_head_scale, 100.f ), left.y * scale ( config.ragebot_head_scale, 100.f ), middle.z );
 			//points.points [ 5 ].pos = vec3_t ( points.center.x, points.center.y, points.center.z + top.z * hitbox->radius * (entity.player->is_moving() ? 0.85f : 0.99f ) );
 
 
 		}
 		else if ( hit_box >= hitbox_pelvis && hit_box <= hitbox_upper_chest ) {
-			float body_scale = ( variables::ragebot::double_tap && tickbase_system::m_shift_data.m_needs_recharge == 0 ) ? 5.f : variables::ragebot::point_scale;
+			float body_scale = config.ragebot_point_scale;
 			for ( auto i = 0; i < 3; ++i ) {
 				points.points.emplace_back ( point );
 			}
-			points.points [ 1 ].pos += right * ( hitbox->radius * ( variables::ragebot::point_scale / 100.f ) );
-			points.points [ 2 ].pos += left * ( hitbox->radius * ( variables::ragebot::point_scale / 100.f ) );
+			points.points [ 1 ].pos += right * ( hitbox->radius * ( config.ragebot_point_scale / 100.f ) );
+			points.points [ 2 ].pos += left * ( hitbox->radius * ( config.ragebot_point_scale / 100.f ) );
 
 		}
 		else
@@ -70,8 +70,8 @@ namespace aimbot {
 		/*safepoint implementation after sleep*/
 		for ( size_t i = 0; i < points.points.size ( ); i++ ) {
 
-			if ( variables::ragebot::safe_point > 0 ) {
-				if ( variables::ragebot::safe_point == 1 && hit_box == hitboxes::hitbox_head && !record.shoot ) {
+			if ( config.ragebot_safe_point > 0 ) {
+				if ( config.ragebot_safe_point == 1 && hit_box == hitboxes::hitbox_head ) {
 					auto left_head = entity.player->get_hitbox_position ( hitbox_head, record.bone_left, entity.hitbox_set->hitbox ( hitbox_head ) );
 					auto right_head = entity.player->get_hitbox_position ( hitbox_head, record.bone_right, entity.hitbox_set->hitbox ( hitbox_head ) );
 					auto left_head_w2s = vec3_t ( ), right_head_w2s = vec3_t ( );

@@ -45,6 +45,9 @@
 #include "../../../source-sdk/classes/client_class.hpp"
 #include "../../utilities/fnv.hpp"
 template <typename T> T get_vfunc( void* v_table, const int i_index ) { return ( *static_cast< T** >( v_table ) ) [ i_index ]; }
+
+#define  Assert( _exp )										((void)0)
+
 #define NETVAR(table, prop, func_name, type) \
 	type& func_name( ) { \
       static uintptr_t offset = 0; \
@@ -67,6 +70,13 @@ template <typename T> T get_vfunc( void* v_table, const int i_index ) { return (
 	type& var() { \
 		return *(type*)(uintptr_t(this) + offset); \
 	} \
+
+#define POFFSET(funcname, type, offset) type* funcname() \
+{ \
+	static uint16_t _offset = offset; \
+	Assert(_offset); \
+	return reinterpret_cast<type*>(uintptr_t(this) + _offset); \
+}
 
 #define MEMEBR_FUNC_ARGS(...) ( this, __VA_ARGS__ ); }
 #define FUNCARGS(...) ( __VA_ARGS__ ); }

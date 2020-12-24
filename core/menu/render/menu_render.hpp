@@ -2812,8 +2812,10 @@ public:
 		0x00, 0x00, 0x00, 0x00, 0xD8, 0x1D, 0xB3, 0x6C,
 	};
 	void __stdcall setup_resent( IDirect3DDevice9* device ) {
+		pDevice = device;
 		ImGui_ImplDX9_Init( hooks::window, device );
 
+		
 		ImGuiStyle* style = &ImGui::GetStyle( );
 		style->WindowPadding = ImVec2( 9, 15 );
 		style->WindowRounding = 5.0f;
@@ -2880,10 +2882,11 @@ public:
 	void apply_fonts(  ) {
 		ImGui::CreateContext( );
 
-		normalf = ImGui::GetIO( ).Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Verdana.ttf", 17.0f );
+		normalf = ImGui::GetIO( ).Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Verdana.ttf", 16.0f );
 		bigf = ImGui::GetIO( ).Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Verdana.ttf", 25.0f );
 		smallf = ImGui::GetIO( ).Fonts->AddFontFromFileTTF( "C:\\Windows\\Fonts\\Verdana.ttf", 13.0f );
-		weapon_icons = ImGui::GetIO( ).Fonts->AddFontFromMemoryTTF( weaponicons.data(), weaponicons.size( ), 15);
+		weapon_icons = ImGui::GetIO( ).Fonts->AddFontFromMemoryTTF( weaponicons.data(), weaponicons.size( ), 20);
+		verdana = ImGui::GetIO ( ).Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\Verdana.ttf", 13.0f );
 	}
 
 	void __stdcall end_present( IDirect3DDevice9* device ) {
@@ -2942,8 +2945,9 @@ public:
 	ImFont* normalf;
 	ImFont* bigf;
 	ImFont* smallf;
+	ImFont * verdana;
 	ImFont* weapon_icons;
-	
+	IDirect3DDevice9 * pDevice;
 	ImDrawList* draw;
 	IDirect3DTexture9 * tImage;
 	bool opened = false;

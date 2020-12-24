@@ -101,9 +101,12 @@ void c_menu::run_visuals( ) {
 
 	visuals::player::present( );
 	visuals::notifications::present ( );
-	visuals::draw_debug_points ( );
 	visuals::local_esp ( );
 	visuals::projectiles::draw ( );
+
 	ImGui::End( );
+
+
+//	visuals::circle_filled ( 500, 300, 50.f, 10.f, 100, D3DCOLOR_ARGB ( 205, 000, 000, 200 ) );
 }
 

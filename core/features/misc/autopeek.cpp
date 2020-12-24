@@ -23,7 +23,7 @@ namespace autopeek {
 			return;
 		if ( m_data.finished )
 			return;
-		m_data.origin = csgo::local_player->abs_origin ( );
+		m_data.origin = local_player::m_data.pointer->abs_origin ( );
 		if ( m_data.state == peek_state::standby ) {
 			search_position ( );
 
@@ -43,7 +43,7 @@ namespace autopeek {
 		if ( !target.player )
 			return;
 		/* getting the first element of targets vector ( this should me the closest related to fov)*/
-		/*vec3_t position = csgo::local_player->get_eye_pos ( );
+		/*vec3_t position = local_player::m_data.pointer->get_eye_pos ( );
 
 		float radius = 120;
 		int radius_steps = 6;
@@ -81,12 +81,12 @@ namespace autopeek {
 					trace_t tr;
 					ray.initialize ( position, location );
 					trace_filter traceFilter;
-					traceFilter.skip = csgo::local_player;
+					traceFilter.skip = local_player::m_data.pointer;
 					interfaces::trace_ray->trace_ray ( ray, MASK_SHOT_BRUSHONLY, &traceFilter, &tr );
 					if ( tr.did_hit ( ) )
 						continue;
 
-					float dmg = autowall::GetDamage ( csgo::local_player, location, target_head, awall);
+					float dmg = autowall::GetDamage ( local_player::m_data.pointer, location, target_head, awall);
 					float dist = Distance ( position, tr.end );
 					if ( dmg  > 10.f)  {
 						if ( dist < closest ) {

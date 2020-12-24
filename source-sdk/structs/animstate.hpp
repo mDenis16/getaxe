@@ -1,74 +1,105 @@
 #pragma once
+struct animstate_pose_param_cache_t {
+	std::uint8_t pad_0x0 [ 0x4 ]; //0x0
+	std::uint32_t m_idx; //0x4 
+	char * m_name; //0x8
 
+	void set_value ( void * e, float val );
+};
 class anim_state {
 public:
-	char pad [ 3 ];
-	char bUnknown; //0x4
-	char pad2 [ 91 ];
-	void* m_pBaseEntity; //0x60
-	void* m_pActiveWeapon; //0x64
-	void* m_pLastActiveWeapon; //0x68
-	float m_flLastClientSideAnimationUpdateTime; //0x6C
-	int m_iLastClientSideAnimationUpdateFramecount; //0x70
-	float m_flUpdateTimeDelta; //0x74
-	float m_flEyeYaw; //0x78
-	float m_flPitch; //0x7C
-	float m_flGoalFeetYaw; //0x80
-	float m_flCurrentFeetYaw; //0x84
-	float m_flCurrentTorsoYaw; //0x88
-	float m_flUnknownVelocityLean; //0x8C //changes when moving/jumping/hitting ground
-	float m_flLeanAmount; //0x90
-	char pad4 [ 4 ]; //NaN
-	float m_flFeetCycle; //0x98 0 to 1
-	float m_flFeetYawRate; //0x9C 0 to 1
-	float m_fUnknown2;
-	float m_fDuckAmount; //0xA4
-	float m_fLandingDuckAdditiveSomething; //0xA8
-	float m_fUnknown3; //0xAC
-	vec3_t m_vOrigin; //0xB0, 0xB4, 0xB8
-	vec3_t m_vLastOrigin; //0xBC, 0xC0, 0xC4
-	float m_vVelocityX; //0xC8
-	float m_vVelocityY; //0xCC
-	char pad5 [ 4 ];
-	float m_flUnknownFloat1; //0xD4 Affected by movement and direction
-	char pad6 [ 8 ];
-	float m_flUnknownFloat2; //0xE0 //from -1 to 1 when moving and affected by direction
-	float m_flUnknownFloat3; //0xE4 //from -1 to 1 when moving and affected by direction
-	float m_unknown; //0xE8
-	float m_velocity; //0xEC
-	float flUpVelocity; //0xF0
-	float m_flSpeedNormalized; //0xF4 //from 0 to 1
-	float m_flFeetSpeedForwardsOrSideWays; //0xF8 //from 0 to 2. something is 1 when walking, 2.something when running, 0.653 when crouch walking
-	float m_flFeetSpeedUnknownForwardOrSideways; //0xFC //from 0 to 3. something
-	float m_flTimeSinceStartedMoving; //0x100
-	float m_flTimeSinceStoppedMoving; //0x104
-	bool m_bOnGround; //0x108
-	bool m_bInHitGroundAnimation; //0x109
-	char pad7 [ 10 ];
-	float m_flLastOriginZ; //0x114
-	float m_flHeadHeightOrOffsetFromHittingGroundAnimation; //0x118 from 0 to 1, is 1 when standing
-	float m_flStopToFullRunningFraction; //0x11C from 0 to 1, doesnt change when walking or crouching, only running
-	char pad8 [ 4 ]; //NaN
-	float m_flMovingFraction; //0x124 affected while jumping and running, or when just jumping, 0 to 1
-	char pad9 [ 4 ]; //NaN
-	float m_flUnknown3;
-	char pad10 [ 528 ];
+	std::uint8_t pad_0x0000 [ 0x4 ]; //0x0000
+	bool m_force_update; //0x0005 
+	std::uint8_t pad_0x0006 [ 0x5A ]; //0x0006
+	void * m_entity; //0x0060 
+	void * m_weapon; //0x0064 
+	void * m_last_weapon; //0x0068 
+	float m_last_clientside_anim_update; //0x006C 
+	uint32_t m_last_clientside_anim_framecount; //0x0070 
+	float m_last_clientside_anim_update_time_delta; //0x0074 
+	float m_eye_yaw; //0x0078 
+	float m_pitch; //0x007C 
+	float m_abs_yaw; //0x0080 
+	float m_feet_yaw; //0x0084 
+	float m_body_yaw; //0x0088 
+	float m_body_yaw_clamped; //0x008C 
+	float m_feet_vel_dir_delta; //0x0090 
+	uint8_t pad_0x0094 [ 0x4 ]; //0x0094
+	float m_feet_cycle; //0x0098 
+	float m_feet_yaw_rate; //0x009C 
+	uint8_t pad_0x00A0 [ 0x4 ]; //0x00A0
+	float m_duck_amount; //0x00A4 
+	float m_landing_duck_additive; //0x00A8 
+	uint8_t pad_0x00AC [ 0x4 ]; //0x00AC
+	vec3_t m_origin; //0x00B0 
+	vec3_t m_old_origin; //0x00BC 
+	vec2_t m_vel2d; //0x00C8 
+	uint8_t pad_0x00D0 [ 0x10 ]; //0x00D0
+	vec2_t m_last_accelerating_vel; //0x00E0 
+	uint8_t pad_0x00E8 [ 0x4 ]; //0x00E8
+	float m_speed2d; //0x00EC 
+	float m_up_vel; //0x00F0 
+	float m_speed_normalized; //0x00F4 
+	float m_run_speed; //0x00F8 
+	float m_unk_feet_speed_ratio; //0x00FC 
+	float m_time_since_move; //0x0100 
+	float m_time_since_stop; //0x0104 
+	bool m_on_ground; //0x0108 
+	bool m_hit_ground; //0x0109 
+	uint8_t pad_0x010A [ 0x4 ]; //0x010A
+	float m_time_in_air; //0x0110 
+	uint8_t pad_0x0114 [ 0x6 ]; //0x0114
+	float m_ground_fraction; //0x011C 
+	uint8_t pad_0x0120 [ 0x2 ]; //0x0120
+	float m_unk_fraction; //0x0124 
+	uint8_t pad_0x0128 [ 0xC ]; //0x0128
+	bool m_moving; //0x0134
+	uint8_t pad_0x0135 [ 0x7B ]; //0x0135
+	animstate_pose_param_cache_t m_lean_yaw_pose; //0x1B0
+	animstate_pose_param_cache_t m_speed_pose; //0x01BC
+	animstate_pose_param_cache_t m_ladder_speed_pose; //0x01C8
+	animstate_pose_param_cache_t m_ladder_yaw_pose; //0x01D4
+	animstate_pose_param_cache_t m_move_yaw_pose; //0x01E0
+	animstate_pose_param_cache_t m_run_pose; //0x01EC 
+	animstate_pose_param_cache_t m_body_yaw_pose; //0x01F8
+	animstate_pose_param_cache_t m_body_pitch_pose; //0x0204
+	animstate_pose_param_cache_t m_dead_yaw_pose; //0x0210
+	animstate_pose_param_cache_t m_stand_pose; //0x021C
+	animstate_pose_param_cache_t m_jump_fall_pose; //0x0228
+	animstate_pose_param_cache_t m_aim_blend_stand_idle_pose; //0x0234
+	animstate_pose_param_cache_t m_aim_blend_crouch_idle_pose; //0x0240
+	animstate_pose_param_cache_t m_strafe_yaw_pose; //0x024C
+	animstate_pose_param_cache_t m_aim_blend_stand_walk_pose; //0x0258
+	animstate_pose_param_cache_t m_aim_blend_stand_run_pose; //0x0264
+	animstate_pose_param_cache_t m_aim_blend_crouch_walk_pose; //0x0270
+	animstate_pose_param_cache_t m_move_blend_walk_pose; //0x027C
+	animstate_pose_param_cache_t m_move_blend_run_pose; //0x0288
+	animstate_pose_param_cache_t m_move_blend_crouch_pose; //0x0294
+	uint8_t pad_0x02A0 [ 0x4 ]; //0x02A0
+	float m_vel_unk; //0x02A4 
+	uint8_t pad_0x02A8 [ 0x86 ]; //0x02A8
+	float m_min_yaw; //0x0330 
+	float m_max_yaw; //0x0334 
+	float m_max_pitch; //0x0338 
+	float m_min_pitch; //0x033C
 
-	float AbsYaw( )
-	{
-		return *( float* ) ( ( DWORD ) this + 0x80 );
-	}
+	void reset ( );
+	void update ( vec3_t & ang );
 };
 class animationlayer {
 public:
-	byte	pad_0x0 [ 0x14 ];
-	int		order;
-	int		sequence;
-	float	previous_cycle;
-	float	weight;
-	float	weight_delta_rate;
-	float	playback_rate;
-	float	cycle;
-	void* owner;
-	byte	pad_0x38 [ 0x4 ];
+	float   m_anim_time;			// 0x0000
+	float   m_fade_out_time;		// 0x0004
+	int     m_flags;				// 0x0008
+	int     m_activty;				// 0x000C
+	int     m_priority;				// 0x0010
+	int     m_order;				// 0x0014
+	int     m_sequence;				// 0x0018
+	float   m_prev_cycle;			// 0x001C
+	float   m_weight;				// 0x0020
+	float   m_weight_delta_rate;	// 0x0024
+	float   m_playback_rate;		// 0x0028
+	float   m_cycle;				// 0x002C
+	void * m_owner;				// 0x0030
+	int     m_bits;					// 0x0034
 };

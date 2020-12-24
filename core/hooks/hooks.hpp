@@ -80,9 +80,15 @@ namespace hooks {
 		using fn = void ( __thiscall * )( void *, void * , vec3_t & , vec3_t & , float & , float & , float &  );
 		static void __fastcall hook ( void * ecx, void * edx, vec3_t & eye_origin, vec3_t & eye_angles, float & z_near, float & z_far, float & fov );
 	}
-	/*
-	void __fastcall hooks::calculate_view::hook ( void * this_pointer, void * edx, vec3_t & eye_origin, vec3_t & eye_angles, float & z_near, float & z_far, float & fov )
-	*/
+	namespace in_prediction {
+		bool __fastcall hook ( void * ecx, void * edx );
+		using fn = bool ( __fastcall * )( void *, void * );
+	}
+	namespace do_extra_bone_processing {
+		using fn = void ( __thiscall * )( void *, void *, vec3_t *, void *, void *, uint8_t *, void * );
+
+		static void _fastcall hook ( void * ecx, uint32_t, void * hdr, vec3_t * pos, void * q, void * matrix, uint8_t * bone_computed, void * context );
+	}
 	namespace do_procedural_foot_plant {
 	
 		static	void __fastcall hook( void* a1, void* _edx, int a2, int a3, int a4, int a5 );
@@ -104,9 +110,9 @@ namespace hooks {
 		static void _fastcall hook( void* ecx, void* edx );
 	}
 	
-	namespace draw_model_execute {
-		using fn = void( __thiscall* )( iv_model_render*, i_mat_render_context*, const draw_model_state_t&, const model_render_info_t&, matrix_t* );
-		static void __stdcall hook( i_mat_render_context* ctx, const draw_model_state_t& state, const model_render_info_t& info, matrix_t* bone_to_world );
+	namespace draw_model_exec {
+		void __fastcall hook ( void * ecx, void * edx, void * ctx, const draw_model_state_t & state, const model_render_info_t & info, matrix_t * custom_bone_to_world = nullptr );
+		using fn = void ( __fastcall * )( void *, void *, void *, const draw_model_state_t &, const model_render_info_t &, matrix_t * );
 	}
 	namespace present {
 
@@ -158,3 +164,4 @@ namespace hooks {
 	}
 	
 }
+inline hooks::draw_model_exec::fn o_draw_model_exec = nullptr;

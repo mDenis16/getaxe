@@ -40,7 +40,7 @@ namespace csgo {
 	extern player_t* local_player;
 	extern matrix_t player_bones[ 65 ][ 128 ];
 	extern matrix_t fake_matrix[ 128 ];
-	extern matrix_t real_matrix [ 128 ];
+	extern BoneArray real_matrix [ 128 ];
 	extern vec3_t m_strafe_angles;
 	extern matrix_t right_player_bones [ 65 ][ 128 ];
 	extern matrix_t left_player_bones [ 65 ][ 128 ];
@@ -55,6 +55,7 @@ namespace csgo {
 	extern int32_t nSinceUse;
 	extern bool choke_next_tick;
 	extern bool m_update_fake;
+	extern bool override_velocity;
 	extern int m_goal_shift;
 	extern bool fakeduck;
 	extern   animationlayer m_real_layers [ 13 ];
@@ -80,6 +81,7 @@ namespace csgo {
 	extern vec3_t m_rotation;
 	extern bool send_packet;
 	extern float choke_yaw;
+	extern  int tickbase_shift;
 	extern 	 bool should_setup_bones;
 	extern HWND window;
 	extern bool in_trace;

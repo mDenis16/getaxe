@@ -68,7 +68,7 @@ float autowall::GetDamage( player_t* pLocal, const vec3_t& vecStart, const vec3_
 bool VectortoVectorVisible( vec3_t src, vec3_t point )
 {
 	trace_t TraceInit;
-	autowall::TraceLine( src, point, MASK_SOLID, csgo::local_player, &TraceInit );
+	autowall::TraceLine( src, point, MASK_SOLID, local_player::m_data.pointer, &TraceInit );
 	trace_t Trace;
 	autowall::TraceLine( src, point, MASK_SOLID, TraceInit.entity, &Trace );
 
@@ -96,7 +96,7 @@ bool autowall::can_hit_float_point( const vec3_t& point, const vec3_t& source )
 	vecDirection.normalize_in_place( );
 	data.vecDir = vecDirection;
 
-	auto pWeapon = csgo::local_player->active_weapon( );
+	auto pWeapon = local_player::m_data.pointer->active_weapon( );
 
 	if ( pWeapon == nullptr )
 		return false;
@@ -109,7 +109,7 @@ bool autowall::can_hit_float_point( const vec3_t& point, const vec3_t& source )
 	data.flCurrentDamage = ( float ) weaponData->iDamage;
 	float trace_length_remaining = weaponData->flRange;
 	vec3_t end = data.vecPosition + ( data.vecDir * trace_length_remaining );
-	TraceLine( data.vecPosition, end, MASK_SHOT | CONTENTS_HITBOX, csgo::local_player, &data.enterTrace );
+	TraceLine( data.vecPosition, end, MASK_SHOT | CONTENTS_HITBOX, local_player::m_data.pointer, &data.enterTrace );
 
 	csgo::in_trace = false;
 	if ( VectortoVectorVisible( data.vecPosition, point ))
@@ -240,7 +240,7 @@ bool autowall::IsBreakableEntity( player_t* pEntity )
 		return false;
 
 	// force set DAMAGE_YES for certain breakable entities (as props, doors, etc)
-	if ( pClientClass->class_id == class_ids::cbreakablesurface || pClientClass->class_id == class_ids::cbasedoor || pClientClass->class_id == class_ids::cfuncbrush )
+	if ( pClientClass->class_id == class_ids::breakable_surface || pClientClass->class_id == class_ids::base_door || pClientClass->class_id == class_ids::func_brush )
 		pEntity->get_take_damage( ) = 2;
 
 	using IsBreakableEntityFn = bool( __thiscall* )( player_t* );

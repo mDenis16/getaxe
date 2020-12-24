@@ -33,11 +33,21 @@ enum nade_throw_act
 class c_nade_prediction
 {
 	std::array< c_nadepoint, 500 >	_points{ };
+	std::vector<ImVec2> points;
+	std::vector<ImVec2> points_detonate;
+	bool _updated = false;
 	bool		 _predicted = false;
 	bool         _w2s = false;
+	bool should_update = false;
+	bool player_hurt = false;
+	bool should_draw = false;
+	bool should_empty = false;
 	void predict( c_usercmd* user_cmd );
-	bool detonated( weapon_t* weapon, float time, trace_t& trace );
+	std::vector<ImVec2> copy_points;
+	std::vector<ImVec2> copy_points_detonate;
 public:
+	bool detonated ( weapon_t * weapon, float time, trace_t & trace );
+	bool detonated ( class_ids id, float time, trace_t & trace );
 	void trace( c_usercmd* user_cmd );
 	void paint_traverse ( );
 	void draw( );

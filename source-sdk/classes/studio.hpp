@@ -212,3 +212,33 @@ public:
 		return (studio_bone_t*)((uint8_t*)this + bone_index) + i;
 	}
 };
+
+class c_studio_hdr {
+public:
+	class mstudioposeparamdesc_t {
+	public:
+		int					sznameindex;
+		__forceinline char * const name ( void ) const { return ( ( char * ) this ) + sznameindex; }
+		int					flags;	// ????
+		float				start;	// starting value
+		float				end;	// ending value
+		float				loop;	// looping range, 0 for no looping, 360 for rotations, etc.
+	};
+
+	studio_hdr_t * m_pStudioHdr;
+	void * m_pVModel;
+};
+class c_bone_accessor {
+public:
+	void * m_pAnimating;
+	BoneArray * m_pBones;
+	int        m_ReadableBones;
+	int        m_WritableBones;
+};
+
+class c_bone_cache {
+public:
+	BoneArray * m_pCachedBones;
+	char pad [ 8 ];
+	int        m_CachedBoneCount;
+};

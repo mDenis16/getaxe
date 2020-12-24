@@ -1,9 +1,16 @@
 #include "../../../features.hpp"
-#include "../../../../helpers/helpers.h"
+
 
 namespace aimbot {
 	std::deque< player_manager::lagcomp_t > filter_records ( target & entity ) {
+		
+		auto index = entity.player->index ( );
+
 		std::deque< player_manager::lagcomp_t > best_records;
+
+		if ( !player_manager::records [ index ].size ( ) )
+			return best_records;
+		
 		player_manager::lagcomp_t best_record;
 		float min_speed = 9999.f;
 		float dmg = 0.f;
@@ -13,10 +20,8 @@ namespace aimbot {
 	
 		bool fatal_found = false;
 
-	//	if ( !variables::ragebot::prioritize_record )
-		//	return best_records;
 
-		for ( auto record : player_manager::records [ entity.index ] ) {
+		for ( auto record : player_manager::records [ index ] ) {
 			if ( math::time_to_ticks ( record.simtime ) == math::time_to_ticks ( entity.player->simulation_time ( ) ) )
 				continue; /*skip current tick*/
 
@@ -25,10 +30,10 @@ namespace aimbot {
 				break;
 			}
 
-			switch ( variables::ragebot::prioritize_record ) {
+			switch ( config.ragebot_record_selection ) {
 			case 1:
 			{
-				if ( variables::ragebot::prioritize_hitbox == hitbox_head ) {
+				if ( config.ragebot_prioritize_hitbox == hitbox_head ) {
 					auto points = multipoint ( );
 					multi_point ( entity, hitbox_head, record, points );
 					if ( points.points.size ( ) >= min_points ) {
@@ -56,7 +61,7 @@ namespace aimbot {
 			{
 				player_manager::restore_record ( entity.player, record );
 
-				auto cur_damage = autowall::GetDamage ( csgo::local_player, record.bone [ 8 ].get_origin ( ), awall );
+				auto cur_damage = autowall::GetDamage ( local_player::m_data.pointer, record.bone [ 8 ].get_origin ( ), awall );
 
 				if ( cur_damage > dmg ) {
 					best_record = record;
@@ -68,7 +73,7 @@ namespace aimbot {
 					fatal_found = true;
 				}
 				if ( !fatal_found ) {
-					cur_damage = autowall::GetDamage ( csgo::local_player, record.bone [ 0 ].get_origin ( ), awall );
+					cur_damage = autowall::GetDamage ( local_player::m_data.pointer, record.bone [ 0 ].get_origin ( ), awall );
 
 					if ( cur_damage > dmg ) {
 						best_record = record;
@@ -89,19 +94,23 @@ namespace aimbot {
 
 		if ( best_record.shoot ) {
 			best_records.push_back ( best_record );
-			best_records.push_back ( player_manager::records[entity.index].back() );
+			best_records.push_back ( player_manager::records[ index ].back() );
 		}
 		else {
-			best_records.push_back ( player_manager::records [ entity.index ].back ( ) );
-			best_records.push_back ( best_record.simtime == 0.f ? player_manager::records[entity.index].front() : best_record );
+			best_records.push_back ( player_manager::records [ index ].back ( ) );
+			best_records.push_back ( best_record.simtime == 0.f ? player_manager::records[ index ].front() : best_record );
 		}
 		return best_records;
 	}
 	void scan ( target & entity ) {
+		
+
 		for ( auto record : filter_records ( entity ) ) {
 
+			player_manager::restore_record ( entity.player, record );
 			bestpoint data = best_point ( entity, record );
-			
+			player_manager::restore_player ( entity.player );
+
 			if ( data.dmg >= (entity.aimbot.best_point.dmg + 5.f) ) {
 				entity.aimbot.best_point = data;
 				entity.aimbot.record = record;

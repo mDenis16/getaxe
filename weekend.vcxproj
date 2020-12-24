@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{AF041675-F00D-4A72-B40F-78D0C4BB72D9}</ProjectGuid>
-    <RootNamespace>csgo-cheat</RootNamespace>
+    <RootNamespace>weekend</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>weekend</ProjectName>
   </PropertyGroup>
@@ -50,7 +50,7 @@
     <IntDir>.\intermediates\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>.\output\debug\</OutDir>
+    <OutDir>C:\Users\topor\source\repos\getaxe\output\debug</OutDir>
     <IntDir>.\intermediates\</IntDir>
     <LibraryPath>F:\includes\dx9\Lib\x86;$(LibraryPath)</LibraryPath>
     <IncludePath>F:\includes\dx9\Include;$(IncludePath)</IncludePath>
@@ -71,17 +71,19 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>MinSpace</Optimization>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
-      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -89,6 +91,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\features\features.cpp" />
     <ClCompile Include="core\features\legitbot\legitbot.cpp" />
     <ClCompile Include="core\features\misc\accuracy.cpp" />
     <ClCompile Include="core\features\misc\autopeek.cpp" />
@@ -100,9 +103,9 @@
     <ClCompile Include="core\features\misc\movement.cpp" />
     <ClCompile Include="core\features\misc\movement_recorder.cpp" />
     <ClCompile Include="core\features\nade prediction\nade_prediction.cpp" />
+    <ClCompile Include="core\features\ragebot\accuracy\autostop.cpp" />
     <ClCompile Include="core\features\ragebot\aimbot.cpp" />
     <ClCompile Include="core\features\ragebot\antiaim.cpp" />
-    <ClCompile Include="core\features\ragebot\autostop.cpp" />
     <ClCompile Include="core\features\ragebot\autowall.cpp" />
     <ClCompile Include="core\features\ragebot\components\hitchance.cpp" />
     <ClCompile Include="core\features\ragebot\components\hitscan\list.cpp" />
@@ -114,7 +117,6 @@
     <ClCompile Include="core\features\ragebot\components\visual_debug.cpp" />
     <ClCompile Include="core\features\ragebot\fakelag.cpp" />
     <ClCompile Include="core\features\ragebot\net_data.cpp" />
-    <ClCompile Include="core\features\ragebot\ragebot.cpp" />
     <ClCompile Include="core\features\ragebot\tickbase_shift.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
     <ClCompile Include="core\features\setup\event_manager.cpp" />
@@ -123,6 +125,7 @@
     <ClCompile Include="core\features\setup\shot_processor.cpp" />
     <ClCompile Include="core\features\visuals\chams.cpp" />
     <ClCompile Include="core\features\visuals\projectiles\grenades.cpp" />
+    <ClCompile Include="core\features\visuals\projectiles\grenade_proximity.cpp" />
     <ClCompile Include="core\features\visuals\projectiles\projectiles.cpp" />
     <ClCompile Include="core\features\visuals\hurt_log.cpp" />
     <ClCompile Include="core\features\visuals\notifications.cpp" />
@@ -131,7 +134,8 @@
     <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\helpers\localplayer.cpp" />
     <ClCompile Include="core\hooks\hooks.cpp" />
-    <ClCompile Include="core\menu\elements\aimbot.cpp" />
+    <ClCompile Include="core\menu\config.cpp" />
+    <ClCompile Include="core\menu\elements\aimbot_menu.cpp" />
     <ClCompile Include="core\menu\elements\legibot.cpp" />
     <ClCompile Include="core\menu\elements\visuals_menu.cpp" />
     <ClCompile Include="core\menu\ImGui\imgui.cpp" />
@@ -162,7 +166,9 @@
     <ClInclude Include="core\features\misc\events\events.hpp" />
     <ClInclude Include="core\features\nade prediction\nade_prediction.hpp" />
     <ClInclude Include="core\helpers\helpers.h" />
+    <ClInclude Include="core\helpers\threadsafe_deque.h" />
     <ClInclude Include="core\hooks\hooks.hpp" />
+    <ClInclude Include="core\menu\config.hpp" />
     <ClInclude Include="core\menu\ImGui\imconfig.h" />
     <ClInclude Include="core\menu\ImGui\imgui.h" />
     <ClInclude Include="core\menu\ImGui\imgui_internal.h" />
@@ -173,7 +179,6 @@
     <ClInclude Include="core\menu\ImGui\imstb_truetype.h" />
     <ClInclude Include="core\menu\menu.hpp" />
     <ClInclude Include="core\menu\render\menu_render.hpp" />
-    <ClInclude Include="core\menu\variables.hpp" />
     <ClInclude Include="dependencies\common_includes.hpp" />
     <ClInclude Include="dependencies\interfaces\engine_sounds.hpp" />
     <ClInclude Include="dependencies\interfaces\i_hud_chat.hpp" />

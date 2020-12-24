@@ -2,6 +2,7 @@
 #include "../../../helpers/helpers.h"
 namespace aimbot {
 	std::vector<target> targets;
+	
 	void populate_list ( ) {
 		targets.clear ( );
 
@@ -11,19 +12,29 @@ namespace aimbot {
 			if ( !entity )
 				continue;
 
+			if ( entity == local_player::m_data.pointer )
+				continue;
+
 			if ( entity->dormant ( ) )
+				continue;
+
+			if ( !entity->is_alive ( ) )
 				continue;
 
 			if ( !entity->is_enemy ( ) )
 				continue;
 
-			if ( entity == local_player::m_data.pointer )
+
+			if ( !player_manager::records [ i ].size ( ) )
 				continue;
 
-			if ( entity->health ( ) <= 0 )
+			if ( ( entity->origin ( ) - engine_prediction::unpredicted_eye ).length ( ) > local_player::m_data.weapon_data->flRange )
 				continue;
+
 			target t;
 			t.player = entity;
+			t.index = entity->index ( );
+			t.health = entity->health ( );
 			targets.push_back ( t );
 		}
 	}
@@ -38,8 +49,8 @@ namespace aimbot {
 		} target_sort;
 
 		std::sort ( targets.begin ( ), targets.end ( ), target_sort );
-		if ( targets.size ( ) > 5 )
-			targets.erase ( targets.begin ( ) + 5, targets.end ( ) );
+		if ( targets.size ( ) > 3 )
+			targets.erase ( targets.begin ( ) + 3, targets.end ( ) );
 	}
 	void update_targets ( ) {
 		

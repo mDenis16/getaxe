@@ -43,7 +43,7 @@ public:
 	uint32_t m_server_count;
 	uint32_t m_current_sequence;
 	char pad_0120 [ 84 ];
-	uint32_t m_delta_tick;
+	int m_delta_tick;
 	bool m_paused;
 	char pad_0179 [ 7 ];
 	uint32_t m_view_entity;
