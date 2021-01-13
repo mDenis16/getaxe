@@ -3,6 +3,8 @@
 #include "../../menu/ImGui/imgui.h"
 #include "../../menu/ImGui/imgui_internal.h"
 #include "../../../dependencies/interfaces/i_memalloc.h"
+
+
 class RadarPlayer_t {
 public:
 	vec3_t pos; //0x0000 
@@ -30,6 +32,7 @@ public:
 	RadarPlayer_t radar_info [ 65 ];
 };
 void visuals::player::player_death ( i_game_event * event ) {
+
 	auto userid = event->get_int ( "userid" );
 	if ( !userid )
 		return;
@@ -48,12 +51,13 @@ void visuals::player::player_death ( i_game_event * event ) {
 	if ( !entity )
 		return;
 	
-	m_data [ entity->index ( ) ].alive = false;
+	//m_data [ entity->index ( ) ].alive = false;
 
-	resolver::resolver_data [ entity->index ( ) ].missed_shots = 0;
+	//resolver::resolver_data [ entity->index ( ) ].missed_shots = 0;
 	
 }
-std::array<visuals::player::data, 65> visuals::player::m_data;
+
+std::array<visuals::player::data, 65 > visuals::player::m_data;
 
 std::map<int, char> weapon_icons =
 {
@@ -114,14 +118,10 @@ std::map<int, char> weapon_icons =
 { weapon_decoy, 'o' },
 { weapon_incgrenade, 'p' },
 { weapon_c4, 'q' },
-}; bool get_playerbox( entity_t* ent, visuals::box& in, visuals::player::data data ) {
+}; bool get_playerbox(  visuals::box& in, visuals::player::data data ) {
 	vec3_t origin, min, max, flb, brt, blb, frt, frb, brb, blt, flt;
 	float left, top, right, bottom;
 
-	/*origin = ent->get_absolute_origin( );
-	min = ent->collideable( )->mins( ) + origin;
-	max = ent->collideable( )->maxs( ) + origin;
-	*/
 	origin = data.origin;
 	min = data.mins;
 	max = data.maxs;
@@ -160,10 +160,10 @@ std::map<int, char> weapon_icons =
 			top = arr [ i ].y;
 	}
 
-	in.x = ( int ) left;
-	in.y = ( int ) top + 3;
-	in.w = int( right - left ) ;
-	in.h = int( bottom - top ) + 3;
+	in.x =  left;
+	in.y =  top + 3;
+	in.w =  right - left ;
+	in.h = bottom - top  + 3;
 
 	return true;
 }
@@ -256,7 +256,16 @@ void visuals::player::name( visuals::player::data _data ) {
 	std::transform( print.begin( ), print.end( ), print.begin( ), ::tolower );
 
 
-	dsdsDrawText ( c_menu::get ( ).smallf, print, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y - 15 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, true, false );
+	dsdsDrawText ( c_menu::get ( ).smallf, print, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y - 15.f ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, true, false );
+
+/*dsdsDrawText ( c_menu::get ( ).smallf, resolver::antiaim_name(_data.index), ImVec2 ( _data.box_data.x + _data.box_data.w  + 5.f, _data.box_data.y + 5 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
+	std::stringstream ss;
+	ss << "delta " << resolver::resolver_data[_data.index].desync_delta;
+
+	dsdsDrawText ( c_menu::get ( ).smallf, ss.str(), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 15 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
+
+
+	dsdsDrawText ( c_menu::get ( ).smallf, resolver::side_name( resolver::resolver_data [ _data.index ].side), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 25 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );*/
 }
 void visuals::player::box( visuals::player::data _data ) {
 	bool should_show = _data.enemy ? config.visuals_enemy_box : config.visuals_team_box;
@@ -265,7 +274,7 @@ void visuals::player::box( visuals::player::data _data ) {
 
 	auto clr = _data.enemy ? config.visuals_enemy_box_color : config.visuals_team_box_color;
 
-	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x - 0.5f, _data.box_data.y - 0.5f ), ImVec2( _data.box_data.x + _data.box_data.w + 0.5, _data.box_data.y + _data.box_data.h  + 0.5 ), ImColor( 0, 0, 0, 155 ), 0.0f );
+	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x - 0.5f, _data.box_data.y - 0.5f ), ImVec2( _data.box_data.x + _data.box_data.w + 0.5f, _data.box_data.y + _data.box_data.h  + 0.5f ), ImColor( 0, 0, 0, 155 ), 0.0f );
 
 	c_menu::get( ).draw->AddRect( ImVec2( _data.box_data.x, _data.box_data.y ), ImVec2( _data.box_data.x + _data.box_data.w, _data.box_data.y + _data.box_data.h ), ImColor( clr[0], clr[1], clr[2], clr[3] ), 0.0f );
 
@@ -302,14 +311,14 @@ void visuals::player::health( visuals::player::data _data ) {
 	};
 
 
-	static auto filled_box_outlined = [ ] ( const int x, const int y, const int w, const int h, const ImColor color, const ImColor outline, const int thickness ) {
+	static auto filled_box_outlined = [ ] ( const float x, const float y, const float w, const float h, const ImColor color, const ImColor outline, const float thickness ) {
 		c_menu::get ( ).draw->AddRectFilled ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h), color );
-		c_menu::get ( ).draw->AddRect ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h ), outline, 0, thickness );
+		c_menu::get ( ).draw->AddRect ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h ), outline, 0.f, 15, thickness );
 	};
-	static auto filled_box = [ ] ( const int x, const int y, const int w, const int h, const ImColor color) {
+	static auto filled_box = [ ] ( const float x, const float y, const float w, const float h, const ImColor color) {
 		c_menu::get ( ).draw->AddRectFilled ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h ), color );
 	};
-	auto clr_h = _data.enemy ? config.visuals_enemy_health_color : config.visuals_team_health_color;
+	//const auto clr_h = _data.enemy ? config.visuals_enemy_health_color : config.visuals_team_health_color;
 
 	
 
@@ -321,8 +330,8 @@ void visuals::player::health( visuals::player::data _data ) {
 	multiplier = std::clamp ( multiplier, 0.f, 1.f );
 	const auto height = ( _data.box_data.h - 2 ) * multiplier;
 
-	const int red = 255 - health * 2.55;
-	const int green = health * 2.55;
+	const int red =  static_cast<int>(255 - health * 2.55f);
+	const int green = static_cast< int >(health * 2.55f);
 
 	filled_box_outlined ( _data.box_data.x - 7 - elements * 6, _data.box_data.y - 0.5f, 4, _data.box_data.h + 0.5f, ImColor ( 0, 0, 0, static_cast< int >( 200 * 0.3f ) ), ImColor ( 0, 0, 0, static_cast< int >( 255 ) ), 1 );
 	filled_box ( _data.box_data.x  - 6 - elements * 6, _data.box_data.y + _data.box_data.h - height - 1 - 0.5f, 2, height + 0.5f, ImColor ( red, green, 0, static_cast< int >( 255 ) ) );
@@ -339,9 +348,9 @@ void visuals::player::health( visuals::player::data _data ) {
 }
 void visuals::player::weapon( visuals::player::data _data ) {
 	
-	auto clr_h = _data.enemy ? config.visuals_enemy_weapon_color : config.visuals_team_weapon_color;
-	auto x = _data.box_data.x - ( _data.box_data.x + _data.box_data.w / 2 );
-	dsdsDrawText ( c_menu::get ( ).weapon_icons, _data.weapon_icon, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y + _data.box_data.h + 5 ), 8, clr_h, 0.1f, true, true );
+	const auto clr_h = _data.enemy ? config.visuals_enemy_weapon_color : config.visuals_team_weapon_color;
+	
+	dsdsDrawText ( c_menu::get ( ).weapon_icons, _data.weapon_icon, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y + _data.box_data.h + 5 ), 8.f, clr_h, 0.1f, true, true );
 }
 
 void visuals::player::arrow ( visuals::player::data _data ) {
@@ -352,7 +361,7 @@ void visuals::player::arrow ( visuals::player::data _data ) {
 			c_menu::get ( ).draw->PathStroke ( col, false, thickness );
 	
 	};
-	auto angle = csgo::original_viewangle.y - math::calc_angle ( engine_prediction::unpredicted_eye, _data.origin).y	 - 90;
+	auto angle = localdata.orig_viewangle.y - math::calc_angle ( engine_prediction::unpredicted_eye, _data.origin).y	 - 90;
 	float width = 5.f;
 	arc ( ImGui::GetWindowWidth() / 2, ImGui::GetWindowHeight ( ) / 2, 256, angle - width, angle + width, ImColor ( 1.f, 1.f, 1.f, 1.f ), 4.f );
 	arc ( ImGui::GetWindowWidth ( ) / 2, ImGui::GetWindowHeight ( ) / 2, 250, angle - width, angle + width, ImColor ( 1.f, 1.f, 1.f, 0.5f ), 1.5f );
@@ -365,7 +374,7 @@ void visuals::player::present( ) {
 	
 
 	for ( size_t i = 1; i <= 64; i++ ) {
-		auto data = m_data.at ( i );
+		auto& data = m_data.at ( i );
 		if ( data.alive && data.valid && !data.out_of_pov ) {
 			if ( data.on_screen ) {
 				visuals::player::name ( data );
@@ -524,9 +533,12 @@ void visuals::player::paint_traverse ( ) {
 				current_data.alive = player->health ( ) > 0;
 				interfaces::engine->get_player_info ( player->index ( ), &current_data.player_info );
 				current_data.origin = player->abs_origin ( );
-				current_data.mins = player->collideable ( )->mins ( ) + current_data.origin;
-				current_data.maxs = player->collideable ( )->maxs ( ) + current_data.origin;
-				
+				player->get_renderable_virtual ( )->get_render_bounds_world_space ( current_data.mins, current_data.maxs );
+				//current_data.mins += current_data.origin;
+				//current_data.maxs += current_data.origin;
+		
+	
+
 				current_data.distance = player->abs_origin ( ).distance_to ( local_player::m_data.eye_position );
 				if ( player->active_weapon ( ) ) {
 					current_data.weapon_icon = weapon_to_icon ( player->active_weapon ( )->item_definition_index ( ) );
@@ -553,7 +565,7 @@ void visuals::player::paint_traverse ( ) {
 				}
 			}
 			if (!current_data.out_of_pov )
-			   current_data.on_screen = get_playerbox ( player, current_data.box_data, current_data );
+			   current_data.on_screen = get_playerbox ( player, current_data.box_data );
 		}
 		
 	

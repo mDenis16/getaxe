@@ -2,19 +2,35 @@
 
 namespace aimbot {
 	bestpoint best_point ( target & entity, player_manager::lagcomp_t & record ) {
-		bool should_override = record.simtime == entity.player->simulation_time();
-		
-			
 	
+
 		autowall::FireBulletData_t awall = { };
 		bestpoint data = {};
 		bool found_fatal_hit = false;
 		bool is_newest_record = record.simtime == entity.player->simulation_time ( );
-	
+	 
+		auto dist = math::calc_distance ( local_pointer->origin ( ), entity.player->origin ( ), false );
+
+		//interfaces::console->console_printf ( "distance %f \n", dist );
+
+		bool high_dist = dist > 1000.f;
+		if ( dist > 500.f ) {
+			auto bone = entity.player->get_hitbox_position ( hitbox_body, record.bone );
+
+			autowall::get_damage ( local_pointer, engine_prediction::unpredicted_eye, bone, awall );
+
+			int pen_limit = high_dist ? 6 : 8;
+
+			if ( awall.penetrationTry > pen_limit ) /* dont scan far enemies */
+				return data;
+		}
 
 		float min_dmg = config.ragebot_min_dmg;
 
-		if ( config.ragebot_double_tap || entity.player->is_in_air ( ) )
+		if ( min_dmg > local_player::m_data.weapon_data->iDamage  || entity.is_current_record_hidden )
+			min_dmg = local_player::m_data.weapon_data->iDamage - 1.f;
+
+		if ( config.ragebot_double_tap )
 			min_dmg = local_player::m_data.weapon_data->iDamage / 2 + 15.f;
 
 		for ( auto hitbox : hitscan_list ) { /*loop through our hitscan list*/
@@ -24,11 +40,12 @@ namespace aimbot {
 	
 			for ( auto point : points.points ) {
 
-				if ( !point.safe )
+				if ( !point.safe && !( entity.is_current_record_hidden && !is_newest_record ) )
 					continue;
 
 			
-				int dmg = autowall::GetDamage ( local_player::m_data.pointer, point.pos, awall );
+				int dmg = autowall::get_damage ( local_pointer, engine_prediction::unpredicted_eye, point.pos, awall );
+
 			
 				found_fatal_hit = ( dmg >= entity.player->health ( ) + 5 ) && hitbox != hitbox_head;
 			

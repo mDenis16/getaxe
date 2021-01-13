@@ -6,21 +6,21 @@
 namespace visuals::projectiles::grenades {
 
 
-	std::vector<grenade_data> grenades;
-	
+
+    std::vector<grenade_data> grenades;
+
 	void think ( entity_t * grenade ) {
 
 		if ( !config.visuals_world_draw_grenades )
 			return;
 
-
+		
 
 		auto client_class = grenade->client_class ( );
 		if ( !client_class )
 			return;
 
 		auto name_data = grenade_name ( grenade, client_class->class_id );
-
 
 		grenade_data _data;
 		_data.name = std::get<0> ( name_data );
@@ -38,7 +38,7 @@ namespace visuals::projectiles::grenades {
 			vec3_t mins, maxs;
 			grenade->get_renderable_virtual ( )->get_render_bounds ( mins, maxs );
 
-			auto origin = grenade->origin ( );
+			auto& origin = grenade->origin ( );
 
 			if ( !interfaces::debug_overlay->world_to_screen ( origin, _data.screen_origin ) )
 				return;
@@ -49,19 +49,9 @@ namespace visuals::projectiles::grenades {
 
 			_data.class_id = client_class->class_id;
 			if ( _data.is_smoke ) {
-				_data.progress = 20.f - std::fabs ( interfaces::globals->cur_time - math::time_to_ticks ( grenade->m_nSmokeEffectTickBegin ( ) ) );
-
-				float step = M_PI * 2.0 / 30;
+				_data.progress = 20.f - std::fabs ( interfaces::globals->cur_time - math::ticks_to_time ( grenade->m_nSmokeEffectTickBegin ( ) ) );
 
 
-				for ( float a = 0; a < ( M_PI * 2.0 ); a += step ) {
-					vec3_t location ( 144 * cos ( a ) + origin.x, 144 * sin ( a ) + origin.y, origin.z );
-					vec3_t w2s_pos = vec3_t ( );
-					if ( interfaces::debug_overlay->world_to_screen ( location, w2s_pos ) ) {
-						_data.polygon.push_back ( ImVec2 ( w2s_pos.x, w2s_pos.y ) );
-
-					}
-				}
 			}
 			else {
 				float flRadius = ( mins - maxs ).Length2D ( ) * 0.5f;
@@ -73,13 +63,8 @@ namespace visuals::projectiles::grenades {
 				int		m_fireCount = *reinterpret_cast< int * >		( ( DWORD ) grenade + 0x13A8		/*0x13A8*/ );
 				bool * m_bFireIsBurning = reinterpret_cast< bool * >	( ( DWORD ) grenade + 0xE94 /*0xE94*/ );
 
-				struct fire_location {
-					vec3_t pos = vec3_t ( );
-					float dist = 0.f;
-					float radius = 0.f;
-					bool used = false;
-				};
-				std::vector<fire_location> fires;
+			
+			
 				for ( int i = 0; i <= m_fireCount; i++ ) {
 					if ( !m_bFireIsBurning [ i ] )
 						continue;
@@ -90,36 +75,12 @@ namespace visuals::projectiles::grenades {
 
 					auto position = origin + vec3_t ( m_fireXDelta [ i ], m_fireYDelta [ i ], m_fireZDelta [ i ] );
 
-					fires.push_back ( { position } );
+					_data.fires.push_back ( { position } );
 
 				}
 
 
-				std::vector<fire_location> limits_fire_filtered;
 
-				float step = M_PI * 2.0 / fires.size ( );
-
-				vec3_t position = grenade->origin ( );
-				for ( float a = 0; a < ( M_PI * 2.0 ); a += step ) {
-					vec3_t location ( flRadius * cos ( a ) + position.x, flRadius * sin ( a ) + position.y, position.z );
-					vec3_t pos_2d = vec3_t ( );
-					if ( interfaces::debug_overlay->world_to_screen ( location, pos_2d ) )
-						_data.raw_polygon.push_back ( ImVec2 ( pos_2d.x, pos_2d.y ) );
-					float min_distance = 9999.f;
-					fire_location found_fire;
-
-					for ( auto & fire_d : fires ) {
-						fire_d.dist = math::calc_distance ( fire_d.pos, location, false );
-						if ( !fire_d.used && fire_d.dist <= min_distance ) {
-							found_fire = fire_d;
-							min_distance = fire_d.dist;
-						}
-					}
-					if ( !found_fire.pos.is_zero ( ) ) {
-						limits_fire_filtered.push_back ( { found_fire.pos, found_fire.dist } );
-						found_fire.used = true;
-					}
-				}
 				/*for ( size_t i = 0; i < limits_fire_filtered.size(); i++ ) {
 					auto current_fire = limits_fire_filtered.at ( i );
 					/*if ( limits_fire_filtered.size ( ) > 2 && i == limits_fire_filtered.size ( ) - 1 ) {
@@ -161,15 +122,7 @@ namespace visuals::projectiles::grenades {
 						*/
 
 
-				for ( auto location : limits_fire_filtered ) {
-
-					interfaces::console->console_printf ( "DISTANCE %f \n", location.dist );
-					vec3_t w2s_pos = vec3_t ( );
-					if ( interfaces::debug_overlay->world_to_screen ( location.pos, w2s_pos ) ) {
-						_data.polygon.push_back ( ImVec2 ( w2s_pos.x, w2s_pos.y ) );
-
-					}
-				}
+	
 
 			}
 		}
@@ -219,7 +172,7 @@ namespace visuals::projectiles::grenades {
 	bool world_to_screen ( const vec3_t & origin, ImVec2 & screen ) {
 		vec3_t screen_game = vec3_t ( );
 		const auto screen_transform = [ &origin, &screen ] ( ) -> bool {
-			static std::uint8_t * matrix;
+			static std::uint8_t * matrix = 0x0;
 			if ( !matrix ) {
 				matrix = static_cast< std::uint8_t * >( utilities::pattern_scan ( "client.dll", "0F 10 05 ? ? ? ? 8D 85 ? ? ? ? B9" ) );
 				matrix += 3;
@@ -227,12 +180,12 @@ namespace visuals::projectiles::grenades {
 				matrix += 176;
 			}
 
-			const matrix_t & w2s_matrix = *reinterpret_cast< matrix_t * >( matrix );
-			screen.x = w2s_matrix.mat_val [ 0 ][ 0 ] * origin.x + w2s_matrix.mat_val [ 0 ][ 1 ] * origin.y + w2s_matrix.mat_val [ 0 ][ 2 ] * origin.z + w2s_matrix.mat_val [ 0 ][ 3 ];
-			screen.y = w2s_matrix.mat_val [ 1 ][ 0 ] * origin.x + w2s_matrix.mat_val [ 1 ][ 1 ] * origin.y + w2s_matrix.mat_val [ 1 ][ 2 ] * origin.z + w2s_matrix.mat_val [ 1 ][ 3 ];
-			screen.z = 0.0f;
+			const matrix3x4_t & w2s_matrix = *reinterpret_cast< matrix3x4_t * >( matrix );
+			screen.x = w2s_matrix.m_flMatVal [ 0 ][ 0 ] * origin.x + w2s_matrix.m_flMatVal [ 0 ][ 1 ] * origin.y + w2s_matrix.m_flMatVal [ 0 ][ 2 ] * origin.z + w2s_matrix.m_flMatVal [ 0 ][ 3 ];
+			screen.y = w2s_matrix.m_flMatVal [ 1 ][ 0 ] * origin.x + w2s_matrix.m_flMatVal [ 1 ][ 1 ] * origin.y + w2s_matrix.m_flMatVal [ 1 ][ 2 ] * origin.z + w2s_matrix.m_flMatVal [ 1 ][ 3 ];
 
-			float w = w2s_matrix.mat_val [ 3 ][ 0 ] * origin.x + w2s_matrix.mat_val [ 3 ][ 1 ] * origin.y + w2s_matrix.mat_val [ 3 ][ 2 ] * origin.z + w2s_matrix.mat_val [ 3 ][ 3 ];
+
+			float w = w2s_matrix.m_flMatVal [ 3 ][ 0 ] * origin.x + w2s_matrix.m_flMatVal [ 3 ][ 1 ] * origin.y + w2s_matrix.m_flMatVal [ 3 ][ 2 ] * origin.z + w2s_matrix.m_flMatVal [ 3 ][ 3 ];
 
 			if ( w < 0.001f ) {
 				screen.x *= 100000;
@@ -263,36 +216,77 @@ namespace visuals::projectiles::grenades {
 		for ( auto _data : grenades ) {
 			if ( _data.on_screen ) {
 				if ( _data.time_able ) {
-			
+
 					static auto size = vec2_t ( 60, 10 );
-					auto screen_origin = ImVec2( _data.screen_origin.x, _data.screen_origin.y);
+					auto screen_origin = ImVec2 ( _data.screen_origin.x, _data.screen_origin.y );
 
-					constexpr float pi = M_PI;
-				
 
-					if ( _data.polygon.size ( ) )
-					    c_menu::get ( ).draw->AddConvexPolyFilled ( _data.polygon.data ( ), _data.polygon.size ( ), ImColor ( 255, 0, 0, 100 ) );
-				
-		
-					auto arc = [ ] ( float x, float y, float radius, float min_angle, float max_angle, ImColor col, float thickness ) {
-						auto draw = ImGui::GetWindowDrawList ( );
-						draw->PathArcTo ( ImVec2 ( x, y ), radius, DEG2RAD ( min_angle ), DEG2RAD ( max_angle ), 32 );
-						draw->PathStroke ( col, false, thickness );
+					float step = 0.0f;
 
-					};
-					
-					auto radius = std::max ( 15.0f - _data.distance / 700.0f, 1.0f );
-					c_menu::get ( ).draw->AddCircleFilled ( screen_origin, radius, ImColor ( 37, 17, 1, 255 ), 40 );
-					auto prog = ( 270 / 7 ) * _data.progress;
-					arc ( screen_origin.x, screen_origin.y, radius, -90, prog, ImColor ( 255, 255, 255, 255 ), 1.5f );
-				
-					const float warning_color [ 4 ] = { 255,0,0,255 };
-					auto color = _data.distance <= _data.radius ? warning_color : c_config::get ( ).visuals_world_draw_weapons_color;
-					dsdsDrawText ( c_menu::get ( ).normalf, "!", ImVec2(screen_origin.x, screen_origin.y  - 15), 30, color, 0.1f, true, false );
+					std::vector<ImVec2> polygon;
+					if ( _data.is_smoke ) {
+						step = M_PI_F * 2.0f / 30.f;
+						for ( float a = 0; a < ( M_PI_F * 2.0 ); a += step ) {
+							vec3_t location ( 144.f * cosf ( a ) +_data.origin.x, 144.f * sinf ( a ) + _data.origin.y, _data.origin.z );
+							ImVec2 w2s_pos = ImVec2 ( );
+							if ( visuals::world_to_screen ( location, w2s_pos ) ) 
+								polygon.push_back ( w2s_pos );
+						}
+					}
+					else {
 
-				
-				}else
-				dsdsDrawText ( c_menu::get ( ).weapon_icons, _data.weapon_icon.c_str ( ), ImVec2(_data.box_data.x, _data.box_data.y)/**/, 20, c_config::get ( ).visuals_world_draw_weapons_color, 0.1f, true, false );
+						step = M_PI_F * 2.0f / static_cast<float>(_data.fires.size ( ));
+
+						for ( float a = 0.f; a < ( M_PI_F * 2.0f ); a += step ) {
+							vec3_t location ( _data.radius * cos ( a ) + _data.origin.x, _data.radius * sin ( a ) + _data.origin.y, _data.origin.z );
+						
+						
+							float min_distance = 9999.f;
+							visuals::projectiles::proj_data::fire_location found_fire;
+
+							for ( auto & fire_d : _data.fires ) {
+								fire_d.dist = math::calc_distance ( fire_d.pos, location, false );
+								if ( !fire_d.used && fire_d.dist <= min_distance ) {
+									found_fire = fire_d;
+									min_distance = fire_d.dist;
+								}
+							}
+							if ( !found_fire.pos.is_zero ( ) ) {
+								ImVec2 screen;
+								if ( visuals::world_to_screen ( found_fire.pos, screen ) )
+									polygon.push_back ( screen );
+								found_fire.used = true;
+							}
+						}
+
+					}
+					c_menu::get ( ).draw->AddConvexPolyFilled ( polygon.data ( ), polygon.size ( ), _data.is_smoke ? ImColor( 94, 92, 85, 100) : ImColor ( 255, 200, 0, 100 ) );
+
+					if ( !_data.is_smoke ) {
+						auto arc = [ ] ( float x, float y, float radius, float min_angle, float max_angle, ImColor col, float thickness ) {
+							auto draw = ImGui::GetWindowDrawList ( );
+							draw->PathArcTo ( ImVec2 ( x, y ), radius, DEG2RAD ( min_angle ), DEG2RAD ( max_angle ), 32 );
+							draw->PathStroke ( col, false, thickness );
+
+						};
+
+						auto radius = std::max ( 15.0f - _data.distance / 700.0f, 1.0f );
+						c_menu::get ( ).draw->AddCircleFilled ( screen_origin, radius, ImColor ( 37, 17, 1, 255 ), 40 );
+						auto prog = ( 270 / 7 ) * _data.progress;
+						arc ( screen_origin.x, screen_origin.y, radius, -90, prog, ImColor ( 255, 255, 255, 255 ), 1.5f );
+
+						const float warning_color [ 4 ] = { 255,0,0,255 };
+						auto color = _data.distance <= _data.radius ? warning_color : c_config::get ( ).visuals_world_draw_weapons_color;
+						dsdsDrawText ( c_menu::get ( ).normalf, "!", ImVec2 ( screen_origin.x, screen_origin.y - 15 ), 30, color, 0.1f, true, false );
+					}
+					else {
+						dsdsDrawText ( c_menu::get ( ).weapon_icons, _data.weapon_icon.c_str ( ), ImVec2 ( screen_origin.x, screen_origin.y )/**/, 20, c_config::get ( ).visuals_world_draw_weapons_color, 0.1f, true, false );
+					}
+
+
+				}
+				else
+					dsdsDrawText ( c_menu::get ( ).weapon_icons, _data.weapon_icon.c_str ( ), ImVec2 (( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y - 15), 20.f, c_config::get ( ).visuals_world_draw_weapons_color, 0.1f, true, false );
 			}
 		}
 

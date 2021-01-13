@@ -29,10 +29,11 @@ namespace menu {
 
 
 
-	void option ( const char * name, const char * description, std::function<void ( )> func, int max_height, bool & value, float color [ 4 ] = nullptr);
+	void option ( const char * name, const char * description, std::function<void ( )> func, float max_height, bool & value, float color [ 4 ] = nullptr);
 
 	void ragebot ( );
-
+	
+	void hooks ( );
 
 	void render_menu( );
 
@@ -53,9 +54,9 @@ namespace menu {
 	extern menu_data m_menu_data;
 
 	struct option_data {
-		 int max_height = 310;
-		 int height = 75;
-		 int cur_height = height;
+		 float max_height = 310.f;
+		 float height = 75.f;
+		 float cur_height = height;
 		 bool enable = false;
 		 bool in_transition = false;
 	};

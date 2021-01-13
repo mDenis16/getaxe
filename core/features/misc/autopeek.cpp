@@ -1,7 +1,7 @@
 #include "../features.hpp"
-float Distance ( vec3_t a, vec3_t b ) {
+/*float Distance ( vec3_t a, vec3_t b ) {
 	return sqrt ( pow ( a.x - b.x, 2 ) + pow ( a.y - b.y, 2 ) + pow ( a.z - b.z, 2 ) );
-}
+}*/
 namespace autopeek {
 	/*peek_data m_data;
 	void key_check ( ) {

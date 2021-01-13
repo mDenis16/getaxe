@@ -35,7 +35,7 @@ namespace misc::movement::recorder {
 				m_global_data.state = recording_state::state_idle;
 			}
 
-		 last_press = interfaces::globals->tick_count;
+		    last_press = interfaces::globals->tick_count;
 		}
 	}
 
@@ -48,7 +48,7 @@ namespace misc::movement::recorder {
 	void save_record ( ) {
 
 	}
-	void playing ( c_usercmd * cmd ) {
+	void playing ( c_usercmd * /*cmd*/ ) {
 		
 	}
 	void start_recording ( ) {

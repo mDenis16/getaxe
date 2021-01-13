@@ -262,69 +262,47 @@ void c_nade_prediction::trace ( c_usercmd * user_cmd ) {
 void c_nade_prediction::paint_traverse ( ) {
 
 
-	points_detonate.clear ( );
-	points.clear ( );
-	if ( _predicted ) {
+	
 
+
+}
+
+void c_nade_prediction::draw ( ) {
+
+	if ( _predicted ) {
+		std::vector<ImVec2> draw_points;
+		std::vector<ImVec2> detonate_points;
 		for ( auto & p : _points ) {
 			if ( !p.m_valid )
 				continue;
 
+			ImVec2 screen_point = ImVec2 ( );
+			if ( visuals::world_to_screen ( p.m_start, screen_point ) ) {
+				draw_points.push_back ( screen_point );
 
-			if ( interfaces::debug_overlay->world_to_screen ( p.m_start, p.m_start_2 ) && interfaces::debug_overlay->world_to_screen ( p.m_end, p.m_end_2 ) ) {
-				points.push_back ( ImVec2 ( p.m_start.x, p.m_start.y ) );
-			}
-			if ( p.m_detonate ) {
-				float step = M_PI * 2.0 / 50;
+				if ( p.m_detonate ) {
+					float step = M_PI * 2.0 / 50;
 
 
-				for ( float a = 0; a < ( M_PI * 2.0 ); a += step ) {
-					vec3_t location ( 144 * cos ( a ) + p.m_end.x, 144 * sin ( a ) + p.m_end.y, p.m_end.z );
-					vec3_t w2s_pos = vec3_t ( );
-					if ( interfaces::debug_overlay->world_to_screen ( location, w2s_pos ) ) {
-						points_detonate.push_back ( ImVec2 ( w2s_pos.x, w2s_pos.y ) );
+					for ( float a = 0; a < ( M_PI * 2.0 ); a += step ) {
+						vec3_t location ( 144 * cos ( a ) + p.m_end.x, 144 * sin ( a ) + p.m_end.y, p.m_end.z );
+						if ( visuals::world_to_screen ( location, screen_point ) )
+							detonate_points.push_back ( screen_point );
+						
 					}
 				}
 			}
 		}
-		_updated = true;
+		if ( detonate_points.size ( ) > 0 )
+			c_menu::get ( ).draw->AddConvexPolyFilled ( detonate_points.data ( ), detonate_points.size ( ), player_hurt ? ImColor ( 255, 0, 0, 150 ) : ImColor ( config.visuals_world_grenade_prediction_color [ 0 ], config.visuals_world_grenade_prediction_color [ 1 ], config.visuals_world_grenade_prediction_color [ 2 ], 0.4f ) );
+
+
+		if ( draw_points.size ( ) > 0 )
+			c_menu::get ( ).draw->AddPolyline ( draw_points.data ( ), draw_points.size ( ), player_hurt ? ImColor ( 255, 0, 0, 255 ) : ImColor ( config.visuals_world_grenade_prediction_color [ 0 ], config.visuals_world_grenade_prediction_color [ 1 ], config.visuals_world_grenade_prediction_color [ 2 ], config.visuals_world_grenade_prediction_color [ 3 ] ), false, 1.f );
 	}
 
 
-}
-void c_nade_prediction::draw ( ) {
 
 
-	if ( points_detonate.size ( ) > 0 )
-		c_menu::get ( ).draw->AddConvexPolyFilled ( points_detonate.data ( ), points_detonate.size ( ), player_hurt ? ImColor ( 255, 0, 0, 150 ) : ImColor ( config.visuals_world_grenade_prediction_color [ 0 ], config.visuals_world_grenade_prediction_color [ 1 ], config.visuals_world_grenade_prediction_color [ 2 ], 0.4f ) );
-
-
-	if ( points.size ( ) > 0 )
-		c_menu::get ( ).draw->AddPolyline ( points.data ( ), points.size ( ), player_hurt ? ImColor ( 255, 0, 0, 255 ) : ImColor ( config.visuals_world_grenade_prediction_color [ 0 ], config.visuals_world_grenade_prediction_color [ 1 ], config.visuals_world_grenade_prediction_color [ 2 ], config.visuals_world_grenade_prediction_color [ 3 ] ), false, 0.8f );
-
-
-	/*
-	if ( _updated ) {
-		copy_points = points;
-		copy_points_detonate = points_detonate;
-		points.clear ( );
-		points_detonate.clear ( );
-		_updated = false;
-	}
-	if ( should_empty ) {
-		if ( copy_points.size ( ) ) copy_points.clear ( );
-		if ( copy_points_detonate.size ( ) ) copy_points_detonate.clear ( );
-		if ( points.size ( ) ) points.clear ( );
-		if ( points_detonate.size ( ) ) points_detonate.clear ( );
-		should_empty = false;
-	}*/
-	//	if ( p.m_detonate || p.m_plane )
-		//	c_menu::get ( ).draw->AddCircleFilled ( ImVec2 ( p.m_start_2.x, p.m_start_2.y ), 2.f, p.m_detonate ? ImColor ( 255, 0, 0 ) : ImColor ( 255, 255, 255 ) );
-
-	//	if ( p.m_detonate )
-		//	draw_3d_circle ( p.m_end, 30, 170, color::red ( ) );
-
-
-	//}
 
 }

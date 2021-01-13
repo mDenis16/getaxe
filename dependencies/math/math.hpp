@@ -70,84 +70,99 @@ namespace math {
 		*sin = _mm_mul_ps ( sinmultiplier, sqrt_ps ( _mm_sub_ps ( _mm_set1_ps ( 1.f ), _mm_mul_ps ( result, result ) ) ) );
 	}
 
-	int time_to_ticks(float time );
-	float ticks_to_time( int tick );
-	vec3_t get_matrix_position( const matrix_t& src );
+	template <typename t>
+	static t interpolate ( const t & t1, const t & t2, float progress ) {
+		if ( t1 == t2 )
+			return t1;
+
+		return t2 * progress + t1 * ( 1.0f - progress );
+	}
+
+	int time_to_ticks ( float time );
+	float ticks_to_time ( int tick );
+	vec3_t get_matrix_position ( const matrix3x4_t & src );
 	int ticks_to_stop ( vec3_t velocity );
-	float clamp_yaw( float yaw );
+	float clamp_yaw ( float yaw );
 
-	
-	void vector_rotate( const vec3_t& in1, const vec3_t& in2, vec3_t& out );
 
-	vec3_t lerp( const vec3_t& a, const vec3_t& b, const float t );
-	void clamp( vec3_t& angles );
-	void random_seed( int seed );
-	void set_matrix_position( vec3_t pos, matrix_t& matrix );
+	void vector_rotate ( const vec3_t & in1, const vec3_t & in2, vec3_t & out );
+
+	vec3_t lerp ( const vec3_t & a, const vec3_t & b, const float t );
+	void clamp ( vec3_t & angles );
+	void random_seed ( int seed );
+	void set_matrix_position ( vec3_t pos, matrix3x4_t & matrix );
 	float fast_sin ( float x );
-	void angle_matrix( const vec3_t angles, matrix_t& matrix );
-	float fast_cos ( const float x );
 	void angle_matrix ( const vec3_t angles, matrix3x4_t & matrix );
-	float random_float( float min, float max );
-	int random_int( int min, int max );
-	vec3_t cubic_bezier( const vec3_t& a, const vec3_t& b, const vec3_t& c, const vec3_t& d, const float t );
-	vec3_t calc_angle( vec3_t a, vec3_t b );
-	void vector_vectors( const vec3_t& forward, vec3_t& right, vec3_t& up );
+	float fast_cos ( const float x );
 
-	void vector_vectors( const vec3_t& forward, vec3_t& right, vec3_t& up );
-	void matrix_set_column( const vec3_t& in, int column, matrix_t& out );
+	float random_float ( float min, float max );
+	int random_int ( int min, int max );
+	vec3_t cubic_bezier ( const vec3_t & a, const vec3_t & b, const vec3_t & c, const vec3_t & d, const float t );
+	vec3_t calc_angle ( vec3_t a, vec3_t b );
+	void vector_vectors ( const vec3_t & forward, vec3_t & right, vec3_t & up );
+
+	void vector_vectors ( const vec3_t & forward, vec3_t & right, vec3_t & up );
 	void matrix_set_column ( const vec3_t & in, int column, matrix3x4_t & out );
-	void angle_matrix( const vec3_t& angles, const vec3_t& position, matrix_t& matrix_out );
-	void angle_matrix ( const vec3_t & angles, const vec3_t & position, matrix3x4_t & matrix_out );
-	void matrix_copy( const matrix_t& source, matrix_t& target );
-
-	void matrix_multiply( matrix_t& in1, const matrix_t& in2 );
-	float dot_product( const float* v1, const float* v2 );
-	void vector_rotate( const float* in1, const matrix_t& in2, float* out );
-	void vector_rotate( const vec3_t& in1, const matrix_t& in2, vec3_t& out );
-	void matrix_get_column( const matrix_t& in, int column, vec3_t& out );
-
-
-	void vector_matrix( const vec3_t& forward, matrix_t& matrix );
-	void smooth_angles( vec3_t view_angles, vec3_t aim_angles, vec3_t& out_angles, float smoothing_x, float smoothing_y );
-	float get_fov( const vec3_t& va, const vec3_t& eyepos, const vec3_t& aimpos );
-	float get_fov( vec3_t viewangle, vec3_t aim_angle );
-	float get_estimate_server_time( c_usercmd* cmd );
-
-
-	void vector_substract( const vec3_t& a, const vec3_t& b, vec3_t& c );
-	void smooth_angle( vec3_t src, vec3_t& dst, float factor );
-	float calc_distance( const vec3_t src, const vec3_t dst, bool _2d );
-
-	void sin_cos(float r, float* s, float* c);
-
-	float distance_to_ray( const vec3_t& pos, const vec3_t& ray_start, const vec3_t& ray_end, float* along = 0, vec3_t* point_on_ray = 0 );
 	
-	vec3_t angle_vector(vec3_t angle);
+	void angle_matrix ( const vec3_t & angles, const vec3_t & position, matrix3x4_t & matrix_out );
+
+	void matrix_copy ( const matrix3x4_t & source, matrix3x4_t & target );
+
+	void matrix_multiply ( matrix3x4_t & in1, const matrix3x4_t & in2 );
+	float dot_product ( const float * v1, const float * v2 );
+	void vector_rotate ( const float * in1, const matrix3x4_t & in2, float * out );
+	void vector_rotate ( const vec3_t & in1, const matrix3x4_t & in2, vec3_t & out );
+	void matrix_get_column ( const matrix3x4_t & in, int column, vec3_t & out );
+
+
+	void vector_matrix ( const vec3_t & forward, matrix3x4_t & matrix );
+	void smooth_angles ( vec3_t view_angles, vec3_t aim_angles, vec3_t & out_angles, float smoothing_x, float smoothing_y );
+	float get_fov ( const vec3_t & va, const vec3_t & eyepos, const vec3_t & aimpos );
+	float get_fov ( vec3_t viewangle, vec3_t aim_angle );
+	float get_estimate_server_time ( c_usercmd * cmd );
+
+
+	void vector_substract ( const vec3_t & a, const vec3_t & b, vec3_t & c );
+	void smooth_angle ( vec3_t src, vec3_t & dst, float factor );
+	float calc_distance ( const vec3_t src, const vec3_t dst, bool _2d );
+
+	void sin_cos ( float r, float * s, float * c );
+
+	float distance_to_ray ( const vec3_t & pos, const vec3_t & ray_start, const vec3_t & ray_end, float * along = 0, vec3_t * point_on_ray = 0 );
+
+	vec3_t angle_vector ( vec3_t angle );
 	void vector_angles ( vec3_t & forward, vec3_t & angles );
 	void VectorAnglesAwall ( const vec3_t & vecForward, vec3_t & angView );
-	void transform_vector(vec3_t&, matrix_t&, vec3_t&);
+	void transform_vector ( vec3_t &, matrix3x4_t &, vec3_t & );
 
 	float segment_to_segment ( const vec3_t s1, const vec3_t s2, const vec3_t k1, const vec3_t k2 );
 
-	void angle_vectors(vec3_t&, vec3_t*, vec3_t*, vec3_t*);
-	vec3_t vector_add( const vec3_t a, const vec3_t b );
-	vec3_t vector_add(vec3_t&, vec3_t&);
-	vec3_t vector_subtract(vec3_t&, vec3_t&);
-	vec3_t vector_multiply(vec3_t&, vec3_t&);
-	void angle_vectors( vec3_t& angles, vec3_t& forward );
-	vec3_t vector_divide(vec3_t&, vec3_t&);
-	bool screen_transform(const vec3_t& point, vec3_t& screen);
-	void normalize_num( vec3_t& vIn, vec3_t& vOut );
-	float fl_angle_mod( float fl_angle );
-	float angle_diff( float destAngle, float srcAngle );
-	float fl_approach_angle( float fl_target, float fl_value, float fl_speed );
-	float normalize_yaw( float f );
-	vec3_t vector_transform ( const vec3_t & in1, const matrix_t & in2 );
+	inline void fast_rsqrt ( float a, float * out );
+
+	float fast_vec_normalize ( vec3_t & vec );
+
+	 void fast_sqrt ( float * __restrict p_out, float * __restrict p_in );
+
+	void angle_vectors ( vec3_t &, vec3_t *, vec3_t *, vec3_t * );
+	vec3_t vector_add ( const vec3_t a, const vec3_t b );
+	vec3_t vector_add ( vec3_t &, vec3_t & );
+	vec3_t vector_subtract ( vec3_t &, vec3_t & );
+	vec3_t vector_multiply ( vec3_t &, vec3_t & );
+	void angle_vectors ( vec3_t & angles, vec3_t & forward );
+	void vector_ma ( const vec3_t & start, float scale, const vec3_t & direction, vec3_t & dest );
+	vec3_t vector_divide ( vec3_t &, vec3_t & );
+	bool screen_transform ( const vec3_t & point, vec3_t & screen );
+	void normalize_num ( vec3_t & vIn, vec3_t & vOut );
+	float fl_angle_mod ( float fl_angle );
+	float angle_diff ( float destAngle, float srcAngle );
+	float fl_approach_angle ( float fl_target, float fl_value, float fl_speed );
+	float normalize_yaw ( float f );
+	vec3_t vector_transform ( const vec3_t & in1, const matrix3x4_t & in2 );
 	bool world_to_screen ( const vec3_t & origin, vec3_t & screen );
 
 
 
-	template <typename t> t clamp_value( t value, t min, t max ) {
+	template <typename t> t clamp_value ( t value, t min, t max ) {
 		if ( value > max ) {
 			return max;
 		}

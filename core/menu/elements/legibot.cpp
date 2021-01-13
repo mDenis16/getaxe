@@ -18,5 +18,10 @@ namespace menu {
 			option_slider ( "Vertical Recoil", "Stabilize vertical recoil", 0.f, 100.f, config.legitbot_recoil_y );
 		}, 300, config.legitbot_recoil );
 
+		option ( "Trigger Assist", "Automatic fire", [ = ] ( ) {
+			option_slider_int ( "Delay between shots", "Wait to shot again", 0,5, config.triggerbot_delay_between_shots );
+			
+		}, 300, config.triggerbot_enable );
+
 	}
 }

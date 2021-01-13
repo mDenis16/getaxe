@@ -4,9 +4,19 @@
 
 namespace aimbot {
 
-	bool does_point_intersect ( target & entity, vec3_t point, int hitbox, matrix_t bones [ 128 ] ) {
+	bool does_point_intersect ( target & entity, vec3_t point, int hitbox, matrix3x4_t bones [ 128 ] ) {
+		if ( !entity.player )
+			return false;
 
-		auto _hitbox = entity.hitbox_set->hitbox ( hitbox );
+		auto model = entity.player->model ( );
+		if ( !model )
+			return false;
+
+		auto studio_model = interfaces::model_info->get_studio_model ( model );
+		if ( !studio_model )
+			return false;
+
+		auto _hitbox = studio_model->hitbox_set ( 0 )->hitbox(hitbox);
 
 		const auto mod = _hitbox->radius != -1.f ? _hitbox->radius : 0.f;
 		vec3_t max = math::vector_transform ( _hitbox->maxs, bones [ _hitbox->bone ] );

@@ -20,6 +20,9 @@ public:
 	 int antiaim_pitch = 0;
 	 int antiaim_fakelag = 0;
 	 bool antiaim_fakelag_flags[5];
+	 bool antiaim_3way = false;
+	 bool antiaim_antibruteforce = false;
+	 bool antiaim_at_targets = false;
 	/* end */
 
 	 /*ragebot*/
@@ -39,6 +42,7 @@ public:
 	  bool ragebot_auto_fire = false;
 	  int ragebot_record_selection = 0;
 	  bool ragebot_double_tap = false;
+	  bool ragebot_hideshots = false;
 	  int ragebot_double_tap_ticks = 12;
 	  float ragebot_hitchance = 0.f;
 	  float ragebot_min_dmg = 0.f;
@@ -66,15 +70,23 @@ public:
 	   bool visuals_enemy_box = false;
 	   bool visuals_enemy_health = false;
 	   bool visuals_enemy_weapon = false;
+	   bool visuals_enemy_flags[6];
 
 	   float visuals_enemy_name_color [ 4 ] = { 0,0,0, 255 };
 	   float visuals_enemy_box_color [ 4 ] = { 0,24,0, 255 };
 	   float visuals_enemy_health_color [ 4 ] = { 0,24,0, 255 };
 	   float visuals_enemy_weapon_color [ 4 ] = { 0,24,0, 255 };
-
+	   float visuals_enemy_flags_color [ 4 ] = { 0,24, 0, 255 };
 	   /*end*/
 
+	   /*
+        visuals world modulation
+	   */
 
+	   bool visuals_modulation_world_nightmode = false;
+
+	   /*
+	   */
 	   /*visuals team modulation*/
 	    bool visuals_modulation_team_visible = false;
 	    bool visuals_modulation_team_xyz = false;
@@ -87,6 +99,9 @@ public:
 
 	   /*end*/
 
+		/*
+		   
+		*/
 		   /*visuals enemy modulation*/
 		bool visuals_modulation_enemy_visible = false;
 		bool visuals_modulation_enemy_xyz = false;
@@ -115,8 +130,8 @@ public:
 		 bool visuals_world_draw_grenades = false;
 		 bool visuals_world_draw_weapons = false;
 		 bool visuals_world_draw_grenades_proximity = false;
-		 bool visuals_world_no_smoke = false;
-		 bool visuals_world_no_flash = false;
+		 bool visuals_world_removals [ 4 ];
+		 bool visuals_world_autowall_crosshair = false;
 		 float visuals_world_draw_weapons_color [ 4 ] = { 255, 255, 255, 255 };
 
 		/* end*/
@@ -132,6 +147,22 @@ public:
 		 float legitbot_smooth = 0.f;
 		 bool legitbot_enable = false;
 		 float legitbot_fov = 0.f;
+		 bool triggerbot_enable = false;
+		 int triggerbot_delay_between_shots = 0;
+		 bool ragebot_extend_lag_compensation = false;
+		 int double_tap_key = 0;
+		 int hide_shots_key = 0;
+
+
+		 /*hooks*/
+		 bool should_skip_animation_frame_target = true;
+		 bool is_hltv_target = true;
+		 bool build_transformations_target = true;
+		 bool setup_bones = true;
+		 bool do_procedural_foot_plant_target = true;
+		 bool standard_blending_rules_target = true;
+		 bool update_client_side_animation = true;
+
 };
 
 #define config c_config::get ( )

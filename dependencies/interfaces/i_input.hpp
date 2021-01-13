@@ -42,8 +42,10 @@ public:
 	int               m_clear_input_state;			// 0xE0
 	c_usercmd* m_commands;					// 0xEC
 	c_verified_user_cmd* m_verified;					// 0xF0
-	c_usercmd* get_user_cmd( int slot, int sequence_num ) {
-		using original_fn = c_usercmd * ( __thiscall* )( void*, int, int );
-		return ( *( original_fn** ) this ) [ 8 ]( this, slot, sequence_num );
+	c_usercmd* get_user_cmd( int sequence_number ) {
+		return &m_commands [ sequence_number % 150 ];
+	}
+	c_verified_user_cmd * get_verified_user_cmd ( int sequence_number ) {
+		return &m_verified [ sequence_number % 150 ];
 	}
 };

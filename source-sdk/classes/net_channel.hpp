@@ -68,11 +68,11 @@ public:
 	char pad_0030 [ 1044 ];
 	/*bool transmit(bool only_reliable) {
 		return ((bool(__thiscall*)(void*, bool)) utilities::get_vfunc(this, 49))(this, only_reliable);
-	}
+	}*/
 
 	void send_datagram()
 	{
 		((void(__thiscall*)(void*, void*)) utilities::get_vfunc(this, 46))(this, NULL);
-	}*/
+	}
 };
 

@@ -15,23 +15,21 @@ namespace aimbot {
 			if ( entity == local_player::m_data.pointer )
 				continue;
 
-			if ( entity->dormant ( ) )
-				continue;
-
 			if ( !entity->is_alive ( ) )
 				continue;
 
-			if ( !entity->is_enemy ( ) )
+			if ( entity->dormant ( ) )
 				continue;
 
-
+			if ( entity->is_teammate ( ) )
+				continue;
 			if ( !player_manager::records [ i ].size ( ) )
 				continue;
 
 			if ( ( entity->origin ( ) - engine_prediction::unpredicted_eye ).length ( ) > local_player::m_data.weapon_data->flRange )
 				continue;
 
-			target t;
+			target t = {};
 			t.player = entity;
 			t.index = entity->index ( );
 			t.health = entity->health ( );
@@ -41,10 +39,12 @@ namespace aimbot {
 	void sort_list ( ) {
 		struct {
 			bool operator()( struct target a, struct target b ) const {
+				auto angle_a = math::calc_angle ( local_player::m_data.eye_position, a.player->get_eye_pos ( ) );
+				auto angle_b = math::calc_angle ( local_player::m_data.eye_position, b.player->get_eye_pos ( ) );
+				auto fov_a = math::get_fov ( local_player::m_data.orig_viewangle, angle_a );
+				auto fov_b = math::get_fov ( local_player::m_data.orig_viewangle, angle_b );
+				return  fov_a < fov_b;
 
-					return  math::get_fov ( local_player::m_data.orig_viewangle, local_player::m_data.eye_position, a.player->get_eye_pos ( ) ) < math::get_fov ( local_player::m_data.orig_viewangle, local_player::m_data.eye_position, b.player->get_eye_pos ( ) );
-
-				return false;
 			}
 		} target_sort;
 
@@ -56,7 +56,11 @@ namespace aimbot {
 		
 		for ( auto &target : targets ) {
 			target.index = target.player->index ( );
-			target.hitbox_set = interfaces::model_info->get_studio_model ( target.player->model ( ) )->hitbox_set ( 0 );
+			int trycount = 0;
+			while ( !target.hitbox_set && trycount <= 3 ) {
+				target.hitbox_set = interfaces::model_info->get_studio_model ( target.player->model ( ) )->hitbox_set ( 0 );
+				trycount++;
+			}
 			target.health = target.player->health ( );
 		}
 	}

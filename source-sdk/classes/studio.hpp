@@ -125,7 +125,7 @@ struct studio_bone_t {
 	vec3_t pos_scale;
 	vec3_t rot_scale;
 
-	matrix_t pose_to_bone;
+	matrix3x4_t pose_to_bone;
 	quaternion quat_alignement;
 	int flags;
 	int proc_type;

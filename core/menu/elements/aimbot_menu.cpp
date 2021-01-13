@@ -23,19 +23,24 @@ namespace menu {
 		
 			option_combobox ( "Pitch", "Where you aimbot shot", std::vector<std::string>{"none", "down", "up"}, config.antiaim_pitch );
 			option_combobox ( "Yaw", "Where you aimbot shot", std::vector<std::string>{"none", "freestanding", "backwards"}, config.antiaim_yaw );
-		
+			option_single ( "At Targets", "Adjust your yaw against enemy", config.antiaim_at_targets );
+			option_single ( "3Way Side", "God bless kibit.", config.antiaim_3way );
+			option_single ( "Anti Bruteforce", "Inverts your side when enemy miss.", config.antiaim_antibruteforce );
 			option_slider_int ( "Fakelag", "Amount of fakelag", 0, 16, config.antiaim_fakelag );
-			option_multicombobox ( "Fakelag Trigger", "When you fakelag", { { "standing", &config.antiaim_fakelag_flags [ 0 ] },  { "moving", &config.antiaim_fakelag_flags [ 1 ] }, { "in air", &config.antiaim_fakelag_flags [ 2 ] }, { "on peek", &config.
+			option_multicombobox ( "Fakelag Trigger", "When you fakelag", { { "standing", &config.antiaim_fakelag_flags [ 0 ] },  { "moving", &config.antiaim_fakelag_flags [ 1 ] }, { "in air", &config.antiaim_fakelag_flags [ 2 ] },
+				{ "on peek", &config.
 antiaim_fakelag_flags [ 3 ] }, { "on shot", &config.
 antiaim_fakelag_flags [ 4 ] } } );
 
-		}, 500, config.antiaim_enable );
-		option ( "Exploits", "Gives you a big advatage", [ = ] ( ) {
+		}, 600, config.antiaim_enable );
+		/*option ( "Exploits", "Gives you a big advatage", [ = ] ( ) {
 			option_single ( "Doubletap", "Allows you to shoot twice at the same time", config.ragebot_double_tap );
-			option_slider_int ( "Ticks ", "db tap ticks", 1, 18, config.ragebot_double_tap_ticks );
-			option_multicombobox ( "Doubletap Options", "Customzice your doubletap", { { "Instant Doubletap", &config.ragebot_double_tap_filters [ 0 ] },  { "Teleport Stop", &config.ragebot_double_tap_filters [ 1 ] } } );
+			option_single ( "Hideshots", "Prevent other players to hit your flip", config.ragebot_hideshots );
+			ImGui::Hotkey ( "##dbtap key", &c_config::get ( ).double_tap_key, ImVec2 ( 100, 20 ) );
+			ImGui::Hotkey ( "##hideshots key", &c_config::get ( ).hide_shots_key, ImVec2 ( 100, 20 ) );
+			
 
-		}, 300, config.antiaim_enable );
+		}, 300, config.antiaim_enable );*/
 	
 	}
 }

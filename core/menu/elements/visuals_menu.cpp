@@ -46,7 +46,13 @@ void menu::visuals ( ) {
 
 		option_single ( "Weapons esp", "Show weapons on map", config.visuals_world_draw_weapons, config.visuals_world_draw_weapons_color );
 		option_single ( "Grenades esp", "Show grenades on map", config.visuals_world_draw_grenades, config.visuals_world_draw_weapons_color );
-		option_single ( "Grenades Proximity", "Show grenades that hit you", config.visuals_world_draw_grenades_proximity, config.visuals_world_draw_weapons_color );
+		option_multicombobox ( "Removals", "Remove things that u dont need", { { "visual recoil", &config.visuals_world_removals [ 0 ] },
+			{ "flash effect", &config.visuals_world_removals [ 1 ] },
+			{ "smoke effect", &config.visuals_world_removals [ 2 ] },
+			{ "molotov effect", &config.visuals_world_removals [ 3 ] },
+			{ "scope", &config.visuals_world_removals [ 4 ] },
+			{ "shadows", &config.visuals_world_removals [ 5 ] },
+			} );
 		
 	}, 300, config.visuals_modulation_team_enabled );
 }

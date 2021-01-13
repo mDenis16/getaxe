@@ -14,7 +14,7 @@ public:
 	void run_visuals( );
 	void run_visuals_preview( );
 
-	void __stdcall create_objects( IDirect3DDevice9* device ) {
+	void __stdcall create_objects( IDirect3DDevice9* /*device*/ ) {
 		if ( hooks::window )
 			ImGui_ImplDX9_CreateDeviceObjects( );
 	}
@@ -2873,9 +2873,7 @@ public:
 		style->Colors [ ImGuiCol_TextSelectedBg ] = ImVec4( 0.25f, 1.00f, 0.00f, 0.43f );
 		style->Colors [ ImGuiCol_ModalWindowDarkening ] = ImVec4( 1.00f, 0.98f, 0.95f, 0.73f );
 	  
-		
-		menu::start ( device );
-
+	
 		create_objects( device );
 	}
 
@@ -2889,7 +2887,7 @@ public:
 		verdana = ImGui::GetIO ( ).Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\Verdana.ttf", 13.0f );
 	}
 
-	void __stdcall end_present( IDirect3DDevice9* device ) {
+	void __stdcall end_present( IDirect3DDevice9* /*device*/ ) {
 		if ( opened ) {
 			if ( ImGui::GetStyle( ).Alpha > 1.f )
 				ImGui::GetStyle( ).Alpha = 1.f;
@@ -2904,6 +2902,9 @@ public:
 	}
 
 	void __stdcall pre_render( IDirect3DDevice9* device ) {
+
+		
+
 		D3DVIEWPORT9 d3d_viewport;
 		device->GetViewport( &d3d_viewport );
 

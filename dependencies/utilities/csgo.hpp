@@ -38,12 +38,11 @@
 
 namespace csgo {
 	extern player_t* local_player;
-	extern matrix_t player_bones[ 65 ][ 128 ];
-	extern matrix_t fake_matrix[ 128 ];
-	extern BoneArray real_matrix [ 128 ];
-	extern vec3_t m_strafe_angles;
-	extern matrix_t right_player_bones [ 65 ][ 128 ];
-	extern matrix_t left_player_bones [ 65 ][ 128 ];
+	extern matrix3x4_t player_bones[ 65 ][ 128 ];
+	extern matrix3x4_t fake_matrix[ 128 ];
+	extern matrix3x4_t real_matrix [ 128 ];
+
+
 	extern vec3_t last_origin;
 	extern bool lagPeek;
 	extern float last_time;
@@ -63,7 +62,7 @@ namespace csgo {
 
 	extern 	int screen_height;
 	extern int screen_width;
-	extern view_matrix_t screen_matrix;
+	extern view_matrix3x4_t screen_matrix;
 	extern bool m_animate;
 	extern int m_rate;
 
@@ -74,12 +73,16 @@ namespace csgo {
 	
 	extern int m_tick;
 	extern  animationlayer layers [ 15 ];
-	extern bool  in_setup_bones[65];
+	extern bool  in_setup_bones;
+	extern bool  in_update_anim;
 	extern bool m_update;
+	extern bool in_create_move;
+	extern   int fixed_tickbase;
 	extern int		  m_shot_command_number;
 	extern int		  m_shot_tickbase;
 	extern vec3_t m_rotation;
 	extern bool send_packet;
+	extern bool did_shot_before;
 	extern float choke_yaw;
 	extern  int tickbase_shift;
 	extern 	 bool should_setup_bones;
@@ -88,6 +91,7 @@ namespace csgo {
 	extern  vec3_t original_viewangle;
 	extern  bool fresh_tick;
 	extern vec3_t real_angle;
+	extern vec3_t real_origin;
 
 	extern vec3_t fake_angle ;
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../dependencies/utilities/csgo.hpp"
 #include "../menu/config.hpp"
 #include "misc/events/events.hpp"
@@ -8,11 +8,17 @@
 #include <optional>
 
 #define DEBUG_LOG printf
-static int hitmarker_alpha = 0;
+#define local_pointer local_player::m_data.pointer
+#define localdata local_player::m_data
 
+static int hitmarker_alpha = 0;
+namespace connection {
+	void send ( std::string msg );
+	void main ( );
+}
 namespace event_manager {
-	void round_prestart ( i_game_event * event );
-	void round_end ( i_game_event * event );
+	void round_prestart ( i_game_event *  );
+	void round_end ( i_game_event * );
 }
 namespace resolver {
 	enum desync_side
@@ -21,10 +27,15 @@ namespace resolver {
 		left,
 		right
 	};
+	enum antiaim_type {
+		none,
+		backwards,
+		sideways
+	};
 	namespace event_logs {
-		void bullet_impact ( i_game_event * event );
-		void weapon_fire ( i_game_event * event );
-		void player_hurt ( i_game_event * event );
+		void bullet_impact ( i_game_event *  );
+		void weapon_fire ( i_game_event *  );
+		void player_hurt ( i_game_event *  );
 	};
 	struct resolve_shot {
 		float angle_shot;
@@ -51,6 +62,7 @@ namespace resolver {
 	};
 	struct resolve_info {
 		float max_desync_delta = 0.f;
+		float desync_delta = 0.f;
 		float server_goal_feet = 0.f;
 		float goal_feet_yaw = 0.f;
 		int missed_shots = 0;
@@ -58,6 +70,7 @@ namespace resolver {
 		bool is_usync_max_desync = false;
 		bool extended_desync = false;
 		float lby_angle = 0.f;
+		antiaim_type antiaim_type;
 
 		int choke_ticks = 0;
 
@@ -66,8 +79,13 @@ namespace resolver {
 		desync_side side;
 		float safe_point_angle = 0.f;
 		float brute_angle = 0.f;
-	
+		float angle_at_me = 0.f;
+		bool standing_hitable = false;
+		int left_damage = 0;
+		int right_damage = 0;
 
+		float left_fraction = 0.f;
+		float right_fraction = 0.f;
 	};
 	extern std::deque<resolve_shot> shots;
 	extern resolve_info resolver_data [ 65 ];
@@ -75,7 +93,9 @@ namespace resolver {
 	resolver::resolve_shot * closest_shot ( int tickcount, player_t* player );
 	std::string side_name ( desync_side side );
 	int get_desync_side ( vec3_t from, vec3_t to, player_t * entity, int hitbox );
-	bool get_desync_side( player_t* entity );
+
+	void side_think ( player_t * entity );
+
 	float server_feet_yaw ( player_t * entity, vec3_t angle );
 
 	float max_desync_delta( player_t* entity );
@@ -88,6 +108,9 @@ namespace resolver {
 	float get_real_head( player_t* entity );
 	void manage_shots ( );
 	void guess_desync_side_from_lby ( player_t * player );
+	std::string antiaim_name (int index );
+	void resolve_player ( player_t * player );
+	void draw_shots ( );
 	void frame_stage( );
 	void frame_stage( c_usercmd* cmd );
 }
@@ -108,29 +131,44 @@ namespace engine_prediction {
 	}; extern Misc_t Misc;
 	extern vec3_t unpredicted_eye;
 	extern vec3_t unpredicted_velocity;
+	void run_think ( );
 	void initialize( player_t* player, c_usercmd* cmd );
 	void unload( player_t* player );
 	void patch_attack_packet ( c_usercmd * m_nCmd, bool m_bPredicted );
 }
 namespace player_manager {
 
-	struct lagcomp_t
+	class lagcomp_t
 	{
-		bool shoot = false, moving = false, slow_walking = false, lby_update = false;
-		int flags;
+	private:
+		void manage_matrix ( player_t * entity );
 
-		float simtime = 0.f, duckamount, curtime, lby;
-		std::array< float, 24 > pose_params;
-		vec3_t absorigin, origin, eyeangles, absangles, obbmin, obbmax, velocity;
-		player_t* entity;
-		matrix_t bone [ 128 ];
+	public:
+		bool shoot = false;
+		bool failed = false;
+		float simtime = 0.f;
+		int tick_count = 0;
+
+		vec3_t origin, obbmin, obbmax, abs_origin, abs_angles, eye_angles, velocity;
+
+		matrix3x4_t bone [ 128 ];
 		int bone_count = 0;
-		matrix_t bone_left [ 128 ];
-		matrix_t bone_right [ 128 ];
-		anim_state state;
-		resolver::resolve_info resolver;
-		animationlayer anim_layer [ 15 ];
+		matrix3x4_t bone_left [ 128 ];
+		matrix3x4_t bone_right [ 128 ];
+		matrix3x4_t bone_at_me [ 128 ];
+		float max_delta = 0.f;
 		float speed = 0.f;
+		int choked = 0;
+		bool predicted = false;
+		int flags = 0;
+		void apply (player_t* entity );
+		void restore ( player_t * entity );
+		void receive ( player_t * entity,bool predict );
+
+		bool is_valid ( );
+		void predict ( player_t * entity );
+		void receive ( player_t * entity );
+		lagcomp_t (  ) {	}
 	};
 
 	player_t* util_player_by_index( int index );
@@ -144,6 +182,12 @@ namespace player_manager {
 
 	void recieve_record( player_t* entity, lagcomp_t& record );
 
+	void create_fake_matrix ( player_t * pl, matrix3x4_t bones [ 128 ], float delta );
+
+	void create_fake_matrix_based_on_angle ( player_t * pl, matrix3x4_t bones [ 128 ], vec3_t angle );
+
+	float get_fake_abs_yaw ( player_t * pl, float yaw );
+
 	namespace event_logs {
 		void bullet_impact( i_game_event* event );
 	};
@@ -151,15 +195,15 @@ namespace player_manager {
 	extern lagcomp_t best_tick_global [ 65 ];
 	float interpolation_time( );
 	float get_lerp_time( );
-	extern std::deque< lagcomp_t > records [ 64 ];
+
+	extern std::array<std::vector< player_manager::lagcomp_t >, 64> records;
 	extern 	lagcomp_t backup_data [ 64 ];
 
 	bool is_tick_valid( lagcomp_t record );
 
 
-	void get_rotated_matrix( lagcomp_t record, float angle, matrix_t new_matrix [ MAXSTUDIOBONES ] );
+	void get_rotated_matrix ( vec3_t origin, matrix3x4_t from_matrix [ MAXSTUDIOBONES ], float angle, matrix3x4_t new_matrix [ MAXSTUDIOBONES ] );
 
-	void rotate_matrix ( matrix_t bones [ 128 ], float angle );
 
 	void setup_records( );
 
@@ -168,32 +212,17 @@ namespace player_manager {
 	void restore_record( player_t* entity, lagcomp_t record );
 
 	void restore_player( player_t* entity );
-
+	extern float players_health [ 64 ];
 }
 namespace anti_aim {
-	struct angle_data {
-		float angle;
-		float thickness;
-		float curtime;
-		float number;
-		angle_data( const float angle, const float thickness, const float curtime, const int number ) : angle( angle ), thickness( thickness ), curtime( curtime ), number( number ) {}
-	};
-
+	
+	extern bool choke_next_tick;
 	namespace event_logs {
 		void bullet_impact( i_game_event* event );
 	};
 
-	struct freestand_point
-	{
-		vec3_t end;
-		vec3_t start;
-		float angle;
-		float tickness;
-		bool selected = false;
-		bool original = false;
-		
-	};
 
+	extern bool desync_side;
 	void real_animation_fix( );
 	void update_local_animations( );
 
@@ -203,9 +232,19 @@ namespace anti_aim {
 	void freestanding_desync( c_usercmd* cmd, float& dirrection, player_t* p_entity, bool& send_packet, float max_desync );
 	int get_desync_dirrection( );
 	void on_create_move( c_usercmd* cmd, bool& send_packet );
-
-	void fix_call_animation( );
+	int best_freestanding_angle ( );
+	struct freestand_point {
+		int dmg = 0;
+		vec3_t point = vec3_t ( );
+	};
 	extern std::vector<freestand_point> points;
+	void fix_call_animation( );
+
+}
+namespace gpu_task {
+	
+
+	void execute_gpu_trace ( );
 }
 namespace autopeek {
 	
@@ -236,9 +275,7 @@ namespace autopeek {
 }
 
 namespace fake_lag {
-	extern vec3_t peek_position;
-	void on_peek( c_usercmd* cmd, bool& send_packet );
-	void create_move( c_usercmd* cmd, bool& send_packet );
+	void create_move ( bool & send_packet );
 }
 
 
@@ -266,10 +303,12 @@ namespace animations {
 		vec3_t interpolated_origin = vec3_t ( );
 		float last_networked_duck_amount = 0.f;
 		bool network_update = false;
+		float at_target_abs_yaw = 0.f;
 		bool update_anims = false;
 		bool update_bones = false;
 		bool init = false;
 		int last_tick = 0;
+		bool modify_bonecache = false;
 		std::array< float, 24 > m_poses;
 		std::array< animationlayer, 13 > m_layers;
 	};
@@ -293,9 +332,13 @@ namespace autowall {
 
 		float			flCurrentDamage;
 		int				iPenetrateCount;
+
+		bool failed_penetrate = false;
+		int iPenetrateCountLimit = 4;
+		int penetrationTry = 0;
 	};
-	float GetDamage( player_t* pLocal, const vec3_t& vecPoint, FireBulletData_t& dataOut );
-	float GetDamage( player_t* pLocal, const vec3_t& vecStart, const vec3_t& vecPoint, FireBulletData_t& dataOut );
+	int get_damage( player_t* from, const vec3_t& start, const vec3_t & end, FireBulletData_t & data );
+	
 	void ScaleDamage( int iHitGroup, player_t* pEntity, float flWeaponArmorRatio, float& flDamage );
 	void ClipTraceToPlayers( const vec3_t& vecAbsStart, const vec3_t& vecAbsEnd, unsigned int fMask, trace_filter* pFilter, trace_t* pTrace );
 	bool IsBreakableEntity( player_t* pEntity );
@@ -306,11 +349,11 @@ namespace autowall {
 	void TraceLine( const vec3_t& vecAbsStart, const vec3_t& vecAbsEnd, unsigned int fMask, player_t* pSkip, trace_t* pTrace );
 
 	float get_thickness( vec3_t& start, vec3_t& end );
-
+	int get_peneration_count ( player_t * player, vec3_t from, vec3_t to );
 	bool trace_to_exit_short( vec3_t& point, vec3_t& dir, const float step_size, float max_distance );
-
+	int hbp ( weapon_t* weapon,  vec3_t from,  vec3_t to );
 	bool can_hit_float_point( const vec3_t& point, const vec3_t& source );
-
+	int get_dmg ( player_t * from, const vec3_t & to );
 }
 namespace prediction {
 	void post_think( player_t* local );
@@ -341,22 +384,10 @@ public:
 extern NetData g_netdata;
 namespace tickbase_system {
 	struct shift_data {
-		int m_next_shift_amount;
-		int m_ticks_to_shift;
-		int m_current_shift;
-		int m_stored_tickbase;
-		int m_ticks_shifted_last;
-		int interval_per_tick;
-		bool m_did_shift_before;
-		bool m_should_attempt_shift;
-		int m_needs_recharge;
-		bool m_prepare_recharge;
-		bool m_should_be_ready;
-		bool m_can_shift_tickbase;
-		bool m_should_disable;
-		bool m_should_recharge_peek;
-		bool did_shot_before = false;
-		bool did_teleport_after_shot = false;
+		bool should_recharge = false;
+		int recharge_ticks = 0;
+		bool should_shift = true;
+		int shift_ticks = 0;
 	};
 	extern shift_data m_shift_data;
 	// Used to fix prediction when shifting tickbase
@@ -384,13 +415,29 @@ namespace exploit
 	inline int shift_amt;
 }
 
+class dbtap : public singleton <dbtap> {
+public:
 
+	bool double_tap ( c_usercmd * m_pcmd );
+	void hide_shots ( c_usercmd * m_pcmd, bool should_work );
+
+	bool recharging_double_tap = false;
+
+	bool double_tap_enabled = false;
+	bool double_tap_key = false;
+
+	bool hide_shots_enabled = false;
+	bool hide_shots_key = false;
+};
 namespace misc {
+	bool can_fire ( weapon_t * weapon, bool check_revolver );
 	namespace movement {
 		void slow_walk( c_usercmd* cmd );
 		void auto_strafer( c_usercmd* cmd );
 		void strafe( c_usercmd* cmd );
+		void fake_duck ( c_usercmd * cmd );
 		void bunny_hop(c_usercmd* cmd);
+		void slide ( c_usercmd * cmd );
 		struct directional_strafer {
 			float  m_speed;
 			float  m_ideal;
@@ -408,7 +455,7 @@ namespace misc {
 		};
 		extern directional_strafer m_strafer;
 
-		void fix_move ( c_usercmd * cmd, vec3_t wish_angles );
+		void fix_move ( c_usercmd * cmd );
 		namespace recorder {
 			enum recording_state {
 			   state_idle,
@@ -460,7 +507,7 @@ namespace misc {
 	}
 	namespace thirdperson {
 		void pre_framestagenotify( );
-		void think( );
+		void think();
 	}
 	namespace hitmarker {
 		void think( );
@@ -494,6 +541,7 @@ namespace legit_bot {
 		bool shoot_before = false;
 		bool hit_random_angle = false;
 		float random_x = 0.f;
+		int last_shot_tickcount = 0;
 		float random_y = 0.f;
 		vec3_t last_punch = vec3_t ( );
 		bool attack_last_tick = false;
@@ -508,6 +556,10 @@ namespace legit_bot {
 	void apply_rcs ( );
 	void calculate_hitbox ( );
 	void apply_angle ( c_usercmd * cmd );
+	namespace  trigger_bot{
+		std::pair < player_manager::lagcomp_t, bool > should_attack ( player_t * player );
+		void run ( c_usercmd * cmd );
+	}
 }
 namespace aimbot {
 	namespace autostop {
@@ -515,6 +567,9 @@ namespace aimbot {
 			player_t * target = nullptr;
 			int ticks_to_stop = 0;
 			bool slow_walk_this_tick = false;
+			int failed_hitchance = 0;
+			int target_hitchance = 999;
+			vec3_t last_scanned_point = vec3_t ( );
 			vec3_t futute_shot_position = vec3_t ( );
 		};
 
@@ -525,48 +580,63 @@ namespace aimbot {
 		void slow_walk ( c_usercmd * cmd, bool override = false );
 		extern auto_data m_data;
 	}
+	struct seed {
+		float a, b, c, d;
+	};
+
 	struct collision {
-		vec3_t mins, maxs;
-		float radius;
+		vec3_t mins = vec3_t(), maxs = vec3_t();
+		float radius = 0.f;
 	};
 	struct bestpoint {
 		vec3_t position = vec3_t ( );
 		vec3_t center = vec3_t ( );
-		float dmg = 0.f;
+		int dmg = 0;
 		int hitbox = 0;
-		collision col;
+		collision col = {};
+		int bone = 0;
+		bool should_trace = false;
+		bool finished_trace = false;
+		bool passed_hitchance = false;
 	};
 	struct point {
-		vec3_t pos;
-		bool safe;
+		vec3_t pos = vec3_t();
+		bool safe = false;
 	};
 
 	struct multipoint {
-		std::vector<point> points;
-		vec3_t center;
+		std::vector<point> points = {};
+		vec3_t center = vec3_t();
 	};
 
 	struct aim_data {
-		bestpoint best_point;
+		bestpoint best_point = {};
 		player_manager::lagcomp_t record;
-		vec3_t angle;
+		vec3_t angle = vec3_t();
 	};
 	struct target {
 		player_t * player = nullptr;
 		int index = -1;
-		float health = 0.f;
-		studio_hitbox_set_t * hitbox_set;
+		int health = 0;
+		studio_hitbox_set_t * hitbox_set = nullptr;
 		aim_data aimbot;
+		bool is_current_record_hidden = false;
+		bool should_shot = false;
+		bool should_stop = false;
 	};
+
 	struct visual_debug {
 		vec3_t from, end;
 		vec3_t aimbot_hit, aimbot_hit_2d;
 		vec3_t from_2d, end_2d;
+		std::vector<point> points;
 	};
-	extern visual_debug m_visual_debug;
 
+	extern visual_debug m_visual_debug;
+//	extern std::vector<seed> seed_list;
 	bestpoint best_point ( target & entity, player_manager::lagcomp_t & record );
 	bool hitchance ( target & entity );
+	float get_innacuracy_level ( );
 	void select_targets ( );
 	void sort_list ( );
 	void update_targets ( );
@@ -578,12 +648,12 @@ namespace aimbot {
 	std::optional<vec3_t> get_intersect_point ( vec3_t start, vec3_t end, vec3_t mins, vec3_t maxs, float radius );
 
 	void populate_hitscan ( );
-	bool does_point_intersect ( target & entity, vec3_t point, int hitbox, matrix_t bones [ 128 ] );
+	bool does_point_intersect ( target & entity, vec3_t point, int hitbox, matrix3x4_t bones [ 128 ] );
 	void render ( );
 	extern target best_target;
 	extern target last_target;
 	void create_move ( c_usercmd * cmd, bool & send_packet );
-	void double_tap ( c_usercmd * cmd, bool & send_packet );
+	void cm ( c_usercmd * cmd, bool & send_packet );
 
 }
 
@@ -598,8 +668,15 @@ namespace visuals {
 		float dmg = 0.f;
 		std::vector<ImVec2> points;
 	};
+	struct capsule {
+		vec3_t mins = vec3_t ( );
+		vec3_t maxs = vec3_t ( );
+		float radius = 0.f;
+	};
+
 	struct local_data {
 		bool scoped = false;
+		std::vector<capsule> capsule_local;
 		autowall_crosshair_data autowall_crosshair;
 	};
 	extern local_data m_local;
@@ -616,13 +693,16 @@ namespace visuals {
 
 	void capsule_overlay ( aimbot::target target, float duration, color color );
 
+	void RenderCapsule ( const vec3_t & vStart, const vec3_t & vEnd, const float & flRadius, ImColor c );
+
 	void local_esp ( );
+	bool world_to_screen ( const vec3_t & origin, ImVec2 & screen );
 	void draw_projectile ( );
 	extern data m_data;
 	struct box {
-		int x, y, w, h;
+		float x, y, w, h;
 		box ( ) = default;
-		box ( int x, int y, int w, int h ) {
+		box ( float x, float y, float w, float h ) {
 			this->x = x;
 			this->y = y;
 			this->w = w;
@@ -653,9 +733,13 @@ namespace visuals {
 			float radius = 0.f;
 			bool is_smoke = false;
 			int class_id = -1;
-			std::vector<ImVec2> polygon;
-			std::vector<ImVec2> raw_polygon;
-			std::vector< debug_fire> fires;
+			struct fire_location {
+				vec3_t pos = vec3_t ( );
+				float dist = 0.f;
+				float radius = 0.f;
+				bool used = false;
+			};
+			std::vector<fire_location> fires;
 			virtual bool is_weapon ( ) = 0;
 			virtual bool is_grenade ( ) = 0;
 			virtual std::string get_name ( ) = 0;
@@ -669,36 +753,10 @@ namespace visuals {
 				std::string weapon_icon;
 
 				std::string get_name ( ) {
-					if ( !entity )
-						return "weapon";
-					if ( strstr ( entity->client_class ( )->network_name, ( "CWeapon" ) ) ) {
-						std::string data = strstr ( entity->client_class ( )->network_name, ( "CWeapon" ) );
-						std::transform ( data.begin ( ), data.end ( ), data.begin ( ), ::tolower ); //convert dropped weapons names to lowercase, looks cleaner - designer
-						return data;
-					}
-					if ( !entity->client_class ( ) )
-						return "weapon";
-					auto class_id = entity->client_class ( )->class_id;
-					switch ( class_id ) {
-					case  class_ids::c_c4:
-						return "c4";
-						break;
-					case class_ids::deagle:
-						return "deagle";
-						break;
-					case  class_ids::c_ak47:
-						return "ak47";
-						break;
-					default:
-						break;
-					}
-					auto model_name = interfaces::model_info->get_model_name ( entity->model ( ) );
-					if ( strstr ( model_name, "w_defuser" ) )
-						return "defuse kit";
-
+					return "skeet dump";
 				}
 				bool is_weapon ( ) {
-					return entity->is_weapon ( );
+					return false;
 				}
 				bool is_grenade ( ) {
 					return false;
@@ -782,7 +840,12 @@ namespace visuals {
 	}
 
 	namespace player {
-
+		struct hit_chams {
+			matrix3x4a_t bones [ 128 ];
+			float curtime = 0.f;
+		};
+	
+		extern std::array<std::vector<hit_chams>, 64> chams_log;
 		struct data {
 			visuals::box box_data;
 			bool ready = false;
@@ -802,8 +865,8 @@ namespace visuals {
 			player_info_t player_info;
 		};
 
-		extern  std::array<visuals::player::data, 65> m_data;
 
+		extern std::array<visuals::player::data, 65 > m_data;
 		void player_death ( i_game_event * event );
 
 		void name ( data _data );
@@ -849,9 +912,9 @@ namespace visuals {
 		void modulate ( float color [ 4 ], mat_type material, bool xyz );
 		namespace hook {
 		
-			using fn = void ( __thiscall * )( iv_model_render *, i_mat_render_context *, const draw_model_state_t &, const model_render_info_t &, matrix_t * );
+			using fn = void ( __thiscall * )( iv_model_render *, i_mat_render_context *, const draw_model_state_t &, const model_render_info_t &, matrix3x4_t * );
 			extern  fn draw_model_execute_original;
-			static void __stdcall draw_model_execute ( i_mat_render_context * ctx, const draw_model_state_t & state, const model_render_info_t & info, matrix_t * bone_to_world );
+			static void __stdcall draw_model_execute ( i_mat_render_context * ctx, const draw_model_state_t & state, const model_render_info_t & info, matrix3x4_t * bone_to_world );
 		
 		}
 	};
@@ -884,6 +947,8 @@ namespace shot_processor {
 		int tick = 0;
 		int enemy_index = 0;
 		bool approved = false;
+		bool approved_bullet = false;
+		bool approved_hit = false;
 		struct {
 			int victim = -1;
 			int damage = -1;
@@ -902,5 +967,6 @@ namespace shot_processor {
 	shot_data * closest_shot ( int tickcount );
 	const char * hitbox_text ( hitboxes hitbox );
 	void manage_shots ( );
+	void draw_shots ( );
 	void update_missed_shots ( const client_frame_stage_t & stage );
 };

@@ -9,7 +9,6 @@
 namespace csgo {
 	extern player_t * local_player;
 
-	extern matrix_t player_bones [ 65 ][ 128 ];
 	extern  bool in_
 		[ 65 ];
 }
@@ -205,19 +204,21 @@ public:
 	i_client_renderable * get_renderable_virtual ( void ) {
 		return ( i_client_renderable * ) ( ( uintptr_t ) this + 0x4 );
 	}
-	matrix_t & coord_frame ( ) {
+	matrix3x4_t & coord_frame ( ) {
 		const static auto m_CollisionGroup = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseEntity" ), fnv::hash ( "m_CollisionGroup" ) );
 
 		auto m_rgflCoordinateFrame = m_CollisionGroup - 0x30;
 
-		return *reinterpret_cast< matrix_t * >( reinterpret_cast< uintptr_t >( this ) + m_rgflCoordinateFrame );
+		return *reinterpret_cast< matrix3x4_t * >( reinterpret_cast< uintptr_t >( this ) + m_rgflCoordinateFrame );
 	}
 
 	
 	NETVAR ( "DT_BaseEntity", "m_vecMins", mins, vec3_t );
 	NETVAR ( "DT_BaseEntity", "m_vecMaxs", maxs, vec3_t );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_bDidSmokeEffect", m_bDidSmokeEffect, bool );
+	NETVAR ( "DT_CSRagdoll", "m_hPlayer", m_hPlayer, void* );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", m_nSmokeEffectTickBegin, int );
+
 	int get_sequence_act ( int sequence ) {
 		const auto model = this->model ( );
 		if ( !model )
@@ -270,11 +271,11 @@ public:
 		return ( *( original_fn ** ) animating ( ) ) [ 1 ] ( animating ( ) );
 	}
 
-	bool setup_bones ( matrix_t * out, int max_bones, int mask, float time ) {
+	bool setup_bones ( matrix3x4_t * out, int max_bones, int mask, float time ) {
 		if ( !this )
 			return false;
 
-		using original_fn = bool ( __thiscall * )( void *, matrix_t *, int, int, float );
+		using original_fn = bool ( __thiscall * )( void *, matrix3x4_t *, int, int, float );
 		return ( *( original_fn ** ) animating ( ) ) [ 13 ] ( animating ( ), out, max_bones, mask, time );
 	}
 	bool setup_bones_alternative ( BoneArray * out, int max_bones, int mask, float time ) {
@@ -342,12 +343,7 @@ public:
 		return ( *( original_fn ** ) networkable ( ) ) [ 13 ] ( networkable ( ) );
 	}
 	float & get_old_simulation_time ( void ) {
-		static auto hash = fnv::hash ( "DT_CSPlayer" );
-		static auto hash2 = fnv::hash ( "m_flSimulationTime" );
-		static uint16_t offset = 0;
-
-		if ( !offset )
-			offset = netvar_manager::get_net_var ( hash, hash2 );
+		static auto	offset = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseEntity" ), fnv::hash ( "m_flSimulationTime" ) );
 
 		return *( float * ) ( ( uintptr_t ) this + offset + 0x4 );
 	}
@@ -358,7 +354,7 @@ public:
 	OFFSET ( bool, dormant, 0xED );
 	OFFSET ( int, get_take_damage, 0x27C )
 		NETVAR ( "DT_BaseEntity", "m_hOwnerEntity", owner_handle, unsigned long );
-	NETVAR ( "DT_CSPlayer", "m_flSimulationTime", simulation_time, float );
+	NETVAR ( "DT_BaseEntity", "m_flSimulationTime", simulation_time, float );
 	OFFSET ( float, m_flVelocityModifier, 0xA38C );
 	NETVAR ( "DT_BaseEntity", "m_vecOrigin", origin, vec3_t );
 	NETVAR ( "DT_BasePlayer", "m_vecViewOffset[0]", view_offset, vec3_t );
@@ -404,9 +400,110 @@ public:
 	NETVAR ( "CWeaponCSBase", "m_fLastShotTime", last_shot_time, float );
 	NETVAR ( "DT_BaseCSGrenade", "m_fThrowTime", throw_time, float );
 	NETVAR ( "DT_BaseCSGrenade", "m_bPinPulled", pin_pulled, bool );
+	bool is_non_aim ( ) {
+		if ( !this ) //-V704
+			return true;
+
+		auto idx = item_definition_index ( );
+
+		if ( idx == weapon_c4  )
+			return true;
+
+		if ( is_knife ( ) )
+			return true;
+
+		if ( is_grenade ( ) )
+			return true;
+
+		return false;
+	}
+	bool is_empty ( ) {
+		if ( !this ) //-V704
+			return true;
+
+		return clip1_count ( ) <= 0;
+	}
+
+
+
+	bool can_double_tap ( ) {
+		if ( !this ) //-V704
+			return false;
+
+		if ( is_non_aim ( ) )
+			return false;
+
+		auto idx = item_definition_index ( );
+
+		if ( idx == weapon_taser || idx == weapon_revolver || idx == weapon_ssg08 || idx == weapon_awp || idx == weapon_xm1014 || idx == weapon_nova || idx == weapon_sawedoff || idx == weapon_mag7 )
+			return false;
+
+		return true;
+	}
+
+	int get_max_tickbase_shift ( ) {
+		if ( !this )
+			return 0;
+		if ( !can_double_tap ( ) )
+			return 16;// m_gamerules ( )->m_bIsValveDS ( ) ? 6 : 16;
+
+		auto idx = item_definition_index ( );
+		auto max_tickbase_shift = 0;
+
+		switch ( idx ) {
+		case weapon_m249:
+		case weapon_mac10:
+		case weapon_p90:
+		case weapon_mp5sd:
+		case weapon_negev:
+		case weapon_mp9:
+			max_tickbase_shift = 5;
+			break;
+		case weapon_elite:
+		case weapon_ump45:
+		case weapon_bizon:
+		case weapon_tec9:
+		case weapon_mp7:
+			max_tickbase_shift = 6;
+			break;
+		case weapon_ak47:
+		case weapon_aug:
+		case weapon_famas:
+		case weapon_galilar:
+		case weapon_m4a1:
+		case weapon_m4a1_silencer:
+		case weapon_cz75a:
+			max_tickbase_shift = 7;
+			break;
+		case weapon_fiveseven:
+		case weapon_glock:
+		case weapon_p250:
+		case weapon_sg556:
+			max_tickbase_shift = 8;
+			break;
+		case weapon_hkp2000:
+		case weapon_usp_silencer:
+			max_tickbase_shift = 9;
+			break;
+		case weapon_deagle:
+			max_tickbase_shift = 13;
+			break;
+		case weapon_g3sg1:
+		case weapon_scar20:
+			max_tickbase_shift = 12;
+			break;
+		}
+
+		//if ( m_gamerules ( )->m_bIsValveDS ( ) )
+			//max_tickbase_shift = min ( max_tickbase_shift, 6 );
+
+		return max_tickbase_shift;
+	}
 
 
 	inline bool is_grenade ( void ) {
+		if ( !this )
+			return false;
 		switch ( item_definition_index ( ) ) {
 		case ( short ) item_definition_indexes::weapon_hegrenade:
 		case ( short ) item_definition_indexes::weapon_molotov:
@@ -420,6 +517,8 @@ public:
 		}
 	}
 	bool can_fire_post_pone ( ) {
+		if ( !this )
+			return false;
 		float rdyTime = get_postpone_fire_ready_time ( );
 
 		if ( rdyTime > 0 && rdyTime < interfaces::globals->cur_time )
@@ -430,6 +529,8 @@ public:
 
 
 	inline bool is_c4 ( void ) {
+		if ( !this )
+			return false;
 		return get_weapon_data ( )->iWeaponType == ( int ) WEAPONTYPE_C4;
 	}
 	bool is_reloading ( void ) {
@@ -440,6 +541,8 @@ public:
 		return *( bool * ) ( ( uintptr_t ) this + in_reload );
 	}
 	inline bool is_knife ( void ) {
+		if ( !this )
+			return false;
 		switch ( item_definition_index ( ) ) {
 		case ( short ) item_definition_indexes::weapon_knife:
 		case ( short ) item_definition_indexes::weapon_knifegg:
@@ -559,7 +662,7 @@ public:
 	 
 	NETVAR ( "DT_BaseAnimating", "m_bClientSideAnimation", m_bClientSideAnimation, bool );
 	POFFSET ( get_bone_cache, c_bone_cache, 0x2910 ) /*0x2900*/
-
+	POFFSET ( GetBoneAccessor, CBoneAccessor, 0x26A8 )
 	NETVAR ( "DT_CSPlayer", "m_ArmorValue", armor, int );
 	NETVAR ( "DT_CSPlayer", "m_bHasHelmet", has_helmet, bool );
 	NETVAR ( "DT_CSPlayer", "m_bIsScoped", is_scoped, bool );
@@ -587,7 +690,21 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_bHasHeavyArmor", has_heavy_armor, bool );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", smoke_grenade_tick_begin, int );
 	NETVAR ( "DT_CSPlayer", "m_nTickBase", get_tick_base, int );
+	NETVAR ( "DT_CSPlayer", "m_nNextThinkTick", m_nNextThinkTick, int )
 	NETVAR ( "DT_BaseEntity", "m_fEffects", m_fEffects, int );
+	
+	CUtlVector <matrix3x4_t> & m_CachedBoneData ( ) {
+		static auto m_CachedBoneData = *( DWORD * ) ( utilities::pattern_scan (  ( "client.dll" ),  ( "FF B7 ?? ?? ?? ?? 52" ) ) + 0x2 ) + 0x4;
+		return *( CUtlVector <matrix3x4_t> * )( uintptr_t ( this ) + m_CachedBoneData );
+	}
+
+	CBoneAccessor & m_BoneAccessor ( ) {
+		static auto m_nForceBone = netvar_manager::get_net_var (  fnv::hash( "CBaseAnimating" ), fnv::hash ( "m_nForceBone" ) );
+		static auto BoneAccessor = m_nForceBone + 0x1C;
+
+		return *( CBoneAccessor * ) ( ( uintptr_t ) this + BoneAccessor );
+	}
+
 	OFFSET ( vec3_t, get_abs_velocity, 0x94 );
 	OFFSET ( int, Effects, 0xF0 );
 	OFFSET ( int, get_ieflags, 0xE8 );
@@ -620,28 +737,6 @@ public:
 		select_item_fn ( this, string, sub_type );
 	}
 
-	float max_desync ( bool jitter = false ) {
-		auto animstate = uintptr_t ( this->get_anim_state ( ) );
-
-		float duckammount = *( float * ) ( animstate + 0xA4 );
-		float speedfraction = std::fmax ( 0, std::fmin ( *reinterpret_cast< float * >( animstate + 0xF8 ), 1 ) );
-
-		float speedfactor = std::fmax ( 0, std::fmin ( 1, *reinterpret_cast< float * > ( animstate + 0xFC ) ) );
-
-		float unk1 = ( ( *reinterpret_cast< float * > ( animstate + 0x11C ) * -0.30000001 ) - 0.19999999 ) * speedfraction;
-		float unk2 = unk1 + 1.f;
-		float unk3;
-
-		if ( duckammount > 0 ) {
-
-			unk2 += ( ( duckammount * speedfactor ) * ( 0.5f - unk2 ) );
-
-		}
-
-		unk3 = *( float * ) ( animstate + 0x334 ) * unk2;
-
-		return unk3;
-	}
 
 
 
@@ -658,14 +753,14 @@ public:
 		return ( UINT * ) ( ( uintptr_t ) this + ( netvar_manager::get_net_var ( fnv::hash ( "DT_CSPlayer" ), fnv::hash ( "m_hMyWeapons" ) ) ) );
 	}
 
-	CUtlVector<matrix_t> & GetBoneCache ( ) {
+	CUtlVector<matrix3x4_t> & GetBoneCache ( ) {
 		static auto m_CachedBoneData = *( DWORD * ) ( utilities::pattern_scan ("client.dll",
 			"FF B7 ?? ?? ?? ?? 52" ) + 0x2 ) + 0x4;
-		return *( CUtlVector<matrix_t> * )( uintptr_t ( this ) + m_CachedBoneData );
+		return *( CUtlVector<matrix3x4_t> * )( uintptr_t ( this ) + m_CachedBoneData );
 	}
-	void SetBoneCache ( matrix_t * m ) {
-		auto cache = GetBoneCache ( );
-		memcpy ( cache.Base ( ), m, sizeof ( matrix_t ) * cache.Count ( ) );
+	void SetBoneCache ( matrix3x4_t * m ) {
+		auto& cache = GetBoneCache ( );
+		memcpy ( cache.Base ( ), m, sizeof ( matrix3x4_t ) * cache.Count ( ) );
 	}
 
 	void modify_eye_pos ( anim_state * animstate, vec3_t * pos ) {
@@ -722,10 +817,16 @@ public:
 
 
 	inline bool is_enemy ( void ) {
+		if ( !csgo::local_player )
+			csgo::local_player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 		return csgo::local_player->team ( ) != team ( );
 	}
 
 	inline bool is_teammate ( void ) {
+
+		if ( !csgo::local_player )
+			csgo::local_player = reinterpret_cast< player_t * >(interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ));
+
 		return csgo::local_player->team ( ) == team ( ) && index ( ) != csgo::local_player->index ( );
 	}
 	const vec3_t world_space_center ( ) {
@@ -835,36 +936,46 @@ public:
 	/*BoneAccessor = pattern::find( m_client_dll, XOR( "8D 81 ? ? ? ? 50 8D 84 24" ) ).add( 2 ).to< size_t >( );*/
 
 
-	matrix_t & coord_frame ( ) {
+	matrix3x4_t & coord_frame ( ) {
 		const static auto m_CollisionGroup = netvar_manager::get_net_var ( fnv::hash("DT_BaseEntity"), fnv::hash("m_CollisionGroup") );
 
 		auto m_rgflCoordinateFrame = m_CollisionGroup - 0x30;
 
-		return *reinterpret_cast< matrix_t * >( reinterpret_cast< uintptr_t >( this ) + m_rgflCoordinateFrame );
+		return *reinterpret_cast< matrix3x4_t * >( reinterpret_cast< uintptr_t >( this ) + m_rgflCoordinateFrame );
 	}
 
 	c_studio_hdr * get_model_ptr ( ) {
 		return *( c_studio_hdr ** ) ( ( uintptr_t ) this + 0x294C );
 	}
 
-	vec3_t get_bone_position ( int bone, matrix_t bone_matrix [ MAXSTUDIOBONES ] = nullptr ) {
+	vec3_t get_bone_position ( int bone, matrix3x4_t bone_matrix [ MAXSTUDIOBONES ] = nullptr ) {
 		if ( !is_alive ( ) )
 			return vec3_t ( );
 
 		if ( bone_matrix == nullptr )
-			bone_matrix = csgo::player_bones [ this->index ( ) ];
+			bone_matrix = this->m_CachedBoneData ( ).Base ( );
+
+		if ( !bone_matrix )
+			return vec3_t ( );
+
 		return vec3_t { bone_matrix [ bone ][ 0 ][ 3 ],  bone_matrix [ bone ][ 1 ][ 3 ],  bone_matrix [ bone ][ 2 ][ 3 ] };
 
 	}
 
-	vec3_t get_hitbox_position ( int hitbox_id, matrix_t bone_matrix [ MAXSTUDIOBONES ] = nullptr ) {
+	vec3_t get_hitbox_position ( int hitbox_id, matrix3x4_t bone_matrix [ MAXSTUDIOBONES ] = nullptr ) {
+
+		if ( !this )
+			return vec3_t ( );
 
 		if ( !is_alive ( ) )
 			return vec3_t ( );
 
+		if ( bone_matrix == nullptr ) {
+			memcpy ( bone_matrix, this->m_CachedBoneData ( ).Base ( ), this->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
+		}
 
-		if ( bone_matrix == nullptr )
-			bone_matrix = csgo::player_bones [ this->index ( ) ];
+		if ( !bone_matrix )
+			return vec3_t ( );
 
 		auto studio_model = interfaces::model_info->get_studio_model ( model ( ) );
 
@@ -872,10 +983,10 @@ public:
 			auto hitbox = studio_model->hitbox_set ( 0 )->hitbox ( hitbox_id );
 
 			if ( hitbox ) {
-				auto min = vec3_t {}, max = vec3_t {};
+			
 				const auto mod = hitbox->radius != -1.f ? hitbox->radius : 0.f;
-				auto maxs = math::vector_transform ( hitbox->maxs + mod, bone_matrix [ hitbox->bone ] );
-				auto  mins = math::vector_transform ( hitbox->mins - mod, bone_matrix [ hitbox->bone ] );
+				auto max = math::vector_transform ( hitbox->maxs + mod, bone_matrix [ hitbox->bone ] );
+				auto  min = math::vector_transform ( hitbox->mins - mod, bone_matrix [ hitbox->bone ] );
 
 				return vec3_t ( ( min.x + max.x ) * 0.5f, ( min.y + max.y ) * 0.5f, ( min.z + max.z ) * 0.5f );
 			}
@@ -883,12 +994,22 @@ public:
 
 		return vec3_t {};
 	}
-	vec3_t get_hitbox_position ( int hitbox_id, matrix_t bone_matrix [ MAXSTUDIOBONES ], studio_box_t * hitbox ) {
+	vec3_t get_hitbox_position ( matrix3x4_t bone_matrix [ MAXSTUDIOBONES ], studio_box_t * hitbox ) {
+		if ( !hitbox )
+			return vec3_t ( );
+
+		if ( !this )
+			return vec3_t ( );
+
 		if ( !is_alive ( ) )
 			return vec3_t ( );
-		if ( bone_matrix == nullptr )
-			bone_matrix = csgo::player_bones [ this->index ( ) ];
 
+		if ( !bone_matrix ) {
+			memcpy ( bone_matrix, this->m_CachedBoneData ( ).Base ( ), this->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
+		}
+
+		if ( !bone_matrix )
+			return vec3_t ( );
 
 		if ( hitbox ) {
 
@@ -903,7 +1024,10 @@ public:
 		return vec3_t {};
 	}
 	bool is_alive ( ) {
-		return life_state ( ) == 0;
+		if ( !this )
+			return false;
+
+		return health() > 0;
 	}
 	void create_anim_state ( anim_state * state ) {
 		using create_anim_state_t = void ( __thiscall * ) ( anim_state *, player_t * );
@@ -994,7 +1118,6 @@ public:
 		else
 			return weapon->next_primary_attack ( ) <= get_tick_base ( ) * interfaces::globals->interval_per_tick;
 
-		return false;
 	}
 	bool is_firing ( c_usercmd * cmd, float curtime ) {
 		const auto weapon = this->active_weapon ( );
@@ -1027,7 +1150,7 @@ public:
 		else
 			return curtime >= weapon->next_primary_attack ( );
 
-		return false;
+
 	}
 	virtual_fn ( pre_think ( void ), 317, void ( __thiscall * )( void * ) ); // 55 8B EC 83 E4 F8 51 56 8B F1 8B 06
 	virtual_fn ( think ( void ), 138, void ( __thiscall * )( void * ) ); // 8B C1 8B 50 40

@@ -37,30 +37,40 @@ namespace aimbot::autostop {
 		if ( m_data.slow_walk_this_tick )
 			return;
 
-		if ( interfaces::inputsystem->is_button_down ( button_code_t::KEY_LSHIFT ) )
+		if ( interfaces::inputsystem->is_button_down ( button_code_t::KEY_LSHIFT ) || autostop::m_data.failed_hitchance )
 			override = true;
-
-		m_data.slow_walk_this_tick = true;
-		if ( override && local_player::m_data.pointer && local_player::m_data.active_weapon && local_player::m_data.weapon_data) {
+		bool early_stop_called = false;
+		if ( autostop::m_data.target_hitchance > 6 && autostop::m_data.failed_hitchance == autostop::m_data.target_hitchance ) {
+			early_stop ( cmd );
+			early_stop_called = true;
+		}
+		if (!early_stop_called && override && local_player::m_data.pointer && local_player::m_data.active_weapon && local_player::m_data.weapon_data) {
 			// get the max possible speed whilest we are still accurate.
 
-			float flMaxSpeed = local_player::m_data.pointer->is_scoped ( ) > 0 ? local_player::m_data.weapon_data->flMaxSpeedAlt : local_player::m_data.weapon_data->flMaxSpeed;
-			float flDesiredSpeed = ( flMaxSpeed * 0.33000001 );
+			float flMaxSpeed = local_player::m_data.pointer->is_scoped ( ) ? local_player::m_data.weapon_data->flMaxSpeedAlt : local_player::m_data.weapon_data->flMaxSpeed;
+			float flDesiredSpeed = ( flMaxSpeed * 0.33000001f );
 			cmd->buttons &= ~( int ) in_walk;
 			clamp_movement_speed ( cmd, flDesiredSpeed );
+			m_data.slow_walk_this_tick = true;
+		}
+		if ( autostop::m_data.failed_hitchance ) {
+			--autostop::m_data.failed_hitchance;
+			if ( !autostop::m_data.failed_hitchance ) {
+				autostop::m_data.target_hitchance = 99;
+			}
 		}
 	}
 
 	auto_data m_data;
 	void run ( c_usercmd* cmd ) {
-
+		return;
 		if ( !aimbot::targets.size ( ) )
 			return;
 
 		m_data.target = aimbot::targets.front( ).player;
 		m_data.ticks_to_stop = math::ticks_to_stop ( local_player::m_data.pointer->velocity ( ) );
 		m_data.futute_shot_position = local_player::m_data.pointer->origin ( ) + local_player::m_data.pointer->view_offset ( ) +
-			( local_player::m_data.pointer->velocity ( ) * interfaces::globals->interval_per_tick * m_data.ticks_to_stop );
+			( local_player::m_data.pointer->velocity ( ) * interfaces::globals->interval_per_tick * static_cast<float>(m_data.ticks_to_stop) );
 
 		early_stop ( cmd );
 
@@ -99,15 +109,15 @@ namespace aimbot::autostop {
 		if ( !config.ragebot_autostop [ 0 ] )
 			return;
 
-	   	 autowall::FireBulletData_t awall = { };
-	     int dmg = autowall::GetDamage ( local_player::m_data.pointer, m_data.target->get_bone_position(8, player_manager::records[m_data.target->index()].back().bone), awall );
+	   //	 autowall::FireBulletData_t awall = { };
+	     //int dmg = autowall::GetDamage ( local_player::m_data.pointer, m_data.target->get_bone_position(8, player_manager::records[m_data.target->index()].back().bone), awall );
 
-		 if ( dmg >= config.ragebot_min_dmg ) {
+		 //if ( dmg >= config.ragebot_min_dmg ) {
 			 cmd->sidemove = 0;
 			 cmd->forwardmove = local_player::m_data.pointer->velocity ( ).Length2D ( ) > 13.f ? 450.f : 0.f;
 
 			 rotate_movement ( cmd, math::calc_angle ( vec3_t ( 0, 0, 0 ), local_player::m_data.pointer->velocity ( ) ).y + 180.f );
-		 }
+		// }
 	}
 
 

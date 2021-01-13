@@ -17,7 +17,7 @@ void visuals::draw_debug_points ( ) {
 }
 
 bool visuals::get_playerbox ( entity_t * ent, visuals::box & in) {
-	matrix_t & tran_frame = ent->coord_frame ( );
+	matrix3x4_t & tran_frame = ent->coord_frame ( );
 
 	const vec3_t min = ent->mins ( );
 	const vec3_t max = ent->maxs ( );
@@ -66,24 +66,28 @@ bool visuals::get_playerbox ( entity_t * ent, visuals::box & in) {
 			top = box_array [ i ].y;
 	}
 
-	in.x = static_cast< int >( left );
-	in.y = static_cast< int >( top );
-	in.w = static_cast< int >( right ) - static_cast< int >( left );
-	in.h = static_cast< int >( bottom ) - static_cast< int >( top );
+	in.x = left;
+	in.y = top;
+	in.w = right - left;
+	in.h = bottom - top;
 	return true;
 }
 void visuals::draw_noscope ( ) {
-    const float screen_size[2] = { csgo::screen_width, csgo::screen_height };
-    auto width = 2;
-    auto color_1 = ImColor ( 153, 102, 204, 255 );
-    auto color_2 = ImColor ( 153, 102, 204, 0 );
-    c_menu::get ( ).draw->AddRectFilled ( ImVec2 ( csgo::screen_width / 2.f - 0.5f, 0 ), ImVec2 ( csgo::screen_width / 2.f + 0.5f, csgo::screen_height), color_1 );
-    c_menu::get ( ).draw->AddRectFilled ( ImVec2(0, csgo::screen_height / 2.f - 0.5f), ImVec2(csgo::screen_width, csgo::screen_height / 2.f + 0.5f), color_1);
+	if ( !config.visuals_world_removals [ 4 ] )
+		return;
+   const  auto color_1 = ImColor ( 153, 102, 204, 255 );
+   const  auto color_2 = ImColor ( 153, 102, 204, 0 );
+    c_menu::get ( ).draw->AddRectFilled ( ImVec2 ( static_cast< float >( csgo::screen_width) / 2.f - 0.5f, 0 ), ImVec2 ( static_cast< float >( csgo::screen_width) / 2.f + 0.5f, static_cast< float >( csgo::screen_height)), color_1 );
+    c_menu::get ( ).draw->AddRectFilled ( ImVec2(0, static_cast<float>(csgo::screen_height) / 2.f - 0.5f), ImVec2( static_cast< float >( csgo::screen_width ), static_cast< float >( csgo::screen_height ) / 2.f + 0.5f), color_1);
 
 }
 void visuals::autowall_crosshair ( ) {
+	if ( !config.visuals_world_autowall_crosshair )
+		return;
+
 	if ( m_local.autowall_crosshair.points.size() > 0 )
 	m_local.autowall_crosshair.points.clear ( );
+
 	if ( !local_player::m_data.pointer )
 		return;
 
@@ -207,8 +211,8 @@ ImVec2 visuals::render_text ( const ImFont * font, int size, const float textCfg
 	const auto verticalOffset = adjustHeight ? textSize.y : 0.0f;
 
 	
-	window->DrawList->AddText ( font, size, { pos.x + horizontalOffset + 1.0f, pos.y - verticalOffset + 1.0f }, ImColor ( textCfg [ 0 ], textCfg [ 1 ], textCfg [ 2 ], textCfg [ 3 ] ) & IM_COL32_A_MASK, text );
-	window->DrawList->AddText ( font, size, { pos.x + horizontalOffset, pos.y - verticalOffset }, ImColor ( textCfg [ 0 ], textCfg [ 1 ], textCfg [ 2 ], textCfg [ 3 ] ), text );
+	window->DrawList->AddText ( font, static_cast<float>(size), { pos.x + horizontalOffset + 1.0f, pos.y - verticalOffset + 1.0f }, ImColor ( textCfg [ 0 ], textCfg [ 1 ], textCfg [ 2 ], textCfg [ 3 ] ) & IM_COL32_A_MASK, text );
+	window->DrawList->AddText ( font, static_cast<float>(size), { pos.x + horizontalOffset, pos.y - verticalOffset }, ImColor ( textCfg [ 0 ], textCfg [ 1 ], textCfg [ 2 ], textCfg [ 3 ] ), text );
 
 	return textSize;
 }
@@ -222,10 +226,9 @@ void visuals::local_esp_think ( ) {
     else {
         m_local.scoped = false;
     }
-	autowall_crosshair ( );
+	//autowall_crosshair ( );
 
-
-
+	
 
    
 }
@@ -248,11 +251,65 @@ void visuals::capsule_overlay ( aimbot::target target, float duration, color col
 }
 void visuals::local_esp ( ) {
 
-    if ( m_local.scoped )
-        draw_noscope ( );
-	
-    nade_pred.draw ( );
+	if ( m_local.scoped )
+		draw_noscope ( );
 
-	c_menu::get ( ).draw->AddConvexPolyFilled ( m_local.autowall_crosshair.points.data ( ), m_local.autowall_crosshair.points.size ( ), m_local.autowall_crosshair.dmg > 1.f ? ImColor( 87, 173, 21, 200) : ImColor( 88, 19, 20,  200 ));
-	c_menu::get ( ).draw->AddPolyline ( m_local.autowall_crosshair.points.data ( ), m_local.autowall_crosshair.points.size ( ), m_local.autowall_crosshair.dmg > 1.f ? ImColor ( 87, 173, 21, 255 ) : ImColor ( 88, 19, 20, 255 ), true, 1.2f );
+	nade_pred.draw ( );
+
+	//c_menu::get ( ).draw->AddConvexPolyFilled ( m_local.autowall_crosshair.points.data ( ), m_local.autowall_crosshair.points.size ( ), m_local.autowall_crosshair.dmg > 1.f ? ImColor( 87, 173, 21, 200) : ImColor( 88, 19, 20,  200 ));
+	//c_menu::get ( ).draw->AddPolyline ( m_local.autowall_crosshair.points.data ( ), m_local.autowall_crosshair.points.size ( ), m_local.autowall_crosshair.dmg > 1.f ? ImColor ( 87, 173, 21, 255 ) : ImColor ( 88, 19, 20, 255 ), true, 1.2f );
+
+	aimbot::render ( );
+	shot_processor::draw_shots ( );
+
+	for ( auto point : anti_aim::points ) {
+		ImVec2 point2d = ImVec2 ( );
+		if ( visuals::world_to_screen ( point.point, point2d ) ) {
+			c_menu::get ( ).draw->AddText ( point2d, ImColor(255,255,255,255), std::to_string(point.dmg).c_str() );
+		}
+	}
+}
+
+bool visuals::world_to_screen ( const vec3_t & origin, ImVec2 & screen ) {
+	vec3_t screen_game = vec3_t ( );
+	const auto screen_transform = [ &origin, &screen ] ( ) -> bool {
+		static std::uint8_t * matrix;
+		if ( !matrix ) {
+			matrix = static_cast< std::uint8_t * >( utilities::pattern_scan ( "client.dll", "0F 10 05 ? ? ? ? 8D 85 ? ? ? ? B9" ) );
+			matrix += 3;
+			matrix = *reinterpret_cast< std::uint8_t ** >( matrix );
+			matrix += 176;
+		}
+
+		const matrix3x4_t & w2s_matrix = *reinterpret_cast< matrix3x4_t * >( matrix );
+		screen.x = w2s_matrix.m_flMatVal [ 0 ][ 0 ] * origin.x + w2s_matrix.m_flMatVal [ 0 ][ 1 ] * origin.y + w2s_matrix.m_flMatVal [ 0 ][ 2 ] * origin.z + w2s_matrix.m_flMatVal [ 0 ][ 3 ];
+		screen.y = w2s_matrix.m_flMatVal [ 1 ][ 0 ] * origin.x + w2s_matrix.m_flMatVal [ 1 ][ 1 ] * origin.y + w2s_matrix.m_flMatVal [ 1 ][ 2 ] * origin.z + w2s_matrix.m_flMatVal [ 1 ][ 3 ];
+
+
+		float w = w2s_matrix.m_flMatVal [ 3 ][ 0 ] * origin.x + w2s_matrix.m_flMatVal [ 3 ][ 1 ] * origin.y + w2s_matrix.m_flMatVal [ 3 ][ 2 ] * origin.z + w2s_matrix.m_flMatVal [ 3 ][ 3 ];
+
+		if ( w < 0.001f ) {
+			screen.x *= 100000;
+			screen.y *= 100000;
+			return true;
+		}
+
+		float invw = 1.f / w;
+		screen.x *= invw;
+		screen.y *= invw;
+
+		return false;
+	};
+
+	if ( !screen_transform ( ) ) {
+		int screen_width, screen_height;
+		interfaces::engine->get_screen_size ( screen_width, screen_height );
+
+		screen.x = ( screen_width * 0.5f ) + ( screen.x * screen_width ) * 0.5f;
+		screen.y = ( screen_height * 0.5f ) - ( screen.y * screen_height ) * 0.5f;
+
+		return true;
+	}
+
+	return false;
 }

@@ -1,4 +1,8 @@
 #include "../features.hpp"
+#include "../../menu/render/menu_render.hpp"
+#include "../../menu/ImGui/imgui.h"
+#include "../../menu/ImGui/imgui_internal.h"
+
 static int last_id = 0;
 std::deque<shot_processor::shot_data> shot_processor::shots;
 std::deque<shot_processor::shot_data> current_shots;
@@ -25,11 +29,20 @@ void shot_processor::weapon_fire( i_game_event* event ) {
 	if ( !aimbot::last_target.player )
 		return;
 
-	shot_data shot;
+	if ( aimbot::last_target.index == -1 )
+		return;
+
+	shot_data shot = {};
+
+	auto target = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( aimbot::last_target.index ));
+	if ( !target )
+		return;
+	aimbot::last_target.player = target;
 	shot.tick = interfaces::globals->tick_count;
 	shot.target = aimbot::last_target;
 	shot.enemy_index = aimbot::last_target.player->index ( ); /*crash after map change should reset it ;)*/
 	shot.shotpos = engine_prediction::unpredicted_eye;
+	shot.curtime = interfaces::globals->cur_time;
 	shots.push_back ( shot );
 	aimbot::last_target = { };
 }
@@ -81,7 +94,6 @@ void shot_processor::hurt_event( i_game_event* event ) {
 		auto shot = closest_shot( interfaces::globals->tick_count );
 		if ( shot ) {
 			shot->hurt = true;
-			shot->hit = true;
 			shot->hit_info.damage = damage;
 			shot->hit_info.hitgroup = hitbox;
 			shot->hit_info.victim = victim;
@@ -116,8 +128,7 @@ void shot_processor::bullet_impact ( i_game_event * event ) {
 	auto shot = closest_shot ( interfaces::globals->tick_count );
 	if ( shot ) {
 		shot->hitpos = bullet_impact;
-		if ( shot->hit )
-			return;
+		shot->approved_bullet = true;
 		auto entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( shot->enemy_index ) );
 
 		if ( !entity )
@@ -126,6 +137,7 @@ void shot_processor::bullet_impact ( i_game_event * event ) {
 			return;
 		if ( entity->dormant ( ) )
 			return;
+
 
 		if ( auto intersection = aimbot::get_intersect_point ( shot->shotpos, bullet_impact, shot->target.aimbot.best_point.col.mins, shot->target.aimbot.best_point.col.maxs, shot->target.aimbot.best_point.col.radius); intersection ) {
 			shot->hit = true;
@@ -213,6 +225,9 @@ void shot_processor::manage_shots( ) {
 		auto shot = &shots.at( i );
 		if ( !shot->approved  && abs(shot->tick - interfaces::globals->tick_count) < 64 ) {
 
+			if ( !shot->approved_bullet && ( interfaces::globals->cur_time - shot->curtime ) < 2.f)
+				continue;
+
 			auto entity = reinterpret_cast< player_t* >( interfaces::entity_list->get_client_entity( shot->enemy_index ) );
 
 			if ( !entity )
@@ -223,47 +238,81 @@ void shot_processor::manage_shots( ) {
 			if ( name.length( ) > 17 )
 				name = name.substr( 0, 17 ) + "...";
 
-			std::transform( name.begin( ), name.end( ), name.begin( ), tolower );
+
+			std::transform ( name.begin ( ), name.end ( ), name.begin ( ), ::tolower );
+		
 			auto hitgroup = hitgroup_text( shot->hit_info.hitgroup );
 			auto hitbox = hitbox_text ( ( hitboxes ) shot->target.aimbot.best_point.hitbox );
-			if ( shot->hit && !shot->hurt )
+		
+			std::stringstream ss = {};
+			interfaces::console->console_printf ( "SHOT [ HITBOX : %i, EXTRAPOLATED: %i, PREDICTED: %s ] \n", shot->target.aimbot.best_point.hitbox, shot->target.aimbot.record.choked, shot->target.aimbot.record.predicted ? "TRUE" : "FALSE" );
+
+			if ( !shot->approved_bullet ) {
+				ss << "Hit " << name << " in " << hitbox << " due to unregister shot.";
+			}
+			else if ( shot->hit &&  !shot->hurt )
 			{
-
-
-					std::stringstream ss;
 					resolver::resolver_data [ shot->enemy_index ].missed_shots++;
 					resolver::resolver_data [ shot->enemy_index ].side = static_cast<resolver::desync_side>(resolver::resolver_data [ shot->enemy_index ].missed_shots % 3);
 					ss << "Missed  " << name << " in " << hitbox << " damage due to resolver.";
 			
-					visuals::notifications::add ( ss.str ( ) );
-					
-
+			}
+			else if ( shot->hurt && !shot->hit ) {
+				
+				ss << "Hit " << name << " in " << hitbox << " due to spread.";
 				
 			}
 			else if ( !shot->hit )
 			{
-				std::stringstream ss;
 				ss << "Missed  " << name << " in " << hitbox << " damage due to spread.";
-				visuals::notifications::add ( ss.str ( ) );
-				//visuals::event_.push_front( visuals::loginfo( ss.str ( ), color( 255, 255, 255 ), interfaces::globals->cur_time ) );
-			}
+			}	
 			else if ( shot->hurt && shot->hit )
 			{
-
-				std::stringstream ss;
-
-				ss << "Hit  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage.  bt (  "  << math::time_to_ticks ( shot->target.player->simulation_time() - shot->target.aimbot.record.simtime ) << " ) " << std::endl;
+	
+				ss << "Hit  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage.  bt (  "  << math::time_to_ticks ( shot->target.player->get_old_simulation_time() - shot->target.aimbot.record.simtime ) << " ) shot  " << (shot->target.aimbot.record.shoot ? "yes" : "no") << std::endl;
 				
-				visuals::notifications::add ( ss.str ( ) );
 			
-				
+	
+				visuals::player::hit_chams hitchams;
+				hitchams.curtime = interfaces::globals->cur_time;
+				std::memcpy ( hitchams.bones, shot->target.aimbot.record.bone, sizeof ( shot->target.aimbot.record.bone ) );
+				visuals::player::chams_log.at ( shot->target.index ).push_back ( hitchams );
 			}
 
+			visuals::notifications::add ( ss.str ( ) );
 			shot->approved = true;
 		}
-		if ( (interfaces::globals->cur_time - shot->curtime) > 5.f )
+		if ( (interfaces::globals->cur_time - shot->curtime) > 15.f )
 			shots.erase( shots.begin( ) + i );
 		
 	}
 	
+}
+
+void shot_processor::draw_shots ( ) {
+	for ( size_t i = 0; i < shots.size ( ); i++ ) {
+		auto& shot = shots.at ( i );
+		if ( shot.approved ) {
+			ImVec2 from = ImVec2 ( ); ImVec2 to = ImVec2();
+			if ( visuals::world_to_screen ( shot.shotpos, from ) && visuals::world_to_screen ( shot.hitpos, to ) ) {
+				int pLineSize = 6;
+
+				auto color = shot.hurt ? ImColor ( 255, 255, 255 ) : ImColor(255,0,0);
+
+				if ( shot.hit ) {
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( to.x - pLineSize / 2, to.y - pLineSize / 2 ), ImVec2 ( to.x - ( pLineSize ), to.y - ( pLineSize ) ), color );
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( to.x - pLineSize / 2, to.y + pLineSize / 2 ), ImVec2 ( to.x - ( pLineSize ), to.y + ( pLineSize ) ), color );
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( to.x + pLineSize / 2, to.y + pLineSize / 2 ), ImVec2 ( to.x + ( pLineSize ), to.y + ( pLineSize ) ), color );
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( to.x + pLineSize / 2, to.y - pLineSize / 2 ), ImVec2 ( to.x + ( pLineSize ), to.y - ( pLineSize ) ), color );
+				}
+				else {
+					c_menu::get ( ).draw->AddCircle ( to, 30, 15, color );
+				}
+
+				c_menu::get ( ).draw->AddLine ( from, to, color );
+			
+				
+			}
+		}
+	}
 }

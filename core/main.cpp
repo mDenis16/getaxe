@@ -4,10 +4,12 @@
 unsigned long WINAPI initialize(void* instance) {
 	while (!GetModuleHandleA("serverbrowser.dll"))
 		Sleep(10000);
-	while ( !( csgo::window = FindWindowA( "Valve001", nullptr ) ) )
+
+	csgo::window = FindWindowA ( "Valve001", nullptr );
+
+	while ( ! csgo::window )
 		Sleep( 100 );
-	//if ( csgo::window )
-		//csgo::old_window = ( WNDPROC ) SetWindowLongPtr( csgo::window, GWL_WNDPROC, ( LONG_PTR ) Hooked_WndProc );
+
 
 	console::initialize("csgo-cheat console");
 

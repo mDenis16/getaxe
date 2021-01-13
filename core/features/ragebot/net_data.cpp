@@ -1,6 +1,6 @@
 #include "../features.hpp"
 #include "../../helpers/helpers.h"
-NetData g_netdata {};;
+NetData g_netdata {};
 
 void NetData::store( ) {
     int          tickbase;
@@ -13,7 +13,7 @@ void NetData::store( ) {
         return;
 
     local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
-
+    csgo::local_player = local_player::m_data.pointer;
     if ( !local_player::m_data.pointer )
         return;
 
@@ -46,7 +46,7 @@ void NetData::apply( ) {
         return;
 
     local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
-
+    csgo::local_player = local_player::m_data.pointer;
     if ( !local_player::m_data.pointer )
         return;
 

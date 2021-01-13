@@ -9,23 +9,34 @@ engine_prediction::Misc_t engine_prediction::Misc;
 engine_prediction::Variables_t engine_prediction::m_stored_variables;
 vec3_t engine_prediction::unpredicted_eye;
 vec3_t engine_prediction::unpredicted_velocity;
+
+void engine_prediction::run_think () {
+
+	int thinktick = local_pointer->m_nNextThinkTick ( );
+
+	if ( thinktick <= 0 || thinktick > local_pointer->get_tick_base() )
+		return;
+
+	static auto unknown_fn = reinterpret_cast< void ( __thiscall * )( int ) >( utilities::pattern_scan ( "client.dll", "55 8B EC 56 57 8B F9 8B B7 ? ? ? ? 8B" ) );
+	unknown_fn ( -1 );
+
+	local_pointer->think ( );
+
+}
+
+
 void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {
-	if ( !interfaces::engine->is_connected ( ) )
+	
+	if ( !local_player::available ( ) )
 		return;
-	if ( !interfaces::engine->is_in_game ( ) )
-		return;
-	if ( !player )
-		return;
-	if ( !player->is_alive ( ) )
-		return;
-	if ( player->health ( ) <= 0 )
-		return;
+
+
 	if ( !move_data )
 		move_data = std::malloc ( 182 );
 
 	static auto oldorigin = local_player::m_data.pointer->origin ( );
 	engine_prediction::unpredicted_eye = player->get_eye_pos ( );
-	engine_prediction::unpredicted_velocity = ( local_player::m_data.pointer->origin ( ) - oldorigin ) * ( 1.0 / interfaces::globals->interval_per_tick );
+	engine_prediction::unpredicted_velocity = ( local_player::m_data.pointer->origin ( ) - oldorigin ) * ( 1.0f / interfaces::globals->interval_per_tick );
 	oldorigin = local_player::m_data.pointer->origin ( );
 
 	old_cur_time = interfaces::globals->cur_time;
@@ -35,7 +46,7 @@ void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {
 		*reinterpret_cast< int * >( reinterpret_cast< uintptr_t >( interfaces::prediction + 0x24 ) ) = 1;
 	}
 	interfaces::globals->cur_time = player->get_tick_base ( ) * interfaces::globals->interval_per_tick;
-	interfaces::globals->frame_time = *reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( interfaces::prediction ) + 0x0A ) ? 0 : interfaces::globals->interval_per_tick;
+	interfaces::globals->frame_time = interfaces::prediction->EnginePaused ? 0.0f : interfaces::globals->interval_per_tick;
 
 	if ( !prediction_random_seed || !prediction_player ) {
 		prediction_random_seed = *reinterpret_cast< int ** >( utilities::pattern_scan ( "client.dll", "A3 ? ? ? ? 66 0F 6E 86" ) + 0x1 );
@@ -94,17 +105,7 @@ void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {
 	}
 
 	// CPlayerMove::RunThink
-	{
-		int * thinktick = reinterpret_cast< int * >( reinterpret_cast< std::uint32_t >( player ) + 0x0FC );
-		if ( *thinktick != -1 && *thinktick > 0 && *thinktick <= player->get_tick_base ( ) ) {
-			*thinktick = -1;
-
-			static auto unknown_fn = reinterpret_cast< void ( __thiscall * )( int ) >( utilities::pattern_scan ( "client.dll", "55 8B EC 56 57 8B F9 8B B7 ? ? ? ? 8B" ) );
-			unknown_fn ( 0 );
-
-			player->think ( );
-		}
-	}
+	run_think ( );
 
 	interfaces::prediction->setup_move ( player, cmd, interfaces::move_helper, reinterpret_cast< player_move_data * >( move_data ) );
 
@@ -146,11 +147,7 @@ void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {
 }
 
 void engine_prediction::unload ( player_t * player ) {
-	if ( !player )
-		return;
-	if ( !player->is_alive ( ) )
-		return;
-	if ( player->health ( ) <= 0 )
+	if ( !local_player::available ( ) )
 		return;
 	interfaces::game_movement->finish_track_prediction_errors ( player );
 
@@ -166,8 +163,8 @@ void engine_prediction::unload ( player_t * player ) {
 		*prediction_player = 0;
 	}
 
-	if ( interfaces::globals->frame_time > 0.f )
-		player->get_tick_base ( )++;
+	//if ( interfaces::globals->frame_time > 0.f )
+	//	player->get_tick_base ( )++;
 
 	interfaces::globals->cur_time = old_cur_time;
 	interfaces::globals->frame_time = old_frame_time;

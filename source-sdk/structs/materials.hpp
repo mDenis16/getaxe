@@ -81,8 +81,8 @@ public:
 	virtual int get_body ( ) = 0;
 	virtual void get_color_modulation ( float * color ) = 0;
 	virtual bool lod_test ( ) = 0;
-	virtual bool setup_bones ( matrix_t * bone_to_world_out, int max_bones, uint32_t mask, float curr_time ) = 0;
-	virtual void setup_weights ( const matrix_t * bone_to_world_out, int flex_weight_count, float * flex_weights, float * flex_delayed_weights ) = 0;
+	virtual bool setup_bones ( matrix3x4_t * bone_to_world_out, int max_bones, uint32_t mask, float curr_time ) = 0;
+	virtual void setup_weights ( const matrix3x4_t * bone_to_world_out, int flex_weight_count, float * flex_weights, float * flex_delayed_weights ) = 0;
 	virtual void do_animation_events ( void ) = 0;
 	virtual void * get_pvs_notify_interface ( ) = 0;
 	virtual void get_render_bounds ( vec3_t & mins, vec3_t & maxs ) = 0;
@@ -99,10 +99,10 @@ public:
 	virtual uint32_t shadow_cast_Type ( ) = 0;
 	virtual void create_model_instance ( ) = 0;
 	virtual unsigned short get_model_instance ( ) = 0;
-	virtual const matrix_t & renderable_to_world_transform ( ) = 0;
+	virtual const matrix3x4_t & renderable_to_world_transform ( ) = 0;
 	virtual int lookup_attachment ( const char * attachment_name ) = 0;
 	virtual bool get_attachment ( int number, vec3_t & origin, vec3_t & angles ) = 0;
-	virtual bool get_attachment ( int number, matrix_t & matrix ) = 0;
+	virtual bool get_attachment ( int number, matrix3x4_t & matrix ) = 0;
 	virtual float * get_render_clip_plane ( void ) = 0;
 	virtual int get_skin ( ) = 0;
 	virtual void on_threaded_draw_setup ( ) = 0;

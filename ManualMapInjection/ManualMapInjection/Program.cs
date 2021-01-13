@@ -10,9 +10,9 @@ namespace ManualMapInjection
     {
         static void Main(string[] args)
         {
-            Console.Write("Enter process name: ");
+            Console.Write("Enter process id: ");
             var name = Console.ReadLine();
-            var target = Process.GetProcessesByName(name).FirstOrDefault();
+            var target = Process.GetProcessesByName(name)[0];
 
             if (target == null)
             {

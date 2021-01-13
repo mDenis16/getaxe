@@ -14,14 +14,10 @@
 
 IDirect3DTexture9* menu::buttonimage = nullptr;
 
-std::string font_location = "C:\\Users\\topor\\Desktop\\ImGui-APP-master\\ImGui Application\Debug\\Montserrat-Regular.ttf";
+
 menu::menu_data menu::m_menu_data;
 menu::option_data menu::m_option_data [ 100 ];
 
-void menu::start( IDirect3DDevice9* device ) {
-
-
-}
 
 
 void menu::option_slider ( const char * name, const char * description, float min, float max, float & value ) {
@@ -91,7 +87,7 @@ void menu::option_multicombobox ( const char * name, const char * description, s
 		preview = "none";
 	ImGui::SetCursorPosX ( ImGui::GetWindowWidth ( ) - ImGui::CalcItemWidth ( ) - 80 );
 	if ( ImGui::BeginCombo ( std::string ( "##" + std::string ( name ) ).data ( ), preview.c_str ( ) ) ) {
-		for ( int n = 0; n < multi_items.size ( ); n++ ) {
+		for ( size_t n = 0; n < multi_items.size ( ); n++ ) {
 			//bool is_selected = ( current_item == multi_items [ n ].name );
 			if ( ImGui::Selectable ( multi_items [ n ].name.c_str ( ), multi_items [ n ].value ) )
 				current_item = multi_items [ n ].name.c_str ();
@@ -123,8 +119,8 @@ void menu::option_combobox ( const char * name, const char * description, std::v
 	//static const char * current_item = NULL;
 	ImGui::SetCursorPosX ( ImGui::GetWindowWidth ( ) - ImGui::CalcItemWidth ( ) - 80 );
 	if ( ImGui::BeginCombo ( std::string ( "##combobox" + std::string ( name ) ).data ( ), items [ value ].c_str() )) {
-		for ( int n = 0; n < items.size(); n++ ) {
-			bool is_selected = ( value == n );
+		for ( size_t n = 0; n < items.size(); n++ ) {
+			bool is_selected = ( value == static_cast<int>(n) );
 			if ( ImGui::Selectable ( items [ n ].data(), is_selected ) ) {
 				//current_item = items [ n ].c_str ();
 				value = n;
@@ -169,7 +165,7 @@ void menu::option_single ( const char * name, const char * description, bool & v
 	
 }
 
-void menu::option ( const char * name, const char * description, std::function< void ( ) > func, int max_height, bool & value, float color [ 4 ] ) {
+void menu::option ( const char * name, const char * description, std::function< void ( ) > func, float max_height, bool & value, float color [ 4 ] ) {
 	const ImGuiWindowFlags m_window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings;
 	m_menu_data.option_index++;
 	const ImGuiIO & io = ImGui::GetIO ( );
@@ -252,17 +248,15 @@ void menu::render_menu( )
 	  ImGui::SetNextWindowSize( ImVec2( 800, 600 ), ImGuiCond_Always );
 
 	
-		 int element_index = 0;
-	
 
 		ImGui::PushFont( c_menu::get( ).normalf );
 		ImGui::Begin( "ImGui Application" , &c_menu::get().opened , m_window_flags ); {
 			ImVec4 color { ImColor( 25, 24, 25 ) };
 			ImGui::PushStyleColor( ImGuiCol_ChildBg, color );
-			ImGui::BeginChild( "ChildR", ImVec2( m_menu_data.width_transition, 0 ), false, m_window_flags ); {
+			ImGui::BeginChild( "ChildR", ImVec2( static_cast<float>(m_menu_data.width_transition), 0 ), false, m_window_flags ); {
 				static int tabs_spacing = 10;
 				if ( m_menu_data.show_tabs_buttons ) {
-					ImGui::Dummy( ImVec2( 0, 280 ) );
+					ImGui::Dummy( ImVec2( 0, 50 ) );
 
 					ImGui::Dummy ( ImVec2 ( 10, 0 ) );
 					ImGui::SameLine ( );
@@ -280,13 +274,20 @@ void menu::render_menu( )
 					if ( ImGui::Button ( "visuals", ImVec2 ( 212, 51 ) ) )
 						tab_index = 2;
 
-
+					ImGui::Dummy ( ImVec2 ( 10, 0 ) );
+					ImGui::SameLine ( );
 					if ( ImGui::Button ( "misc", ImVec2 ( 212, 51 ) ) )
 						tab_index = 3;
+
+
+					ImGui::Dummy ( ImVec2 ( 10, 0 ) );
+					ImGui::SameLine ( );
+					if ( ImGui::Button ( "hooks", ImVec2 ( 212, 51 ) ) )
+						tab_index = 4;
 				}
 				else {
 	
-					ImGui::SetCursorPos( ImVec2( -2, ImGui::GetWindowHeight ( ) / 2 - 27.5 )  );
+					ImGui::SetCursorPos( ImVec2( -2, ImGui::GetWindowHeight ( ) / 2.f - 27.5f )  );
 					ImGui::Image( menu::buttonimage, ImVec2( 55, 55 ) );
 					
 				}
@@ -386,6 +387,9 @@ void menu::render_menu( )
 
 				}
 				ImGui::EndChild (  );
+				break;
+			case 4:
+				menu::hooks ( );
 				break;
 			}
 		

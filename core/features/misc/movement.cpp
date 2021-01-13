@@ -2,7 +2,8 @@
 
 misc::movement::directional_strafer misc::movement::m_strafer;
 
-void misc::movement::fix_move ( c_usercmd * cmd, vec3_t wish_angles ) {
+void misc::movement::fix_move ( c_usercmd * cmd ) {
+	auto wish_angles = localdata.orig_viewangle;
 	vec3_t view_fwd, view_right, view_up, cmd_fwd, cmd_right, cmd_up;
 	math::angle_vectors ( wish_angles, &view_fwd, &view_right, &view_up );
 	math::angle_vectors ( cmd->viewangles, &cmd_fwd, &cmd_right, &cmd_up );

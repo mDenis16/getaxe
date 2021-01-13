@@ -171,7 +171,7 @@ namespace visuals::projectiles::grenades::proximity {
 	}
 	void think_paint ( ) {
 		
-		for ( int t = 0; t < proximity_grenades.size ( ); t++ ) {
+		for ( size_t t = 0; t < proximity_grenades.size ( ); t++ ) {
 			interfaces::debug_overlay->world_to_screen ( proximity_grenades.at ( t ).position, proximity_grenades.at ( t ).w2s );
 			if ( std::fabs ( interfaces::globals->cur_time - proximity_grenades.at ( t ).curtime ) > 5.f )
 				proximity_grenades.erase ( proximity_grenades.begin ( ) + t );

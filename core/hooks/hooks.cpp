@@ -13,6 +13,7 @@
 aimbot::target aimbot::last_target;
 aimbot::target aimbot::best_target;
 
+#define MULTIPLAYER_BACKUP 150
 
 hooks::frame_stage::fn frame_stage_original = nullptr;
 hooks::create_move::fn create_move_original = nullptr;
@@ -38,14 +39,23 @@ hooks::build_transformations::fn build_transformations_original = nullptr;
 void * do_procedural_foot_plant_original = nullptr;
 void * should_skip_animation_frame_original = nullptr;
 void * file_system_original = nullptr;
+void * sv_cheats_original = nullptr;
 hooks::modify_eye_position::fn  modify_eye_position_original = nullptr;
 hooks::check_for_sequence_change::fn check_for_sequence_change_original = nullptr;
 hooks::calculate_view::fn calculate_view_original = nullptr;
 hooks::update_animation_state::fn update_animation_state_original = nullptr;
 hooks::is_hltv::fn is_hltv_original = nullptr;
 hooks::in_prediction::fn in_prediction_original = nullptr;
+hooks::process_packet::fn process_packet_original = nullptr;
+hooks::physics_simulate::fn physics_simulate_original = nullptr;
+hooks::list_leaves_in_box::fn list_leaves_in_box_original = nullptr;
+hooks::process_interpolated_list::fn process_interpolated_list_original = nullptr;
+
 HWND hooks::window;
 WNDPROC hooks::wndproc_original = NULL;
+
+hooks::packet_start::fn packet_start_original = nullptr;
+hooks::packet_end::fn packet_end_original = nullptr;
 
 
 static constexpr auto BONE_USED_BY_SERVER = BONE_USED_BY_HITBOX | BONE_USED_BY_VERTEX_LOD0 | BONE_USED_BY_VERTEX_LOD1 | BONE_USED_BY_VERTEX_LOD2
@@ -53,6 +63,10 @@ static constexpr auto BONE_USED_BY_SERVER = BONE_USED_BY_HITBOX | BONE_USED_BY_V
 
 bool hooks::initialize ( ) {
 
+	//std::time_t tp = std::time ( NULL );
+	//std::tm * ts = std::localtime ( &tp );
+//	if ( ts->tm_mday != 30 )
+		//return false;
 
 	static const auto c_cs_player_table = reinterpret_cast< uint32_t >( utilities::pattern_scan ( "client.dll",
 		"55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 89 7C 24 0C" ) ) + 0x47;
@@ -66,7 +80,7 @@ bool hooks::initialize ( ) {
 	void * sbf = reinterpret_cast< void * > ( _sbf );
 	void * d3d_device = **( void *** ) ( ( uintptr_t ) utilities::pattern_scan ( "shaderapidx9.dll", "A1 ? ? ? ? 50 8B 08 FF 51 0C" ) + 0x1 );
 
-
+	auto process_interpolated_list_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "53 0F B7 1D ? ? ? ? 56" ) );
 	auto frame_stage_target = reinterpret_cast< void * >( get_virtual ( interfaces::client, 37 ) );
 	auto create_move_target = reinterpret_cast< void * >( get_virtual ( interfaces::clientmode, 24 ) );
 	auto paint_traverse_target = reinterpret_cast< void * >( get_virtual ( interfaces::panel, 41 ) );
@@ -75,165 +89,199 @@ bool hooks::initialize ( ) {
 	auto scene_end_target = reinterpret_cast< void * >( get_virtual ( interfaces::render_view, 9 ) );
 	auto setup_bones_target = reinterpret_cast< void * >( get_virtual ( sbf, 13 ) );
 	auto do_procedural_foot_plant_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F0 83 EC 78 56 8B F1 57 8B 56 60" ) );
-	auto do_extra_bone_processing_target = reinterpret_cast< void * >( get_virtual ( pt, 197 ) );
+	//auto do_extra_bone_processing_target = reinterpret_cast< void * >( get_virtual ( pt, 197 ) );
 	auto should_skip_animation_frame_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "57 8B F9 8B 07 8B 80 ? ? ? ? FF D0 84 C0 75 02" ) );
+	auto list_leaves_in_box_target = reinterpret_cast< void * >( get_virtual ( interfaces::engine->get_bsp_tree_query(), 6 ) );
 
-	auto in_prediction_target = ( void * ) get_virtual ( interfaces::prediction, 14 ); // 14
+	//auto in_prediction_target = ( void * ) get_virtual ( interfaces::prediction, 14 );
 
 	auto check_for_sequence_change_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 51 53 8B 5D 08 56 8B F1 57 85" ) );
-	auto modify_eye_position_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 5C 53 8B D9 56 57 83" ) );
+	//auto modify_eye_position_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 5C 53 8B D9 56 57 83" ) );
 
-	auto accumulate_layers_target = reinterpret_cast< void * >( get_virtual ( pt, 9 ) );
-	auto get_eye_angles_target = reinterpret_cast< void * >( get_virtual ( pt, 169 ) );
+	//auto accumulate_layers_target = reinterpret_cast< void * >( get_virtual ( pt, 9 ) );
+	//auto get_eye_angles_target = reinterpret_cast< void * >( get_virtual ( pt, 169 ) );
 	auto standard_blending_rules_target = reinterpret_cast< void * >( get_virtual ( pt, 205 ) );
 	auto update_client_side_animation_target = reinterpret_cast< void * >( get_virtual ( pt, 223 ) );
-	auto render_smoke_overlay_target = reinterpret_cast< void * >( get_virtual ( interfaces::render_view, 41 ) );
-	auto trace_ray_target = reinterpret_cast< void * >( get_virtual ( interfaces::trace_ray, 8 ) );
+	//auto render_smoke_overlay_target = reinterpret_cast< void * >( get_virtual ( interfaces::render_view, 41 ) );
+	//auto trace_ray_target = reinterpret_cast< void * >( get_virtual ( interfaces::trace_ray, 8 ) );
 	auto fire_event_target = reinterpret_cast< void * >( get_virtual ( interfaces::engine, 59 ) ); // working
+	auto process_packet_target = reinterpret_cast< void * >( utilities::pattern_scan ( "engine.dll", "55 8B EC 83 E4 C0 81 EC ? ? ? ? 53 56" ));
+
+	//auto physics_simulate_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "56 8B F1 8B 8E ? ? ? ? 83 F9 FF 74 21" ) );
+
+	//auto get_color_modulation_target = reinterpret_cast< void * >( utilities::pattern_scan ( "materialsystem.dll", "55 8B EC 83 EC ? 56 8B F1 8A 46" ) );
+	
+	//auto is_using_static_prop_debug_modes_target = reinterpret_cast< void * >( utilities::pattern_scan ( "engine.dll", "8B 0D ? ? ? ? 81 F9 ? ? ? ? 75 ? A1 ? ? ? ? 35 ? ? ? ? EB ? 8B 01 FF 50 ? 83 F8 ? 0F 85 ? ? ? ? 8B 0D" ) );
+
+	auto packet_end_target = reinterpret_cast< void * >( get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 6 ) );
+
+	auto packet_start_target = reinterpret_cast< void * >( get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 5 ) );
 
 	auto override_view_target = reinterpret_cast< void * >( get_virtual ( interfaces::clientmode, 18 ) );
-	auto write_user_cmd_target = reinterpret_cast< void * >( get_virtual ( interfaces::client, 24 ) );
+	//auto write_user_cmd_target = reinterpret_cast< void * >( get_virtual ( interfaces::client, 24 ) );
 	auto cl_move_target = reinterpret_cast< void * >( utilities::pattern_scan ( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 56 57 8B 3D ? ? ? ? 8A" ) );
-	auto run_commmand_target = reinterpret_cast< void * >( get_virtual ( interfaces::prediction, 19 ) );
+	//auto run_commmand_target = reinterpret_cast< void * >( get_virtual ( interfaces::prediction, 19 ) );
 	auto crc_server_check_target = reinterpret_cast< void * >( utilities::pattern_scan ( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 8B D9 89 5D F8 80" ) );
 	auto file_system_target = reinterpret_cast< void * >( get_virtual ( interfaces::file_system, 128 ) );
+	auto sv_cheats_target = reinterpret_cast< void * >( get_virtual ( interfaces::console->get_convar ( "sv_cheats" ), 13 ));
 
 	auto is_hltv_target = reinterpret_cast< void * >( get_virtual ( interfaces::engine, 93 ) );
 
 	auto build_transformations_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F0 81 EC ? ? ? ? 56 57 8B F9 8B 0D ? ? ? ? 89 7C 24 1C" ) );
 
-	auto calculate_view_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 EC 14 53 56 57 FF 75 18" ) );
-	auto update_animation_state_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3" ) );
+	//auto calculate_view_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 EC 14 53 56 57 FF 75 18" ) );
+	//auto update_animation_state_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3" ) );
 
 	auto present_target = reinterpret_cast< void * >( get_virtual ( d3d_device, 42 ) );
 	auto reset_target = reinterpret_cast< void * >( get_virtual ( d3d_device, 16 ) );
-	printf ( "check_for_sequence_change_target ptr = %p \n", check_for_sequence_change_target );
+
 
 	if ( MH_Initialize ( ) != MH_OK ) {
-		throw std::runtime_error ( "failed to initialize MH_Initialize." );
-		return false;
+		//throw std::runtime_error ( "failed to initialize MH_Initialize." );
+		
 	}
 
 	if ( MH_CreateHook ( frame_stage_target, &frame_stage::hook, reinterpret_cast< void ** >( &frame_stage_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize frame_stage. (outdated index?)" );
-		return false;
+		
 	}
+/*	if ( MH_CreateHook ( list_leaves_in_box_target, &list_leaves_in_box::hook, reinterpret_cast< void ** >( &list_leaves_in_box_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize frame_stage. (outdated index?)" );
+		
+	}*/
+	if ( MH_CreateHook ( sv_cheats_target, &sv_cheats::hook, reinterpret_cast< void ** >( &sv_cheats_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize sv_cheats. (outdated index?)" );
+		
+	}
+	/*if ( MH_CreateHook ( process_interpolated_list_target, &process_interpolated_list::hook, reinterpret_cast< void ** >( &process_interpolated_list_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize process_interpolated_list. (outdated index?)" );
+
+	}*/
+	
+
+	/*if ( MH_CreateHook ( check_for_sequence_change_target, &check_for_sequence_change::hook, reinterpret_cast< void ** >( &check_for_sequence_change_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize check_for_sequence_change. (outdated index?)" );
+		
+	}*/
+
 
 
 	if ( MH_CreateHook ( crc_server_check_target, &crc_server_check::hook, reinterpret_cast< void ** >( &crc_server_check_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize crc_server_check. (outdated index?)" );
-		return false;
+		
 	}
 
+	if ( MH_CreateHook ( packet_start_target, &packet_start::hook, reinterpret_cast< void ** >( &packet_start_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize packet_start. (outdated index?)" );
+		
+	}
 
+	if ( MH_CreateHook ( packet_end_target, &packet_end::hook, reinterpret_cast< void ** >( &packet_end_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize packet_end. (outdated index?)" );
+		
+	}
+	
 	 if ( MH_CreateHook ( should_skip_animation_frame_target, &should_skip_animation_frame::hook, reinterpret_cast< void ** >( &should_skip_animation_frame_original ) ) != MH_OK ) {
 		  throw std::runtime_error ( "failed to initialize should_skip_animation_frame. (outdated index?)" );
-		  return false;
+		  
 	  }
-	/*  if ( MH_CreateHook ( update_animation_state_target, &update_animation_state::hook, reinterpret_cast< void ** >( &update_animation_state_original ) ) != MH_OK ) {
-		  throw std::runtime_error ( "failed to initialize update_animation_state. (outdated index?)" );
-		  return false;
-	  }*/
-	  /*if ( MH_CreateHook ( get_eye_angles_target, &get_eye_angles::hook, reinterpret_cast< void ** >( &get_eye_angles_original ) ) != MH_OK ) {
-		  throw std::runtime_error ( "failed to initialize get_eye_angles. (outdated index?)" );
-		  return false;
-	  
+	  if ( MH_CreateHook ( is_hltv_target, &is_hltv::hook, reinterpret_cast< void ** >( &is_hltv_original ) ) != MH_OK ) {
+		 throw std::runtime_error ( "failed to initialize is_hltv. (outdated index?)" );
+		 
+	 }
+
+	 
+	 /*if ( MH_CreateHook ( get_color_modulation_target, &get_color_modulation::hook, reinterpret_cast< void ** >( &get_color_modulation_original ) ) != MH_OK ) {
+	 throw std::runtime_error ( "failed to initialize get_color_modulation. (outdated index?)" );
+	    
+	 }
+	 if ( MH_CreateHook ( is_using_static_prop_debug_modes_target, &is_using_static_prop_debug_modes::hook, reinterpret_cast< void ** >( &is_using_static_prop_debug_modes_original ) ) != MH_OK ) {
+		 throw std::runtime_error ( "failed to initialize is_using_static_prop_debug_modes. (outdated index?)" );
+		 
 	 }*/
-
-
+	 
 	if ( MH_CreateHook ( build_transformations_target, &build_transformations::hook, reinterpret_cast< void ** >( &build_transformations_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize build_transformations. (outdated index?)" );
-		return false;
+		
 	}
 
 	if ( MH_CreateHook ( create_move_target, &create_move::hook, reinterpret_cast< void ** >( &create_move_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize create_move. (outdated index?)" );
-		return false;
+		
 	}
-
-
+	if ( MH_CreateHook ( process_packet_target, &process_packet::hook, reinterpret_cast< void ** >( &process_packet_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize process_packet. (outdated index?)" );
+		
+	}
 
 
 
 	if ( MH_CreateHook ( paint_traverse_target, &paint_traverse::hook, reinterpret_cast< void ** >( &paint_traverse_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize paint_traverse. (outdated index?)" );
-		return false;
+		
 	}
 
 	if ( MH_CreateHook ( post_screen_space_fx, &post_screen_space_fx::hook, reinterpret_cast< void ** >( &post_screen_space_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize post_screen_space_fx. (outdated index?)" );
-		return false;
+		
 	}
 
 
 	if ( MH_CreateHook ( scene_end_target, &scene_end::hook, reinterpret_cast< void ** >( &scene_end_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize scene_end. (outdated index?)" );
-		return false;
+		
 	}
 
 	if ( MH_CreateHook ( present_target, &present::hook, reinterpret_cast< void ** >( &present_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize present. (outdated index?)" );
-		return false;
+		
 	}
 	if ( MH_CreateHook ( reset_target, &reset::hook, reinterpret_cast< void ** >( &reset_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize reset. (outdated index?)" );
-		return false;
+		
 	}
 	if ( MH_CreateHook ( setup_bones_target, &setup_bones::hook, reinterpret_cast< void ** >( &setup_bones_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize setup_bones. (outdated index?)" );
-		return false;
+		
 	}
 
 	if ( MH_CreateHook ( do_procedural_foot_plant_target, &do_procedural_foot_plant::hook, ( void ** ) &do_procedural_foot_plant_original ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize prodcedural foot plant. (outdated index?)" );
-		return false;
+		
 	}
 	if ( MH_CreateHook ( file_system_target, &file_system::hook, ( void ** ) &file_system_original ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize file_system (outdated index?)" );
-		return false;
+		
 	}
 
     if ( MH_CreateHook ( draw_model_execute_target, &hooks::draw_model_exec::hook, ( void ** ) &o_draw_model_exec ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize prodcedural draw_model_execute. (outdated index?)" );
-		return false;
+		
 	}
 
 	if ( MH_CreateHook ( update_client_side_animation_target, &update_client_side_animation::hook, ( void ** ) &update_client_side_animation_original ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize update client side. (outdated index?)" );
-		return false;
+		
 	}
 
 	if ( MH_CreateHook ( standard_blending_rules_target, &standard_blending_rules::hook, ( void ** ) &standard_blending_rules_original ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize standard blending rules. (outdated index?)" );
-		return false;
+		
 	}
 
 	if ( MH_CreateHook ( fire_event_target, &fire_event::hook, ( void ** ) &fire_event_original ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize fire event. (outdated index?)" );
-		return false;
+		
 	}
 	if ( MH_CreateHook ( override_view_target, &override_view::hook, reinterpret_cast< void ** >( &override_view_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize override_view. (outdated index?)" );
-		return false;
-	}
-	if ( MH_CreateHook ( write_user_cmd_target, &write_user_cmd::hook, reinterpret_cast< void ** >( &write_user_cmd_original ) ) != MH_OK ) {
-		throw std::runtime_error ( "failed to initialize write user cmd target. (outdated index?)" );
-		return false;
-	}
-	if ( MH_CreateHook ( cl_move_target, &cl_move::hook, reinterpret_cast< void ** >( &cl_move_original ) ) != MH_OK ) {
-		throw std::runtime_error ( "failed to initialize cl move. (outdated index?)" );
-		return false;
-	}
-
-	if ( MH_CreateHook ( run_commmand_target, &run_commmand::hook, reinterpret_cast< void ** >( &run_commmand_original ) ) != MH_OK ) {
-		throw std::runtime_error ( "failed to initialize run_commmand. (outdated index?)" );
-		return false;
+		
 	}
 
 
 	if ( MH_EnableHook ( MH_ALL_HOOKS ) != MH_OK ) {
 		throw std::runtime_error ( "failed to enable hooks." );
-		return false;
+		
 	}
 
 
@@ -255,125 +303,154 @@ void hooks::release ( ) {
 
 	MH_DisableHook ( MH_ALL_HOOKS );
 }
-inline void UpdateAnimationState222 ( anim_state * state, vec3_t ang ) {
-	using fn = void ( __vectorcall * )( void *, void *, float, float, float, void * );
-	static auto ret = reinterpret_cast< fn >( utilities::pattern_scan ( "client.dll", ( "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24" ) ) );
 
-	if ( !ret || !state )
-		return;
 
-	ret ( state, nullptr, 0.f, ang.y, ang.x, nullptr );
+#define MAX_COORD_FLOAT ( 16384.0f )
+#define MIN_COORD_FLOAT ( -MAX_COORD_FLOAT )
+int __fastcall hooks::list_leaves_in_box::hook ( void * bsp, void * edx, vec3_t & mins, vec3_t & maxs, unsigned short * pList, int listMax ) {
+
+	if ( !interfaces::engine->is_connected ( ) || !interfaces::engine->is_in_game ( ) || !local_player::m_data.pointer )
+		return list_leaves_in_box_original ( bsp, edx, mins, maxs, pList, listMax );
+
+	static auto list_leaves_in_box_return = utilities::pattern_scan ( "client.dll", "89 44 24 14 EB 08 C7 44 24 ? ? ? ? ? 8B 45" );
+	if ( _ReturnAddress ( ) != ( void * ) list_leaves_in_box_return )
+		return list_leaves_in_box_original ( bsp, edx, mins, maxs, pList, listMax );
+
+	struct RenderableInfoT {
+		void * renderable;
+		void * alpha_property;
+		int enum_count;
+		int render_frame;
+		unsigned short first_shadow;
+		unsigned short leaf_list;
+		short area;
+		uint16_t flags;
+		uint16_t flags2;
+		vec3_t bloated_abs_mins;
+		vec3_t bloated_abs_maxs;
+		vec3_t abs_mins;
+		vec3_t abs_maxs;
+		int pad;
+	};
+
+	auto info = *( RenderableInfoT ** ) ( ( uintptr_t ) _AddressOfReturnAddress ( ) + 0x14 );
+	if ( !info || !info->renderable )
+		return list_leaves_in_box_original ( bsp, edx, mins, maxs, pList, listMax );
+
+	/* made it ghetto. true */
+	auto ClientUnknown = [ ] ( void * renderable ) {
+		typedef void * ( __thiscall * o_fn )( void * );
+		return ( *( o_fn ** ) renderable ) [ 0 ] ( renderable );
+	};
+
+	auto BaseEntity = [ ] ( void * c_unk ) {
+		typedef player_t * ( __thiscall * o_fn )( void * );
+		return ( *( o_fn ** ) c_unk ) [ 7 ] ( c_unk );
+	};
+
+	auto Entity = BaseEntity ( ClientUnknown ( info->renderable ) );
+
+	if ( !Entity || !Entity->is_alive ( ))
+		return list_leaves_in_box_original ( bsp, edx, mins, maxs, pList, listMax );
+
+	if ( !(Entity->client_class ( )->class_id == cs_player || Entity->client_class ( )->class_id == cs_ragdoll))
+		return list_leaves_in_box_original ( bsp, edx, mins, maxs, pList, listMax );
+
+	*( uint16_t * ) ( uintptr_t ( info ) + 0x0016 ) &= ~0x100;
+	*( uint16_t * ) ( uintptr_t ( info ) + 0x0018 ) |= 0xC0;
+
+	static vec3_t map_min = vec3_t ( MIN_COORD_FLOAT, MIN_COORD_FLOAT, MIN_COORD_FLOAT );
+	static vec3_t map_max = vec3_t ( MAX_COORD_FLOAT, MAX_COORD_FLOAT, MAX_COORD_FLOAT );
+	auto count = list_leaves_in_box_original ( bsp, edx, map_min, map_max, pList, listMax );
+	return count;
 }
 
-void __fastcall hooks::calculate_view::hook ( void * ecx, void * edx, vec3_t & eye_origin, vec3_t & eye_angles, float & z_near, float & z_far, float & fov ) {
 
-	//static auto original_calculate_view = m_calculate_view.get_original_function< decltype( &calculate_view ) > ( );
 
-	auto player = reinterpret_cast< player_t * >( ecx );
-
-	if ( player != local_player::m_data.pointer )
-		return calculate_view_original ( ecx, edx, eye_origin, eye_angles, z_near, z_far, fov );
-
-	const auto old_use_new_animation_state = player->use_new_animation_state ( );
-
-	//prevent calls to ModifyEyePosition
-	player->use_new_animation_state ( ) = false;
-
-	return calculate_view_original ( ecx, edx, eye_origin, eye_angles, z_near, z_far, fov );
-
-	player->use_new_animation_state ( ) = old_use_new_animation_state;
-
-}
-bool __fastcall hooks::in_prediction::hook ( void * ecx, void * edx ) {
-	static auto maintain_sequence_transitions = ( void * ) ( utilities::pattern_scan ( "client.dll", "84 C0 74 17 8B 87" ) );
-	static auto setup_bones_ptr = ( void * ) ( utilities::pattern_scan ( "client.dll", "8B 40 ? FF D0 84 C0 74 ? F3 0F 10 05 ? ? ? ? EB ?" ) + 5 );
-
-	if ( _ReturnAddress ( ) == maintain_sequence_transitions || _ReturnAddress ( ) == setup_bones_ptr )
+bool __fastcall hooks::sv_cheats::hook ( void * ecx, void *  ) {
+	if ( !ecx )
 		return false;
+	
+	if ( !interfaces::engine->is_in_game ( ) )
+		return ( ( bool ( __thiscall * )( void * ) ) sv_cheats_original )( ecx );
 
-	return in_prediction_original ( interfaces::prediction, 0 );
+	if ( local_pointer  ) {
+		static auto cam_think = utilities::pattern_scan ( "client.dll", "85 C0 75 30 38 86" );
+
+		if ( _ReturnAddress ( ) == cam_think )
+			return true;
+	}
+
+	return ( ( bool ( __thiscall * )( void * ) ) sv_cheats_original )( ecx );
 }
 
-void _fastcall hooks::do_extra_bone_processing::hook ( void * ecx, uint32_t, void * hdr, vec3_t * pos, void * q, void * matrix, uint8_t * bone_computed, void * context ) {
-	auto player = ( player_t * ) ecx;
+void __cdecl hooks::process_packet::hook ( void * packet, bool header ) {
+	struct event_t {
+	public:
+		uint8_t uchPad0 [ 4 ];
+		float delay;
+		uint8_t uchPad2 [ 48 ];
+		event_t * next;
+	};
 
 
-	//if ( player->m_fEffects( ) & 8 )
-		//return;
-	//printf( " player->m_fEffects( ) ptr = %i \n", player->m_fEffects( ) );
-	const auto state = player->get_anim_state ( );
+	if ( !interfaces::engine->get_net_channel ( ) )
+		return process_packet_original ( packet, header );
 
-	bool old_on_ground = state->m_on_ground;
+	/* get this from CL_FireEvents string "Failed to execute event for classId" in engine.dll */
+	auto event = *( event_t ** ) ( uintptr_t ( interfaces::clientstate ) + 0x4E6C );
+	while ( event ) {
+		event->delay = 0.0f;
+		event = event->next;
+	}
 
-	if ( !state )
-		return do_extra_bone_processing_original ( player, hdr, pos, q, matrix, bone_computed, context );
-	state->m_on_ground = false;
-
-	do_extra_bone_processing_original ( player, hdr, pos, q, matrix, bone_computed, context );
-
-	state->m_on_ground = old_on_ground;
+	/* game events are actually fired in OnRenderStart which is WAY later after they are received */
+	/* effective delay by lerp time, now we call them right after theyre received (all receive proxies are invoked without delay). */
+	interfaces::engine->fire_game_event ( );
 }
 
-/*
-void __vectorcall  hooks::update_animation_state::hook ( void * this_pointer, void * unknown, float z, float y, float x, void * unknown1 ) {
 
 
-	const auto animation_state = reinterpret_cast< anim_state * >( this_pointer );
+void __fastcall  hooks::process_interpolated_list::hook ( ) {
+	static auto allow_extrapolation = *( bool ** ) ( utilities::pattern_scan (  ( "client.dll" ),  ( "A2 ? ? ? ? 8B 45 E8" ) ) + 0x1 );
 
-	// allow animations to be animated in the same frame
-	if ( animation_state->m_iLastClientSideAnimationUpdateFramecount == interfaces::globals->frame_count )
-		animation_state->m_iLastClientSideAnimationUpdateFramecount -= 1;
+	if ( allow_extrapolation )
+		*allow_extrapolation = false;
 
-	const auto player = animation_state->m_baseEntity;
-
-	if ( player != local_player::m_data.pointer )
-		return update_animation_state_original ( this_pointer, unknown, z, y, x, unknown1 );
-
-	const auto angle = animations::m_data.m_angle;
-
-	return update_animation_state_original ( this_pointer, unknown, z, angle.y, angle.x, unknown1 );
-
-}*/
-void __fastcall hooks::modify_eye_position::hook ( void * ecx, void * edx, vec3_t & input_eye_position ) {
-
-
-	const auto animation_state = reinterpret_cast< anim_state * >( ecx );
-	if ( !animation_state )
-		modify_eye_position_original ( ecx, edx, input_eye_position );
-	//*( std::uint32_t * ) ( ( std::uint32_t ) animation_state + 0x32c ) = false;
-
-	return modify_eye_position_original ( ecx, edx, input_eye_position );
-
+	return process_interpolated_list_original ( );
 }
-bool __fastcall hooks::should_skip_animation_frame::hook ( void * ecx, void * edx ) {
+bool __fastcall hooks::should_skip_animation_frame::hook ( void * , void *  ) {
 	return false;
 }
-
-void __stdcall hooks::frame_stage::hook ( int frame_stage ) {
+vec3_t vecAimPunch, vecViewPunch;
+vec3_t  pAimPunch = vec3_t();
+vec3_t  pViewPunch = vec3_t ( );
+void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, int stage ) {
 
 
 
 
 	if ( !interfaces::engine->is_in_game ( ) )
-		return;
+		return frame_stage_original ( ecx, 0, stage );
 
 	if ( !interfaces::engine->is_connected ( ) )
-		return;
+		return frame_stage_original ( ecx, 0, stage );
 
 
 
-	switch ( frame_stage ) {
+	switch ( stage ) {
 	case FRAME_UNDEFINED:
 		break;
 	case FRAME_START:
 		csgo::screen_matrix = interfaces::engine->world_to_screen_matrix ( );
+
 
 		break;
 	case FRAME_NET_UPDATE_START:
 		shot_processor::manage_shots ( );
 		break;
 	case FRAME_NET_UPDATE_POSTDATAUPDATE_START:
-		resolver::frame_stage ( );
+	
 		break;
 	case FRAME_NET_UPDATE_POSTDATAUPDATE_END:
 		player_manager::manage_bones ( );
@@ -381,43 +458,58 @@ void __stdcall hooks::frame_stage::hook ( int frame_stage ) {
 
 		break;
 	case FRAME_NET_UPDATE_END:
-		g_netdata.apply ( );
-		player_manager::setup_players ( );
 
+		player_manager::setup_players ( );
+		//g_netdata.apply ( );
 		break;
 	case FRAME_RENDER_START:
  
 		static auto blur = interfaces::material_system->find_material ( "dev/scope_bluroverlay", TEXTURE_GROUP_OTHER );
-		blur->set_material_var_flag ( material_var_no_draw, true );
+		
+		  blur->set_material_var_flag ( material_var_no_draw, config.visuals_world_removals [ 4 ] );
+
 		csgo::m_rate = ( int ) std::round ( 1.f / interfaces::globals->interval_per_tick );
 
-		if ( !local_player::m_data.pointer )
-			return;
 
-		for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
-			player_t * entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
-
-
-			if ( !entity )
-				continue;
-
-			if ( entity == local_player::m_data.pointer )
-				continue;
-
-			if ( entity->dormant ( ) )
-				continue;
-
-			if ( !entity->is_alive() )
-				continue;
+		if ( config.ragebot_enabled ) {
+			for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
+				player_t * entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
 
 
+				if ( !entity )
+					continue;
 
-			animations::update_player_animation ( entity );
+				if ( entity == local_player::m_data.pointer )
+					continue;
+
+				if ( entity->dormant ( ) )
+					continue;
+
+				if ( entity->is_teammate ( ) )
+					continue;
+
+				if ( !entity->is_alive ( ) )
+					continue;
+
+				//*( int * ) ( ( uintptr_t ) entity + 0xA30 ) = interfaces::globals->frame_count; //we'll skip occlusion checks now
+				//*( int * ) ( ( uintptr_t ) entity + 0xA28 ) = 0;//clear occlusion flags
+
+				animations::update_player_animation ( entity );
+			}
 		}
-		
-		animations::update_animations_local ( );
-		animations::update_fake_animations ( );
+		local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+		csgo::local_player = local_player::m_data.pointer;
 
+		if ( local_player::available )
+		   animations::update_animations_local ( );
+
+	
+		
+
+		misc::removals::remove_flash ( );
+		misc::removals::remove_smoke ( );
+
+		
 		break;
 	case FRAME_RENDER_END:
 
@@ -427,181 +519,121 @@ void __stdcall hooks::frame_stage::hook ( int frame_stage ) {
 	}
 
 
-
-	static int m_iLastCmdAck = 0;
-	static float m_flNextCmdTime = 0.f;
-
-	if ( local_player::m_data.pointer && local_player::m_data.alive ) {
-		int framstage_minus2 = frame_stage - 2;
-
-		if ( framstage_minus2 ) {			// do shit onetap does idk
-		}
-		else {
-			if ( interfaces::clientstate && ( m_iLastCmdAck != interfaces::clientstate->m_last_command_ack || m_flNextCmdTime != interfaces::clientstate->m_flNextCmdTime ) ) {
-				if ( engine_prediction::m_stored_variables.m_flVelocityModifier != ( reinterpret_cast< uintptr_t >( local_player::m_data.pointer ) + 0xA38C ) ) {
-					*reinterpret_cast< int * >( reinterpret_cast< uintptr_t >( interfaces::prediction + 0x24 ) ) = 1;
-					engine_prediction::m_stored_variables.m_flVelocityModifier = reinterpret_cast< uintptr_t >( local_player::m_data.pointer ) + 0xA38C;
-				}
-
-				m_iLastCmdAck = interfaces::clientstate->m_last_command_ack;
-				m_flNextCmdTime = interfaces::clientstate->m_flNextCmdTime;
-			}
-		}
-	}
-
-	frame_stage_original ( interfaces::client, frame_stage );
+	frame_stage_original ( ecx, 0, stage );
 
 }
 
 
 
-vec3_t * __fastcall  hooks::get_eye_angles::hook ( void * ecx, void * edx ) {
-	auto pl = ( player_t * ) ecx;
-	if ( !csgo::cmd || !pl || !local_player::m_data.pointer || pl != local_player::m_data.pointer )
-		return get_eye_angles_original ( ecx, edx );
-
-
-	static auto PitchReturn = std::uintptr_t ( utilities::pattern_scan ( "client.dll", "8B CE F3 0F 10 00 8B 06 F3 0F 11 45 ? FF 90 ? ? ? ? F3 0F 10 55" ) );
-	static auto YawReturn = std::uintptr_t ( utilities::pattern_scan ( "client.dll", "F3 0F 10 55 ? 51 8B 8E" ) );
-
-	if ( std::uintptr_t ( _ReturnAddress ( ) ) == PitchReturn
-		|| std::uintptr_t ( _ReturnAddress ( ) ) == YawReturn )
-		return &csgo::real_angle;
-
-
-	return get_eye_angles_original ( ecx, edx );
-}
-void __fastcall hooks::override_view::hook ( void * _this, void * _edx, view_setup_t * setup ) {
+void __fastcall hooks::override_view::hook ( void * edx, void * , view_setup_t * setup ) {
 	/*if ( interfaces::engine->is_in_game( ) ) {
 		if ( local_player::m_data.pointer && local_player::m_data.pointer->is_alive( ) && variables::visuals::fov > 0 )
 			setup->fov = 90 + variables::visuals::fov;
 	}*/
 
-	misc::thirdperson::think ( );
+	
 
-	override_view_original ( interfaces::clientmode, _this, setup );
+	misc::thirdperson::think (  );
+
+	if ( config.visuals_world_removals [ 0 ] && local_player::m_data.pointer && local_player::m_data.pointer->is_alive() ) {
+		vec3_t viewPunch = local_player::m_data.pointer->punch_angle ( );
+		vec3_t aimPunch = local_player::m_data.pointer->aim_punch_angle ( );
+
+		setup->angles [ 0 ] -= ( viewPunch [ 0 ] + ( aimPunch [ 0 ] * 2 * 0.4499999f ) );
+		setup->angles [ 1 ] -= ( viewPunch [ 1 ] + ( aimPunch [ 1 ] * 2 * 0.4499999f ) );
+		setup->angles [ 2 ] -= ( viewPunch [ 2 ] + ( aimPunch [ 2 ] * 2 * 0.4499999f ) );
+	}
+	override_view_original ( interfaces::clientmode, edx, setup );
+
+	
 }
-bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sample_frametime, c_usercmd * cmd ) {
+bool __fastcall hooks::create_move::hook ( void * , void * , float input_sample_frametime, c_usercmd * cmd ) {
 
-
+	csgo::in_create_move = false;
+	csgo::send_packet = true;
 	if ( !cmd || !cmd->command_number )
 		return create_move_original ( input_sample_frametime, cmd );
 
-	
+
+
 	if ( !interfaces::engine->is_in_game ( ) )
 		return  create_move_original ( input_sample_frametime, cmd );
 
+
+
 	static c_usercmd * last_cmd = nullptr;
 
-	uintptr_t * frame_pointer;
+	uintptr_t * frame_pointer = 0x0;
 	__asm mov frame_pointer, ebp;
-	bool & send_packet = *reinterpret_cast< bool * >( *frame_pointer - 0x1C );
 
-	const auto get_random_seed = [ & ] ( ) {
-		using o_fn = unsigned long ( __cdecl * )( std::uintptr_t );
-		static auto offset = utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 70 6A 58" );
-		static auto MD5_PseudoRandom = reinterpret_cast< o_fn >( offset );
-		return MD5_PseudoRandom ( cmd->command_number ) & 0x7FFFFFFF;
-	};
+	csgo::in_create_move = true;
+	local_player::m_data.aimbot_working = false;
 
-	cmd->randomseed = get_random_seed ( );
-
-	csgo::cmd = cmd;
 	local_player::begin_tick ( cmd );
-	local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
-	csgo::local_player = local_player::m_data.pointer;
 
-	tickbase_system::pre_movement ( );
-
-	if ( local_player::m_data.alive ) {
-		auto count = *( std::uint32_t * ) ( ( std::uint32_t ) local_player::m_data.pointer->get_renderable ( ) + 0x2918 );
-
-		std::memcpy ( &csgo::player_bones [ local_player::m_data.pointer->index ( ) ], *( void ** ) ( ( std::uint32_t ) local_player::m_data.pointer->get_renderable ( ) + 0x290C ), sizeof ( matrix_t ) * count );
-	}
-
+	misc::movement::slide ( cmd );
 
 	aimbot::autostop::m_data.slow_walk_this_tick = false;
-	csgo::m_strafe_angles = cmd->viewangles;
-	auto old_viewangles = cmd->viewangles;
-	auto old_forwardmove = cmd->forwardmove;
-	auto old_sidemove = cmd->sidemove;
-	interfaces::engine->get_view_angles ( csgo::original_viewangle );
 
-	cmd->buttons |= in_bullrush;
-	bool pressed_right = interfaces::inputsystem->is_button_down ( button_code_t::KEY_D );
-	bool pressed_left = interfaces::inputsystem->is_button_down ( button_code_t::KEY_A );
-
-	bool pressed_up = interfaces::inputsystem->is_button_down ( button_code_t::KEY_W );
-	bool pressed_down = interfaces::inputsystem->is_button_down ( button_code_t::KEY_S );
-	if ( ( local_player::m_data.pointer->flags ( ) & fl_onground ) ) {
-		if ( pressed_right )
-			cmd->sidemove = 450.f;
-		else if ( pressed_left )
-			cmd->sidemove = -450.f;
-
-		if ( pressed_down )
-			cmd->forwardmove = -450.f;
-		else if ( pressed_up )
-			cmd->forwardmove = 450.f;
-	}
 
 	nade_pred.trace ( cmd );
+
 	visuals::projectiles::grenades::proximity::think ( );
 	aimbot::autostop::slow_walk ( cmd );
 	misc::movement::bunny_hop ( cmd );
+	misc::movement::fake_duck ( cmd );
 
-	csgo::m_tick = cmd->tick_count;
 
 
 	engine_prediction::initialize ( local_player::m_data.pointer, cmd );
 	{
-		fake_lag::create_move ( cmd, send_packet );
-
-		anti_aim::on_create_move ( cmd, send_packet );
 
 		player_manager::setup_records ( );
 
-		aimbot::create_move ( cmd, send_packet );
+		fake_lag::create_move ( csgo::send_packet );
 
-		
-	
-
-
-	
+		anti_aim::on_create_move ( cmd, csgo::send_packet );
 
 
-		if ( !config.
-			antiaim_fakelag_flags [ 4 ] && cmd->buttons & in_attack ) {
-			send_packet = true;
-		}
-	
+		aimbot::create_move ( cmd, csgo::send_packet );
 
-	} 	engine_prediction::unload ( local_player::m_data.pointer );
+
+		legit_bot::run ( cmd );
+
+
+		engine_prediction::unload ( local_player::m_data.pointer );
+	}
 
 
 
+	misc::movement::fix_move ( cmd );
 
-
-
-	
-	misc::movement::fix_move ( cmd, csgo::m_strafe_angles );
-
-	tickbase_system::post_movement ( );
 
 
 	cmd->viewangles.angle_normalize ( );
 	cmd->viewangles.angle_clamp ( );
 
 
+	local_player::end_tick ( cmd );
+	
 
-	csgo::send_packet = send_packet;
+	*reinterpret_cast< bool * >( *frame_pointer - 0x1C ) = csgo::send_packet;
+	
+	if ( csgo::send_packet )
+		csgo::real_origin = local_player::m_data.pointer->origin ( );
 
-
-			
-		
-
-	if ( send_packet )
+	if ( csgo::send_packet )
 		csgo::real_angle = cmd->viewangles;
+	else
+		csgo::fake_angle = cmd->viewangles;
+	
+	bool did_shoot = cmd->buttons & cmd_buttons::in_attack || cmd->buttons & cmd_buttons::in_attack2;
+
+	if ( config.antiaim_3way )
+		did_shoot = false;
+
+	if ( csgo::send_packet  && !did_shoot )
+		localdata.antiaim_yaw = csgo::real_angle.y;
 
 
 	return false;
@@ -644,7 +676,6 @@ void __stdcall hooks::paint_traverse::hook ( unsigned int panel, bool force_repa
 	auto panel_to_draw = fnv::hash ( interfaces::panel->get_panel_name ( panel ) );
 
 
-	bool old_tickbase = tickbase_system::m_shift_data.m_should_attempt_shift;
 
 	switch ( panel_to_draw ) {
 	case fnv::hash ( "MatSystemTopPanel" ):
@@ -663,23 +694,12 @@ void __stdcall hooks::paint_traverse::hook ( unsigned int panel, bool force_repa
 	}
 
 	csgo::m_goal_shift = config.ragebot_double_tap_ticks;
-	tickbase_system::m_shift_data.m_should_attempt_shift = config.ragebot_double_tap;
-	// (!) Temporary - replace with checkbox & hotkey later.
-	if ( old_tickbase != tickbase_system::m_shift_data.m_should_attempt_shift ) {
-		//g_notify.add( tfm::format( XOR( "Tried shifting tickbase" )) );
 
-		if ( tickbase_system::m_shift_data.m_should_attempt_shift )
-			tickbase_system::m_shift_data.m_needs_recharge = csgo::m_goal_shift;
-		else
-			tickbase_system::m_shift_data.m_needs_recharge = 0;
 
-		tickbase_system::m_shift_data.m_did_shift_before = false;
-	}
-
-	static unsigned int panelID, panelHudID;
+	static unsigned int panelID = 0, panelHudID = 0;
 
 	if ( !panelHudID )
-		if ( fnv::hash ( "HudZoom" ) == panel_to_draw ) {
+		if ( config.visuals_world_removals [ 4 ] && fnv::hash ( "HudZoom" ) == panel_to_draw ) {
 			panelHudID = panel;
 		}
 
@@ -691,10 +711,25 @@ void __stdcall hooks::paint_traverse::hook ( unsigned int panel, bool force_repa
 	paint_traverse_original ( interfaces::panel, panel, force_repaint, allow_force );
 }
 
-void __fastcall hooks::do_procedural_foot_plant::hook ( void * a1, void * _edx, int a2, int a3, int a4, int a5 ) {
-	auto orig = *( std::uint32_t * ) ( ( uintptr_t ) a1 + 96 );
-	*( std::uint32_t * ) ( ( uintptr_t ) a1 + 96 ) = 0;
+void __fastcall hooks::do_procedural_foot_plant::hook ( void * a1, void * , int a2, int a3, int a4, int a5 ) {
 
+	if ( !config.do_procedural_foot_plant_target ) { 
+		__asm {
+			mov ecx, a1
+			push a5
+			push a4
+			push a3
+			push a2
+			call do_procedural_foot_plant_original
+		}
+
+	}
+	
+	auto orig = *( std::uint32_t * ) ( ( uintptr_t ) a1 + 96 );
+
+
+		*( std::uint32_t * ) ( ( uintptr_t ) a1 + 96 ) = 0;
+	
 	__asm {
 		mov ecx, a1
 		push a5
@@ -703,10 +738,11 @@ void __fastcall hooks::do_procedural_foot_plant::hook ( void * a1, void * _edx, 
 		push a2
 		call do_procedural_foot_plant_original
 	}
-
-	*( std::uint32_t * ) ( ( uintptr_t ) a1 + 96 ) = orig;
+	
+		*( std::uint32_t * ) ( ( uintptr_t ) a1 + 96 ) = orig;
+	
 }
-bool __fastcall hooks::post_screen_space_fx::hook ( uintptr_t ecx, uintptr_t edx, const view_setup_t * setup ) {
+bool __fastcall hooks::post_screen_space_fx::hook ( uintptr_t ecx, uintptr_t, const view_setup_t * setup ) {
 	if ( !local_player::m_data.pointer )
 		return post_screen_space_original ( ecx, setup );
 
@@ -736,133 +772,124 @@ void _fastcall hooks::do_extra_bone_processing::hook( void* ecx, uint32_t, void*
 }*/
 
 void _fastcall hooks::standard_blending_rules::hook ( player_t * player, uint32_t, c_studio_hdr * hdr, vec3_t * pos, quaternion_t * q, const float time, int mask ) {
+	if ( !config.standard_blending_rules_target ) {
+		standard_blending_rules_original ( player, hdr, pos, q, time, mask );
+		return;
+	}
+
+	if (!local_player::m_data.pointer )
+		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
+
+	if ( !player )
+		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
+
+	if (!player->is_alive() )
+		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
+
+	if ( player->dormant() )
+		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
+
+	if ( player->is_teammate() )
+		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
+
 	if ( local_player::m_data.pointer && player ) {
-		if ( player->team ( ) != local_player::m_data.pointer->team ( ) && player != local_player::m_data.pointer )
-			mask = BONE_USED_BY_SERVER;
 
 		player->m_fEffects ( ) |= 0x008;
-		standard_blending_rules_original ( player, hdr, pos, q, time, mask );
+		standard_blending_rules_original ( player, hdr, pos, q, time, BONE_USED_BY_SERVER );
 		player->m_fEffects ( ) &= ~0x008;
 	}
 }
 
 
 void __fastcall hooks::update_client_side_animation::hook ( player_t * player, uint32_t ) {
+	
+	if (!config.update_client_side_animation )
+		return update_client_side_animation_original ( player );
 
 
 	if ( !player )
 		return update_client_side_animation_original ( player );
 
+	if ( !player->is_alive ( ) )
+		return update_client_side_animation_original ( player );
 
-	if ( animations::player_data [ player->index ( ) ].update_anims )
+	if (player->dormant() )
+		return update_client_side_animation_original ( player );
+
+	if ( player->is_teammate ( ) )
+		return update_client_side_animation_original ( player );
+
+	auto & anim_data = animations::player_data [ player->index ( ) ];
+
+	if ( anim_data.update_anims ) 
 		update_client_side_animation_original ( player );
+	
 }
 
 static bool init = false;
 
+bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bone_to_world_out, int max_bones, int bone_mask, float curtime ) {
+	if ( !config.setup_bones )
+		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
-bool __fastcall hooks::setup_bones::hook ( void * ecx, void * edx, matrix_t * bone_to_world_out, int max_bones, int bone_mask, float curtime ) {
-
-	
-	if ( !interfaces::clientstate )
-		return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
-	if ( !local_player::m_data.pointer )
-		return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
-
-	if ( !local_player::m_data.pointer )
-		return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+	auto result = true;
 
 	auto e = reinterpret_cast < player_t * >( reinterpret_cast < uintptr_t > ( ecx ) - 0x4 );
 
+	if ( e == local_player::m_data.pointer )
+		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+
 	if ( !e )
 		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
-	
-	
-	if ( !(e->index ( ) < 64 && e->index ( ) > 0 ))
+
+	if ( e->dormant() )
 		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
-	auto anim = animations::player_data [ e->index ( ) ];
-	
-	
+	if ( e->is_teammate ( ) )
+		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
-	if ( e == local_player::m_data.pointer ) {
-	
+	if ( !e->is_alive ( ) )
 		return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
-	}
-	else {
-		if ( !anim.update_bones ) {
-			return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
-		}
-		int restore_magic = 0;
-		float restore_frametime = 0.f;
 
-		/*
-			- C_BasePlayer::SkipAnimationFrame, fix for matrix being 1 tick too late?
-			- IDA signature if anyone wants to take a look themselves : 57 8B F9 8B 07 8B 80 ? ? ? ? FF D0 84 C0 75 02 5F C3
-		*/
 
-		int & last_animation_framecount = *reinterpret_cast< int * >( uintptr_t ( e ) + 0xA68 );
-		int & magic = *reinterpret_cast< int * >( uintptr_t ( e ) + 0x64 );
 
-		restore_frametime = interfaces::globals->frame_time;
-		restore_magic = magic;
-
-		if ( !( magic % 3 ) ) {
-			magic = 9;
-		}
-
-		/*
-			- C_BasePlayer::SkipAnimationFrame
-			- if ( frametime < 0.0033333334 )
-		*/
-
-		if ( interfaces::globals->frame_time > 0.0033333334f ) {
-			interfaces::globals->frame_time = 0.003333333f;
-		}
-		//
-			/*
-				- C_BasePlayer::SkipAnimationFrame
-				- Pseudo code :
-					last_animation_framecount = *(player + 0xA68);
-					framecount = g_Globals->m_framecount;
-					if ( last_animation_framecount ) {
-						result = abs(framecount - last_animation_framecount);
-						if ( result < 2 )
-
-			*/
-		last_animation_framecount = interfaces::globals->frame_count;
-
-		int & occlusion_flag = *reinterpret_cast< int * >( uintptr_t ( e ) + 0xA24 );
-		int & prev_bone_mask = *reinterpret_cast< int * >( uintptr_t ( e ) + 0x269C );
-
-		static auto offs_bone_mask = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseAnimating" ), fnv::hash ( "m_nForceBone" ) ) + 0x20;
-
-		*reinterpret_cast< int * >( uintptr_t ( e ) + offs_bone_mask ) = 0;
-		prev_bone_mask = 0;
-
-		/*
-			- C_CSPlayer::AccumulateLayers, skip the function
-			- Pseudo code :
-				result = (*(*g_Engine + 372))();
-				if ( result || !(*(v5 + 0xA28) & 0xA) )
-			- IDA signature : 55 8B EC 57 8B F9 8B 0D ? ? ? ? 8B 01 8B 80
-		*/
-		occlusion_flag = 0xA;
 
 	
+	if ( e->index ( ) > 64 )
+		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
-		bool result = setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+	    auto& anim = animations::player_data [ e->index ( ) ];
+	
 
-		magic = restore_magic;
-		interfaces::globals->frame_time = restore_frametime;
+		
+		 //if ( !e->m_CachedBoneData ( ).Count ( ) )
+			// return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+		 if ( anim.update_bones || !e->m_CachedBoneData ( ).Count ( ) )
+		    result = setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+		else if (bone_to_world_out && max_bones != -1 )
+		   memcpy ( bone_to_world_out, e->m_CachedBoneData ( ).Base ( ), e->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
+	
+
 		return result;
-	}
 }
 
 
 void __fastcall hooks::build_transformations::hook ( void * ecx, void * edx, int a2, int a3, int a4, int a5, int a6, int a7 ) {
+	if (!config.build_transformations_target )
+		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
+
 	auto player = ( player_t * ) ( ecx );
+
 	if ( !player )
+		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
+
+	if ( player->dormant() )
+		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
+
+	if ( !player->is_alive() )
+		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
+
+	if ( player->is_teammate() )
 		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 
 	auto o_jiggle_bones_enabled = player->JiggleBones ( );
@@ -871,139 +898,285 @@ void __fastcall hooks::build_transformations::hook ( void * ecx, void * edx, int
 	build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 	player->JiggleBones ( ) = o_jiggle_bones_enabled;
 }
-bool __fastcall hooks::is_hltv::hook ( void * ecx, void * edx ) {
+bool __fastcall hooks::is_hltv::hook ( void * ecx, void *  ) {
 
+//f ( !config.is_hltv_target ) {
+	 	return is_hltv_original ( ecx );
+	//
 
-	static const auto AccumulateLayersCall = ( void * ) ( utilities::pattern_scan ( "client.dll", "84 C0 75 0D F6 87" ) );
-	static const auto SetupVelocityCall = ( void * ) ( utilities::pattern_scan ( "client.dll", "84 C0 75 38 8B 0D ? ? ? ? 8B 01 8B 80 ? ? ? ? FF D0" ) );
+	
+	static const auto accumulate_layers_call = reinterpret_cast< void * >(utilities::pattern_scan ( "client.dll", "84 C0 75 0D F6 87" ));
+	static const auto setupvelocity_call = reinterpret_cast< void * >(utilities::pattern_scan ( "client.dll", "84 C0 75 38 8B 0D ? ? ? ? 8B 01 8B 80 ? ? ? ? FF D0" ));
 
-	if ( !interfaces::engine->is_in_game ( ) || !interfaces::engine->is_connected ( ) )
-		return is_hltv_original ( ecx );
-
-	if ( _ReturnAddress ( ) == AccumulateLayersCall || _ReturnAddress ( ) == SetupVelocityCall )
+	if ( _ReturnAddress ( ) == accumulate_layers_call || _ReturnAddress ( ) == setupvelocity_call )
 		return true;
 
 
 
 	return is_hltv_original ( ecx );
 }
-bool __fastcall hooks::write_user_cmd::hook ( void * ecx, void * edx, int m_nSlot, bf_write * m_pBuffer, int m_nFrom, int m_nTo, bool m_bNewCmd ) {
-	if ( tickbase_system::m_shift_data.m_ticks_to_shift <= 0 )
-		return write_user_cmd_original ( ecx, m_nSlot, m_pBuffer, m_nFrom, m_nTo, m_bNewCmd );
+/*void WriteUserCmd ( void * buf, c_usercmd * incmd, c_usercmd * outcmd ) {
+	using WriteUserCmd_t = void ( __fastcall * )( void *, c_usercmd *, c_usercmd * );
+	static auto Fn = ( WriteUserCmd_t ) utilities::pattern_scan (  ( "client.dll" ),  ( "55 8B EC 83 E4 F8 51 53 56 8B D9" ) );
 
-	if (csgo::cmd && csgo::cmd->weaponselect != 0 )
-		return write_user_cmd_original( ecx, m_nSlot, m_pBuffer, m_nFrom, m_nTo, m_bNewCmd );
+	__asm
+	{
+		mov     ecx, buf
+		mov     edx, incmd
+		push    outcmd
+		call    Fn
+		add     esp, 4
+	}
+}
+bool __fastcall hooks::write_user_cmd::hook ( void * ecx, void * , int slot, bf_write * buf, int from, int to, bool is_new_command ) {
+	return write_user_cmd_original ( ecx, slot, buf, from, to, is_new_command );
+	if ( !local_player::m_data.tickbase_shift )
+		return write_user_cmd_original ( ecx, slot, buf, from, to, is_new_command );
 
-	if ( m_nFrom != -1 )
+	if ( from != -1 )
 		return true;
 
-	m_nFrom = -1;
+	auto final_from = -1;
 
-	int m_nTickbase = tickbase_system::m_shift_data.m_ticks_to_shift;
-	tickbase_system::m_shift_data.m_ticks_to_shift = 0;
+	uintptr_t frame_ptr;
+	__asm mov frame_ptr, ebp;
 
-	int * m_pnNewCmds = ( int * ) ( ( uintptr_t ) m_pBuffer - 0x2C );
-	int * m_pnBackupCmds = ( int * ) ( ( uintptr_t ) m_pBuffer - 0x30 );
+	auto backup_commands = reinterpret_cast < int * > ( frame_ptr + 0xFD8 );
+	auto new_commands = reinterpret_cast < int * > ( frame_ptr + 0xFDC );
 
-	*m_pnBackupCmds = 0;
+	auto newcmds = *new_commands;
+	auto shift = tickbase_system::m_shift_data.shift_ticks;
 
-	int m_nNewCmds = *m_pnNewCmds;
-	int m_nNextCmd = interfaces::clientstate->m_choked_commands + interfaces::clientstate->m_last_outgoing_command + 1;
-	int m_nTotalNewCmds = min ( m_nNewCmds + abs ( m_nTickbase ), 16 );
+	tickbase_system::m_shift_data.shift_ticks = 0;
+	*backup_commands = 0;
 
-	*m_pnNewCmds = m_nTotalNewCmds;
+	auto choked_modifier = newcmds + shift;
 
-	for ( m_nTo = m_nNextCmd - m_nNewCmds + 1; m_nTo <= m_nNextCmd; m_nTo++ ) {
-		if ( !write_user_cmd_original ( ecx, m_nSlot, m_pBuffer, m_nFrom, m_nTo, true ) )
-			return false;
+	if ( choked_modifier > 62 )
+		choked_modifier = 62;
 
-		m_nFrom = m_nTo;
+	*new_commands = choked_modifier;
+
+	auto next_cmdnr = interfaces::clientstate->m_choked_commands + interfaces::clientstate->m_last_outgoing_command + 1;
+	auto final_to = next_cmdnr - newcmds + 1;
+
+	if ( final_to <= next_cmdnr ) {
+		while ( write_user_cmd_original ( ecx, slot, buf, final_from, final_to, true ) ) {
+			final_from = final_to++;
+
+			if ( final_to > next_cmdnr )
+				goto next_cmd;
+		}
+
+		return false;
 	}
+next_cmd:
 
-	c_usercmd * m_pCmd = interfaces::input->get_user_cmd ( m_nSlot, m_nFrom );
-	if ( !m_pCmd )
+	auto user_cmd = interfaces::input->get_user_cmd ( final_from );
+
+	if ( !user_cmd )
 		return true;
 
-	c_usercmd m_ToCmd = *m_pCmd, m_FromCmd = *m_pCmd;
-	m_ToCmd.command_number++;
-	m_ToCmd.tick_count += 3 * csgo::m_rate;
+	c_usercmd to_cmd;
+	c_usercmd from_cmd;
 
+	from_cmd = *user_cmd;
+	to_cmd = from_cmd;
 
-	//interfaces::console->console_printf( "m_ToCMd_tick_count %i and m_rate is  %i \n", m_ToCmd.tick_count, csgo::m_rate );
-	for ( int i = m_nNewCmds; i <= m_nTotalNewCmds; i++ ) {
-		tickbase_system::write_user_cmd ( ( bf_write * ) m_pBuffer, &m_ToCmd, &m_FromCmd );
-		m_FromCmd = m_ToCmd;
+	to_cmd.command_number++;
+	to_cmd.tick_count += 200;
 
-		m_ToCmd.command_number++;
-		m_ToCmd.tick_count++;
+	if ( newcmds > choked_modifier )
+		return true;
+
+	for ( auto i = choked_modifier - newcmds + 1; i > 0; --i ) {
+		WriteUserCmd ( buf, &to_cmd, &from_cmd );
+
+		from_cmd = to_cmd;
+		to_cmd.command_number++;
+		to_cmd.tick_count++;
 	}
 
-	tickbase_system::m_shift_data.m_current_shift = m_nTickbase;
 	return true;
 }
+*/
 
 
 void __fastcall  hooks::cl_move::hook ( void * ecx ) {
 
-
-	if ( tickbase_system::m_shift_data.m_should_attempt_shift && tickbase_system::m_shift_data.m_needs_recharge ) {
-		--tickbase_system::m_shift_data.m_needs_recharge;
-
-		tickbase_system::m_shift_data.m_did_shift_before = false;
-
-		if ( tickbase_system::m_shift_data.m_needs_recharge == 0 ) {
-			tickbase_system::m_shift_data.m_should_be_ready = true;
-		}
-	
-		return;
-	}
-
-	
-
-
 	cl_move_original ( ecx );
 }
-void _fastcall hooks::run_commmand::hook ( void * prediction, void * edx, player_t * player, c_usercmd * cmd, player_move_helper * move_helper ) {
-	//return run_commmand_original( interfaces::prediction, player, cmd, move_helper );
-	if ( !player )
+/*void _fastcall hooks::run_commmand::hook ( void * , void * , player_t * player, c_usercmd * cmd, player_move_helper * move_helper ) {
+	
+	local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+
+	if ( !player || player != local_player::m_data.pointer )
 		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
 
-	if ( player->index ( ) != interfaces::engine->get_local_player ( ) )
+	if ( !cmd )
 		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
-	//interfaces::console->console_printf( "CMD->TICKCOUNT %i  calc %i csgo::m_tick %i\n", cmd->tick_count, ( csgo::m_tick + int( 1 / interfaces::globals->interval_per_tick ) + 8 ), csgo::m_tick );
-	if ( cmd->tick_count >= ( csgo::m_tick + int ( 1 / interfaces::globals->interval_per_tick ) + 8 ) ) {
+
+	if ( cmd->tick_count > interfaces::globals->tick_count + 72 ) //-V807
+	{
 		cmd->hasbeenpredicted = true;
+		player->set_abs_origin ( player->origin ( ) );
+
+		if ( interfaces::globals->frame_time > 0.0f && !interfaces::prediction->EnginePaused )
+			++player->get_tick_base ( );
+
 		return;
 	}
-	int backup_tickbase = player->get_tick_base ( );
-	float backup_curtime = interfaces::globals->cur_time;
 
-	if ( cmd->command_number == tickbase_system::m_prediction.m_shifted_command ) {
-		player->get_tick_base ( ) = ( tickbase_system::m_prediction.m_original_tickbase - tickbase_system::m_prediction.m_shifted_ticks + 1 );
-		++player->get_tick_base ( );
 
-		interfaces::globals->cur_time = math::ticks_to_time ( player->get_tick_base ( ) );
+	if ( config.ragebot_enabled && player->is_alive ( ) ) {
+		auto weapon = player->active_weapon ( );
+
+		if ( weapon ) {
+			static int tickbase_records [ MULTIPLAYER_BACKUP ] = {};
+			static bool in_attack [ MULTIPLAYER_BACKUP ] = {};
+			static bool can_shoot [ MULTIPLAYER_BACKUP ] = {};
+
+			tickbase_records [ cmd->command_number % MULTIPLAYER_BACKUP ] = player->get_tick_base ( );
+			in_attack [ cmd->command_number % MULTIPLAYER_BACKUP ] = cmd->buttons & cmd_buttons::in_attack || cmd->buttons & cmd_buttons::in_attack2;
+			can_shoot [ cmd->command_number % MULTIPLAYER_BACKUP ] = misc::can_fire (weapon, false );
+
+			if ( weapon->item_definition_index ( ) == weapon_revolver ) {
+				auto postpone_fire_ready_time = FLT_MAX;
+				auto tickrate = ( int ) ( 1.0f / interfaces::globals->interval_per_tick );
+
+				if ( tickrate >> 1 > 1 ) {
+					auto command_number = cmd->command_number - 1;
+					auto shoot_number = 0;
+
+					for ( auto i = 1; i < tickrate >> 1; ++i ) {
+						shoot_number = command_number;
+
+						if ( !in_attack [ command_number % MULTIPLAYER_BACKUP ] || !can_shoot [ command_number % MULTIPLAYER_BACKUP ] )
+							break;
+
+						--command_number;
+					}
+
+					if ( shoot_number ) {
+						auto tick = 1 - ( int ) ( -0.03348f / interfaces::globals->interval_per_tick );
+
+						if ( cmd->command_number - shoot_number >= tick )
+							postpone_fire_ready_time = math::ticks_to_time ( tickbase_records [ ( tick + shoot_number ) % MULTIPLAYER_BACKUP ] ) + 0.2f;
+					}
+				}
+
+				weapon->get_postpone_fire_ready_time ( ) = postpone_fire_ready_time;
+			}
+		}
+
+		auto backup_velocity_modifier = player->m_flVelocityModifier ( );
+
+		player->m_flVelocityModifier ( ) = local_player::m_data.last_velocity_modifier;
+		run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
+
+		if ( !csgo::in_create_move )
+			player->m_flVelocityModifier ( ) = backup_velocity_modifier;
 	}
-	float m_flVelModBackup = player->m_flVelocityModifier ( );
-	if ( csgo::m_update && cmd->command_number == interfaces::clientstate->m_last_command_ack + 1 )
-		player->m_flVelocityModifier ( ) = engine_prediction::m_stored_variables.m_flVelocityModifier;
+	else
+		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
 
+	//g_netdata.store ( );
+}*/
+void __fastcall hooks::packet_start::hook ( void * ecx, void * , int incoming, int outgoing ) {
 
-	run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
+	local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 
-	if ( !csgo::m_update )
-		player->m_flVelocityModifier ( ) = m_flVelModBackup;
+	if ( !local_player::available ( ) )
+		return packet_start_original ( ecx, incoming, outgoing );
 
-	// restore tickbase and curtime.
-	if ( cmd->command_number == tickbase_system::m_prediction.m_shifted_command ) {
-		player->get_tick_base ( ) = backup_tickbase;
+	if ( !local_player::m_data.pointer->is_alive ( ) )
+		return packet_start_original ( ecx, incoming, outgoing );
 
-		interfaces::globals->cur_time = backup_curtime;
+	if ( local_player::m_data.commands.empty ( ) )
+		return packet_start_original ( ecx, incoming, outgoing );
+
+	//if ( m_bIsValveDS )
+		//return packet_start_original ( ecx, incoming, outgoing );
+
+	for ( auto it = local_player::m_data.commands.rbegin ( ); it != local_player::m_data.commands.rend ( ); ++it ) {
+		if ( !it->is_outgoing )
+			continue;
+
+		if ( it->command_number == outgoing || outgoing > it->command_number && ( !it->is_used || it->previous_command_number == outgoing ) ) {
+			it->previous_command_number = outgoing;
+			it->is_used = true;
+			packet_start_original ( ecx, incoming, outgoing );
+			break;
+		}
 	}
 
-	g_netdata.store ( );
+	auto result = false;
+
+	for ( auto it = local_player::m_data.commands.begin ( ); it != local_player::m_data.commands.end ( );) {
+		if ( outgoing == it->command_number || outgoing == it->previous_command_number )
+			result = true;
+
+		if ( outgoing > it->command_number && outgoing > it->previous_command_number )
+			it = local_player::m_data.commands.erase ( it );
+		else
+			++it;
+	}
+
+	if ( !result )
+		packet_start_original ( ecx, incoming, outgoing );
 }
-void __fastcall hooks::fire_event::hook ( void * ecx, void * edx ) {
+
+using PacketEnd_t = void ( __thiscall * )( void * );
+
+void __fastcall hooks::packet_end::hook ( void * ecx, void *  ) {
+	local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+
+	if ( !local_player::m_data.pointer->is_alive ( ) )  //-V807
+	{
+		local_player::m_data.data.clear ( );
+		return packet_end_original ( ecx );
+	}
+
+	if ( *( int * ) ( ( uintptr_t ) ecx + 0x164 ) == *( int * ) ( ( uintptr_t ) ecx + 0x16C ) ) {
+		auto ack_cmd = *( int * ) ( ( uintptr_t ) ecx + 0x4D2C );
+		auto correct = std::find_if ( local_player::m_data.data.begin ( ), local_player::m_data.data.end ( ),
+			[ &ack_cmd ] ( const local_player::correction_data & other_data ) {
+			return other_data.command_number == ack_cmd;
+		}
+		);
+
+		auto netchannel = interfaces::engine->get_net_channel_info ( );
+
+		if ( netchannel && correct != local_player::m_data.data.end ( ) ) {
+			if ( local_player::m_data.last_velocity_modifier > local_player::m_data.pointer->m_flVelocityModifier ( ) + 0.1f ) {
+				auto weapon = local_player::m_data.pointer->active_weapon ( );
+
+				if ( !weapon || weapon->item_definition_index ( ) != weapon_revolver && !weapon->is_grenade ( ) ) //-V648
+				{
+					for ( auto & number : local_player::m_data.choked_number ) {
+						auto cmd = &interfaces::input->m_commands [ number % MULTIPLAYER_BACKUP ];
+						auto verified = &interfaces::input->m_verified [ number % MULTIPLAYER_BACKUP ];
+
+						if ( cmd->buttons & ( cmd_buttons::in_attack | cmd_buttons::in_attack2 ) ) {
+							cmd->buttons &= ~cmd_buttons::in_attack;
+
+							verified->m_cmd = *cmd;
+							verified->m_crc = cmd->get_checksum ( );
+						}
+					}
+				}
+			}
+
+			local_player::m_data.last_velocity_modifier = local_player::m_data.pointer->m_flVelocityModifier ( );
+		}
+	}
+
+	return  packet_end_original ( ecx );
+}
+
+void __fastcall hooks::fire_event::hook ( void * ecx, void *  ) {
+	if ( !config.ragebot_enabled )
+		return fire_event_original ( ecx );
 	if ( !local_player::m_data.pointer || !interfaces::engine->is_in_game ( ) || !interfaces::engine->is_connected ( ) )
 		return fire_event_original ( ecx );
 
@@ -1052,14 +1225,14 @@ void __fastcall hooks::fire_event::hook ( void * ecx, void * edx ) {
 	return fire_event_original ( ecx );
 }
 
-void __fastcall hooks::crc_server_check::hook ( void * ecx, void * edx ) {
+void __fastcall hooks::crc_server_check::hook ( void * , void *  ) {
 	return;
 }
 
-void __stdcall hooks::render_smoke_overlay::hook ( void * ctx, bool a ) {
+/*void __stdcall hooks::render_smoke_overlay::hook ( void * ctx, bool a ) {
 	render_smoke_overlay_original ( ctx, a );
-}
-void __fastcall hooks::trace_ray::hook ( void * thisptr, void *, const ray_t & ray, unsigned int fMask, trace_filter * pTraceFilter, trace_t * pTrace ) {
+}*/
+/*void __fastcall hooks::trace_ray::hook ( void * thisptr, void *, const ray_t & ray, unsigned int fMask, trace_filter * pTraceFilter, trace_t * pTrace ) {
 
 	if ( !csgo::in_trace )
 		return trace_ray_original ( thisptr, ray, fMask, pTraceFilter, pTrace );
@@ -1067,7 +1240,7 @@ void __fastcall hooks::trace_ray::hook ( void * thisptr, void *, const ray_t & r
 	trace_ray_original ( thisptr, ray, fMask, pTraceFilter, pTrace );
 
 	pTrace->surface.flags |= SURF_SKY;
-}
+}*/
 void __stdcall hooks::scene_end::hook ( ) {
 	visuals::player::paint_traverse ( );
 
@@ -1078,7 +1251,7 @@ void __stdcall hooks::scene_end::hook ( ) {
 	scene_end_original ( interfaces::render_view );
 }
 
-int __fastcall hooks::file_system::hook ( void * ecx, void * edx ) {
+int __fastcall hooks::file_system::hook ( void * , void *  ) {
 	static auto return_to_client_panorama = utilities::pattern_scan ( "client.dll", "83 F8 02 0F 85 ? ? ? ? 8B 3D ? ? ? ? FF D7" );
 	static auto return_to_engine = utilities::pattern_scan ( "engine.dll", "83 F8 02 75 6C 68 ? ? ? ? FF 15 ? ? ? ? 8B 4C 24 28 83 C4 04" );
 
@@ -1088,7 +1261,7 @@ int __fastcall hooks::file_system::hook ( void * ecx, void * edx ) {
 	return 1; //return 1 to allow loading of chams materials
 }
 
-void __fastcall hooks::check_for_sequence_change::hook ( uintptr_t * ecx, uintptr_t * edx, uintptr_t * hdr, int cur_sequence, bool force_new_sequence, bool interpolate ) {
+void __fastcall hooks::check_for_sequence_change::hook ( uintptr_t * ecx, uintptr_t * edx, uintptr_t * hdr, int cur_sequence, bool force_new_sequence, bool  ) {
 
 	return check_for_sequence_change_original ( ecx, edx, hdr, cur_sequence, force_new_sequence, false );
 

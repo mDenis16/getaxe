@@ -210,8 +210,8 @@ struct ray_t {
 	VectorAligned m_delta; // direction + length of the ray
 	VectorAligned m_start_offset; // Add this to m_Start to get the actual ray start
 	VectorAligned m_extents; // Describes an axis aligned box extruded along a ray
-	const matrix_t* m_world_axis_transform;
-	//const matrix_t *m_pWorldAxisTransform;
+	const matrix3x4_t* m_world_axis_transform;
+	//const matrix3x4_t *m_pWorldAxisTransform;
 	bool m_is_ray; // are the extents zero?
 	bool m_is_swept; // is delta != 0?
 
@@ -248,28 +248,28 @@ private:
 
 
 struct cplane_t {
-	vec3_t normal;
-	float m_dist;
+	vec3_t normal = vec3_t();
+	float m_dist = 0.f;
 	BYTE m_type;
 	BYTE m_sign_bits;
 	BYTE m_pad[2];
 };
 
 struct trace_t {
-	vec3_t start;
-	vec3_t end;
-	cplane_t plane;
-	float flFraction;
-	int contents;
+	vec3_t start = vec3_t();
+	vec3_t end = vec3_t ( );
+	cplane_t plane = {};
+	float flFraction = 0.f;
+	int contents = 0;
 	unsigned short dispFlags;
-	bool allsolid;
-	bool startSolid;
-	float fractionLeftSolid;
-	csurface_t surface;
-	int hitGroup;
-	short physicsBone;
-	player_t* entity;
-	int hitbox;
+	bool allsolid = false;
+	bool startSolid = false;
+	float fractionLeftSolid = 0.f;
+	csurface_t surface = {};
+	int hitGroup = 0;
+	short physicsBone = 0;
+	player_t* entity = nullptr;
+	int hitbox = 0;
 
 	bool did_hit() const {
 		return flFraction < 1.f;

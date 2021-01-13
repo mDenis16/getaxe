@@ -20,7 +20,8 @@ public:
 
 class event_info {
 public:
-	   uint8_t uchPad0[4];
+	uint16_t classID; //0x0000 0 implies not in use
+	char pad_0002 [ 2 ]; //0x0002 
     float flDelay;
     uint8_t uchPad1[48];
 	event_info*pNext;

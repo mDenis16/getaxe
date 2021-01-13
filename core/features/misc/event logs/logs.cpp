@@ -1,5 +1,5 @@
 #include "../../features.hpp"
-
+/*
 const char* hitgroup_name( int hitgroup ) {
 	switch ( hitgroup ) {
 	case hitgroup_head:
@@ -103,4 +103,4 @@ void misc::event_logs::item_purchase( i_game_event* event ) {
 		gun.erase( gun.find( "weapon_" ), 7 );
 		interfaces::chat_element->chat_print( 0, 0, " ""\x01""[""\x03""amtlib""\x01""]""\x01"" %s bought %s \n", player_name.c_str( ), gun.c_str( ) );
 	}
-}
+}*/

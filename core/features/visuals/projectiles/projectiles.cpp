@@ -29,7 +29,7 @@ namespace visuals::projectiles {
 		}
 
 	
-		for ( size_t i = 1; i < interfaces::entity_list->get_highest_index ( ); i++ ) {
+		for ( int i = 1; i < interfaces::entity_list->get_highest_index ( ); i++ ) {
 
 			entity_t * entity = reinterpret_cast< entity_t * >( interfaces::entity_list->get_client_entity ( i ) );
 			if ( !entity )

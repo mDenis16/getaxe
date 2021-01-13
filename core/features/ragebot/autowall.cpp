@@ -6,63 +6,27 @@
 #define MAX_DAMAGE			500.f				// max weapons damage
 #define MAX_WEAPONS			64					// max number of weapons available
 
-float autowall::GetDamage( player_t* pLocal, const vec3_t& vecPoint, FireBulletData_t& dataOut )
+int autowall::get_damage ( player_t * from, const vec3_t & start, const vec3_t & end, FireBulletData_t & data )
 {
-	vec3_t angView;
-	vec3_t vecDirection;
-	vec3_t vecDelta = vecPoint - engine_prediction::unpredicted_eye;
-	float flDamage = 0;
-	csgo::in_trace = true;
-	// setup data
-	FireBulletData_t data;
 
-	data.vecPosition = engine_prediction::unpredicted_eye;
-	data.filter.skip = pLocal;
+	int dmg = 0;
 
-	math::VectorAnglesAwall( vecDelta, angView );
-	vecDirection = math::angle_vector( angView );
-	vecDirection.normalize_in_place( );
-	data.vecDir = vecDirection;
+	data.vecPosition = start;
+	data.filter.skip = from;
+	vec3_t angle = math::calc_angle ( start, end );
 
-	auto pWeapon = pLocal->active_weapon( );
+	data.vecDir = math::angle_vector ( angle );
+	data.vecDir.normalize_in_place ( );
 
-	if ( pWeapon == nullptr )
-		return -1.0f;
+	auto weapon = from->active_weapon( );
 
-	if ( SimulateFireBullet( pLocal, pWeapon, data ) )
-		flDamage = data.flCurrentDamage;
-	csgo::in_trace = false;
-	dataOut = data;
-	return flDamage;
-}
-float autowall::GetDamage( player_t* pLocal, const vec3_t& vecStart, const vec3_t& vecPoint, FireBulletData_t& dataOut )
-{
-	vec3_t angView;
-	vec3_t vecDirection;
-	vec3_t vecDelta = vecPoint - vecStart;
-	float flDamage = 0;
-	csgo::in_trace = true;
-	// setup data
-	FireBulletData_t data;
+	if ( !weapon )
+		return 0;
 
-	data.vecPosition = vecStart;
-	data.filter.skip = pLocal;
+	if ( SimulateFireBullet( from, weapon, data ) )
+		dmg = static_cast<int>(data.flCurrentDamage);
 
-	math::VectorAnglesAwall ( vecDelta, angView );
-	vecDirection = math::angle_vector( angView );
-	vecDirection.normalize_in_place( );
-	data.vecDir = vecDirection;
-
-	auto pWeapon = pLocal->active_weapon( );
-
-	if ( pWeapon == nullptr )
-		return -1.0f;
-
-	if ( SimulateFireBullet( pLocal, pWeapon, data ) )
-		flDamage = data.flCurrentDamage;
-	csgo::in_trace = false;
-	dataOut = data;
-	return flDamage;
+	return dmg;
 }
 
 bool VectortoVectorVisible( vec3_t src, vec3_t point )
@@ -84,7 +48,7 @@ bool autowall::can_hit_float_point( const vec3_t& point, const vec3_t& source )
 	vec3_t angView;
 	vec3_t vecDirection;
 	vec3_t vecDelta = point - source;
-	float flDamage = 0;
+
 	csgo::in_trace = true;
 	// setup data
 	FireBulletData_t data;
@@ -390,9 +354,9 @@ bool autowall::HandleBulletPenetration( player_t* pLocal, surfacedata_t* pEnterS
 	// this calculates how much damage we've lost depending on thickness of the wall, our penetration, damage, and the modifiers set earlier
 	const float flLostDamage = ( data.flCurrentDamage * flDamageLostModifier + std::max<float>( 0.0f, 3.75f / pWeaponData->flPenetration ) * ( flModifier * 3.0f ) ) + ( ( flModifier * flTraceDistance ) / 24.0f );
 
-	// did we loose too much damage?
-//	if ( flLostDamage > data.flCurrentDamage )
-	//	return false;
+	//did we loose too much damage?
+	if ( flLostDamage > data.flCurrentDamage )
+	  return false;
 
 	// we can't use any of the damage that we've lost
 	if ( flLostDamage > 0.0f )
@@ -453,13 +417,13 @@ bool autowall::SimulateFireBullet( player_t* pLocal, weapon_t* pWeapon, FireBull
 			break;
 
 		// check is can do damage
-		if ( data.enterTrace.hitGroup > hitgroup_generic && data.enterTrace.hitGroup <= hitgroup_rightleg && data.enterTrace.entity->is_enemy(  ) )
+		if ( data.enterTrace.hitGroup > hitgroup_generic && data.enterTrace.hitGroup <= hitgroup_rightleg /*&& data.enterTrace.entity->is_enemy(  )*/ )
 		{
 			// we got target - scale damage
 			ScaleDamage( data.enterTrace.hitGroup, data.enterTrace.entity, pWeaponData->flArmorRatio, data.flCurrentDamage );
 			return true;
 		}
-
+		data.penetrationTry++;
 		// calling handlebulletpenetration here reduces our penetration �ounter, and if it returns true, we can't shoot through it
 		if ( !HandleBulletPenetration( pLocal, pEnterSurfaceData, pWeaponData, data ) )
 			break;

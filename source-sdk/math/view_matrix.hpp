@@ -3,11 +3,11 @@
 
 typedef float vec_t;
 
-class view_matrix_t {
+class view_matrix3x4_t {
 public:
 
-	view_matrix_t();
-	view_matrix_t(
+	view_matrix3x4_t();
+	view_matrix3x4_t(
 		vec_t m00, vec_t m01, vec_t m02, vec_t m03,
 		vec_t m10, vec_t m11, vec_t m12, vec_t m13,
 		vec_t m20, vec_t m21, vec_t m22, vec_t m23,
@@ -16,10 +16,10 @@ public:
 
 	// Creates a matrix where the X axis = forward
 	// the Y axis = left, and the Z axis = up
-	view_matrix_t(const vec3_t& forward, const vec3_t& left, const vec3_t& up);
+	view_matrix3x4_t(const vec3_t& forward, const vec3_t& left, const vec3_t& up);
 
 	// Construct from a 3x4 matrix
-	view_matrix_t(const matrix_t& matrix3x4);
+	view_matrix3x4_t(const matrix3x4_t& matrix3x4);
 
 	// Set the values in the matrix.
 	void		init(
@@ -30,7 +30,7 @@ public:
 	);
 
 	// Initialize from a 3x4
-	void		init(const matrix_t& matrix3x4);
+	void		init(const matrix3x4_t& matrix3x4);
 
 	// array access
 	inline float* operator[](int i) {
@@ -64,13 +64,13 @@ public:
 	void		pre_translate(const vec3_t& vTrans);
 	void		post_translate(const vec3_t& vTrans);
 
-	matrix_t& as_matrix();
-	const matrix_t& as_matrix() const;
-	void		copy_from_matrix(const matrix_t& m3x4);
-	void		set_matrix(matrix_t& matrix3x4) const;
+	matrix3x4_t& as_matrix();
+	const matrix3x4_t& as_matrix() const;
+	void		copy_from_matrix(const matrix3x4_t& m3x4);
+	void		set_matrix(matrix3x4_t& matrix3x4) const;
 
-	bool		operator==(const view_matrix_t& src) const;
-	bool		operator!=(const view_matrix_t& src) const { return !(*this == src); }
+	bool		operator==(const view_matrix3x4_t& src) const;
+	bool		operator!=(const view_matrix3x4_t& src) const { return !(*this == src); }
 
 	// Access the basis vec3_ts.
 	vec3_t		get_left() const;
@@ -115,23 +115,23 @@ public:
 	// Matrix->matrix operations.
 public:
 
-	view_matrix_t& operator=(const view_matrix_t & mOther);
+	view_matrix3x4_t& operator=(const view_matrix3x4_t & mOther);
 
 	// Multiply two matrices (out = this * vm).
-	void		MatrixMul(const view_matrix_t & vm, view_matrix_t & out) const;
+	void		MatrixMul(const view_matrix3x4_t & vm, view_matrix3x4_t & out) const;
 
 	// Add two matrices.
-	const view_matrix_t& operator+=(const view_matrix_t & other);
+	const view_matrix3x4_t& operator+=(const view_matrix3x4_t & other);
 
 	// Just calls MatrixMul and returns the result.
-	view_matrix_t		operator*(const view_matrix_t & mOther) const;
+	view_matrix3x4_t		operator*(const view_matrix3x4_t & mOther) const;
 
 	// Add/Subtract two matrices.
-	view_matrix_t		operator+(const view_matrix_t & other) const;
-	view_matrix_t		operator-(const view_matrix_t & other) const;
+	view_matrix3x4_t		operator+(const view_matrix3x4_t & other) const;
+	view_matrix3x4_t		operator-(const view_matrix3x4_t & other) const;
 
 	// Negation.
-	view_matrix_t		operator-() const;
+	view_matrix3x4_t		operator-() const;
 
 	// Matrix operations.
 public:
@@ -144,29 +144,29 @@ public:
 	void		setup_maitrx_orginal_angles(const vec3_t & origin, const vec3_t & vAngles);
 
 	// Does a fast inverse, assuming the matrix only contains translation and rotation.
-	void		inverse_tr(view_matrix_t & mRet) const;
+	void		inverse_tr(view_matrix3x4_t & mRet) const;
 
 	// Usually used for debug checks. Returns true if the upper 3x3 contains
 	// unit vec3_ts and they are all orthogonal.
 	bool		is_rotation_matrix() const;
 
 	// This calls the other InverseTR and returns the result.
-	view_matrix_t		inverse_tr() const;
+	view_matrix3x4_t		inverse_tr() const;
 
 	// Get the scale of the matrix's basis vec3_ts.
 	vec3_t		get_scale() const;
 
 	// (Fast) multiply by a scaling matrix setup from vScale.
-	view_matrix_t		scale(const vec3_t & vScale);
+	view_matrix3x4_t		scale(const vec3_t & vScale);
 
 	// Normalize the basis vec3_ts.
-	view_matrix_t		normalize_basis_vector_3d() const;
+	view_matrix3x4_t		normalize_basis_vector_3d() const;
 
 	// Transpose.
-	view_matrix_t		transpose() const;
+	view_matrix3x4_t		transpose() const;
 
 	// Transpose upper-left 3x3.
-	view_matrix_t		transpose_3x3() const;
+	view_matrix3x4_t		transpose_3x3() const;
 
 public:
 	// The matrix.

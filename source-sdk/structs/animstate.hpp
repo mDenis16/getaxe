@@ -8,9 +8,10 @@ struct animstate_pose_param_cache_t {
 };
 class anim_state {
 public:
-	std::uint8_t pad_0x0000 [ 0x4 ]; //0x0000
-	bool m_force_update; //0x0005 
-	std::uint8_t pad_0x0006 [ 0x5A ]; //0x0006
+	char pad [ 3 ];
+	char bUnknown; //0x4
+	char pad2 [ 87 ];
+	void * m_pLastBoneSetupWeapon; //0x5C
 	void * m_entity; //0x0060 
 	void * m_weapon; //0x0064 
 	void * m_last_weapon; //0x0068 

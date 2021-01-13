@@ -91,19 +91,19 @@ public:
 
 class player_prediction {
 public:
-	bool in_prediction() {
-		typedef bool(__thiscall * oInPrediction)(void*);
-		return utilities::call_virtual<oInPrediction>(this, 14)(this);
+	void update ( int start_frame, bool valid_frame, int inc_ack, int out_cmd ) {
+		typedef void ( __thiscall * oUpdate )( void *, int, bool, int, int );
+		return utilities::call_virtual<oUpdate> ( this, 3 )( this, start_frame, valid_frame, inc_ack, out_cmd );
 	}
-	void check_moving_ground( player_t* player, float frame_time) {
-		typedef void( __thiscall* checkMoving )( void*, player_t*, double );
-		return utilities::call_virtual<checkMoving>( this, 18 )( this, player, frame_time );
+	void check_moving_ground ( player_t * player, float frame_time ) {
+		typedef void ( __thiscall * checkMoving )( void *, player_t *, double );
+		return utilities::call_virtual<checkMoving> ( this, 18 )( this, player, frame_time );
 	}
-
-	void run_command(player_t* player, c_usercmd* ucmd, player_move_helper* moveHelper) {
-		typedef void(__thiscall * oRunCommand)(void*, player_t*, c_usercmd*, player_move_helper*);
-		return utilities::call_virtual<oRunCommand>(this, 19)(this, player, ucmd, moveHelper);
+	void run_command ( player_t * player, c_usercmd * ucmd, player_move_helper * moveHelper ) {
+		typedef void ( __thiscall * oRunCommand )( void *, player_t *, c_usercmd *, player_move_helper * );
+		return utilities::call_virtual<oRunCommand> ( this, 19 )( this, player, ucmd, moveHelper );
 	}
+	
 
 	void setup_move(player_t* player, c_usercmd* ucmd, player_move_helper* moveHelper, void* pMoveData) {
 		typedef void(__thiscall * oSetupMove)(void*, player_t*, c_usercmd*, player_move_helper*, void*);
@@ -115,4 +115,20 @@ public:
 		typedef void(__thiscall * oFinishMove)(void*, player_t*, c_usercmd*, void*);
 		return utilities::call_virtual<oFinishMove>(this, 21)(this, player, ucmd, pMoveData);
 	}
+
+	void set_local_view_angles ( vec3_t & angles ) {
+		typedef void ( __thiscall * Fn )( void *, vec3_t & );
+		return utilities::call_virtual<Fn> ( this, 21 )( this, angles );
+	}
+	char pad00 [ 8 ]; 					// 0x0000
+	bool InPrediction;				// 0x0008
+	char pad01 [ 1 ];					// 0x0009
+	bool EnginePaused;				// 0x000A
+	char pad02 [ 13 ];					// 0x000B
+	bool IsFirstTimePredicted;		// 0x0018
+
+/*	bool in_prediction ( ) {
+		typedef bool ( __thiscall * oInPrediction )( void * );
+		return utilities::call_virtual<oInPrediction> ( this, 14 )( this );
+	}*/
 };

@@ -14,25 +14,25 @@ struct model_t {
 };
 
 struct model_render_info_t {
-	vec3_t origin;
-	vec3_t angles;
-	char pad[0x4]; // added this
-	void* renderable; // this
-	//const void *model; // and this
-	const model_t* model;
-	const matrix_t* model_to_world;
-	const matrix_t* lighting_offset;
-	const vec3_t* lighting_origin;
-	int flags;
-	int entity_index;
-	int skin;
-	int body;
-	int hitboxset;
-	unsigned short instance;
+    vec3_t                  origin;
+    vec3_t                  angles;
+    char pad [ 0x4 ];
+    void * pRenderable;
+    const model_t * pModel;
+    const matrix3x4_t * pModelToWorld;
+    const matrix3x4_t * pLightingOffset;
+    const vec3_t * pLightingOrigin;
+    int                     flags;
+    int                     entity_index;
+    int                     skin;
+    int                     body;
+    int                     hitboxset;
+    void*   instance;
 
-	model_render_info_t() {
-		model_to_world = NULL;
-		lighting_offset = NULL;
-		lighting_origin = NULL;
-	}
+    model_render_info_t ( ) //-V730
+    {
+        pModelToWorld = NULL;
+        pLightingOffset = NULL;
+        pLightingOrigin = NULL;
+    }
 };
