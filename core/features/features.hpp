@@ -159,6 +159,7 @@ namespace player_manager {
 		float max_delta = 0.f;
 		float speed = 0.f;
 		int choked = 0;
+		bool lag = false;
 		bool predicted = false;
 		int flags = 0;
 		void apply (player_t* entity );

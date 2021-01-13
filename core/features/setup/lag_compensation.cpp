@@ -157,6 +157,9 @@ namespace player_manager {
 		if ( records.at ( entity->index ( ) ).empty ( ) )
 			return;
 
+		if ( this->choked < 2 )
+			return;
+
 		auto predict_origin = [ ] ( vec3_t origin, vec3_t velocity, int ticks ) {
 			return origin + ( velocity * ( interfaces::globals->interval_per_tick * static_cast< float >( ticks ) ) );
 		};
@@ -187,7 +190,7 @@ namespace player_manager {
 	void lagcomp_t::receive ( player_t * entity ) {
 
 		this->simtime = entity->simulation_time ( );
-		bool update = entity->simulation_time ( ) == entity->get_old_simulation_time ( );
+		this->lag = entity->simulation_time ( ) != entity->get_old_simulation_time ( );
 		/*autowall related stuff*/
 		this->obbmin = entity->collideable ( )->mins ( );
 		this->obbmax = entity->collideable ( )->maxs ( );
@@ -203,11 +206,10 @@ namespace player_manager {
 		/*record selection*/
 		this->tick_count = interfaces::globals->tick_count;
 		this->speed = entity->velocity ( ).length_2d_sqr ( );
-		this->choked = update ? 0 : math::time_to_ticks ( std::fabs(entity->simulation_time ( ) - entity->get_old_simulation_time ( )) );
+		this->choked = math::time_to_ticks ( std::fabs(entity->simulation_time ( ) - entity->get_old_simulation_time ( )) );
 		this->flags = entity->flags ( );
 		this->max_delta = resolver::max_desync_delta ( entity );
-		if ( this->choked )
-			this->predict ( entity );
+
 
 		this->manage_matrix ( entity );
 	}
@@ -461,6 +463,8 @@ void player_manager::setup_records ( ) {
 				auto & rec = records.at ( i ).at ( t );
 				if ( !rec.is_valid ( ) )
 					records [ i ].erase ( records.at ( i ).begin ( ) + t );
+				else if (rec.lag )
+					rec.predict ( player );
 			}
 		}
 	}
