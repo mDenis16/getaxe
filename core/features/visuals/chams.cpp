@@ -355,11 +355,11 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 						o_draw_model_exec ( ecx, edx, ctx, state, info, custom_bone_to_world );
 					
 						if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
-							auto record = player_manager::records [ entity->index ( ) ].front ( );
-							interfaces::render_view->modulate_color ( green );
-							o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone_left );
-							interfaces::render_view->modulate_color ( blue );
-							o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone_right );
+							for ( auto record : player_manager::records [ entity->index ( ) ] ) {
+								interfaces::render_view->modulate_color ( blue );
+								o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone );
+							}
+				
 						}
 						interfaces::model_render->override_material ( NULL );
 

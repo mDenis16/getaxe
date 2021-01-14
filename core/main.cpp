@@ -16,7 +16,6 @@ unsigned long WINAPI initialize(void* instance) {
 
 	try {
 		interfaces::initialize();
-		//render::initialize();
 		hooks::initialize();
 	}
 

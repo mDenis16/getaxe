@@ -24,8 +24,14 @@ namespace aimbot {
 			return;
 		if ( !local_player::m_data.active_weapon )
 			return;
+
+		if ( local_player::m_data.active_weapon->is_non_aim ( ) )
+			return;
+
 		if ( !local_player::m_data.weapon_data )
 			return;
+
+
  
 		    populate_hitscan ( );
 

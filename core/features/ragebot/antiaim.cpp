@@ -171,6 +171,7 @@ int anti_aim::best_freestanding_angle ( ) {
 	
 	if ( target.player && target.player->active_weapon() ) {
 		autowall::FireBulletData_t awall = { };
+		awall.target = local_pointer;
 		vec3_t old_abs_angles = target.player->abs_angles ( );
 		matrix3x4_t old_cache [ 128 ];
 
@@ -180,7 +181,7 @@ int anti_aim::best_freestanding_angle ( ) {
 
 			matrix3x4_t rotated [ 128 ];
 			player_manager::get_rotated_matrix ( local_origin, local_pointer->m_CachedBoneData ( ).Base ( ), angle, rotated );
-			local_pointer->set_abs_angles ( vec3_t(0, angle, 0) );
+			//local_pointer->set_abs_angles ( vec3_t(0, angle, 0) );
 			std::memcpy ( local_pointer->m_CachedBoneData ( ).Base ( ), rotated, local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
 			auto bone = local_pointer->get_hitbox_position ( hitbox_head, rotated );
 			int dmg = autowall::get_damage ( target.player, target.player->get_eye_pos ( ), bone, awall );
@@ -242,6 +243,7 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 	if ( interfaces::inputsystem->is_button_down( button_code_t::KEY_V ) && ( interfaces::globals->tick_count  - tick) > 3 )
 	{
 		desync_side = !desync_side;
+		//send_packet  = true;
 		tick = interfaces::globals->tick_count;
 	}
 

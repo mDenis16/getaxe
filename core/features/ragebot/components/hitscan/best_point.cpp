@@ -5,6 +5,8 @@ namespace aimbot {
 	
 
 		autowall::FireBulletData_t awall = { };
+		awall.target = entity.player;
+
 		bestpoint data = {};
 		bool found_fatal_hit = false;
 		bool is_newest_record = record.simtime == entity.player->simulation_time ( );

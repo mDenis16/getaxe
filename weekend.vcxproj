@@ -98,6 +98,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\features\connection\connection.cpp" />
     <ClCompile Include="core\features\features.cpp" />
     <ClCompile Include="core\features\gpu_task\execution.cpp" />
     <ClCompile Include="core\features\legitbot\legitbot.cpp" />
@@ -158,6 +159,8 @@
     <ClCompile Include="core\menu\menu.cpp" />
     <ClCompile Include="core\menu\render\menu_render.cpp" />
     <ClCompile Include="core\render\render.cpp" />
+    <ClCompile Include="core\scripting\duktape.c" />
+    <ClCompile Include="core\scripting\registers.cpp" />
     <ClCompile Include="dependencies\minhook\buffer.c" />
     <ClCompile Include="dependencies\minhook\hde\hde32.c" />
     <ClCompile Include="dependencies\minhook\hde\hde64.c" />
@@ -193,6 +196,8 @@
     <ClInclude Include="core\menu\ImGui\imstb_truetype.h" />
     <ClInclude Include="core\menu\menu.hpp" />
     <ClInclude Include="core\menu\render\menu_render.hpp" />
+    <ClInclude Include="core\scripting\duktape.h" />
+    <ClInclude Include="core\scripting\duk_config.h" />
     <ClInclude Include="dependencies\common_includes.hpp" />
     <ClInclude Include="dependencies\interfaces\engine_sounds.hpp" />
     <ClInclude Include="dependencies\interfaces\i_hud_chat.hpp" />
@@ -267,6 +272,9 @@
     <ClInclude Include="source-sdk\structs\models.hpp" />
     <ClInclude Include="source-sdk\structs\vertex_t.hpp" />
     <ClInclude Include="source-sdk\structs\weaponinfo.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="core\scripting\duk_source_meta.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

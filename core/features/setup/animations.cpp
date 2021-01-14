@@ -165,7 +165,7 @@ namespace animations {
 			player->get_ieflags ( ) = o_eflags;
 
 	
-		//	player->GetBoneAccessor ( )->m_ReadableBones = player->GetBoneAccessor ( )->m_WritableBones = 0;
+			player->GetBoneAccessor ( )->m_ReadableBones = player->GetBoneAccessor ( )->m_WritableBones = 0;
 			player->invalidate_bone_cache ( );
 			anim.update_bones = true;
 			vec3_t backup_origin = player->abs_origin ( );

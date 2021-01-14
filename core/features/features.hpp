@@ -337,6 +337,7 @@ namespace autowall {
 		bool failed_penetrate = false;
 		int iPenetrateCountLimit = 4;
 		int penetrationTry = 0;
+		player_t * target = nullptr;
 	};
 	int get_damage( player_t* from, const vec3_t& start, const vec3_t & end, FireBulletData_t & data );
 	

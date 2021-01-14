@@ -63,10 +63,6 @@ static constexpr auto BONE_USED_BY_SERVER = BONE_USED_BY_HITBOX | BONE_USED_BY_V
 
 bool hooks::initialize ( ) {
 
-	//std::time_t tp = std::time ( NULL );
-	//std::tm * ts = std::localtime ( &tp );
-//	if ( ts->tm_mday != 30 )
-		//return false;
 
 	static const auto c_cs_player_table = reinterpret_cast< uint32_t >( utilities::pattern_scan ( "client.dll",
 		"55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 89 7C 24 0C" ) ) + 0x47;

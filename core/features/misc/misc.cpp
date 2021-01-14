@@ -268,7 +268,14 @@ bool misc::can_fire ( weapon_t* weapon, bool check_revolver ) {
 	if ( !weapon->is_non_aim ( ) && weapon->is_empty ( ) )
 		return false;
 
-	if ( interfaces::globals->cur_time < weapon->next_primary_attack ( ) )
+	const auto nci = interfaces::engine->get_net_channel_info ( );
+
+	if ( !nci )
+		return false;
+
+
+
+	if ( (interfaces::globals->cur_time + nci->get_latency ( 1 ) )  < weapon->next_primary_attack ( ) )
 		return false;
 
 	if ( check_revolver && weapon->item_definition_index ( ) == weapon_revolver && weapon->get_postpone_fire_ready_time ( ) >= interfaces::globals->cur_time )

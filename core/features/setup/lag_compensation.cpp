@@ -157,9 +157,6 @@ namespace player_manager {
 		if ( records.at ( entity->index ( ) ).empty ( ) )
 			return;
 
-		if ( this->choked < 2 )
-			return;
-
 		auto predict_origin = [ ] ( vec3_t origin, vec3_t velocity, int ticks ) {
 			return origin + ( velocity * ( interfaces::globals->interval_per_tick * static_cast< float >( ticks ) ) );
 		};
@@ -169,16 +166,22 @@ namespace player_manager {
 		static auto sv_gravity = interfaces::console->get_convar ( "sv_gravity" );
 		static auto sv_jump_impulse = interfaces::console->get_convar ( "sv_jump_impulse" );
 
+		//if ( !( flags & fl_onground ) )
+		//	predicted_origin.z -= ( interfaces::globals->frame_time * sv_gravity->get_float ( ) );
+		//else if ( ( records.at ( entity->index ( ) ).front ( ).flags & fl_onground ) )
+		//	this->origin.z = sv_jump_impulse->get_float ( );
+
 
 		this->predicted = true;
 
-		this->simtime += math::ticks_to_time ( this->choked );// std::fabs ( entity->get_old_simulation_time ( ) - entity->simulation_time ( ) );
+		this->simtime += math::ticks_to_time ( 1 );
 
 
 		for ( auto & i : this->bone ) {
 			vec3_t original = vec3_t ( i [ 0 ][ 3 ], i [ 1 ][ 3 ], i [ 2 ][ 3 ] );
 			vec3_t predicted = predict_origin ( original, this->velocity, this->choked );
-
+		//	if ( !( flags & fl_onground ) )
+			//	predicted.z -= ( interfaces::globals->frame_time * sv_gravity->get_float ( ) );
 			i [ 0 ][ 3 ] = predicted.x;
 			i [ 1 ][ 3 ] = predicted.y;
 			i [ 2 ][ 3 ] = predicted.z;
@@ -190,7 +193,7 @@ namespace player_manager {
 	void lagcomp_t::receive ( player_t * entity ) {
 
 		this->simtime = entity->simulation_time ( );
-		this->lag = entity->simulation_time ( ) != entity->get_old_simulation_time ( );
+		
 		/*autowall related stuff*/
 		this->obbmin = entity->collideable ( )->mins ( );
 		this->obbmax = entity->collideable ( )->maxs ( );
@@ -209,7 +212,8 @@ namespace player_manager {
 		this->choked = math::time_to_ticks ( std::fabs(entity->simulation_time ( ) - entity->get_old_simulation_time ( )) );
 		this->flags = entity->flags ( );
 		this->max_delta = resolver::max_desync_delta ( entity );
-
+		if ( this->choked > 2 )
+			this->predict ( entity );
 
 		this->manage_matrix ( entity );
 	}
@@ -463,8 +467,6 @@ void player_manager::setup_records ( ) {
 				auto & rec = records.at ( i ).at ( t );
 				if ( !rec.is_valid ( ) )
 					records [ i ].erase ( records.at ( i ).begin ( ) + t );
-				else if (rec.lag )
-					rec.predict ( player );
 			}
 		}
 	}

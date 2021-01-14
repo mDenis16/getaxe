@@ -416,8 +416,18 @@ bool autowall::SimulateFireBullet( player_t* pLocal, weapon_t* pWeapon, FireBull
 		if ( flTraceLenght > 3000.0f || flEnterPenetrationModifier < 0.1f )
 			break;
 
+		bool did_hit_specific_target = false;
+		if ( data.target  && data.enterTrace.entity ) {
+			did_hit_specific_target = data.enterTrace.entity == data.target;
+		}
+		else {
+			did_hit_specific_target = data.enterTrace.entity ? data.enterTrace.entity->is_enemy() : false;
+		}
+	
+		
+
 		// check is can do damage
-		if ( data.enterTrace.hitGroup > hitgroup_generic && data.enterTrace.hitGroup <= hitgroup_rightleg /*&& data.enterTrace.entity->is_enemy(  )*/ )
+		if ( data.enterTrace.hitGroup > hitgroup_generic && data.enterTrace.hitGroup <= hitgroup_rightleg && did_hit_specific_target )
 		{
 			// we got target - scale damage
 			ScaleDamage( data.enterTrace.hitGroup, data.enterTrace.entity, pWeaponData->flArmorRatio, data.flCurrentDamage );
