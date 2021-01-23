@@ -631,6 +631,8 @@ bool __fastcall hooks::create_move::hook ( void * , void * , float input_sample_
 	if ( csgo::send_packet  && !did_shoot )
 		localdata.antiaim_yaw = csgo::real_angle.y;
 
+	if (local_pointer && local_pointer->is_alive())
+	interfaces::console->console_printf ( "max desync delta %f\n", resolver::max_desync_delta(local_pointer) );
 
 	return false;
 }

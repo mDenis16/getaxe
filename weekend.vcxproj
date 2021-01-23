@@ -52,8 +52,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>C:\Users\topor\source\repos\getaxe\output\debug</OutDir>
     <IntDir>.\intermediates\</IntDir>
-    <LibraryPath>"F:\includes\boost_1_73_0\stage\lib";$(LibraryPath)</LibraryPath>
-    <IncludePath>F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0</IncludePath>
+    <LibraryPath>F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\includes\cef-master\include;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\ultralight\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

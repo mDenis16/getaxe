@@ -20,6 +20,11 @@ namespace event_manager {
 	void round_prestart ( i_game_event *  );
 	void round_end ( i_game_event * );
 }
+namespace overlay {
+	void initialize ( );
+	void render ( );
+
+}
 namespace resolver {
 	enum desync_side
 	{
@@ -142,10 +147,11 @@ namespace player_manager {
 	{
 	private:
 		void manage_matrix ( player_t * entity );
-
+		void matrix_resolve ( player_t * entity );
 	public:
 		bool shoot = false;
 		bool failed = false;
+		int left_dmg, right_dmg = 0;
 		float simtime = 0.f;
 		int tick_count = 0;
 
@@ -154,13 +160,17 @@ namespace player_manager {
 		matrix3x4_t bone [ 128 ];
 		int bone_count = 0;
 		matrix3x4_t bone_left [ 128 ];
+		matrix3x4_t bone_resolved [ 128 ];
+		matrix3x4_t bone_aim [ 128 ];
 		matrix3x4_t bone_right [ 128 ];
 		matrix3x4_t bone_at_me [ 128 ];
 		float max_delta = 0.f;
 		float speed = 0.f;
 		int choked = 0;
 		bool lag = false;
+		bool resolved = false;
 		bool predicted = false;
+		resolver::desync_side side = resolver::desync_side::dodge;
 		int flags = 0;
 		void apply (player_t* entity );
 		void restore ( player_t * entity );
@@ -169,6 +179,7 @@ namespace player_manager {
 		bool is_valid ( );
 		void predict ( player_t * entity );
 		void receive ( player_t * entity );
+		void simulate_movement ( player_t * entity, vec3_t & vecOrigin, vec3_t & vecVelocity, int & fFlags, bool bOnGround );
 		lagcomp_t (  ) {	}
 	};
 
@@ -186,7 +197,7 @@ namespace player_manager {
 	void create_fake_matrix ( player_t * pl, matrix3x4_t bones [ 128 ], float delta );
 
 	void create_fake_matrix_based_on_angle ( player_t * pl, matrix3x4_t bones [ 128 ], vec3_t angle );
-
+	void simulate_movement ( player_t * entity, vec3_t & vecOrigin, vec3_t & vecVelocity, int & fFlags, bool bOnGround );
 	float get_fake_abs_yaw ( player_t * pl, float yaw );
 
 	namespace event_logs {
@@ -231,7 +242,7 @@ namespace anti_aim {
 
 	bool allow( c_usercmd* ucmd, bool& send_packet );
 	void freestanding_desync( c_usercmd* cmd, float& dirrection, player_t* p_entity, bool& send_packet, float max_desync );
-	int get_desync_dirrection( );
+	void calculate_peek_real( );
 	void on_create_move( c_usercmd* cmd, bool& send_packet );
 	int best_freestanding_angle ( );
 	struct freestand_point {

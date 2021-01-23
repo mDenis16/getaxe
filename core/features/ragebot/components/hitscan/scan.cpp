@@ -29,7 +29,7 @@ namespace aimbot {
 
 		for ( auto record : player_manager::records [ index ] ) {
 			
-			if ( record.shoot ) {
+			if ( record.shoot || record.resolved ) {
 				best_record = record;
 				break;
 			}
@@ -109,49 +109,22 @@ namespace aimbot {
 	}
 
 	void manage_resolve_data ( target & entity, player_manager::lagcomp_t& record ) {
-		if ( record.shoot  )
-			return;
 
-		if ( !config.ragebot_resolver ) {
+
+		/*if ( !config.ragebot_resolver ) {
 			resolver::resolver_data [ entity.player->index ( ) ].side = resolver::desync_side::dodge;
 			return;
 		}
 		if ( resolver::resolver_data [ entity.player->index ( ) ].antiaim_type != resolver::antiaim_type::backwards ) {
 			resolver::resolver_data [ entity.player->index ( ) ].side = resolver::desync_side::dodge;
 			return;
-		}
-		
-		auto origin = entity.player->get_hitbox_position ( hitbox_head, record.bone );
-		auto left = entity.player->get_hitbox_position ( hitbox_head, record.bone_left );
-		auto right = entity.player->get_hitbox_position ( hitbox_head, record.bone_right );
-		auto head_at_target = entity.player->get_hitbox_position ( hitbox_head, record.bone_at_me );
-		bool left_visible = autowall::can_hit_float_point ( left, engine_prediction::unpredicted_eye );
-		bool right_visible = autowall::can_hit_float_point ( right, engine_prediction::unpredicted_eye );
-		float dist_hitable_left = math::calc_distance ( left, head_at_target, false );
-		float dist_hitable_right = math::calc_distance ( right, head_at_target, false );
-
-		if ( right_visible && left_visible )
-			return;
-
-
-		float delta = fabs ( dist_hitable_left - dist_hitable_right );
-		if ( delta < 1.f ) {
-			resolver::resolver_data [ entity.player->index ( ) ].side = resolver::desync_side::dodge;
-			return;
-		}
-		
-		if ( dist_hitable_left < 2.f && dist_hitable_right < 2.f ) {
-			resolver::resolver_data [ entity.player->index ( ) ].side = resolver::desync_side::dodge; 
-			return;
-		}
-		if ( dist_hitable_left < 3.f || right_visible ) {
-			std::memcpy ( record.bone, record.bone_left, sizeof ( record.bone_left ) );
-			resolver::resolver_data [ entity.player->index ( ) ].side = resolver::desync_side::left;
-		}
-		else if ( dist_hitable_right < 3.f || left_visible ) {
-			std::memcpy ( record.bone, record.bone_right, sizeof ( record.bone_right ) );
-			resolver::resolver_data [ entity.player->index ( ) ].side = resolver::desync_side::right;
-		}
+		}*/
+	   
+		if ( !record.shoot  && record.resolved )
+			std::memcpy ( record.bone_aim, record.bone_resolved, sizeof ( record.bone_resolved ) );
+		else
+			std::memcpy ( record.bone_aim, record.bone, sizeof ( record.bone ) );
+	
 	
 	}
 	void scan ( target & entity ) {

@@ -151,7 +151,59 @@ bool anti_aim::allow( c_usercmd* ucmd, bool& send_packet ) {
 
 	return true;
 }
+void anti_aim::calculate_peek_real ( ) {
+	if ( aimbot::targets.empty ( ) )
+		return;
 
+	auto target = aimbot::targets.front ( );
+
+	float Back, Right, Left;
+
+	vec3_t src3D, dst3D, forward, right, up, src, dst;
+	trace_t tr;
+	ray_t ray, ray2, ray3, ray4, ray5;
+	trace_filter filter;
+
+	vec3_t engineViewAngles;
+	interfaces::engine->get_view_angles ( engineViewAngles );
+
+	engineViewAngles.x = 0;
+
+	math::angle_vectors ( engineViewAngles, &forward, &right, &up );
+
+	filter.skip = local_pointer;
+	src3D = engine_prediction::unpredicted_eye;
+	dst3D = src3D + ( forward * 384 );
+
+	ray.initialize ( src3D, dst3D );
+
+	interfaces::trace_ray->trace_ray ( ray, MASK_SHOT, &filter, &tr );
+
+	Back = ( tr.end - tr.start ).length ( );
+
+	ray2.initialize ( src3D + right * 35, dst3D + right * 35 );
+
+	interfaces::trace_ray->trace_ray ( ray2, MASK_SHOT, &filter, &tr );
+
+	Right = ( tr.end - tr.start ).length ( );
+
+	ray3.initialize ( src3D - right * 35, dst3D - right * 35 );
+
+	interfaces::trace_ray->trace_ray ( ray3, MASK_SHOT, &filter, &tr );
+
+	Left = ( tr.end - tr.start ).length ( );
+
+	if ( Left > Right ) {
+		anti_aim::desync_side = true;
+	}
+	else if ( Right > Left ) {
+		anti_aim::desync_side = false;
+	}
+	//else if ( Back > Right || Back > Left ) {
+	//	return ( yaw - 180 );
+//	}
+
+}
 int anti_aim::best_freestanding_angle ( ) {
 	anti_aim::points.clear ( );
 	auto local_origin = local_pointer->origin ( );
@@ -269,7 +321,7 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 			viewangle.angle_normalize ( ); viewangle.angle_clamp ( );
 		}
 		
-	
+		 calculate_peek_real ( );
 
 		 if ( send_packet ) {
 				 cmd->viewangles.y = viewangle.y;

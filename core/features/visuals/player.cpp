@@ -258,14 +258,15 @@ void visuals::player::name( visuals::player::data _data ) {
 
 	dsdsDrawText ( c_menu::get ( ).smallf, print, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y - 15.f ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, true, false );
 
-/*dsdsDrawText ( c_menu::get ( ).smallf, resolver::antiaim_name(_data.index), ImVec2 ( _data.box_data.x + _data.box_data.w  + 5.f, _data.box_data.y + 5 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
-	std::stringstream ss;
-	ss << "delta " << resolver::resolver_data[_data.index].desync_delta;
 
-	dsdsDrawText ( c_menu::get ( ).smallf, ss.str(), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 15 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
-
-
-	dsdsDrawText ( c_menu::get ( ).smallf, resolver::side_name( resolver::resolver_data [ _data.index ].side), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 25 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );*/
+	
+	if ( !player_manager::records [ _data.index ].empty ( ) ) {
+		auto current = player_manager::records [ _data.index ].back ( );
+		dsdsDrawText ( c_menu::get ( ).smallf, resolver::side_name ( current.side ), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 25 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
+		if ( current.resolved ) {
+			dsdsDrawText ( c_menu::get ( ).smallf, "hit", ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 15 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
+		 }
+	}
 }
 void visuals::player::box( visuals::player::data _data ) {
 	bool should_show = _data.enemy ? config.visuals_enemy_box : config.visuals_team_box;

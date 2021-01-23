@@ -175,7 +175,7 @@ std::string resolver::side_name ( desync_side side ) {
 		side_name = "right";
 		break;
 	}
-	return "side_name";
+	return side_name;
 }
 
 void resolver::event_logs::bullet_impact ( i_game_event *  ) {

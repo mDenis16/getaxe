@@ -77,6 +77,7 @@ enum hitgroups {
 	hitgroup_rightarm = 5,
 	hitgroup_leftleg = 6,
 	hitgroup_rightleg = 7,
+	hitgroup_neck = 8,
 	hitgroup_gear = 10
 };
 

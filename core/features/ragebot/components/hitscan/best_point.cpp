@@ -16,7 +16,7 @@ namespace aimbot {
 		//interfaces::console->console_printf ( "distance %f \n", dist );
 
 		bool high_dist = dist > 1000.f;
-		if ( dist > 500.f ) {
+		if (  dist > 500.f ) {
 			auto bone = entity.player->get_hitbox_position ( hitbox_body, record.bone );
 
 			autowall::get_damage ( local_pointer, engine_prediction::unpredicted_eye, bone, awall );
@@ -29,10 +29,10 @@ namespace aimbot {
 
 		float min_dmg = config.ragebot_min_dmg;
 
-		if ( min_dmg > local_player::m_data.weapon_data->iDamage  || entity.is_current_record_hidden )
+		if ( min_dmg > local_player::m_data.weapon_data->iDamage )
 			min_dmg = local_player::m_data.weapon_data->iDamage - 1.f;
 
-		if ( config.ragebot_double_tap )
+		if ( config.ragebot_double_tap || interfaces::inputsystem->is_button_down ( button_code_t::KEY_F))
 			min_dmg = local_player::m_data.weapon_data->iDamage / 2 + 15.f;
 
 		for ( auto hitbox : hitscan_list ) { /*loop through our hitscan list*/
@@ -41,8 +41,13 @@ namespace aimbot {
 			multi_point ( entity, hitbox, record, points, !is_newest_record );
 	
 			for ( auto point : points.points ) {
+			
+			
 
-				if ( !point.safe && !( entity.is_current_record_hidden && !is_newest_record ) )
+				//if ( hitbox == hitbox_head && !record.resolved  )
+				//	continue;
+
+				if ( !point.safe )
 					continue;
 
 			

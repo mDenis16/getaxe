@@ -353,14 +353,30 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 
 						override_mat ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );
 						o_draw_model_exec ( ecx, edx, ctx, state, info, custom_bone_to_world );
-					
-						if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
+						if ( !player_manager::records [ entity->index ( ) ].empty ( ) ) {
+
+							auto oldest = player_manager::records [ entity->index ( ) ].front ( );
+							
+							interfaces::render_view->modulate_color ( red );
+							o_draw_model_exec ( ecx, edx, ctx, state, info, oldest.bone_left );
+
+							interfaces::render_view->modulate_color ( blue );
+
+							o_draw_model_exec ( ecx, edx, ctx, state, info, oldest.bone_right );
+
+
+						}
+						/*if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
 							for ( auto record : player_manager::records [ entity->index ( ) ] ) {
-								interfaces::render_view->modulate_color ( blue );
+								if (record.predicted )
+									interfaces::render_view->modulate_color ( red );
+								else
+									interfaces::render_view->modulate_color ( blue );
+
 								o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone );
 							}
 				
-						}
+						}*/
 						interfaces::model_render->override_material ( NULL );
 
 					}

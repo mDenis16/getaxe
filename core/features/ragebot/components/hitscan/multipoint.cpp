@@ -6,13 +6,23 @@ namespace aimbot {
 
 	void multi_point ( target & entity, const int & hit_box, player_manager::lagcomp_t & record, multipoint & points, bool should_disable ) {
 
+		auto model = entity.player->model ( );
+		if ( !model )
+			return;
 
+		auto studio_model = interfaces::model_info->get_studio_model ( model );
+		if ( !studio_model )
+			return;
 
-		studio_box_t * hitbox = entity.hitbox_set->hitbox ( hit_box );
+		auto hitbox_set = studio_model->hitbox_set ( 0 );
+		if ( !hitbox_set )
+			return;
+
+		studio_box_t * hitbox = hitbox_set->hitbox ( hit_box );
 
 		const auto mod = hitbox->radius != -1.f ? hitbox->radius : 0.f;
-		auto maxs = math::vector_transform ( hitbox->maxs + mod, record.bone [ hitbox->bone ] );
-		auto  mins = math::vector_transform ( hitbox->mins - mod, record.bone [ hitbox->bone ] );
+		auto maxs = math::vector_transform ( hitbox->maxs + mod, record.bone_aim [ hitbox->bone ] );
+		auto  mins = math::vector_transform ( hitbox->mins - mod, record.bone_aim [ hitbox->bone ] );
 
 		points.center = ( mins + maxs ) * 0.5f;
 
@@ -63,6 +73,9 @@ namespace aimbot {
 		else
 			points.points.emplace_back ( point );
 
+
+
+
 		if ( hit_box == hitbox_head ) { /*head upper chest intersection*/
 			for ( size_t i = 0; i < points.points.size ( ); i++ )
 				if ( does_point_intersect ( entity, points.points.at ( i ).pos, hitbox_upper_chest, record.bone ) )
@@ -71,35 +84,20 @@ namespace aimbot {
 		/*safepoint implementation after i sleep*/
 		for ( size_t i = 0; i < points.points.size ( ); i++ ) {
 		
-			if ( !record.shoot && config.ragebot_resolver ) {
-				if ( resolver::resolver_data [ entity.player->index ( ) ].side > 0 ) {
-					points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_at_me ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone );
-				}
-				else {
-					points.points.at ( i ).safe =  does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_left ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_right );
-				}
+
+			if ( record.max_delta <= 32 || record.shoot ) {
+				points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_left ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_right );
 			}
-			else {
-				if ( record.shoot || config.ragebot_safe_point > 0 ) {
-					if ( record.shoot || config.ragebot_safe_point == 1 && hit_box == hitboxes::hitbox_head ) {
-						auto left_head = entity.player->get_hitbox_position ( record.bone_left, entity.hitbox_set->hitbox ( hitbox_head ) );
-						auto right_head = entity.player->get_hitbox_position ( record.bone_right, entity.hitbox_set->hitbox ( hitbox_head ) );
-						auto left_head_w2s = vec3_t ( ), right_head_w2s = vec3_t ( );
-						auto center = vec3_t ( csgo::screen_width / 2.f, csgo::screen_height / 2.f, 0.f );
-						if ( interfaces::debug_overlay->world_to_screen ( left_head, left_head_w2s ) && interfaces::debug_overlay->world_to_screen ( right_head, right_head_w2s ) ) {
-
-							auto dist_to_left = math::calc_distance ( center, left_head_w2s, true );
-							auto dist_to_right = math::calc_distance ( center, right_head_w2s, true );
-
-							points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, dist_to_left <= dist_to_right ? record.bone_left : record.bone_right );
-
-
-						}
-					}
-					else
-						points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_left ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_right );
-				}
+			else if (config.ragebot_safe_point > 0) {
+				
+				if ( record.resolved && record.max_delta > 32 && record.max_delta <= 50 )
+					points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_resolved ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_aim );
+				else if ( record.resolved )
+					points.points.at ( i ).safe = true;
 			}
+		     
+			
+		
 		
 		}
 		aimbot::m_visual_debug.points = points.points;

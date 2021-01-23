@@ -163,6 +163,7 @@ public:
 		 bool standard_blending_rules_target = true;
 		 bool update_client_side_animation = true;
 
+		 bool abs_angles = false;
 };
 
 #define config c_config::get ( )

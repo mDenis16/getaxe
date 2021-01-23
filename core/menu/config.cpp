@@ -26,6 +26,7 @@ bool c_config::save_config ( std::string file_name ) {
 	return true;
 }
 
+
 bool c_config::load_config ( std::string file_name ) {
 	CreateDirectory ( "C:\\axeus", NULL );
 

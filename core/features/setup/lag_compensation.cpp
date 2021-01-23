@@ -108,7 +108,7 @@ namespace player_manager {
 		entity->set_abs_angles ( this->abs_angles );
 		entity->set_abs_origin ( this->abs_origin );
 
-		memcpy ( entity->m_CachedBoneData ( ).Base ( ), this->bone, entity->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+		memcpy ( entity->m_CachedBoneData ( ).Base ( ), this->bone_aim, entity->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
 	}
 	void lagcomp_t::restore ( player_t * entity ) {
 		auto & anim = animations::player_data [ entity->index ( ) ];
@@ -163,14 +163,7 @@ namespace player_manager {
 
 		auto predicted_origin = predict_origin ( this->origin, this->velocity, this->choked );
 
-		static auto sv_gravity = interfaces::console->get_convar ( "sv_gravity" );
-		static auto sv_jump_impulse = interfaces::console->get_convar ( "sv_jump_impulse" );
-
-		//if ( !( flags & fl_onground ) )
-		//	predicted_origin.z -= ( interfaces::globals->frame_time * sv_gravity->get_float ( ) );
-		//else if ( ( records.at ( entity->index ( ) ).front ( ).flags & fl_onground ) )
-		//	this->origin.z = sv_jump_impulse->get_float ( );
-
+	
 
 		this->predicted = true;
 
@@ -180,8 +173,7 @@ namespace player_manager {
 		for ( auto & i : this->bone ) {
 			vec3_t original = vec3_t ( i [ 0 ][ 3 ], i [ 1 ][ 3 ], i [ 2 ][ 3 ] );
 			vec3_t predicted = predict_origin ( original, this->velocity, this->choked );
-		//	if ( !( flags & fl_onground ) )
-			//	predicted.z -= ( interfaces::globals->frame_time * sv_gravity->get_float ( ) );
+		
 			i [ 0 ][ 3 ] = predicted.x;
 			i [ 1 ][ 3 ] = predicted.y;
 			i [ 2 ][ 3 ] = predicted.z;
@@ -216,6 +208,92 @@ namespace player_manager {
 			this->predict ( entity );
 
 		this->manage_matrix ( entity );
+		this->matrix_resolve ( entity );
+	}
+	void lagcomp_t::matrix_resolve ( player_t * entity ) {
+		if ( this->max_delta < 36 )
+			return;
+
+		auto closest_wall = vec3_t ( );
+		float step = M_PI * 2.0 / 8;
+		float radius = 100.f;
+		float closest_dist = 999.f;
+
+		auto position = this->origin +  entity->view_offset();
+		for ( float a = 0; a < ( M_PI * 2.0 ); a += step ) {
+			vec3_t location ( radius * cos ( a ) + position.x, radius * sin ( a ) + position.y, position.z );
+
+			ray_t ray;
+			trace_t tr;
+			ray.initialize ( position, location );
+			trace_filter_one_entity traceFilter;
+			traceFilter.pEntity = entity;
+			interfaces::trace_ray->trace_ray ( ray, MASK_SHOT, &traceFilter, &tr );
+			auto dist = tr.end.distance_to ( position );
+
+			if ( dist < closest_dist ) {
+				closest_wall = tr.end;
+				closest_dist = dist;
+			}
+
+		}
+
+		if ( closest_dist < 80.f ) { /*thanks to neverlose lool i luv you sophie*/
+
+			if ( !closest_wall.is_zero ( ) ) {
+				auto left_head = entity->get_hitbox_position ( hitbox_head, this->bone_left );
+				auto right_head = entity->get_hitbox_position ( hitbox_head, this->bone_right );
+
+				auto left_dist = left_head.distance_to ( closest_wall );
+				auto right_dist = right_head.distance_to ( closest_wall );
+
+				if ( right_dist >= left_dist ) {
+					std::memcpy ( this->bone_resolved, this->bone_left, sizeof ( this->bone_left ) );
+					this->resolved = true;
+					this->side = resolver::desync_side::left;
+				}
+				else {
+					std::memcpy ( this->bone_resolved, this->bone_right, sizeof ( this->bone_right ) );
+					this->resolved = true;
+					this->side = resolver::desync_side::right;
+				}
+			}
+		}
+		//else {
+			/*simple traceray implementation or just use oldest data :P*/
+			/*if ( records [ entity->index ( ) ].empty ( ) )
+				return;
+
+			auto oldest = records [ entity->index ( ) ].front ( );
+
+			this->side = oldest.side;
+			this->resolved = this->resolved;
+
+		}*/
+		
+	/*	vec3_t direction_1 = math::angle_vector ( vec3_t ( 0.f, math::calc_angle ( local_pointer->origin ( ), entity->origin ( ) ).y - 90.f, 0.f ) );
+		vec3_t direction_2 = math::angle_vector ( vec3_t ( 0.f, math::calc_angle ( local_pointer->origin ( ), entity->origin ( ) ).y + 90.f, 0.f ) );
+
+		const auto left_eye_pos = entity->origin ( ) + vec3_t ( 0, 0, 64 ) + ( direction_1 * 16.f );
+		const auto right_eye_pos = entity->origin ( ) + vec3_t ( 0, 0, 64 ) + ( direction_2 * 16.f );
+		*/
+		/*autowall::FireBulletData_t awall = { };
+		this->left_dmg = autowall::get_damage ( entity, localdata.eye_position, entity->get_hitbox_position(hitbox_head, this->bone_left), awall );
+		this->right_dmg = autowall::get_damage ( entity, localdata.eye_position, entity->get_hitbox_position ( hitbox_head, this->bone_left ), awall );
+		if ( this->left_dmg == this->right_dmg == 0 )
+			return;
+
+		if ( this->right_dmg >= this->left_dmg ) {
+			std::memcpy ( this->bone_resolved, this->bone_left, sizeof ( this->bone_left ) );
+			this->resolved = true;
+			this->side = resolver::desync_side::left;
+		}
+		else if ( this->left_dmg >= this->right_dmg ) {
+			std::memcpy ( this->bone_resolved, this->bone_right, sizeof ( this->bone_right ) );
+			this->resolved = true;
+			this->side = resolver::desync_side::right;
+		}*/
+
 	}
 	void lagcomp_t::manage_matrix ( player_t * entity ) {
 
@@ -338,7 +416,7 @@ void player_manager::create_fake_matrix ( player_t* pl, matrix3x4_t bones [ 128 
 	auto angle = pl->eye_angles ( );
 	angle.y += delta;
 	animations::update_anim_angle ( animstate, angle );
-	/*crash*/
+	if (config.abs_angles )
 	pl->set_abs_angles (vec3_t(0, pl->get_anim_state ( )->m_abs_yaw ,0) );
 	pl->GetBoneAccessor ( )->m_ReadableBones = pl->GetBoneAccessor ( )->m_WritableBones = 0;
 
