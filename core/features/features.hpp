@@ -15,6 +15,29 @@ static int hitmarker_alpha = 0;
 namespace connection {
 	void send ( std::string msg );
 	void main ( );
+	class telemetry {
+	public:
+		telemetry ( ) { 
+			side = 0;
+			hit_side = 0;
+		}
+	
+		int id = 0;
+		std::string map;
+		vec3_t position = vec3_t();
+		float max_desync_delta = 0.f;
+		float lby = 0.f;
+		int autowall_side = 0;
+		int side = 0;
+		int hit_side = 0;
+		bool missed = false;
+		float left_yaw = 0.f;
+		float right_yaw = 0.f;
+		float yaw = 0.f;
+		float goal_feet = 0.f;
+		void send ( );
+	
+	};
 }
 namespace event_manager {
 	void round_prestart ( i_game_event *  );
@@ -38,9 +61,9 @@ namespace resolver {
 		sideways
 	};
 	namespace event_logs {
-		void bullet_impact ( i_game_event *  );
-		void weapon_fire ( i_game_event *  );
-		void player_hurt ( i_game_event *  );
+		void bullet_impact ( i_game_event * event  );
+		void weapon_fire ( i_game_event * event );
+		void player_hurt ( i_game_event * event );
 	};
 	struct resolve_shot {
 		float angle_shot;
@@ -51,7 +74,8 @@ namespace resolver {
 		float angle_related_to_me;
 		int tick;
 		int enemy_index;
-
+		bool bullat_impact_approved = false;
+		bool failed = false;
 		struct {
 			int victim = -1;
 			int damage = -1;
@@ -74,6 +98,7 @@ namespace resolver {
 		bool is_using_desync = false;
 		bool is_usync_max_desync = false;
 		bool extended_desync = false;
+		bool lby_desync = false;
 		float lby_angle = 0.f;
 		antiaim_type antiaim_type;
 
@@ -100,6 +125,8 @@ namespace resolver {
 	int get_desync_side ( vec3_t from, vec3_t to, player_t * entity, int hitbox );
 
 	void side_think ( player_t * entity );
+
+	int get_desync_side ( player_t * entity, vec3_t from, vec3_t to );
 
 	float server_feet_yaw ( player_t * entity, vec3_t angle );
 
@@ -167,9 +194,14 @@ namespace player_manager {
 		float max_delta = 0.f;
 		float speed = 0.f;
 		int choked = 0;
+		bool in_air  = false;
 		bool lag = false;
 		bool resolved = false;
 		bool predicted = false;
+		float lby = 0.f;
+		float goal_feet = 0.f;
+		bool invalid = false;
+		animationlayer anim_layer [ 15 ];
 		resolver::desync_side side = resolver::desync_side::dodge;
 		int flags = 0;
 		void apply (player_t* entity );
@@ -217,7 +249,9 @@ namespace player_manager {
 	void get_rotated_matrix ( vec3_t origin, matrix3x4_t from_matrix [ MAXSTUDIOBONES ], float angle, matrix3x4_t new_matrix [ MAXSTUDIOBONES ] );
 
 
-	void setup_records( );
+	void filter_records ( );
+
+	void setup_records( client_frame_stage_t stage);
 
 	void backup_player( player_t* entity );
 
@@ -254,9 +288,38 @@ namespace anti_aim {
 
 }
 namespace gpu_task {
-	
+	enum task_type {
+	   distance
 
-	void execute_gpu_trace ( );
+	};
+
+
+
+	class task {
+	public:
+		int id = 0;
+		task_type type;
+		bool finished = false;
+		long time = 0;
+		int attemps = 0;
+		void wait_for ( );
+		virtual void handle ( ) = 0;
+	};
+	class calc_distance : public task {
+	public:
+		vec3_t from, to;
+		bool calc_2d =  false;
+		float result = 0.f;
+		void handle ( ) override;
+
+		calc_distance ( vec3_t _from, vec3_t _to, bool _calc_2d );
+	};
+
+	void execute_tasks ( );
+	long get_mils ( );
+	extern int last_task_id;
+	extern std::vector<task *> tasklist;
+	extern size_t thread_lock;
 }
 namespace autopeek {
 	
@@ -276,6 +339,7 @@ namespace autopeek {
 		bool run = false;
 		bool finished = false;
 	};
+	extern bool shot_fired;
 	void run_cm ( c_usercmd * cmd );
 	void search_position ( );
 	void move ( c_usercmd * cmd );
@@ -333,7 +397,89 @@ namespace animations {
 	void post_data_end ( player_t * player );
 
 }
+namespace shifting {
+	void create_move( c_usercmd* cmd  );
+	struct shift_data {
+		bool can_shift = false;
+		bool did_last_tick_shoot = false;
 
+		bool shift_this_tick = false;
+		int shift_ticks = 0;
+		int  next_tickbase_shift = 0;
+		int shift_target = 0;
+		int recharge_ticks = 16;
+		bool did_shift_before = false;
+		bool allow = false;
+		bool was_zero_before = false;
+		int original_tickbase = 0;
+		int last_shift_tick = 0;
+		int shifted_command = 0;
+		int wait_for_recharge = 0;
+		int current_shift = 0;
+		bool can_recharge = true;
+		bool finished_shift_last_tick = false;
+		c_usercmd * shift_cmd = nullptr;
+	};
+	inline shift_data _shift;
+}
+
+enum Prediction_stage {
+	SETUP,
+	PREDICT,
+	FINISH
+};
+
+class engineprediction : public singleton <engineprediction> {
+	struct Netvars_data {
+		int tickbase = INT_MIN;
+
+		vec3_t m_aimPunchAngle = vec3_t(0,0,0);
+		vec3_t m_aimPunchAngleVel = vec3_t ( 0, 0, 0 );
+		vec3_t m_viewPunchAngle = vec3_t ( 0, 0, 0 );
+		vec3_t m_vecViewOffset = vec3_t ( 0, 0, 0 );
+	};
+
+	struct Backup_data {
+		int flags = 0;
+		vec3_t velocity = vec3_t ( 0, 0, 0 );
+	};
+
+	struct Prediction_data {
+		void reset ( ) {
+			prediction_stage = SETUP;
+			old_curtime = 0.0f;
+			old_frametime = 0.0f;
+		}
+
+		Prediction_stage prediction_stage = SETUP;
+		float old_curtime = 0.0f;
+		float old_frametime = 0.0f;
+		int * prediction_random_seed = nullptr;
+		int * prediction_player = nullptr;
+	};
+
+	struct Viewmodel_data {
+		weapon_t * weapon = nullptr;
+
+		int viewmodel_index = 0;
+		int sequence = 0;
+		int animation_parity = 0;
+
+		float cycle = 0.0f;
+		float animation_time = 0.0f;
+	};
+public:
+	Netvars_data netvars_data [ 150 ];
+	Backup_data backup_data;
+	Prediction_data prediction_data;
+	Viewmodel_data viewmodel_data;
+
+	void store_netvars ( );
+	void restore_netvars ( );
+	void setup ( );
+	void predict ( c_usercmd * m_pcmd );
+	void finish ( );
+};
 namespace autowall {
 	struct FireBulletData_t
 	{
@@ -669,7 +815,10 @@ namespace aimbot {
 	void cm ( c_usercmd * cmd, bool & send_packet );
 
 }
+namespace autothrow {
+	void create_move ( c_usercmd * cmd );
 
+}
 namespace visuals {
 
 	struct data {
@@ -809,17 +958,30 @@ namespace visuals {
 			void draw ( );
 
 			namespace proximity {
-				struct proximity_data {
+				class proximity_data {
+				public:
 					vec3_t position = vec3_t ( );
+					vec3_t predicted_position = vec3_t ( );
 					float curtime = 0.f;
 					float damage = 0.f;
-				
-				
+
+					int spawn_tick = 0;
+					entity_t * grenade;
 					bool predicted = false;
 					bool visible = false;
 					vec3_t w2s = vec3_t ( );
+					void predict ( );
+					bool detonated ( float time, trace_t & trace );
+					proximity_data ( entity_t* _grenade ) {
+						grenade = _grenade;
+						position = _grenade->origin ( );
+						spawn_tick = interfaces::globals->tick_count;
+					}
+
+
 				};
-				extern std::vector<proximity_data> proximity_grenades;
+			
+				extern std::vector<proximity_data*> proximity_grenades;
 				void think ( );
 				void draw ( );
 				void think_paint ( );

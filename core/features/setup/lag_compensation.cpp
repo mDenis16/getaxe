@@ -45,10 +45,25 @@ void player_manager::event_logs::bullet_impact ( i_game_event * event ) {
 
 		//	interfaces::console->console_printf ( "Found exact shot time: %f, ticks choked to get here: %d\n", shot_time, math::time_to_ticks ( event_time - math::ticks_to_time ( record.tick_count ) ) );
 			record.shoot = true;
+			record.resolved = true;
 
-			const float delta = math::normalize_yaw ( enemy_angle.y - entity->eye_angles ( ).y );
+			float flPseudoFireYaw = math::normalize_yaw ( math::calc_angle ( entity->get_eye_pos ( ), local_pointer->eye_pos() ).y );
 
-			get_rotated_matrix ( entity->origin ( ), record.bone, delta, record.bone );
+		
+				float flLeftFireYawDelta = fabsf ( math::normalize_yaw ( flPseudoFireYaw - ( record.eye_angles.y + 29.f ) ) );
+				float flRightFireYawDelta = fabsf ( math::normalize_yaw ( flPseudoFireYaw - ( record.eye_angles.y - 29.f ) ) );
+
+				//g_notify.add( tfm::format( XOR( "found shot record on %s: [ yaw: %i ]" ), game::GetPlayerName( record->m_player->index( ) ), int( flLeftFireYawDelta > flRightFireYawDelta ? -29.f : 29.f ) ) );
+
+				if ( flLeftFireYawDelta > flRightFireYawDelta )
+					record.side = resolver::desync_side::left;
+				else
+					record.side = resolver::desync_side::right;
+					
+			//}
+			//const float delta = math::normalize_yaw ( enemy_angle.y - entity->eye_angles ( ).y );
+
+			//get_rotated_matrix ( record.origin, record.bone, delta, record.bone );
 
 			break;
 		}
@@ -108,7 +123,7 @@ namespace player_manager {
 		entity->set_abs_angles ( this->abs_angles );
 		entity->set_abs_origin ( this->abs_origin );
 
-		memcpy ( entity->m_CachedBoneData ( ).Base ( ), this->bone_aim, entity->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+		memcpy ( entity->m_CachedBoneData ( ).Base ( ), this->bone, entity->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
 	}
 	void lagcomp_t::restore ( player_t * entity ) {
 		auto & anim = animations::player_data [ entity->index ( ) ];
@@ -142,16 +157,77 @@ namespace player_manager {
 		if ( !nci )
 			return false;
 
+		if ( invalid )
+			return false;
 
-		float correct = 0.f;
 
-		correct += nci->get_latency ( 1 );
-		correct += get_lerp_time ( );
+		static auto sv_maxunlag = interfaces::console->get_convar (  ( "sv_maxunlag" ) );
 
-		const auto delta_time = correct - ( interfaces::globals->cur_time - this->simtime );
+		auto outgoing = nci->get_latency ( 0 );
+		auto incoming = nci->get_latency ( 1 );
 
-		return fabsf ( delta_time ) < 0.2f;
+		auto correct = std::clamp ( outgoing + incoming + get_lerp_time ( ), 0.0f, sv_maxunlag->get_float ( ) );
+
+		auto curtime = local_pointer->is_alive ( ) ? math::ticks_to_time ( localdata.fixed_tickbase ) : interfaces::globals->cur_time; //-V807
+		auto delta_time = correct - ( curtime - this->simtime );
+
+		if ( fabs ( delta_time ) > 0.2f )
+			return false;
+
+		auto extra_choke = 0;
+
+		if ( localdata.fakeducking )
+			extra_choke = 14 - interfaces::clientstate->m_choked_commands;
+
+		auto server_tickcount = extra_choke + interfaces::globals->tick_count + math::time_to_ticks ( outgoing + incoming );
+		int dead_time = static_cast<int>( ( math::ticks_to_time ( server_tickcount ) - sv_maxunlag->get_float ( ) ));
+
+		if ( this->simtime < static_cast<float>(dead_time)) 
+			return false;
+
+		return true;
 	}
+	/*
+	bool lagcomp_t::is_valid ( ) {
+		if ( !this ) //-V704
+			return false;
+
+
+		if ( this->invalid )
+			return false;
+
+		auto net_channel_info = interfaces::engine->get_net_channel_info ( );
+
+		if ( !net_channel_info )
+			return false;
+
+		static auto sv_maxunlag = interfaces::console->get_convar (   "sv_maxunlag"  );
+
+		auto outgoing = net_channel_info->get_latency ( 0 );
+		auto incoming = net_channel_info->get_latency ( 1 );
+
+		auto correct = std::clamp ( outgoing + incoming + get_lerp_time ( ), 0.0f, sv_maxunlag->get_float ( ) );
+
+		auto curtime = local_pointer->is_alive ( ) ? math::ticks_to_time ( localdata.fixed_tickbase ) : interfaces::globals->cur_time; //-V807
+		auto delta_time = correct - ( curtime - this->simtime );
+
+		if ( fabs ( delta_time ) > 0.2f )
+			return false;
+
+		auto extra_choke = 0;
+
+		if ( localdata.fakeducking )
+			extra_choke = 14 - interfaces::clientstate->m_choked_commands;
+
+		auto server_tickcount = extra_choke + interfaces::globals->tick_count + math::time_to_ticks ( outgoing + incoming );
+		auto dead_time = ( int ) ( math::time_to_ticks ( server_tickcount ) - sv_maxunlag->get_float ( ) );
+
+		if ( this->simtime < ( float ) dead_time )
+			return false;
+
+		return true;
+	}
+	*/
 	void lagcomp_t::predict ( player_t * entity ) {
 
 		if ( records.at ( entity->index ( ) ).empty ( ) )
@@ -185,7 +261,9 @@ namespace player_manager {
 	void lagcomp_t::receive ( player_t * entity ) {
 
 		this->simtime = entity->simulation_time ( );
-		
+		/*animation system*/
+		animations::update_player_animation (entity );
+
 		/*autowall related stuff*/
 		this->obbmin = entity->collideable ( )->mins ( );
 		this->obbmax = entity->collideable ( )->maxs ( );
@@ -204,19 +282,34 @@ namespace player_manager {
 		this->choked = math::time_to_ticks ( std::fabs(entity->simulation_time ( ) - entity->get_old_simulation_time ( )) );
 		this->flags = entity->flags ( );
 		this->max_delta = resolver::max_desync_delta ( entity );
-		if ( this->choked > 2 )
-			this->predict ( entity );
+		this->in_air = entity->is_in_air ( );
+		this->lby = entity->lower_body_yaw ( );
+		this->goal_feet = entity->get_anim_state ( )->m_feet_yaw;
+
+		/*resolver*/
+		std::memcpy ( this->anim_layer, entity->get_animoverlays ( ), sizeof ( animationlayer ) * 15 );
+
+
+
+		//{"autowall_side":2,"goal_feet":0.0,"id":0,"lby":-94.9395523071289,"left_yaw":0,"map":"maps\\workshop\\308490450\\xhair_v3.bsp","max_desync_delta":58.0,"missed":false,"position":{"x":-1024.0,"y":32.0,"z":0.031249992549419403},"right_yaw":0,"side":0,"yaw":0}
+
+//	if ( this->choked > 2 )
+	//	this->predict ( entity );
 
 		this->manage_matrix ( entity );
 		this->matrix_resolve ( entity );
+
+		if ( entity->simulation_time ( ) < entity->get_old_simulation_time ( ) )
+			this->invalid = true;
+
 	}
 	void lagcomp_t::matrix_resolve ( player_t * entity ) {
-		if ( this->max_delta < 36 )
+		if ( this->in_air || this->max_delta < 36 )
 			return;
 
 		auto closest_wall = vec3_t ( );
 		float step = M_PI * 2.0 / 8;
-		float radius = 100.f;
+		float radius = 130.f;
 		float closest_dist = 999.f;
 
 		auto position = this->origin +  entity->view_offset();
@@ -238,62 +331,36 @@ namespace player_manager {
 
 		}
 
-		if ( closest_dist < 80.f ) { /*thanks to neverlose lool i luv you sophie*/
-
+		if ( closest_dist < 100.f ) {
 			if ( !closest_wall.is_zero ( ) ) {
 				auto left_head = entity->get_hitbox_position ( hitbox_head, this->bone_left );
 				auto right_head = entity->get_hitbox_position ( hitbox_head, this->bone_right );
 
 				auto left_dist = left_head.distance_to ( closest_wall );
 				auto right_dist = right_head.distance_to ( closest_wall );
+			
+				bool le = right_dist >= left_dist;
+				if ( localdata.force_invert_resolver_on_key )
+					le = !le;
 
-				if ( right_dist >= left_dist ) {
+				if ( le ) {
 					std::memcpy ( this->bone_resolved, this->bone_left, sizeof ( this->bone_left ) );
 					this->resolved = true;
 					this->side = resolver::desync_side::left;
 				}
 				else {
+
 					std::memcpy ( this->bone_resolved, this->bone_right, sizeof ( this->bone_right ) );
 					this->resolved = true;
 					this->side = resolver::desync_side::right;
+
 				}
 			}
 		}
-		//else {
-			/*simple traceray implementation or just use oldest data :P*/
-			/*if ( records [ entity->index ( ) ].empty ( ) )
-				return;
-
-			auto oldest = records [ entity->index ( ) ].front ( );
-
-			this->side = oldest.side;
-			this->resolved = this->resolved;
-
-		}*/
 		
-	/*	vec3_t direction_1 = math::angle_vector ( vec3_t ( 0.f, math::calc_angle ( local_pointer->origin ( ), entity->origin ( ) ).y - 90.f, 0.f ) );
-		vec3_t direction_2 = math::angle_vector ( vec3_t ( 0.f, math::calc_angle ( local_pointer->origin ( ), entity->origin ( ) ).y + 90.f, 0.f ) );
+		
 
-		const auto left_eye_pos = entity->origin ( ) + vec3_t ( 0, 0, 64 ) + ( direction_1 * 16.f );
-		const auto right_eye_pos = entity->origin ( ) + vec3_t ( 0, 0, 64 ) + ( direction_2 * 16.f );
-		*/
-		/*autowall::FireBulletData_t awall = { };
-		this->left_dmg = autowall::get_damage ( entity, localdata.eye_position, entity->get_hitbox_position(hitbox_head, this->bone_left), awall );
-		this->right_dmg = autowall::get_damage ( entity, localdata.eye_position, entity->get_hitbox_position ( hitbox_head, this->bone_left ), awall );
-		if ( this->left_dmg == this->right_dmg == 0 )
-			return;
-
-		if ( this->right_dmg >= this->left_dmg ) {
-			std::memcpy ( this->bone_resolved, this->bone_left, sizeof ( this->bone_left ) );
-			this->resolved = true;
-			this->side = resolver::desync_side::left;
-		}
-		else if ( this->left_dmg >= this->right_dmg ) {
-			std::memcpy ( this->bone_resolved, this->bone_right, sizeof ( this->bone_right ) );
-			this->resolved = true;
-			this->side = resolver::desync_side::right;
-		}*/
-
+		
 	}
 	void lagcomp_t::manage_matrix ( player_t * entity ) {
 
@@ -301,8 +368,11 @@ namespace player_manager {
 		angle_to_me = math::normalize_yaw ( angle_to_me );
 		const auto at_target_yaw = math::normalize_yaw ( math::calc_angle ( entity->origin ( ), local_player::m_data.pointer->origin ( ) ).y - 180.f );
 		const float delta = math::normalize_yaw ( at_target_yaw - entity->eye_angles ( ).y );
-		create_fake_matrix ( entity, this->bone_left, -resolver::max_desync_delta ( entity ) );
-		create_fake_matrix ( entity, this->bone_right, resolver::max_desync_delta ( entity ) );
+		create_fake_matrix ( entity, this->bone_left, localdata.force_low_delta_on_key  ? -28 : -resolver::max_desync_delta ( entity ) );
+		create_fake_matrix ( entity, this->bone_right, localdata.force_low_delta_on_key ? 28 : resolver::max_desync_delta ( entity ) );
+
+		//std::memcpy ( this->bone_left, csgo::left_player_bones [ entity->index ( ) ], sizeof ( csgo::left_player_bones [ entity->index ( ) ] ) );
+		//std::memcpy ( this->bone_right, csgo::right_player_bones [ entity->index ( ) ], sizeof ( csgo::right_player_bones [ entity->index (  ) ] ) );
 		get_rotated_matrix ( entity->origin ( ), this->bone, delta, this->bone_at_me );
 	}
 }
@@ -322,8 +392,7 @@ void player_manager::manage_bones( ) {
 		if ( !entity )
 			continue;
 
-		if ( entity == local_player::m_data.pointer )
-			continue;
+	
 
 		if ( entity->dormant( ) )
 			continue;
@@ -331,7 +400,8 @@ void player_manager::manage_bones( ) {
 		if ( !entity->is_alive() )
 			continue;
 
-		
+		if ( entity == local_pointer )
+			continue;
 
 		static auto set_interpolation_flags = [ ] ( player_t* e, int flag ) {
 			const auto var_map = ( uintptr_t ) e + 36;
@@ -340,7 +410,9 @@ void player_manager::manage_bones( ) {
 			for ( auto index = 0; index < sz_var_map; index++ )
 				*( uintptr_t* ) ( ( *( uintptr_t* ) var_map ) + index * 12 ) = flag;
 		};
-		set_interpolation_flags ( entity, 0 );
+		
+		  set_interpolation_flags ( entity, 0 );
+
 		animations::post_data_end ( entity );
 	
 
@@ -503,13 +575,10 @@ void player_manager::get_rotated_matrix( vec3_t origin, matrix3x4_t from_matrix 
 
 }
 
-
-void player_manager::setup_records ( ) {
-
-
-
-	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
+void player_manager::filter_records ( ) {
+	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) { 
 		player_t * player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
+
 
 		if ( !player )
 			continue;
@@ -519,21 +588,6 @@ void player_manager::setup_records ( ) {
 
 		if ( player->team ( ) == local_player::m_data.pointer->team ( ) )
 			continue;
-
-		if ( !player->dormant ( ) && player->is_alive ( ) ) {
-
-
-			if ( !player->m_CachedBoneData ( ).m_Size )
-				continue;
-
-			if ( !player->m_CachedBoneData ( ).Base ( ) )
-				continue;
-
-			lagcomp_t record;
-
-			record.receive ( player  );
-			records.at ( i ).push_back ( record );
-		}
 
 		if ( records.at ( i ).size ( ) ) {
 
@@ -547,5 +601,73 @@ void player_manager::setup_records ( ) {
 					records [ i ].erase ( records.at ( i ).begin ( ) + t );
 			}
 		}
+
+	}
+
+}
+void player_manager::setup_records ( client_frame_stage_t stage ) {
+
+	if ( stage != FRAME_NET_UPDATE_END )
+		return;
+
+	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
+		player_t * player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
+
+		if ( !player )
+			continue;
+
+		if ( player == local_player::m_data.pointer )
+			continue;
+
+		if ( player->team ( ) == local_player::m_data.pointer->team ( ) )
+			continue;
+
+		auto time_delta = abs ( math::time_to_ticks ( player->simulation_time ( ) ) - interfaces::globals->tick_count );
+
+		if ( time_delta > 1.0f / interfaces::globals->interval_per_tick )
+			continue;
+
+		auto update = records [ i ].empty ( ) || player->simulation_time ( ) != player->get_old_simulation_time ( ); //-V550
+
+		if ( update && !records [ i ].empty ( ) ) {
+			auto server_tick = interfaces::clientstate->m_iServerTick - i % interfaces::globals->timestamp_randomize_window;
+			auto current_tick = server_tick - server_tick % interfaces::globals->timestamp_networking_base;
+
+			if ( math::time_to_ticks ( player->get_old_simulation_time ( ) ) < current_tick && math::time_to_ticks ( player->simulation_time ( ) ) == current_tick ) {
+				auto layer = &player->get_animoverlays ( ) [ 11 ];
+				auto previous_layer = &records [ i ].front ( ).anim_layer [ 11 ];
+
+				if ( layer->m_cycle == previous_layer->m_cycle ) //-V550
+				{
+					player->simulation_time ( ) = player->get_old_simulation_time ( );
+					update = false;
+				}
+			}
+		}
+
+
+		if ( !player->dormant ( ) && player->is_alive ( ) ) {
+
+
+			if ( !player->m_CachedBoneData ( ).m_Size )
+				continue;
+
+			if ( !player->m_CachedBoneData ( ).Base ( ) )
+				continue;
+
+			if ( !update )
+				continue;
+
+			if ( !records [ i ].empty ( ) && ( player->origin ( ) - records [ i ].front ( ).origin ).length_sqr ( ) > 4096.0f )
+				for ( auto & record : records [ i ] )
+					record.invalid = true;
+
+			lagcomp_t record;
+
+			record.receive ( player );
+			records.at ( i ).push_back ( record );
+
+		}
 	}
 }
+	

@@ -43,9 +43,11 @@ class c_nade_prediction
 	bool should_draw = false;
 	bool should_empty = false;
 	void predict( c_usercmd* user_cmd );
+
 	std::vector<ImVec2> copy_points;
 	std::vector<ImVec2> copy_points_detonate;
 public:
+	std::pair<vec3_t, float> custom_predict ( c_usercmd * user_cmd, vec3_t angles, player_t * target );
 	bool detonated ( weapon_t * weapon, float time, trace_t & trace );
 	bool detonated ( class_ids id, float time, trace_t & trace );
 	void trace( c_usercmd* user_cmd );

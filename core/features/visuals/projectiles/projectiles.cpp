@@ -20,13 +20,6 @@ namespace visuals::projectiles {
 		float radius = 100;
 		float step = M_PI * 2.0 / 50;
 
-		vec3_t position = local_player::m_data.pointer->get_eye_pos ( );
-		for ( float a = 0; a < ( M_PI * 2.0 ); a += step ) {
-			vec3_t location ( radius * cos ( a ) + position.x, radius * sin ( a ) + position.y, position.z );
-			vec3_t w2s_location = vec3_t ( );
-			if ( interfaces::debug_overlay->world_to_screen ( location, w2s_location ) )
-				poly_test.push_back ( ImVec2 ( w2s_location.x, w2s_location.y ) );
-		}
 
 	
 		for ( int i = 1; i < interfaces::entity_list->get_highest_index ( ); i++ ) {

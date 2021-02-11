@@ -12,11 +12,23 @@ namespace local_player {
 		if ( !m_data.in_game && real_in_game && !waiting ) {
 			DEBUG_LOG ( "DETCTED IN GAME \n" );
 			last_tick_count = interfaces::globals->tick_count;
+			localdata.freestand_on_key_last_tick = 0;
+			localdata.force_safe_point_on_key_tick = 0;
+			localdata.force_min_dmg_on_key_tick = 0;
+			localdata.force_low_delta_on_key_tick = 0;
+			localdata.force_invert_resolver_on_key_tick = 0;
+
 			waiting = true;
 		}
 		else if ( !real_in_game ) {
 			m_data.in_game = false;
 			DEBUG_LOG ( "NO LONGER IN GAME \n" );
+			localdata.freestand_on_key_last_tick = 0;
+			localdata.force_safe_point_on_key_tick = 0;
+			localdata.force_min_dmg_on_key_tick = 0;
+			localdata.force_min_dmg_on_key_tick = 0;
+			localdata.force_low_delta_on_key_tick = 0;
+			localdata.force_invert_resolver_on_key_tick = 0;
 			waiting = false;
 		}
 		if ( real_in_game && !m_data.in_game && std::abs ( interfaces::globals->tick_count - last_tick_count ) > 50 ) {
@@ -36,7 +48,7 @@ namespace local_player {
 
 		cmd->randomseed = get_random_seed ( );
 
-
+		localdata.m_tick = cmd->tick_count;
 		m_data.orig_viewangle = cmd->viewangles;
 		m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 		csgo::local_player = local_player::m_data.pointer;
@@ -50,6 +62,18 @@ namespace local_player {
 			m_data.eye_position = engine_prediction::unpredicted_eye;
 			m_data.velocity = engine_prediction::unpredicted_velocity;
 		}
+
+		m_data.backup_tickbase = local_pointer->get_tick_base ( );
+
+		if ( shifting::_shift.next_tickbase_shift ) {
+			m_data.fixed_tickbase = local_pointer->get_tick_base ( ) - shifting::_shift.next_tickbase_shift;
+			shifting::_shift.next_tickbase_shift = 0;
+		}
+		else
+			m_data.fixed_tickbase = m_data.backup_tickbase;
+
+
+		
 	}
 	bool available ( ) {
 
@@ -101,6 +125,25 @@ namespace local_player {
 				--net_channel->out_sequence_nr;
 
 				net_channel->choked_packets = backup_choke;
+			}
+		}
+	}
+	void post_predict ( c_usercmd * cmd ) {
+		if ( local_player::available ( ) ) {
+			engine_prediction::unpredicted_eye = local_pointer->get_eye_pos ( );
+			engine_prediction::unpredicted_velocity = engineprediction::get ( ).backup_data.velocity;
+
+			if ( localdata.active_weapon ) {
+				auto backup_velocity = local_pointer->velocity ( );
+				auto backup_abs_velocity = local_pointer->get_abs_velocity ( );
+
+				local_pointer->velocity ( ) = engineprediction::get ( ).backup_data.velocity;
+				local_pointer->get_abs_velocity ( ) = engineprediction::get ( ).backup_data.velocity;
+
+				localdata.active_weapon->update_accuracy_penalty ( );
+
+				local_pointer->velocity ( ) = backup_velocity;
+				local_pointer->get_abs_velocity ( ) = backup_abs_velocity;
 			}
 		}
 	}

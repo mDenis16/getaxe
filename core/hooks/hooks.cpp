@@ -50,6 +50,7 @@ hooks::process_packet::fn process_packet_original = nullptr;
 hooks::physics_simulate::fn physics_simulate_original = nullptr;
 hooks::list_leaves_in_box::fn list_leaves_in_box_original = nullptr;
 hooks::process_interpolated_list::fn process_interpolated_list_original = nullptr;
+hooks::clip_ray_collideable::fn clip_ray_collideable_original = nullptr;
 
 HWND hooks::window;
 WNDPROC hooks::wndproc_original = NULL;
@@ -114,9 +115,10 @@ bool hooks::initialize ( ) {
 	auto packet_start_target = reinterpret_cast< void * >( get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 5 ) );
 
 	auto override_view_target = reinterpret_cast< void * >( get_virtual ( interfaces::clientmode, 18 ) );
-	//auto write_user_cmd_target = reinterpret_cast< void * >( get_virtual ( interfaces::client, 24 ) );
+	auto clip_ray_collideable_target = reinterpret_cast< void * >( get_virtual ( interfaces::trace_ray, 4 ) );
+	auto write_user_cmd_target = reinterpret_cast< void * >( get_virtual ( interfaces::client, 24 ) );
 	auto cl_move_target = reinterpret_cast< void * >( utilities::pattern_scan ( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 56 57 8B 3D ? ? ? ? 8A" ) );
-	//auto run_commmand_target = reinterpret_cast< void * >( get_virtual ( interfaces::prediction, 19 ) );
+	auto run_commmand_target = reinterpret_cast< void * >( get_virtual ( interfaces::prediction, 19 ) );
 	auto crc_server_check_target = reinterpret_cast< void * >( utilities::pattern_scan ( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 8B D9 89 5D F8 80" ) );
 	auto file_system_target = reinterpret_cast< void * >( get_virtual ( interfaces::file_system, 128 ) );
 	auto sv_cheats_target = reinterpret_cast< void * >( get_virtual ( interfaces::console->get_convar ( "sv_cheats" ), 13 ));
@@ -141,6 +143,15 @@ bool hooks::initialize ( ) {
 		throw std::runtime_error ( "failed to initialize frame_stage. (outdated index?)" );
 		
 	}
+	if ( MH_CreateHook ( run_commmand_target, &run_commmand::hook, reinterpret_cast< void ** >( &run_commmand_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize run_commmand. (outdated index?)" );
+
+	}
+	if ( MH_CreateHook ( clip_ray_collideable_target, &clip_ray_collideable::hook, reinterpret_cast< void ** >( &clip_ray_collideable_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize clip_ray_collideable. (outdated index?)" );
+
+	}
+	
 /*	if ( MH_CreateHook ( list_leaves_in_box_target, &list_leaves_in_box::hook, reinterpret_cast< void ** >( &list_leaves_in_box_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize frame_stage. (outdated index?)" );
 		
@@ -155,11 +166,14 @@ bool hooks::initialize ( ) {
 	}*/
 	
 
-	/*if ( MH_CreateHook ( check_for_sequence_change_target, &check_for_sequence_change::hook, reinterpret_cast< void ** >( &check_for_sequence_change_original ) ) != MH_OK ) {
-		throw std::runtime_error ( "failed to initialize check_for_sequence_change. (outdated index?)" );
+	if ( MH_CreateHook ( cl_move_target, &cl_move::hook, reinterpret_cast< void ** >( &cl_move_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize cl_move. (outdated index?)" );
 		
-	}*/
+	}
+	if ( MH_CreateHook ( write_user_cmd_target, &write_user_cmd::hook, reinterpret_cast< void ** >( &write_user_cmd_original ) ) != MH_OK ) {
+		throw std::runtime_error ( "failed to initialize write_user_cmd. (outdated index?)" );
 
+	}
 
 
 	if ( MH_CreateHook ( crc_server_check_target, &crc_server_check::hook, reinterpret_cast< void ** >( &crc_server_check_original ) ) != MH_OK ) {
@@ -375,7 +389,7 @@ bool __fastcall hooks::sv_cheats::hook ( void * ecx, void *  ) {
 
 		if ( _ReturnAddress ( ) == cam_think )
 			return true;
-	}
+	} 
 
 	return ( ( bool ( __thiscall * )( void * ) ) sv_cheats_original )( ecx );
 }
@@ -421,7 +435,7 @@ bool __fastcall hooks::should_skip_animation_frame::hook ( void * , void *  ) {
 vec3_t vecAimPunch, vecViewPunch;
 vec3_t  pAimPunch = vec3_t();
 vec3_t  pViewPunch = vec3_t ( );
-void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, int stage ) {
+void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, client_frame_stage_t stage ) {
 
 
 
@@ -449,14 +463,15 @@ void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, int stage ) {
 	
 		break;
 	case FRAME_NET_UPDATE_POSTDATAUPDATE_END:
+		
 		player_manager::manage_bones ( );
 
 
 		break;
 	case FRAME_NET_UPDATE_END:
-
+		g_netdata.apply ( );
 		player_manager::setup_players ( );
-		//g_netdata.apply ( );
+		resolver::frame_stage ( );
 		break;
 	case FRAME_RENDER_START:
  
@@ -467,40 +482,12 @@ void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, int stage ) {
 		csgo::m_rate = ( int ) std::round ( 1.f / interfaces::globals->interval_per_tick );
 
 
-		if ( config.ragebot_enabled ) {
-			for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
-				player_t * entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
 
-
-				if ( !entity )
-					continue;
-
-				if ( entity == local_player::m_data.pointer )
-					continue;
-
-				if ( entity->dormant ( ) )
-					continue;
-
-				if ( entity->is_teammate ( ) )
-					continue;
-
-				if ( !entity->is_alive ( ) )
-					continue;
-
-				//*( int * ) ( ( uintptr_t ) entity + 0xA30 ) = interfaces::globals->frame_count; //we'll skip occlusion checks now
-				//*( int * ) ( ( uintptr_t ) entity + 0xA28 ) = 0;//clear occlusion flags
-
-				animations::update_player_animation ( entity );
-			}
-		}
 		local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 		csgo::local_player = local_player::m_data.pointer;
 
 		if ( local_player::available )
-		   animations::update_animations_local ( );
-
-	
-		
+			animations::update_animations_local ( );
 
 		misc::removals::remove_flash ( );
 		misc::removals::remove_smoke ( );
@@ -508,15 +495,16 @@ void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, int stage ) {
 		
 		break;
 	case FRAME_RENDER_END:
-
+		
 		break;
 	default:
 		break;
 	}
 
 
-	frame_stage_original ( ecx, 0, stage );
+	frame_stage_original ( ecx, edx, stage );
 
+	player_manager::setup_records ( stage );
 }
 
 
@@ -539,14 +527,16 @@ void __fastcall hooks::override_view::hook ( void * edx, void * , view_setup_t *
 		setup->angles [ 1 ] -= ( viewPunch [ 1 ] + ( aimPunch [ 1 ] * 2 * 0.4499999f ) );
 		setup->angles [ 2 ] -= ( viewPunch [ 2 ] + ( aimPunch [ 2 ] * 2 * 0.4499999f ) );
 	}
+	if ( local_pointer && local_pointer->is_alive() && interfaces::input->m_camera_in_third_person && interfaces::inputsystem->is_button_down(KEY_C) )
+		setup->origin.z = local_pointer->abs_origin ( ).z + 64.f;
+
 	override_view_original ( interfaces::clientmode, edx, setup );
 
 	
 }
-bool __fastcall hooks::create_move::hook ( void * , void * , float input_sample_frametime, c_usercmd * cmd ) {
+bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sample_frametime, c_usercmd * cmd ) {
 
-	csgo::in_create_move = false;
-	csgo::send_packet = true;
+
 	if ( !cmd || !cmd->command_number )
 		return create_move_original ( input_sample_frametime, cmd );
 
@@ -556,11 +546,34 @@ bool __fastcall hooks::create_move::hook ( void * , void * , float input_sample_
 		return  create_move_original ( input_sample_frametime, cmd );
 
 
+	csgo::in_create_move = false;
+	csgo::send_packet = true;
 
-	static c_usercmd * last_cmd = nullptr;
 
-	uintptr_t * frame_pointer = 0x0;
+
+
+	auto original_result = create_move_original (  input_sample_frametime, cmd );
+
+	if ( original_result ) {
+		interfaces::prediction->set_local_view_angles ( cmd->viewangles );
+		interfaces::engine->set_view_angles ( cmd->viewangles );
+	}
+
+/*	static c_usercmd shift_cmd = { };
+	if ( !shifting::_shift.shift_ticks )
+		std::memcpy ( &shift_cmd, cmd, sizeof ( shift_cmd ) );
+	else if ( shifting::_shift.shift_ticks ) {
+		cmd = &shift_cmd;
+		return false;
+	}*/
+
+
+
+
+	uintptr_t * frame_pointer;
 	__asm mov frame_pointer, ebp;
+	
+
 
 	csgo::in_create_move = true;
 	local_player::m_data.aimbot_working = false;
@@ -571,35 +584,42 @@ bool __fastcall hooks::create_move::hook ( void * , void * , float input_sample_
 
 	aimbot::autostop::m_data.slow_walk_this_tick = false;
 
-
+	
 	nade_pred.trace ( cmd );
 
 	visuals::projectiles::grenades::proximity::think ( );
+	autopeek::run_cm ( cmd );
 	aimbot::autostop::slow_walk ( cmd );
 	misc::movement::bunny_hop ( cmd );
 	misc::movement::fake_duck ( cmd );
 
 
+	engineprediction::get ( ).prediction_data.reset ( ); //-V807
+	engineprediction::get ( ).setup ( );
 
-	engine_prediction::initialize ( local_player::m_data.pointer, cmd );
+	engineprediction::get ( ).predict ( cmd );
 	{
-
-		player_manager::setup_records ( );
+		local_player::post_predict ( cmd );
 
 		fake_lag::create_move ( csgo::send_packet );
 
 		anti_aim::on_create_move ( cmd, csgo::send_packet );
 
+		player_manager::filter_records ( );
 
 		aimbot::create_move ( cmd, csgo::send_packet );
+
+		shifting::create_move ( cmd );
+		autothrow::create_move ( cmd );
 
 
 		legit_bot::run ( cmd );
 
 
-		engine_prediction::unload ( local_player::m_data.pointer );
+    
 	}
 
+	engineprediction::get ( ).finish ( );
 
 
 	misc::movement::fix_move ( cmd );
@@ -613,8 +633,11 @@ bool __fastcall hooks::create_move::hook ( void * , void * , float input_sample_
 	local_player::end_tick ( cmd );
 	
 
-	*reinterpret_cast< bool * >( *frame_pointer - 0x1C ) = csgo::send_packet;
+	*reinterpret_cast< bool * >( *frame_pointer - 0x1C ) =  shifting::_shift.shift_ticks ? false: csgo::send_packet;
 	
+	//if ( shifting::_shift.shift_ticks )
+	//	cmd->tick_count -= shifting::_shift.shift_ticks;
+
 	if ( csgo::send_packet )
 		csgo::real_origin = local_player::m_data.pointer->origin ( );
 
@@ -631,8 +654,40 @@ bool __fastcall hooks::create_move::hook ( void * , void * , float input_sample_
 	if ( csgo::send_packet  && !did_shoot )
 		localdata.antiaim_yaw = csgo::real_angle.y;
 
-	if (local_pointer && local_pointer->is_alive())
-	interfaces::console->console_printf ( "max desync delta %f\n", resolver::max_desync_delta(local_pointer) );
+	//if (shifting::_shift.shift_ticks && cmd->buttons & cmd_buttons::in_attack )
+	//cmd->buttons |= in_attack;
+
+	if ( interfaces::inputsystem->is_button_down ( KEY_X ) && std::abs ( interfaces::globals->tick_count - localdata.freestand_on_key_last_tick ) > 5 ) {
+		localdata.freestanding_on_key = !localdata.freestanding_on_key;
+		localdata.freestand_on_key_last_tick = interfaces::globals->tick_count;
+	}
+
+	if ( interfaces::inputsystem->is_button_down ( KEY_F ) && std::abs ( interfaces::globals->tick_count - localdata.force_safe_point_on_key_tick ) > 5 ){ 
+		localdata.force_safe_point_on_key = !localdata.force_safe_point_on_key;
+
+		localdata.force_safe_point_on_key_tick = interfaces::globals->tick_count;
+	}
+
+	if ( interfaces::inputsystem->is_button_down ( KEY_G ) && std::abs ( interfaces::globals->tick_count - localdata.force_min_dmg_on_key_tick ) > 5 ){ 
+		localdata.force_min_dmg_on_key = !localdata.force_min_dmg_on_key;
+		localdata.force_min_dmg_on_key_tick = interfaces::globals->tick_count;
+	}
+
+	if ( interfaces::inputsystem->is_button_down ( KEY_T ) && std::abs ( interfaces::globals->tick_count - localdata.force_low_delta_on_key_tick ) > 5 ){ 
+		localdata.force_low_delta_on_key = !localdata.force_low_delta_on_key;
+		localdata.force_low_delta_on_key_tick = interfaces::globals->tick_count;
+	}
+
+	if ( interfaces::inputsystem->is_button_down ( KEY_B ) && std::abs ( interfaces::globals->tick_count - localdata.force_invert_resolver_on_key_tick ) > 5 ){ 
+		localdata.force_invert_resolver_on_key = !localdata.force_invert_resolver_on_key;
+		localdata.force_invert_resolver_on_key_tick = interfaces::globals->tick_count;
+	}
+	if ( interfaces::inputsystem->is_button_down ( KEY_Z ) && std::abs ( interfaces::globals->tick_count - localdata.force_invert_doubletap_on_key ) > 25 ) {
+		localdata.force_invert_doubletap_on_key = !localdata.force_invert_doubletap_on_key;
+		shifting::_shift.allow = localdata.force_invert_doubletap_on_key;
+		localdata.force_invert_doubletap_on_key_tick = interfaces::globals->tick_count;
+	}
+//	interfaces::console->console_printf ( "tickbase %i fixed tickbase %i \n", local_pointer->get_tick_base(), localdata.fixed_tickbase );
 
 	return false;
 }
@@ -669,7 +724,27 @@ LRESULT __stdcall hooks::wnd_proc::hook ( HWND hwnd, UINT message, WPARAM wparam
 
 	return CallWindowProcA ( wndproc_original, hwnd, message, wparam, lparam );
 }
+void draw_angles ( player_t* local, vec3_t angle, color color, const char * input ) {
+	vec3_t src3D, dst3D, forward, src, dst;
+	trace_t tr;
+	ray_t ray;
+	trace_filter filter;
 
+	filter.skip = local;
+
+	forward = math::angle_vector ( angle );
+	src3D = local->origin ( );
+	dst3D = src3D + ( forward * 45.f );
+
+	ray.initialize ( src3D, dst3D );
+	interfaces::trace_ray->trace_ray ( ray, 0, &filter, &tr );
+
+	if ( !interfaces::debug_overlay->world_to_screen ( src3D, src ) || !interfaces::debug_overlay->world_to_screen ( tr.end, dst ) )
+		return;
+	interfaces::surface->set_drawing_color ( color.r, color.g, color.b, color.a );
+	interfaces::surface->draw_line ( src.x, src.y, dst.x, dst.y );
+	//renderer->string ( true, renderer->fonts.esp, dst.x, dst.y, color, font_center, input );
+}
 void __stdcall hooks::paint_traverse::hook ( unsigned int panel, bool force_repaint, bool allow_force ) {
 	auto panel_to_draw = fnv::hash ( interfaces::panel->get_panel_name ( panel ) );
 
@@ -680,8 +755,22 @@ void __stdcall hooks::paint_traverse::hook ( unsigned int panel, bool force_repa
 	{
 	
 		interfaces::engine->get_screen_size ( csgo::screen_width, csgo::screen_height );
+		if ( interfaces::engine->is_in_game ( ) && interfaces::engine->is_connected ( ) && local_pointer && local_pointer->is_alive ( ) ) {
+			/*
 
-	
+			for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
+				player_t * player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
+
+				if ( !player )
+					continue;
+
+
+				if ( !player->dormant ( ) && player->is_alive ( ) ) {
+					draw_angles ( player, vec3_t ( 0, player->lower_body_yaw ( ), 0 ), color ( 0, 255, 0, 255 ), "LBY" );
+				}
+			}*/
+		
+		}
 	}
 	break;
 
@@ -787,8 +876,8 @@ void _fastcall hooks::standard_blending_rules::hook ( player_t * player, uint32_
 	if ( player->dormant() )
 		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
 
-	if ( player->is_teammate() )
-		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
+	//if ( player->is_teammate() )
+		//return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
 
 	if ( local_player::m_data.pointer && player ) {
 
@@ -815,7 +904,7 @@ void __fastcall hooks::update_client_side_animation::hook ( player_t * player, u
 		return update_client_side_animation_original ( player );
 
 	if ( player->is_teammate ( ) )
-		return update_client_side_animation_original ( player );
+	   return update_client_side_animation_original ( player );
 
 	auto & anim_data = animations::player_data [ player->index ( ) ];
 
@@ -843,13 +932,17 @@ bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bo
 	if ( e->dormant() )
 		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
-	if ( e->is_teammate ( ) )
-		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
-
+	//if ( e->is_teammate ( ) )
+	//	return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+		//
 	if ( !e->is_alive ( ) )
 		return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
 
+	static auto r_jiggle_bones = interfaces::console->get_convar (  ( "r_jiggle_bones" ) );
+	auto r_jiggle_bones_backup = r_jiggle_bones->get_int ( );
+
+	r_jiggle_bones->set_value ( 0 );
 
 
 	
@@ -867,7 +960,7 @@ bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bo
 		else if (bone_to_world_out && max_bones != -1 )
 		   memcpy ( bone_to_world_out, e->m_CachedBoneData ( ).Base ( ), e->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
 	
-
+		 r_jiggle_bones->set_value ( r_jiggle_bones_backup );
 		return result;
 }
 
@@ -887,8 +980,8 @@ void __fastcall hooks::build_transformations::hook ( void * ecx, void * edx, int
 	if ( !player->is_alive() )
 		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 
-	if ( player->is_teammate() )
-		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
+	//if ( player->is_teammate() )
+		//return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 
 	auto o_jiggle_bones_enabled = player->JiggleBones ( );
 
@@ -913,7 +1006,7 @@ bool __fastcall hooks::is_hltv::hook ( void * ecx, void *  ) {
 
 	return is_hltv_original ( ecx );
 }
-/*void WriteUserCmd ( void * buf, c_usercmd * incmd, c_usercmd * outcmd ) {
+void WriteUserCmd ( void * buf, c_usercmd * incmd, c_usercmd * outcmd ) {
 	using WriteUserCmd_t = void ( __fastcall * )( void *, c_usercmd *, c_usercmd * );
 	static auto Fn = ( WriteUserCmd_t ) utilities::pattern_scan (  ( "client.dll" ),  ( "55 8B EC 83 E4 F8 51 53 56 8B D9" ) );
 
@@ -927,8 +1020,10 @@ bool __fastcall hooks::is_hltv::hook ( void * ecx, void *  ) {
 	}
 }
 bool __fastcall hooks::write_user_cmd::hook ( void * ecx, void * , int slot, bf_write * buf, int from, int to, bool is_new_command ) {
-	return write_user_cmd_original ( ecx, slot, buf, from, to, is_new_command );
-	if ( !local_player::m_data.tickbase_shift )
+	
+
+	int shift_target = config.ragebot_double_tap_ticks;
+	if ( !shift_target )
 		return write_user_cmd_original ( ecx, slot, buf, from, to, is_new_command );
 
 	if ( from != -1 )
@@ -943,9 +1038,9 @@ bool __fastcall hooks::write_user_cmd::hook ( void * ecx, void * , int slot, bf_
 	auto new_commands = reinterpret_cast < int * > ( frame_ptr + 0xFDC );
 
 	auto newcmds = *new_commands;
-	auto shift = tickbase_system::m_shift_data.shift_ticks;
+	auto shift = shift_target;
 
-	tickbase_system::m_shift_data.shift_ticks = 0;
+	
 	*backup_commands = 0;
 
 	auto choked_modifier = newcmds + shift;
@@ -986,7 +1081,7 @@ next_cmd:
 
 	if ( newcmds > choked_modifier )
 		return true;
-
+		
 	for ( auto i = choked_modifier - newcmds + 1; i > 0; --i ) {
 		WriteUserCmd ( buf, &to_cmd, &from_cmd );
 
@@ -995,16 +1090,76 @@ next_cmd:
 		to_cmd.tick_count++;
 	}
 
+	shifting::_shift.current_shift = shift;
 	return true;
 }
-*/
 
+void __fastcall hooks::clip_ray_collideable::hook ( void * ecx, void * edx, const ray_t & ray, uint32_t fMask, collideable_t * pCollide, void * pTrace ) {
+	
 
-void __fastcall  hooks::cl_move::hook ( void * ecx ) {
+	if ( pCollide ) {
+		// extend the tracking
+		const auto old_max = pCollide->maxs ( ).z;
 
-	cl_move_original ( ecx );
+		//auto v9 = (C_BasePlayer*)(uintptr_t(pCollide) - 4);
+
+	//	if (v9 && *(void**)v9 && !v9->IsDead() && *(int*)(uintptr_t(v9) + 0x64) < 64 && v9->get_weapon() && v9->get_weapon()->is_knife())
+		pCollide->maxs ( ).z += 5; // if the player is holding a knife and ducking in air we can still trace to this faggot and hit him
+
+		clip_ray_collideable_original ( ecx, ray, fMask, pCollide, pTrace );
+
+		// restore Z
+		pCollide->maxs ( ).z = old_max;
+		return;
+	}
+	
+	 clip_ray_collideable_original ( ecx, ray, fMask, pCollide, pTrace );
 }
-/*void _fastcall hooks::run_commmand::hook ( void * , void * , player_t * player, c_usercmd * cmd, player_move_helper * move_helper ) {
+
+void __cdecl hooks::cl_move::hook ( float accumulated_extra_samples, bool final_tick ) {
+	
+
+	if ( shifting::_shift.allow && shifting::_shift.recharge_ticks && ( localdata.fixed_tickbase >= shifting::_shift.wait_for_recharge || !shifting::_shift.wait_for_recharge ) ) {
+		shifting::_shift.recharge_ticks--;
+		if ( shifting::_shift.recharge_ticks <= 0 ) {
+			shifting::_shift.can_shift = true;
+			shifting::_shift.can_recharge = false;
+	
+		}
+
+		return;
+	}
+	
+
+	if ( shifting::_shift.allow  ) {
+	
+		while ( shifting::_shift.shift_ticks ) {
+
+			shifting::_shift.shift_ticks--;
+	
+			cl_move_original ( accumulated_extra_samples , shifting::_shift.shift_ticks <= 0 );
+	
+
+			if ( shifting::_shift.shift_ticks <= 0 ) {
+				shifting::_shift.recharge_ticks = config.ragebot_double_tap_ticks;
+				shifting::_shift.wait_for_recharge = localdata.fixed_tickbase + 32;
+				shifting::_shift.next_tickbase_shift = 0;
+			}
+
+
+		}
+
+	}
+	else {
+		shifting::_shift.shift_ticks = 0;
+		shifting::_shift.recharge_ticks = config.ragebot_double_tap_ticks;
+		shifting::_shift.can_shift = false;
+	}
+
+	cl_move_original ( accumulated_extra_samples, final_tick );
+}
+
+void _fastcall hooks::run_commmand::hook ( void * , void * , player_t * player, c_usercmd * cmd, player_move_helper * move_helper ) {
 	
 	local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 
@@ -1014,72 +1169,36 @@ void __fastcall  hooks::cl_move::hook ( void * ecx ) {
 	if ( !cmd )
 		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
 
-	if ( cmd->tick_count > interfaces::globals->tick_count + 72 ) //-V807
-	{
+	if (!csgo::cmd )
+		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
+
+	if ( cmd->tick_count >= (csgo::cmd->tick_count + int ( 1 / interfaces::globals->interval_per_tick ) + 8 ) ) {
 		cmd->hasbeenpredicted = true;
-		player->set_abs_origin ( player->origin ( ) );
-
-		if ( interfaces::globals->frame_time > 0.0f && !interfaces::prediction->EnginePaused )
-			++player->get_tick_base ( );
-
 		return;
 	}
 
+	int backup_tickbase = player->get_tick_base ( );
+	float backup_curtime = interfaces::globals->cur_time;
 
-	if ( config.ragebot_enabled && player->is_alive ( ) ) {
-		auto weapon = player->active_weapon ( );
 
-		if ( weapon ) {
-			static int tickbase_records [ MULTIPLAYER_BACKUP ] = {};
-			static bool in_attack [ MULTIPLAYER_BACKUP ] = {};
-			static bool can_shoot [ MULTIPLAYER_BACKUP ] = {};
+/*	if ( cmd->command_number == shifting::_shift.shifted_command ) {
+		player->get_tick_base ( ) = ( shifting::_shift.original_tickbase - shifting::_shift.shift_ticks + 1 );
+		++player->get_tick_base ( );
 
-			tickbase_records [ cmd->command_number % MULTIPLAYER_BACKUP ] = player->get_tick_base ( );
-			in_attack [ cmd->command_number % MULTIPLAYER_BACKUP ] = cmd->buttons & cmd_buttons::in_attack || cmd->buttons & cmd_buttons::in_attack2;
-			can_shoot [ cmd->command_number % MULTIPLAYER_BACKUP ] = misc::can_fire (weapon, false );
+		interfaces::globals->cur_time = math::ticks_to_time( player->get_tick_base ( ) );
+	}*/
 
-			if ( weapon->item_definition_index ( ) == weapon_revolver ) {
-				auto postpone_fire_ready_time = FLT_MAX;
-				auto tickrate = ( int ) ( 1.0f / interfaces::globals->interval_per_tick );
 
-				if ( tickrate >> 1 > 1 ) {
-					auto command_number = cmd->command_number - 1;
-					auto shoot_number = 0;
+	run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
 
-					for ( auto i = 1; i < tickrate >> 1; ++i ) {
-						shoot_number = command_number;
+	/*if ( cmd->command_number == shifting::_shift.shifted_command ) {
+		player->get_tick_base ( ) = backup_tickbase;
 
-						if ( !in_attack [ command_number % MULTIPLAYER_BACKUP ] || !can_shoot [ command_number % MULTIPLAYER_BACKUP ] )
-							break;
+		interfaces::globals->cur_time = backup_curtime;
+	}*/
 
-						--command_number;
-					}
-
-					if ( shoot_number ) {
-						auto tick = 1 - ( int ) ( -0.03348f / interfaces::globals->interval_per_tick );
-
-						if ( cmd->command_number - shoot_number >= tick )
-							postpone_fire_ready_time = math::ticks_to_time ( tickbase_records [ ( tick + shoot_number ) % MULTIPLAYER_BACKUP ] ) + 0.2f;
-					}
-				}
-
-				weapon->get_postpone_fire_ready_time ( ) = postpone_fire_ready_time;
-			}
-		}
-
-		auto backup_velocity_modifier = player->m_flVelocityModifier ( );
-
-		player->m_flVelocityModifier ( ) = local_player::m_data.last_velocity_modifier;
-		run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
-
-		if ( !csgo::in_create_move )
-			player->m_flVelocityModifier ( ) = backup_velocity_modifier;
-	}
-	else
-		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
-
-	//g_netdata.store ( );
-}*/
+	g_netdata.store ( );
+}
 void __fastcall hooks::packet_start::hook ( void * ecx, void * , int incoming, int outgoing ) {
 
 	local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
@@ -1276,6 +1395,7 @@ long __stdcall hooks::present::hook ( IDirect3DDevice9 * device ) {
 		c_menu::get ( ).setup_resent ( device );
 		initialized = true;
 	}
+	
 	if ( initialized ) {
 		c_menu::get ( ).pre_render ( device );
 		c_menu::get ( ).post_render ( );

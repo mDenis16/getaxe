@@ -39,8 +39,8 @@ namespace aimbot {
 	void sort_list ( ) {
 		struct {
 			bool operator()( struct target a, struct target b ) const {
-				auto angle_a = math::calc_angle ( local_player::m_data.eye_position, a.player->get_eye_pos ( ) );
-				auto angle_b = math::calc_angle ( local_player::m_data.eye_position, b.player->get_eye_pos ( ) );
+				auto angle_a = math::calc_angle ( local_player::m_data.eye_position, a.player->get_eye_pos ( ) ); angle_a.angle_normalize ( );
+				auto angle_b = math::calc_angle ( local_player::m_data.eye_position, b.player->get_eye_pos ( ) ); angle_b.angle_normalize ( );
 				auto fov_a = math::get_fov ( local_player::m_data.orig_viewangle, angle_a );
 				auto fov_b = math::get_fov ( local_player::m_data.orig_viewangle, angle_b );
 				return  fov_a < fov_b;

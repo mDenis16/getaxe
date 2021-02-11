@@ -261,13 +261,34 @@ void visuals::local_esp ( ) {
 
 	aimbot::render ( );
 	shot_processor::draw_shots ( );
+	visuals::projectiles::grenades::proximity::draw ( );
+	const float center_x = csgo::screen_width / 2.f;
+	const float center_y = csgo::screen_height / 2.f;
 
-	for ( auto point : anti_aim::points ) {
+	if (localdata.force_safe_point_on_key )
+	    c_menu::get ( ).draw->AddText ( ImVec2( center_x + 15, center_y - 35 ), ImColor ( 255, 0, 255, 255 ), "SAFEPOINT");
+
+	if ( localdata.force_min_dmg_on_key )
+		c_menu::get ( ).draw->AddText ( ImVec2 ( center_x + 15, center_y - 75 ), ImColor ( 255, 0, 255, 255 ), "MIN DMG 15" );
+
+	if ( localdata.force_low_delta_on_key )
+		c_menu::get ( ).draw->AddText ( ImVec2 ( center_x + 15, center_y - 105 ), ImColor ( 255, 0, 0, 255 ), "dodge enemy" );
+
+	if ( localdata.force_invert_resolver_on_key )
+		c_menu::get ( ).draw->AddText ( ImVec2 ( center_x + 15, center_y - 145 ), ImColor ( 255, 0, 0, 255 ), "invert resolver" );
+
+	if ( localdata.force_invert_doubletap_on_key )
+		c_menu::get ( ).draw->AddText ( ImVec2 ( center_x + 15, center_y - 185 ), ImColor ( 255, 0, 0, 255 ), "doubletap" );
+
+	//ImVec2 scr;
+	//if ( visuals::world_to_screen ( engine_prediction::unpredicted_eye, scr ) )
+	//	c_menu::get ( ).draw->AddCircleFilled ( scr, 8.f, ImColor ( 255, 255, 255, 255 ) );
+	/*for ( auto point : anti_aim::points ) {
 		ImVec2 point2d = ImVec2 ( );
 		if ( visuals::world_to_screen ( point.point, point2d ) ) {
 			c_menu::get ( ).draw->AddText ( point2d, ImColor(255,255,255,255), std::to_string(point.dmg).c_str() );
 		}
-	}
+	}*/
 }
 
 bool visuals::world_to_screen ( const vec3_t & origin, ImVec2 & screen ) {

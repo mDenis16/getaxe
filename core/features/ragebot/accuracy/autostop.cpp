@@ -36,18 +36,24 @@ namespace aimbot::autostop {
 
 		if ( m_data.slow_walk_this_tick )
 			return;
+		if ( !local_player::m_data.pointer )
+			return;
+		if ( !local_player::m_data.pointer->is_alive ( ) )
+			return;
 
 		if ( interfaces::inputsystem->is_button_down ( button_code_t::KEY_LSHIFT ) || autostop::m_data.failed_hitchance )
 			override = true;
+
 		bool early_stop_called = false;
-		if ( autostop::m_data.target_hitchance > 6 && autostop::m_data.failed_hitchance == autostop::m_data.target_hitchance ) {
+		float flMaxSpeed = local_player::m_data.pointer->is_scoped ( ) ? local_player::m_data.weapon_data->flMaxPlayerSpeedAlt : local_player::m_data.weapon_data->flMaxPlayerSpeed;
+		if ( autostop::m_data.target_hitchance > 1 && autostop::m_data.failed_hitchance == autostop::m_data.target_hitchance && engine_prediction::unpredicted_velocity.Length2D() > 80.f ) {
 			early_stop ( cmd );
 			early_stop_called = true;
 		}
 		if (!early_stop_called && override && local_player::m_data.pointer && local_player::m_data.active_weapon && local_player::m_data.weapon_data) {
 			// get the max possible speed whilest we are still accurate.
 
-			float flMaxSpeed = local_player::m_data.pointer->is_scoped ( ) ? local_player::m_data.weapon_data->flMaxSpeedAlt : local_player::m_data.weapon_data->flMaxSpeed;
+			
 			float flDesiredSpeed = ( flMaxSpeed * 0.33000001f );
 			cmd->buttons &= ~( int ) in_walk;
 			clamp_movement_speed ( cmd, flDesiredSpeed );

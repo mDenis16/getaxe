@@ -108,6 +108,8 @@ bool should_predict( )
 
 bool anti_aim::allow( c_usercmd* ucmd, bool& send_packet ) {
 
+	if ( shifting::_shift.shift_ticks )
+		return false;
 
 	auto local = local_player::m_data.pointer;
 	if ( !local && !local->is_alive( ) )
@@ -150,6 +152,61 @@ bool anti_aim::allow( c_usercmd* ucmd, bool& send_packet ) {
 
 
 	return true;
+}
+ float anti_aim::get_freestanding_angle ( ) {
+
+	float Back, Right, Left;
+
+	vec3_t src3D, dst3D, forward, right, up, src, dst;
+	trace_t tr;
+	ray_t ray, ray2, ray3, ray4, ray5;
+	trace_filter filter;
+
+	vec3_t engineViewAngles;
+	interfaces::engine->get_view_angles ( engineViewAngles );
+
+	engineViewAngles.x = 0;
+
+	math::angle_vectors ( engineViewAngles, &forward, &right, &up );
+	engineViewAngles.y = math::normalize_yaw ( engineViewAngles.y );
+	filter.skip = local_pointer;
+	src3D = engine_prediction::unpredicted_eye;
+	dst3D = src3D + ( forward * 384 );
+
+	ray.initialize ( src3D, dst3D );
+
+	interfaces::trace_ray->trace_ray ( ray, MASK_SHOT, &filter, &tr );
+
+	Back = ( tr.end - tr.start ).length ( );
+
+	ray2.initialize ( src3D + right * 35, dst3D + right * 35 );
+
+	interfaces::trace_ray->trace_ray ( ray2, MASK_SHOT, &filter, &tr );
+
+	Right = ( tr.end - tr.start ).length ( );
+
+	ray3.initialize ( src3D - right * 35, dst3D - right * 35 );
+
+	interfaces::trace_ray->trace_ray ( ray3, MASK_SHOT, &filter, &tr );
+
+	Left = ( tr.end - tr.start ).length ( );
+	static bool jiter = false;
+
+	if ( Left > Right ) {
+		return ( engineViewAngles.y - 90 );
+	}
+	else if ( Right > Left ) {
+		return ( engineViewAngles.y + 90 );
+	}
+	else if ( Back > Right || Back > Left ) {
+		jiter = !jiter;
+		if ( jiter )
+		return ( engineViewAngles.y - 160 );
+		else
+			return ( engineViewAngles.y - 190 );
+	}
+	return ( engineViewAngles.y - 180 );
+
 }
 void anti_aim::calculate_peek_real ( ) {
 	if ( aimbot::targets.empty ( ) )
@@ -299,11 +356,52 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 		tick = interfaces::globals->tick_count;
 	}
 
+	if ( localdata.freestanding_on_key ) {
+	
+		cmd->viewangles.y = math::normalize_yaw ( get_freestanding_angle ( ) );
+	
+		return;
+	}
 
 	switch ( config.antiaim_yaw ) {
 	case 1:
 	{
-		cmd->viewangles.y = best_freestanding_angle ( );
+		vec3_t viewangle = vec3_t ( );
+		static vec3_t temp_angle = vec3_t ( );
+		interfaces::engine->get_view_angles ( viewangle );
+		if ( !( cmd->buttons & in_use ) ) {
+
+			viewangle.y -= 180.f;
+			if ( config.antiaim_at_targets && aimbot::targets.size ( ) && aimbot::targets.front ( ).player ) {
+				viewangle.y = math::calc_angle ( local_player::m_data.pointer->origin ( ), aimbot::targets.front ( ).player->origin ( ) ).y - 180.f;
+			}
+			viewangle.angle_normalize ( ); viewangle.angle_clamp ( );
+		}
+
+		float fakelag_percent = interfaces::clientstate->m_choked_commands ? static_cast<float>(interfaces::clientstate->m_choked_commands) / 14.0 : 0.f;
+		float desync_delta = ( fakelag_percent / 1.f ) * 57.f;
+
+		interfaces::console->console_printf ( "DESYNC DELTA %f \n", desync_delta );
+
+		if ( send_packet ) {
+			cmd->viewangles.y = viewangle.y;
+		}
+		else {
+			if ( anti_aim::desync_side )
+				cmd->viewangles.y = localdata.antiaim_yaw - desync_delta;
+			else
+				cmd->viewangles.y = localdata.antiaim_yaw + desync_delta;
+		}
+
+
+		if ( should_predict ( ) ) {
+			if ( anti_aim::desync_side )
+				cmd->viewangles.y = localdata.antiaim_yaw - 120.f;
+			else
+				cmd->viewangles.y = localdata.antiaim_yaw + 120.f;
+
+			send_packet = false;
+		}
 	}
 
 	break;
@@ -322,15 +420,17 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 		}
 		
 		 calculate_peek_real ( );
+		 float fakelag_percent = interfaces::clientstate->m_choked_commands ? static_cast< float >( interfaces::clientstate->m_choked_commands ) / 14.0 : 0.f;
+		 float desync_delta = 120.f;
 
 		 if ( send_packet ) {
 				 cmd->viewangles.y = viewangle.y;
 		 }
 		 else {
 			 if ( anti_aim::desync_side )
-				 cmd->viewangles.y = localdata.antiaim_yaw - 120.f;
+				 cmd->viewangles.y = localdata.antiaim_yaw - desync_delta;
 			 else
-				 cmd->viewangles.y = localdata.antiaim_yaw + 120.f;
+				 cmd->viewangles.y = localdata.antiaim_yaw + desync_delta;
 		 }
 		if ( fabsf ( cmd->sidemove ) < 2.0f ) {
 			cmd->sidemove = cmd->tick_count % 2 ? 1.10f : -1.10f;

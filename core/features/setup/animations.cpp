@@ -135,8 +135,6 @@ namespace animations {
 
 
 
-
-		if ( anim.last_tick != interfaces::globals->tick_count ) {
 			const auto o_eflags = player->get_ieflags ( );
 
 			*reinterpret_cast< bool * >( uintptr_t ( animstate ) + 0x5 ) = true;
@@ -174,9 +172,7 @@ namespace animations {
 			//player->set_abs_origin ( backup_origin );
 			anim.update_bones = false;
 
-			
-			anim.last_tick = interfaces::globals->tick_count;
-		}
+		
 	}
 	void update_animations_local ( ) {
 
@@ -188,7 +184,7 @@ namespace animations {
 		if ( !interfaces::engine->is_connected ( ) )
 			return;
 
-		bool should_update = false;
+		bool should_update = true;
 		if ( interfaces::globals->tick_count != last_tick ) {
 			should_update = true;
 			last_tick = interfaces::globals->tick_count;
@@ -245,13 +241,19 @@ namespace animations {
 			std::memcpy ( local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), m_data.m_poses.data ( ), sizeof ( m_data.m_poses ) );
 
 			local_player::m_data.pointer->GetBoneAccessor ( )->m_ReadableBones = local_player::m_data.pointer->GetBoneAccessor ( )->m_WritableBones = 0;
+			auto delta = math::normalize_yaw ( ( csgo::real_angle.y - m_data.proper_abs_yaw ) ) / 2.f;
+			delta = math::normalize_yaw ( delta );
 
-			local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, m_data.proper_abs_yaw + ( (csgo::real_angle.y - m_data.proper_abs_yaw )  ), 0 ) );
+			local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, math::normalize_yaw( m_data.proper_abs_yaw + delta) , 0 ) );
 		
 			
 			local_player::m_data.pointer->invalidate_bone_cache ( );
+			anim_data.update_bones = true;
+			auto old = local_pointer->get_anim_state ( )->m_duck_amount;
+			local_pointer->get_anim_state ( )->m_landing_duck_additive = 0.f;
 			local_player::m_data.pointer->setup_bones ( csgo::fake_matrix, 128, 0x7FF00, interfaces::globals->cur_time );
-		
+			local_pointer->get_anim_state ( )->m_duck_amount = old;
+			anim_data.update_bones = false;
 
 			for ( auto & i : csgo::fake_matrix ) {
 				i [ 0 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).x; //-V807
@@ -266,8 +268,9 @@ namespace animations {
 
 			//local_player::m_data.pointer->GetBoneAccessor ( )->m_ReadableBones = local_player::m_data.pointer->GetBoneAccessor ( )->m_WritableBones = 0;
 			local_player::m_data.pointer->invalidate_bone_cache ( );
+			anim_data.update_bones = true;
 			local_player::m_data.pointer->setup_bones ( nullptr, 128, 0x7FF00, interfaces::globals->cur_time );
-
+			anim_data.update_bones = false;
 		
 		}
 	}

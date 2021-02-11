@@ -39,6 +39,9 @@
 namespace csgo {
 	extern player_t* local_player;
 	extern matrix3x4_t player_bones[ 65 ][ 128 ];
+	extern matrix3x4_t left_player_bones [ 65 ][ 128 ];
+	extern matrix3x4_t right_player_bones [ 65 ][ 128 ];
+
 	extern matrix3x4_t fake_matrix[ 128 ];
 	extern matrix3x4_t real_matrix [ 128 ];
 

@@ -14,8 +14,8 @@ namespace hooks {
 	inline unsigned int get_virtual(void* _class, unsigned int index) { return static_cast<unsigned int>((*reinterpret_cast<int**>(_class))[index]); }
 	typedef float quaternion_t [ 4 ];
 	namespace frame_stage {
-		using fn = void ( __fastcall * )( void *, void *, int );
-		static void __fastcall hook ( void * ecx, void * edx, int stage );
+		using fn = void ( __fastcall * )( void *, void *, client_frame_stage_t );
+		static void __fastcall hook ( void * ecx, void * edx, client_frame_stage_t stage );
 	}
 	namespace process_interpolated_list {
 		using fn = void ( __thiscall * )( );
@@ -38,8 +38,8 @@ namespace hooks {
 		int __fastcall hook ( void * bsp, void * edx, vec3_t & mins, vec3_t & maxs, unsigned short * pList, int listMax );
 	}
 	namespace create_move {
-		using fn = bool(__stdcall*)(float, c_usercmd*);
-		static bool __fastcall hook(void* , void* , float input_sample_frametime, c_usercmd* cmd);
+		using fn = bool ( __stdcall * )( float, c_usercmd * );
+		static bool __fastcall hook ( void * ecx, void * edx, int input_sample_frametime, c_usercmd * cmd );
 	};
 	namespace process_packet {
 		static void __cdecl hook ( void * packet, bool header );
@@ -173,8 +173,13 @@ namespace hooks {
 		static vec3_t * __fastcall hook ( void * ecx, void * edx );
 	}
 	namespace cl_move {
-		using fn = void* ( __thiscall* )( void*  );
-		static void __fastcall  hook( void* ecx );
+
+		using fn = void ( __cdecl * ) ( float, bool );
+		static void __cdecl hook ( float accumulated_extra_samples, bool final_tick );
+	}
+	namespace clip_ray_collideable {
+		using fn = void * ( __thiscall * )( void *, const ray_t &, uint32_t, collideable_t *, void * );
+		static void __fastcall hook ( void * ecx, void * edx, const ray_t & ray, uint32_t fMask, collideable_t * pCollide, void * pTrace );
 	}
 	namespace scene_end {
 		using fn = void( __thiscall* )( void* );

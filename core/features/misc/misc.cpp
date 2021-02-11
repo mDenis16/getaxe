@@ -273,17 +273,25 @@ bool misc::can_fire ( weapon_t* weapon, bool check_revolver ) {
 	if ( !nci )
 		return false;
 
+	auto owner = ( player_t * ) interfaces::entity_list->get_client_entity_handle ( weapon->owner_handle ( ) );
 
-
-	if ( (interfaces::globals->cur_time + nci->get_latency ( 1 ) )  < weapon->next_primary_attack ( ) )
+	if ( !owner )
 		return false;
 
-	if ( check_revolver && weapon->item_definition_index ( ) == weapon_revolver && weapon->get_postpone_fire_ready_time ( ) >= interfaces::globals->cur_time )
+	auto server_time = math::ticks_to_time ( localdata.fixed_tickbase );
+
+	if ( server_time < weapon->next_primary_attack ( ) )
 		return false;
+
+	if ( server_time < owner->next_attack ( ) )
+		return false;
+
 
 	return true;
 }
 bool dbtap::double_tap ( c_usercmd * m_pcmd ) {
+	return false;
+
 	if ( !local_player::m_data.alive )
 		return false;
 	static float last_change_time = 0.f;

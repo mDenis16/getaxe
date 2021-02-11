@@ -245,7 +245,7 @@ void shot_processor::manage_shots( ) {
 			auto hitbox = hitbox_text ( ( hitboxes ) shot->target.aimbot.best_point.hitbox );
 		
 			std::stringstream ss = {};
-			interfaces::console->console_printf ( "SHOT [ HITBOX : %i, EXTRAPOLATED: %i, PREDICTED: %s ] \n", shot->target.aimbot.best_point.hitbox, shot->target.aimbot.record.choked, shot->target.aimbot.record.predicted ? "TRUE" : "FALSE" );
+			//interfaces::console->console_printf ( "SHOT [ HITBOX : %i, EXTRAPOLATED: %i, PREDICTED: %s ] \n", shot->target.aimbot.best_point.hitbox, shot->target.aimbot.record.choked, shot->target.aimbot.record.predicted ? "TRUE" : "FALSE" );
 
 			if ( !shot->approved_bullet ) {
 				ss << "Hit " << name << " in " << hitbox << " due to unregister shot.";
@@ -272,11 +272,28 @@ void shot_processor::manage_shots( ) {
 				ss << "Hit  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage.  bt (  "  << math::time_to_ticks ( shot->target.player->get_old_simulation_time() - shot->target.aimbot.record.simtime ) << " ) shot  " << (shot->target.aimbot.record.shoot ? "yes" : "no") << std::endl;
 				
 			
-	
+				if ( shot->target.aimbot.record.resolved ) {
+					connection::telemetry send_data = { };
+					send_data.lby = shot->target.aimbot.record.lby;
+					send_data.autowall_side = shot->target.aimbot.record.side;
+					send_data.goal_feet = shot->target.aimbot.record.goal_feet;
+					send_data.left_yaw = shot->target.aimbot.record.eye_angles.y - 58.f;
+					send_data.yaw = shot->target.aimbot.record.eye_angles.y;
+					send_data.right_yaw = shot->target.aimbot.record.eye_angles.y + 58.f;
+					send_data.map = interfaces::engine->get_level_name ( );
+					send_data.hit_side = shot->target.aimbot.record.side;
+					send_data.max_desync_delta = shot->target.aimbot.record.max_delta;
+					send_data.missed = false;
+					send_data.position = shot->target.aimbot.record.origin;
+					send_data.send ( );
+				}
+
 				visuals::player::hit_chams hitchams;
 				hitchams.curtime = interfaces::globals->cur_time;
 				std::memcpy ( hitchams.bones, shot->target.aimbot.record.bone, sizeof ( shot->target.aimbot.record.bone ) );
 				visuals::player::chams_log.at ( shot->target.index ).push_back ( hitchams );
+
+
 			}
 
 			visuals::notifications::add ( ss.str ( ) );
@@ -291,7 +308,7 @@ void shot_processor::manage_shots( ) {
 
 void shot_processor::draw_shots ( ) {
 	for ( size_t i = 0; i < shots.size ( ); i++ ) {
-		auto& shot = shots.at ( i );
+		auto shot = shots.at ( i );
 		if ( shot.approved ) {
 			ImVec2 from = ImVec2 ( ); ImVec2 to = ImVec2();
 			if ( visuals::world_to_screen ( shot.shotpos, from ) && visuals::world_to_screen ( shot.hitpos, to ) ) {
@@ -315,4 +332,29 @@ void shot_processor::draw_shots ( ) {
 			}
 		}
 	}
+	/*for ( size_t i = 0; i < resolver::shots.size ( ); i++ ) {
+		resolver::resolve_shot shot = resolver::shots.at ( i );
+		if ( shot.approved ) {
+			ImVec2 from = ImVec2 ( ); ImVec2 to = ImVec2 ( );
+			if ( visuals::world_to_screen ( shot.shotpos, from ) && visuals::world_to_screen ( shot.hitpos, to ) ) {
+				int pLineSize = 6;
+
+				auto color = shot.hurt ? ImColor ( 255, 255, 255 ) : ImColor ( 255, 0, 0 );
+
+				if ( shot.hit ) {
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( to.x - pLineSize / 2, to.y - pLineSize / 2 ), ImVec2 ( to.x - ( pLineSize ), to.y - ( pLineSize ) ), color );
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( to.x - pLineSize / 2, to.y + pLineSize / 2 ), ImVec2 ( to.x - ( pLineSize ), to.y + ( pLineSize ) ), color );
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( to.x + pLineSize / 2, to.y + pLineSize / 2 ), ImVec2 ( to.x + ( pLineSize ), to.y + ( pLineSize ) ), color );
+					c_menu::get ( ).draw->AddLine ( ImVec2 ( to.x + pLineSize / 2, to.y - pLineSize / 2 ), ImVec2 ( to.x + ( pLineSize ), to.y - ( pLineSize ) ), color );
+				}
+				else {
+					c_menu::get ( ).draw->AddCircle ( to, 30, 15, color );
+				}
+
+				c_menu::get ( ).draw->AddLine ( from, to, color );
+
+
+			}
+		}
+	}*/
 }

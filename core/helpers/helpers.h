@@ -41,6 +41,25 @@ namespace local_player {
 		bool double_tap_aim_check = false;
 
 
+		bool freestanding_on_key = false;
+		int freestand_on_key_last_tick = 0;
+
+		bool force_safe_point_on_key = false;
+		int force_safe_point_on_key_tick = 0;
+
+		bool force_min_dmg_on_key = false;
+		int force_min_dmg_on_key_tick = 0;
+		int m_tick = 0;
+		bool force_low_delta_on_key = false;
+		int force_low_delta_on_key_tick = 0;
+
+		bool force_invert_resolver_on_key = false;
+		int force_invert_resolver_on_key_tick = 0;
+
+
+		bool force_invert_doubletap_on_key = false;
+		int force_invert_doubletap_on_key_tick = 0;
+
 		bool fired_shot = false;
 		bool force_send_packet = false;
 		bool should_choke_packet = false;
@@ -69,4 +88,5 @@ namespace local_player {
 	bool available ( );
 	void begin_tick ( c_usercmd * cmd );
 	void end_tick ( c_usercmd * cmd );
+	void post_predict ( c_usercmd* cmd );
 }

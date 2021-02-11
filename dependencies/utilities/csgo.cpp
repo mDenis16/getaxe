@@ -6,7 +6,10 @@ namespace csgo {
 	view_matrix3x4_t screen_matrix;
 	int screen_width = 0;
 
+
 	matrix3x4_t fake_matrix[ 128 ];
+	matrix3x4_t left_player_bones [ 65 ][ 128 ];
+	matrix3x4_t right_player_bones [ 65 ][ 128 ];
 	matrix3x4_t real_matrix [ 128 ];
 	bool override_velocity = false;
 	bool choke_next_tick = false;

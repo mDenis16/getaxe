@@ -45,9 +45,10 @@ void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {
 	if ( m_stored_variables.m_flVelocityModifier < 1.0 ) {
 		*reinterpret_cast< int * >( reinterpret_cast< uintptr_t >( interfaces::prediction + 0x24 ) ) = 1;
 	}
-	interfaces::globals->cur_time = player->get_tick_base ( ) * interfaces::globals->interval_per_tick;
-	interfaces::globals->frame_time = interfaces::prediction->EnginePaused ? 0.0f : interfaces::globals->interval_per_tick;
 
+	interfaces::globals->cur_time = math::ticks_to_time ( localdata.fixed_tickbase );
+	interfaces::globals->frame_time = interfaces::prediction->EnginePaused ? 0.0f : interfaces::globals->interval_per_tick;
+	
 	if ( !prediction_random_seed || !prediction_player ) {
 		prediction_random_seed = *reinterpret_cast< int ** >( utilities::pattern_scan ( "client.dll", "A3 ? ? ? ? 66 0F 6E 86" ) + 0x1 );
 		prediction_player = *reinterpret_cast< int ** >( utilities::pattern_scan ( "client.dll", "89 35 ? ? ? ? F3 0F 10 48" ) + 0x2 );

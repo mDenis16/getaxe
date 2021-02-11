@@ -212,7 +212,8 @@ public:
 		return *reinterpret_cast< matrix3x4_t * >( reinterpret_cast< uintptr_t >( this ) + m_rgflCoordinateFrame );
 	}
 
-	
+	NETVAR ( "DT_BaseCSGrenadeProjectile", "m_vInitialVelocity", m_vInitialVelocity, vec3_t );
+
 	NETVAR ( "DT_BaseEntity", "m_vecMins", mins, vec3_t );
 	NETVAR ( "DT_BaseEntity", "m_vecMaxs", maxs, vec3_t );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_bDidSmokeEffect", m_bDidSmokeEffect, bool );
@@ -435,7 +436,7 @@ public:
 
 		auto idx = item_definition_index ( );
 
-		if ( idx == weapon_taser || idx == weapon_revolver || idx == weapon_ssg08 || idx == weapon_awp || idx == weapon_xm1014 || idx == weapon_nova || idx == weapon_sawedoff || idx == weapon_mag7 )
+		if ( idx == weapon_taser || idx == weapon_revolver || idx == weapon_awp || idx == weapon_xm1014 || idx == weapon_nova || idx == weapon_sawedoff || idx == weapon_mag7 )
 			return false;
 
 		return true;
@@ -626,7 +627,7 @@ public:
 
 	void update_accuracy_penalty ( ) {
 		using original_fn = void ( __thiscall * )( void * );
-		( *( original_fn ** ) this ) [ 483 ] ( this );
+					( *( original_fn ** ) this ) [ 483 ] ( this );
 	}
 
 	weapon_info_t * get_weapon_data ( ) {
@@ -640,6 +641,7 @@ public:
 
 
 };
+
 class player_t : public entity_t {
 private:
 	template <typename T>
@@ -689,7 +691,13 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_flDuckAmount", duck_amount, float );
 	NETVAR ( "DT_CSPlayer", "m_bHasHeavyArmor", has_heavy_armor, bool );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", smoke_grenade_tick_begin, int );
-	NETVAR ( "DT_CSPlayer", "m_nTickBase", get_tick_base, int );
+	
+
+	int & get_tick_base ( ) {
+		static auto m_nTickBase_var = netvar_manager::get_net_var ( fnv::hash ( "DT_BasePlayer" ), fnv::hash ( "m_nTickBase" ) );
+		return *( int * ) ( uintptr_t ( this ) + m_nTickBase_var );
+	}
+
 	NETVAR ( "DT_CSPlayer", "m_nNextThinkTick", m_nNextThinkTick, int )
 	NETVAR ( "DT_BaseEntity", "m_fEffects", m_fEffects, int );
 	
@@ -788,7 +796,17 @@ public:
 		}
 	}
 
+	vec3_t eye_pos ( ) {
 
+		static auto Weapon_ShootPosition = reinterpret_cast< float * ( __thiscall * )( void *, vec3_t * ) >(
+			utilities::pattern_scan ( "client.dll", "55 8B EC 56 8B 75 08 57 8B F9 56 8B 07 FF 90 ? ? ? ?" )
+			);
+
+		vec3_t pos;
+		Weapon_ShootPosition ( this, &pos );
+
+		return pos;
+	}
 	vec3_t get_eye_pos ( ) {
 
 		/*static auto Weapon_ShootPosition = reinterpret_cast< float * ( __thiscall * )( void *, vec3_t * ) >(
@@ -798,8 +816,28 @@ public:
 		vec3_t pos;
 		Weapon_ShootPosition ( this, &pos );
 		*/
+
 		vec3_t pos = this->origin ( ) + this->view_offset ( );
 
+		if ( interfaces::inputsystem->is_button_down(KEY_C) && this->index ( ) ==  interfaces::engine->get_local_player ( ) ) {
+			vec3_t _origin = origin ( );
+
+			vec3_t vDuckHullMin = interfaces::game_movement->GetPlayerMins ( true );
+			vec3_t vStandHullMin = interfaces::game_movement->GetPlayerMins ( false );
+
+			float fMore = ( vDuckHullMin.z - vStandHullMin.z );
+
+			vec3_t vecDuckViewOffset = interfaces::game_movement->GetPlayerViewOffset ( true );
+			vec3_t vecStandViewOffset = interfaces::game_movement->GetPlayerViewOffset ( false );
+			float duckFraction = duck_amount ( );
+
+			float tempz = ( ( vecDuckViewOffset.z - fMore ) * duckFraction ) +
+				( vecStandViewOffset.z * ( 1 - duckFraction ) );
+
+			_origin.z += tempz;
+
+			return _origin;
+		}
 
 		auto anim_state = this->get_anim_state ( );
 		if ( anim_state )
@@ -971,6 +1009,9 @@ public:
 			return vec3_t ( );
 
 		if ( bone_matrix == nullptr ) {
+			if ( !this->m_CachedBoneData ( ).m_Size )
+				return vec3_t ( );
+			bone_matrix = new matrix3x4_t [ 128 ];
 			memcpy ( bone_matrix, this->m_CachedBoneData ( ).Base ( ), this->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
 		}
 
@@ -991,7 +1032,7 @@ public:
 				return vec3_t ( ( min.x + max.x ) * 0.5f, ( min.y + max.y ) * 0.5f, ( min.z + max.z ) * 0.5f );
 			}
 		}
-
+		delete bone_matrix;
 		return vec3_t {};
 	}
 	vec3_t get_hitbox_position ( matrix3x4_t bone_matrix [ MAXSTUDIOBONES ], studio_box_t * hitbox ) {

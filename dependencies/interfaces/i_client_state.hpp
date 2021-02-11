@@ -43,7 +43,16 @@ public:
 	float m_flNextCmdTime;
 	uint32_t m_server_count;
 	uint32_t m_current_sequence;
-	char pad_0120 [ 84 ];
+
+	// de aici 
+	//char pad_0120 [ 84 ];
+	char _0x0120 [ 4 ];
+	__int32 m_iClockDriftMgr; //0x0124 
+	char _0x0128 [ 68 ];
+	__int32 m_iServerTick; //0x016C 
+	__int32 m_iClientTick; //0x0170 
+
+	//pana aici
 	int m_delta_tick;
 	bool m_paused;
 	char pad_0179 [ 7 ];

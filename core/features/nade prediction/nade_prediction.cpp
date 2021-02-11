@@ -136,7 +136,124 @@ void c_nade_prediction::predict ( c_usercmd * user_cmd ) {
 	_predicted = true;
 	should_draw = true;
 }
+std::pair < vec3_t, float > c_nade_prediction::custom_predict ( c_usercmd * user_cmd, vec3_t angles, player_t* target ) {
+	
+	std::pair< vec3_t, float > best_point;
 
+	constexpr float restitution = 0.45f;
+	constexpr float power [ ] = { 1.0f, 1.0f, 0.5f, 0.0f };
+	constexpr float velocity = 403.0f * 0.9f;
+
+	float step, gravity, new_velocity, unk01;
+	int index {}, grenade_act { 1 };
+	vec3_t pos, thrown_direction, start, eye_origin;
+	vec3_t  thrown;
+
+	static auto sv_gravity = interfaces::console->get_convar ( "sv_gravity" );
+
+	gravity = sv_gravity->get_float ( ) / 8.0f;
+	step = interfaces::globals->interval_per_tick;
+
+	eye_origin = local_player::m_data.pointer->get_eye_pos ( );
+
+	thrown = angles;
+
+	if ( thrown.x < 0 )
+		thrown.x = -10 + thrown.x * ( ( 90 - 10 ) / 90.0f );
+	else
+		thrown.x = -10 + thrown.x * ( ( 90 + 10 ) / 90.0f );
+
+
+	auto primary_attack = user_cmd->buttons & in_attack;
+	auto secondary_attack = user_cmd->buttons & in_attack2;
+
+	if ( primary_attack && secondary_attack )
+		grenade_act = ACT_LOB;
+	else if ( secondary_attack )
+		grenade_act = ACT_DROP;
+
+	unk01 = power [ grenade_act ];
+
+	unk01 = unk01 * 0.7f;
+	unk01 = unk01 + 0.3f;
+
+	new_velocity = velocity * unk01;
+
+	math::angle_vectors ( thrown, thrown_direction );
+
+	start = eye_origin + thrown_direction * 16.0f;
+	thrown_direction = ( thrown_direction * new_velocity ) + local_player::m_data.pointer->velocity ( );
+	float highest_damage = 0.f;
+
+	for ( auto time = 0.0f; index < 500; time += step ) {
+
+		pos = start + thrown_direction * step;
+		trace_t trace;
+		ray_t ray;
+		trace_filter_skip_one_entity filter ( local_player::m_data.pointer );
+
+		ray.initialize ( start, pos );
+		interfaces::trace_ray->trace_ray ( ray, MASK_SOLID, &filter, &trace );
+
+		if ( trace.flFraction != 1.0f ) {
+			thrown_direction = trace.plane.normal * -2.0f * thrown_direction.dot ( trace.plane.normal ) + thrown_direction;
+
+			thrown_direction *= restitution;
+
+			pos = start + thrown_direction * trace.flFraction * step;
+
+			time += ( step * ( 1.0f - trace.flFraction ) );
+		}
+
+		auto detonate = detonated ( local_player::m_data.pointer->active_weapon ( ), time, trace );
+		index++;
+
+		start = pos;
+
+		thrown_direction.z -= gravity * trace.flFraction * step;
+
+		if ( detonate ) {
+
+			// get center of mass for player.
+			vec3_t center = target->world_space_center ( );
+
+			// get delta between center of mass and final nade pos.
+			vec3_t delta = center - pos;
+
+			if ( local_player::m_data.active_weapon->item_definition_index ( ) == weapon_hegrenade ) {
+
+				if ( delta.length ( ) > 350.f )
+					continue;
+
+				auto dmg_ray = ray_t ( ); dmg_ray.initialize ( pos, center );
+				// check if our path was obstructed by anything using a trace.
+				interfaces::trace_ray->trace_ray ( dmg_ray, MASK_SHOT, ( trace_filter * ) &filter, &trace );
+
+				// something went wrong here.
+				if ( !trace.entity || trace.entity != target )
+					continue;
+
+				// rather 'interesting' formula by valve to compute damage.
+				float d = ( delta.length ( ) - 25.f ) / 140.f;
+				float damage = 105.f * std::exp ( -d * d );
+
+				// scale damage.
+				autowall::ScaleDamage ( hitgroup_chest, target, 1.f, damage );
+
+				if ( damage > highest_damage ) {
+					highest_damage = damage;
+					best_point.second = damage;
+				}
+			}
+			best_point.first = pos;
+		   
+			break;
+		}
+	
+	}
+
+	return best_point;
+}
 bool c_nade_prediction::detonated ( weapon_t * weapon, float time, trace_t & trace ) {
 	if ( !weapon )
 		return true;

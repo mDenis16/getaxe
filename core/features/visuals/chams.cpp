@@ -216,7 +216,9 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 	if ( is_player && local_player::m_data.pointer ) {
 	
 		auto entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( info.entity_index ) );
-
+		const float red [ 4 ] = { 255,0,0, 255 };
+		const float green [ 4 ] = { 0,255,0, 255 };
+		const float blue [ 4 ] = { 0,0,255, 255 };
 		if ( entity ) {
 		
 			if ( entity != local_player::m_data.pointer  ) {
@@ -318,6 +320,17 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 				interfaces::render_view->modulate_color ( old_modulation );
 				interfaces::model_render->override_material ( NULL );
 
+				/*if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
+					for ( auto record : player_manager::records [ entity->index ( ) ] ) {
+						if ( record.predicted )
+							interfaces::render_view->modulate_color ( red );
+						else
+							interfaces::render_view->modulate_color ( blue );
+
+						o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone );
+					}
+
+				}*/
 
 			}
 			else if (entity->is_alive()) {
@@ -347,26 +360,24 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 							if ( found_tint && tint )
 								tint->SetVector ( vec3_t ( config.visuals_modulation_enemy_xyz_color [ 0 ], config.visuals_modulation_enemy_xyz_color [ 1 ], config.visuals_modulation_enemy_xyz_color [ 2 ] ) );
 						}
-						const float red[4] = { 255,0,0, 255 };
-						const float green [ 4 ] = { 0,255,0, 255 };
-						const float blue [ 4 ] = { 0,0,255, 255 };
+				
 
 						override_mat ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );
 						o_draw_model_exec ( ecx, edx, ctx, state, info, custom_bone_to_world );
-						if ( !player_manager::records [ entity->index ( ) ].empty ( ) ) {
+						if ( csgo::right_player_bones [ entity->index ( ) ] && csgo::left_player_bones [ entity->index ( ) ] ) {
 
-							auto oldest = player_manager::records [ entity->index ( ) ].front ( );
+							//auto oldest = player_manager::records [ entity->index ( ) ].front ( );
 							
 							interfaces::render_view->modulate_color ( red );
-							o_draw_model_exec ( ecx, edx, ctx, state, info, oldest.bone_left );
+							o_draw_model_exec ( ecx, edx, ctx, state, info, csgo::left_player_bones[entity->index()] );
 
 							interfaces::render_view->modulate_color ( blue );
 
-							o_draw_model_exec ( ecx, edx, ctx, state, info, oldest.bone_right );
+							o_draw_model_exec ( ecx, edx, ctx, state, info, csgo::right_player_bones [ entity->index ( ) ] );
 
 
 						}
-						/*if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
+						if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
 							for ( auto record : player_manager::records [ entity->index ( ) ] ) {
 								if (record.predicted )
 									interfaces::render_view->modulate_color ( red );
@@ -376,7 +387,7 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 								o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone );
 							}
 				
-						}*/
+						}
 						interfaces::model_render->override_material ( NULL );
 
 					}

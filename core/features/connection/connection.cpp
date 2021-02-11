@@ -1,4 +1,4 @@
-
+/*
 #include <websocketpp/config/asio_no_tls_client.hpp>
 #include <websocketpp/client.hpp>
 
@@ -278,11 +278,10 @@ void connection::main ( ) {
 	if ( done ) {
 		endpoint.connect ( "http://localhost:4621/" );
 		std::this_thread::sleep_for ( std::chrono::milliseconds ( 2000 ) );
-		endpoint.send ( 0, std::string ( "csgoStart" ) );
+		//endpoint.send ( 0, std::string ( "csgoStart" ) );
 		done = false;
 	}
 
 
 
-
-}
+}*/

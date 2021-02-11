@@ -53,7 +53,7 @@
     <OutDir>C:\Users\topor\source\repos\getaxe\output\debug</OutDir>
     <IntDir>.\intermediates\</IntDir>
     <LibraryPath>F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>F:\includes\cef-master\include;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\ultralight\include</IncludePath>
+    <IncludePath>F:\includes\nlohmann;F:\includes\cef-master\include;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\ultralight\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -99,7 +99,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\features\connection\connection.cpp" />
+    <ClCompile Include="core\features\connection\telemetry.cpp" />
     <ClCompile Include="core\features\features.cpp" />
+    <ClCompile Include="core\features\gpu_task\distance.cpp" />
     <ClCompile Include="core\features\gpu_task\execution.cpp" />
     <ClCompile Include="core\features\legitbot\legitbot.cpp" />
     <ClCompile Include="core\features\legitbot\triggerbot.cpp" />
@@ -112,6 +114,9 @@
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\misc\movement.cpp" />
     <ClCompile Include="core\features\misc\movement_recorder.cpp" />
+    <ClCompile Include="core\features\misc\prediction_system.cpp" />
+    <ClCompile Include="core\features\misc\shifting.cpp" />
+    <ClCompile Include="core\features\nade prediction\autothrow.cpp" />
     <ClCompile Include="core\features\nade prediction\nade_prediction.cpp" />
     <ClCompile Include="core\features\ragebot\accuracy\autostop.cpp" />
     <ClCompile Include="core\features\ragebot\aimbot.cpp" />
@@ -127,7 +132,6 @@
     <ClCompile Include="core\features\ragebot\components\visual_debug.cpp" />
     <ClCompile Include="core\features\ragebot\fakelag.cpp" />
     <ClCompile Include="core\features\ragebot\net_data.cpp" />
-    <ClCompile Include="core\features\ragebot\tickbase_shift.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
     <ClCompile Include="core\features\setup\event_manager.cpp" />
     <ClCompile Include="core\features\setup\lag_compensation.cpp" />
@@ -179,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
     <ClInclude Include="core\features\misc\events\events.hpp" />
+    <ClInclude Include="core\features\misc\prediction_system.h" />
     <ClInclude Include="core\features\nade prediction\nade_prediction.hpp" />
     <ClInclude Include="core\helpers\checksum_crc.h" />
     <ClInclude Include="core\helpers\checksum_md5.h" />

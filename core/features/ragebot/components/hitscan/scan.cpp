@@ -28,8 +28,10 @@ namespace aimbot {
 
 
 		for ( auto record : player_manager::records [ index ] ) {
-			
-			if ( record.shoot || record.resolved ) {
+			if ( record.invalid )
+				continue;
+
+			if ( record.shoot ) {
 				best_record = record;
 				break;
 			}
@@ -98,10 +100,11 @@ namespace aimbot {
 
 	
 		if ( best_record.shoot || entity.is_current_record_hidden ) {
-			best_records.push_back ( player_manager::records [ index ].back ( ) );
 			best_records.push_back ( best_record );
+			best_records.push_back ( player_manager::records [ index ].back ( ) );
 		}
 		else {
+		
 			best_records.push_back ( player_manager::records [ index ].back ( ) );
 			best_records.push_back ( best_record.simtime == 0.f ? player_manager::records[ index ].front() : best_record );
 		}
@@ -119,12 +122,7 @@ namespace aimbot {
 			resolver::resolver_data [ entity.player->index ( ) ].side = resolver::desync_side::dodge;
 			return;
 		}*/
-	   
-		if ( !record.shoot  && record.resolved )
-			std::memcpy ( record.bone_aim, record.bone_resolved, sizeof ( record.bone_resolved ) );
-		else
-			std::memcpy ( record.bone_aim, record.bone, sizeof ( record.bone ) );
-	
+
 	
 	}
 	void scan ( target & entity ) {
@@ -132,20 +130,22 @@ namespace aimbot {
 
 		for ( auto record : filter_records ( entity ) ) {
 
-			manage_resolve_data ( entity, record );	
+			if ( record.is_valid ( ) ) {
+				manage_resolve_data ( entity, record );
 
-			record.apply ( entity.player );
-			bestpoint data = { };
-			if ( !record.failed )
-				data = best_point ( entity, record );
-			record.restore ( entity.player );
+				record.apply ( entity.player );
+				bestpoint data = { };
+				if ( !record.failed )
+					data = best_point ( entity, record );
+				record.restore ( entity.player );
 
 
-			if ( data.dmg >= (entity.aimbot.best_point.dmg + 5.f) ) {
-				entity.aimbot.best_point = data;
-				entity.aimbot.record = record;
-				if ( record.shoot )
-					break;
+				if ( data.dmg >= ( entity.aimbot.best_point.dmg + 5.f ) ) {
+					entity.aimbot.best_point = data;
+					entity.aimbot.record = record;
+					if ( record.shoot )
+						return;
+				}
 			}
 		}
 	

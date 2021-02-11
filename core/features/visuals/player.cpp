@@ -261,7 +261,10 @@ void visuals::player::name( visuals::player::data _data ) {
 
 	
 	if ( !player_manager::records [ _data.index ].empty ( ) ) {
-		auto current = player_manager::records [ _data.index ].back ( );
+		if ( _data.index > 64 )
+			return;
+
+			auto current = player_manager::records [ _data.index ].back ( );
 		dsdsDrawText ( c_menu::get ( ).smallf, resolver::side_name ( current.side ), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 25 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
 		if ( current.resolved ) {
 			dsdsDrawText ( c_menu::get ( ).smallf, "hit", ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 15 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
@@ -541,7 +544,7 @@ void visuals::player::paint_traverse ( ) {
 	
 
 				current_data.distance = player->abs_origin ( ).distance_to ( local_player::m_data.eye_position );
-				if ( player->active_weapon ( ) ) {
+				if ( player->active_weapon ( ) && player->active_weapon ( )->get_weapon_data()) {
 					current_data.weapon_icon = weapon_to_icon ( player->active_weapon ( )->item_definition_index ( ) );
 					current_data.weapon_name = player->active_weapon ( )->get_weapon_data ( )->szWeaponName;
 				}

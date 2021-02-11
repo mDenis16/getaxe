@@ -33,14 +33,12 @@ antiaim_fakelag_flags [ 3 ] }, { "on shot", &config.
 antiaim_fakelag_flags [ 4 ] } } );
 
 		}, 600, config.antiaim_enable );
-		/*option ( "Exploits", "Gives you a big advatage", [ = ] ( ) {
-			option_single ( "Doubletap", "Allows you to shoot twice at the same time", config.ragebot_double_tap );
-			option_single ( "Hideshots", "Prevent other players to hit your flip", config.ragebot_hideshots );
-			ImGui::Hotkey ( "##dbtap key", &c_config::get ( ).double_tap_key, ImVec2 ( 100, 20 ) );
-			ImGui::Hotkey ( "##hideshots key", &c_config::get ( ).hide_shots_key, ImVec2 ( 100, 20 ) );
+		option ( "Exploits", "Gives you a big advatage", [ = ] ( ) {
+			option_slider_int ( "exploit", "Amount of fakelag", 0, 32, config.ragebot_double_tap_ticks );
+	
 			
 
-		}, 300, config.antiaim_enable );*/
+		}, 300, config.antiaim_enable );
 	
 	}
 }

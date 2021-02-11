@@ -18,11 +18,13 @@ namespace aimbot {
 		if ( !hitbox_set )
 			return;
 
+		bool should_use_resolved = hit_box == hitbox_head && record.resolved;
+
 		studio_box_t * hitbox = hitbox_set->hitbox ( hit_box );
 
 		const auto mod = hitbox->radius != -1.f ? hitbox->radius : 0.f;
-		auto maxs = math::vector_transform ( hitbox->maxs + mod, record.bone_aim [ hitbox->bone ] );
-		auto  mins = math::vector_transform ( hitbox->mins - mod, record.bone_aim [ hitbox->bone ] );
+		auto maxs = math::vector_transform ( hitbox->maxs + mod, should_use_resolved ? record.bone_resolved [ hitbox->bone ] : record.bone [ hitbox->bone ] );
+		auto  mins = math::vector_transform ( hitbox->mins - mod, should_use_resolved ? record.bone_resolved [ hitbox->bone ] : record.bone [ hitbox->bone ] );
 
 		points.center = ( mins + maxs ) * 0.5f;
 
@@ -33,6 +35,7 @@ namespace aimbot {
 
 		if ( should_disable && hit_box != hitbox_head )
 			return;
+		point.safe = false;
 
 		vec3_t current_angles = math::calc_angle ( points.center, engine_prediction::unpredicted_eye );
 
@@ -81,19 +84,19 @@ namespace aimbot {
 				if ( does_point_intersect ( entity, points.points.at ( i ).pos, hitbox_upper_chest, record.bone ) )
 					points.points.erase ( points.points.begin ( ) + i );
 		}
+
 		/*safepoint implementation after i sleep*/
 		for ( size_t i = 0; i < points.points.size ( ); i++ ) {
 		
 
-			if ( record.max_delta <= 32 || record.shoot ) {
+			if (!record.shoot && ( record.in_air || record.max_delta <= 45 || localdata.force_safe_point_on_key) ) {
 				points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_left ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_right );
 			}
-			else if (config.ragebot_safe_point > 0) {
+			else if (config.ragebot_safe_point <= 3) {
 				
-				if ( record.resolved && record.max_delta > 32 && record.max_delta <= 50 )
-					points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_resolved ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_aim );
-				else if ( record.resolved )
-					points.points.at ( i ).safe = true;
+				if ( (record.resolved && record.max_delta >= 42 && record.max_delta <= 50) || record.shoot  )
+					points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_resolved ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone );
+
 			}
 		     
 			

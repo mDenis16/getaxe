@@ -1,6 +1,7 @@
 #include "../dependencies/utilities/csgo.hpp"
 #include "features/features.hpp"
 
+
 unsigned long WINAPI initialize(void* instance) {
 	while (!GetModuleHandleA("serverbrowser.dll"))
 		Sleep(10000);
@@ -12,7 +13,8 @@ unsigned long WINAPI initialize(void* instance) {
 
 
 	console::initialize("csgo-cheat console");
-
+//#if RELEASE
+	//connection::main ( );
 
 	try {
 		interfaces::initialize();

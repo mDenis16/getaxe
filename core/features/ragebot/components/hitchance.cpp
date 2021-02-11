@@ -202,12 +202,15 @@ namespace aimbot {
 
 	std::optional<vec3_t> get_intersect_point ( vec3_t start, vec3_t end, vec3_t mins, vec3_t maxs, float radius ) {
 		auto sphere_intesection = [ start, end, radius ] ( auto && center ) -> std::optional<vec3_t> {
-			auto direction = ( end - start ).normalizedvec ( );
+					
+			auto direction = ( end - start );
+
+			math::fast_vec_normalize ( direction );
 
 			auto q = vec3_t ( center - start );
 			auto v = q.dot ( direction );
 			auto d = radius * radius - ( q.length_sqr ( ) - v * v );
-
+			
 			if ( d < FLT_EPSILON )
 				return {};
 
@@ -218,7 +221,7 @@ namespace aimbot {
 		math::fast_vec_normalize(delta );
 		auto dist = mins.distance_to ( maxs );
 		if ( dist > 100.f ) {
-			interfaces::console->console_printf ( "DEBUG: CRITICAL ERROR IN GET INTERSECT POINT ADDRESS %p hitchance.cpp %\n", _ReturnAddress ( ) );
+			//interfaces::console->console_printf ( "DEBUG: CRITICAL ERROR IN GET INTERSECT POINT ADDRESS %p hitchance.cpp %\n", _ReturnAddress ( ) );
 			return {};
 		}
 		for ( size_t i {}; i < std::floor ( mins.distance_to ( maxs ) ); ++i ) {
@@ -256,6 +259,21 @@ namespace aimbot {
 		float hitchance = config.ragebot_hitchance;
 
 		if ( !local_player ) return false;
+
+		const auto round_acc = [ ] ( const float accuracy ) { return roundf ( accuracy * 1000.f ) / 1000.f; };
+
+		const auto crouched = local_pointer->flags ( ) & fl_ducking;
+		const auto weapon_inaccuracy = localdata.active_weapon->inaccuracy ( );
+
+		if ( crouched ) {
+			if ( round_acc ( weapon_inaccuracy ) == round_acc ( localdata.active_weapon->is_sniper() ? localdata.weapon_data->flInaccuracyCrouchAlt : localdata.weapon_data->flInaccuracyCrouch ) )
+				return true;
+		}
+		else {
+			if ( round_acc ( weapon_inaccuracy ) == round_acc ( localdata.active_weapon->is_sniper ( ) ? localdata.weapon_data->flInaccuracyStandAlt : localdata.weapon_data->flInaccuracyStand ) )
+				return true;
+
+		}
 		int traces_hit = 0;
 		int needed_hits = static_cast< int >( SEED_MAX * ( hitchance / 100.f ) );
 		vec3_t forward, right, up;
@@ -266,8 +284,6 @@ namespace aimbot {
 		if ( !weapon )
 			return false;
 
-
-		weapon->update_accuracy_penalty ( );
 
 		float weapon_spread = weapon->get_spread ( );
 		float weapon_cone = weapon->inaccuracy ( );
@@ -289,8 +305,10 @@ namespace aimbot {
 		vec3_t mins = vec3_t ( ), maxs = vec3_t ( );
 		float radius = _hitbox->radius != -1.f ? _hitbox->radius : 0.f;
 
-		VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x, _hitbox->maxs.y, _hitbox->maxs.z ), entity.aimbot.record.bone [ _hitbox->bone ], maxs );
-		VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x, _hitbox->mins.y, _hitbox->mins.z ), entity.aimbot.record.bone [ _hitbox->bone ], mins );
+		bool should_use_resolved = entity.aimbot.best_point.hitbox == hitbox_head && entity.aimbot.record.resolved;
+
+		VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x, _hitbox->maxs.y, _hitbox->maxs.z ), should_use_resolved ? entity.aimbot.record.bone_resolved [ _hitbox->bone ] : entity.aimbot.record.bone [ _hitbox->bone ], maxs );
+		VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x, _hitbox->mins.y, _hitbox->mins.z ), should_use_resolved ? entity.aimbot.record.bone_resolved [ _hitbox->bone ] : entity.aimbot.record.bone [ _hitbox->bone ], mins );
 		entity.aimbot.best_point.col.maxs = maxs;
 		entity.aimbot.best_point.col.mins = mins;
 		entity.aimbot.best_point.col.radius = radius;

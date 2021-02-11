@@ -118,7 +118,7 @@ public:
 
 	void set_local_view_angles ( vec3_t & angles ) {
 		typedef void ( __thiscall * Fn )( void *, vec3_t & );
-		return utilities::call_virtual<Fn> ( this, 21 )( this, angles );
+		return utilities::call_virtual<Fn> ( this, 13 )( this, angles );
 	}
 	char pad00 [ 8 ]; 					// 0x0000
 	bool InPrediction;				// 0x0008

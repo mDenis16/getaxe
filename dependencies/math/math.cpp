@@ -1,6 +1,6 @@
 #include "../utilities/csgo.hpp"
 #include "../../core/menu/render/menu_render.hpp"
-
+#include "../../core/features/features.hpp"
 
 #define sin math::fast_sin
 #define cos math::fast_cos
@@ -369,6 +369,8 @@ void math::smooth_angle ( vec3_t src, vec3_t & dst, float factor ) {
 }
 
 float math::calc_distance ( const vec3_t src, const vec3_t dst, bool _2d = false ) {
+	
+
 	return sqrtf ( powf ( ( src.y - dst.y ), 2 ) + powf ( ( src.x - dst.x ), 2 ) + ( _2d ? 1.0f : powf ( ( src.z - dst.z ), 2 ) ) );
 }
 /*optimize out math functions with precomputed values*/
