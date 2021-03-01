@@ -58,8 +58,8 @@ enum e_anim_layer {
 };
 
 namespace animations {
-	anim_data m_data;
-	std::array<anim_info, 64> player_data;
+	
+
 	void update_anim_angle ( anim_state * state, vec3_t ang ) {
 		using fn = void ( __vectorcall * )( void *, void *, float, float, float, void * );
 		static auto ret = reinterpret_cast< fn >( utilities::pattern_scan ( "client.dll", ( "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24" ) ) );
@@ -67,22 +67,35 @@ namespace animations {
 		if ( !ret || !state )
 			return;
 
+
+
 		ret ( state, nullptr, 0.f, ang.y, ang.x, nullptr );
 	}
 
 	void post_data_end ( player_t * player ) {
 		auto & anim = player_data [ player->index ( ) ];
 		if ( player->simulation_time ( ) != player->get_old_simulation_time ( ) ) {
-			anim.last_networked_angle = player->eye_angles ( );
-			anim.last_networked_origin = player->origin ( );
-			anim.last_networked_duck_amount = player->duck_amount ( );
-			anim.network_update = true;
+			
+			predict_velocity ( player );
+
+			anim.network.angle = player->eye_angles ( );
+			anim.network.origin = player->origin ( );
+			anim.outdated_anims = anim.network_update = true;
+
+			anim.simulated_origin = anim.network.origin + ( player->velocity ( ) * ( interfaces::globals->interval_per_tick  ) );
+
 		}
 	}
 
-	vec3_t predict_position ( player_t * player ) {
-		auto & anim = player_data [ player->index ( ) ];
-		return anim.predicted_origin = anim.last_networked_origin + ( player->velocity ( ) * ( interfaces::globals->interval_per_tick * ( float ) math::time_to_ticks ( player->simulation_time ( ) - player->get_old_simulation_time ( ) ) ) );
+	void predict_velocity ( player_t * player ) {
+
+		 auto & anim = player_data [ player->index ( ) ];
+		 anim.time_delta = player->simulation_time ( ) - player->get_old_simulation_time ( );
+
+		 anim.predicted_origin = anim.network.origin + ( anim.perdicted_velocity * ( interfaces::globals->interval_per_tick * ( float ) math::time_to_ticks ( anim.time_delta ) ) );
+		 anim.perdicted_velocity = ( player->velocity() - anim.network.origin ) / anim.time_delta;
+
+
 	}
 	void __declspec( naked ) feet_wobble_fix ( ) {
 		__asm
@@ -120,69 +133,109 @@ namespace animations {
 			ret
 		}
 	}
+
+
+	void backup ( ) {
+
+		globals.cur_time = interfaces::globals->cur_time;
+		globals.real_time = interfaces::globals->realtime;
+		globals.frame_time = interfaces::globals->frame_time;
+		globals.abs_frametime = interfaces::globals->absolute_frametime;
+		globals.interpolation_amount = interfaces::globals->interpolation_amount;
+		globals.tickcount = interfaces::globals->tick_count;
+		globals.framecount = interfaces::globals->frame_count;
+	}
+
+	void backup_animations ( player_t * player ) {
+		auto & backup = player_data [ player->index ( ) ].backup;
+
+		auto anim_pointer = player->get_anim_state ( );
+
+		std::memcpy ( &backup.state, anim_pointer, sizeof ( anim_state ) );
+		std::memcpy ( backup.layers.data ( ), player->anim_layers ( ).data ( ), sizeof ( animationlayer ) * 13 );
+		std::memcpy ( backup.poses.data ( ), player->m_flPoseParameter ( ).data ( ), sizeof ( float ) * 24 );
+	}
+
+	void restore_animations ( player_t * player ) {
+		auto & backup = player_data [ player->index ( ) ].backup;
+		
+		auto anim_pointer = player->get_anim_state ( );
+
+
+		memcpy ( player->m_flPoseParameter ( ).data(), backup.poses.data(), sizeof ( float ) * 24 );
+		memcpy ( player->get_anim_state(), &backup.state, sizeof ( anim_state ) );
+		memcpy ( player->anim_layers ().data(), backup.layers.data(), sizeof ( animationlayer ) * 13 );
+
+	}
+	void restore (  ) {
+		interfaces::globals->cur_time = globals.cur_time;
+		interfaces::globals->realtime = globals.real_time;
+		interfaces::globals->frame_time = globals.frame_time;
+		interfaces::globals->absolute_frametime = globals.abs_frametime;
+		interfaces::globals->interpolation_amount = globals.interpolation_amount;
+
+		interfaces::globals->tick_count = globals.tickcount;
+		interfaces::globals->frame_count = globals.framecount;
+	}
+
+	void update_globals ( player_t * player, float time ) {
+		static auto host_timescale = interfaces::console->get_convar ( ( "host_timescale" ) );
+
+		int tick = math::time_to_ticks ( time );
+
+		interfaces::globals->cur_time = time;
+		interfaces::globals->realtime = time;
+		interfaces::globals->frame_time = interfaces::globals->interval_per_tick * host_timescale->get_float ( );
+		interfaces::globals->absolute_frametime = interfaces::globals->interval_per_tick * host_timescale->get_float ( );
+		interfaces::globals->absolute_frame_start_time = time - interfaces::globals->interval_per_tick * host_timescale->get_float ( );
+		interfaces::globals->interpolation_amount = 0;
+
+		interfaces::globals->frame_count = tick;
+		interfaces::globals->tick_count = tick;
+
+
+
+	}
 	void update_player_animation ( player_t * player ) {
 
-		auto & anim = player_data [ player->index ( ) ];
-
-
-
-
-		auto animstate = player->get_anim_state ( );
-
-		if ( !animstate )
-			return;
-
-
-
-
-			const auto o_eflags = player->get_ieflags ( );
-
-			*reinterpret_cast< bool * >( uintptr_t ( animstate ) + 0x5 ) = true;
-			animstate->m_last_clientside_anim_framecount = 0;
-
-			predict_position ( player );
 	
-			if ( anim.network_update ) {
-				float flTimeDelta = player->simulation_time ( ) - player->get_old_simulation_time ( );
-				anim.perdicted_velocity = ( anim.predicted_origin - anim.last_networked_origin ) / flTimeDelta;
-				anim.last_networked_origin = player->origin ( );
-				anim.interpolated_origin = math::lerp ( anim.last_networked_origin, anim.predicted_origin, flTimeDelta );
-				anim.last_networked_duck_amount = player->duck_amount ( );
-				anim.network_update = false;
-			}
 
-			player->get_ieflags ( ) &= ~4096;
-			player->get_abs_velocity ( ) = anim.perdicted_velocity;
-
-	
-			feet_wobble_fix ( );
-			anim.update_anims = true;
-			player->duck_amount ( ) = anim.last_networked_duck_amount;
-			update_anim_angle ( animstate, anim.last_networked_angle );
-			anim.update_anims = false;
-			player->get_ieflags ( ) = o_eflags;
-
-	
-			player->GetBoneAccessor ( )->m_ReadableBones = player->GetBoneAccessor ( )->m_WritableBones = 0;
-			player->invalidate_bone_cache ( );
-			anim.update_bones = true;
-			vec3_t backup_origin = player->abs_origin ( );
-		
-			player->setup_bones ( nullptr, 128, bone_used_by_anything, interfaces::globals->cur_time );
-			//player->set_abs_origin ( backup_origin );
-			anim.update_bones = false;
-
-		
 	}
+	/*local player*/
 	void update_animations_local ( ) {
 
 
 		static int last_tick = 0;
-		if ( !interfaces::engine->is_in_game ( ) )
-			return;
+	
+		/*if ( local_pointer &&  local_pointer->is_alive ( ) ) {
+		/*	if ( local_pointer->get_anim_state ( )->m_hit_ground ) {
+				*reinterpret_cast< float * >( reinterpret_cast< uintptr_t >( local_pointer->get_anim_state ( ) ) + 0x110 ) = 0.0f;
+			}*/
+			//local_pointer->m_flPoseParameter ( ) [ 12 ] = 0.f;
+			//local_pointer->m_flPoseParameter ( ) [ 11 ] = 120.f;
+			//if ( local_pointer->get_anim_state ( )->m_hit_ground ) {
+			//	float height = static_cast< float >( reinterpret_cast< uintptr_t >( local_pointer->get_anim_state ( ) ) + 0x118 );
 
-		if ( !interfaces::engine->is_connected ( ) )
-			return;
+				//if ( height ) {
+			//		update_anim_angle ( local_pointer->get_anim_state ( ), vec3_t ( 0.f, local_pointer->get_anim_state ( )->m_eye_yaw, 0.f ) );
+				//}
+			//}
+				
+			
+
+		//}
+		/*if ( local_pointer->is_in_air ( ) ) {
+		  
+			//if ( local_pointer->get_anim_state ( )->m_hit_ground )
+				
+
+			local_pointer->get_anim_state ( )->m_time_in_air = 999.f;
+
+
+			//entity.set_prop ( entity.get_local_player ( ), "m_flPoseParameter", 0.5, 12 )
+		}*/
+
+//		return;
 
 		bool should_update = true;
 		if ( interfaces::globals->tick_count != last_tick ) {
@@ -240,17 +293,15 @@ namespace animations {
 			std::memcpy ( local_player::m_data.pointer->get_animoverlays ( ), m_data.m_layers.data ( ), sizeof ( m_data.m_layers ) );
 			std::memcpy ( local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), m_data.m_poses.data ( ), sizeof ( m_data.m_poses ) );
 
-			local_player::m_data.pointer->GetBoneAccessor ( )->m_ReadableBones = local_player::m_data.pointer->GetBoneAccessor ( )->m_WritableBones = 0;
+			//local_player::m_data.pointer->GetBoneAccessor ( )->m_ReadableBones = local_player::m_data.pointer->GetBoneAccessor ( )->m_WritableBones = 0;
 			auto delta = math::normalize_yaw ( ( csgo::real_angle.y - m_data.proper_abs_yaw ) ) / 2.f;
 			delta = math::normalize_yaw ( delta );
 
 			local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, math::normalize_yaw( m_data.proper_abs_yaw + delta) , 0 ) );
-		
-			
-			local_player::m_data.pointer->invalidate_bone_cache ( );
+
 			anim_data.update_bones = true;
 			auto old = local_pointer->get_anim_state ( )->m_duck_amount;
-			local_pointer->get_anim_state ( )->m_landing_duck_additive = 0.f;
+			local_pointer->get_anim_state ( )->m_duck_amount = 0.f;
 			local_player::m_data.pointer->setup_bones ( csgo::fake_matrix, 128, 0x7FF00, interfaces::globals->cur_time );
 			local_pointer->get_anim_state ( )->m_duck_amount = old;
 			anim_data.update_bones = false;
@@ -266,11 +317,15 @@ namespace animations {
 
 			local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, m_data.proper_abs_yaw, 0 ) );
 
-			//local_player::m_data.pointer->GetBoneAccessor ( )->m_ReadableBones = local_player::m_data.pointer->GetBoneAccessor ( )->m_WritableBones = 0;
-			local_player::m_data.pointer->invalidate_bone_cache ( );
 			anim_data.update_bones = true;
-			local_player::m_data.pointer->setup_bones ( nullptr, 128, 0x7FF00, interfaces::globals->cur_time );
+			local_player::m_data.pointer->setup_bones ( csgo::real_matrix, 128, 0x7FF00, interfaces::globals->cur_time );
 			anim_data.update_bones = false;
+
+			for ( auto & i : csgo::real_matrix ) {
+				i [ 0 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).x; //-V807
+				i [ 1 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).y;
+				i [ 2 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).z;
+			}
 		
 		}
 	}

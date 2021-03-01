@@ -14,8 +14,8 @@ namespace hooks {
 	inline unsigned int get_virtual(void* _class, unsigned int index) { return static_cast<unsigned int>((*reinterpret_cast<int**>(_class))[index]); }
 	typedef float quaternion_t [ 4 ];
 	namespace frame_stage {
-		using fn = void ( __fastcall * )( void *, void *, client_frame_stage_t );
-		static void __fastcall hook ( void * ecx, void * edx, client_frame_stage_t stage );
+		using fn = void ( __stdcall * )( client_frame_stage_t );
+		static void __stdcall hook ( client_frame_stage_t stage );
 	}
 	namespace process_interpolated_list {
 		using fn = void ( __thiscall * )( );
@@ -103,9 +103,9 @@ namespace hooks {
 		using fn = bool ( __fastcall * )( void *, void * );
 	}
 	namespace do_extra_bone_processing {
-		using fn = void ( __thiscall * )( void *, void *, vec3_t *, void *, void *, uint8_t *, void * );
+		using fn = void ( __thiscall * )( void * , void * , void *, vec3_t * , float * , void * , void * , void *  );
 
-		static void _fastcall hook ( void * ecx, uint32_t, void * hdr, vec3_t * pos, void * q, void * matrix, uint8_t * bone_computed, void * context );
+		static void _fastcall hook ( void * ecx, void * edx, void * hdr, vec3_t * pos, float * quaternion, void * matrix, void * bone_computed, void * ik_context );
 	}
 	namespace do_procedural_foot_plant {
 	
@@ -148,8 +148,8 @@ namespace hooks {
 		static LRESULT __stdcall  hook( HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam );
 	}
 	namespace run_commmand {
-		using fn = void( __thiscall* )( void*, player_t* , c_usercmd*, player_move_helper*  );
-		static void _fastcall hook( void* , void* , player_t* player, c_usercmd* cmd, player_move_helper* move_helper );
+		static void __fastcall hook ( void * ecx, void * edx, player_t * player, c_usercmd * cmd, player_move_helper * move_helper );
+		using fn = void ( __fastcall * )( void *, void *, player_t *, c_usercmd *, void * );
 	}
 	namespace packet_start {
 		using fn = void ( __thiscall * )( void *, int, int );

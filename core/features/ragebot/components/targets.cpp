@@ -18,8 +18,8 @@ namespace aimbot {
 			if ( !entity->is_alive ( ) )
 				continue;
 
-			if ( entity->dormant ( ) )
-				continue;
+			//if ( entity->dormant ( ) )
+				//continue;
 
 			if ( entity->is_teammate ( ) )
 				continue;

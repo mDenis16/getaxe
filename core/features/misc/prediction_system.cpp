@@ -14,7 +14,7 @@ void engineprediction::setup ( ) {
 	prediction_data.old_curtime = interfaces::globals->cur_time; //-V807
 	prediction_data.old_frametime = interfaces::globals->frame_time;
 
-	interfaces::globals->cur_time = math::ticks_to_time ( localdata.fixed_tickbase );
+	interfaces::globals->cur_time = math::ticks_to_time ( local_pointer->get_tick_base ( ) );
 	interfaces::globals->frame_time = interfaces::prediction->EnginePaused ? 0.0f : interfaces::globals->interval_per_tick;
 
 	prediction_data.prediction_stage = PREDICT;
@@ -37,7 +37,7 @@ void engineprediction::predict ( c_usercmd * m_pcmd ) {
 	*prediction_data.prediction_random_seed = MD5_PseudoRandom ( m_pcmd->command_number ) & INT_MAX;
 
 	if ( !prediction_data.prediction_player )
-		prediction_data.prediction_player = *reinterpret_cast < int ** > ( utilities::pattern_scan (  ( "client.dll" ),  ( "89 35 ? ? ? ? F3 0F 10 48" ) ) + 0x2 );
+		prediction_data.prediction_player = *reinterpret_cast < int ** > ( utilities::pattern_scan (  ( "client.dll" ),  ( "89 35 ? ? ? ? F3 0F 10 48 20" ) ) + 0x2 );
 
 	*prediction_data.prediction_player = reinterpret_cast < int > ( local_pointer );
 

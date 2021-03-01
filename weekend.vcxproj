@@ -141,7 +141,6 @@
     <ClCompile Include="core\features\visuals\projectiles\grenades.cpp" />
     <ClCompile Include="core\features\visuals\projectiles\grenade_proximity.cpp" />
     <ClCompile Include="core\features\visuals\projectiles\projectiles.cpp" />
-    <ClCompile Include="core\features\visuals\hurt_log.cpp" />
     <ClCompile Include="core\features\visuals\notifications.cpp" />
     <ClCompile Include="core\features\visuals\player.cpp" />
     <ClCompile Include="core\features\visuals\projectiles\weapons.cpp" />

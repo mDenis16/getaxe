@@ -298,8 +298,7 @@ int resolver::get_desync_side ( vec3_t from, vec3_t to, player_t * entity, int h
 	return 0;
 }
 
-float resolver::server_feet_yaw( player_t* entity, vec3_t angle )
-{
+float resolver::server_feet_yaw ( player_t * entity ) {
 	auto animstate = entity->get_anim_state ( );
 
 	if ( !animstate )
@@ -311,8 +310,13 @@ float resolver::server_feet_yaw( player_t* entity, vec3_t angle )
 	auto ducking_speed = max ( 0.f, min ( 1.f, *reinterpret_cast< float * > ( animstate + 0xFC ) ) );
 	auto running_speed = max ( 0.f, min ( *reinterpret_cast< float * > ( animstate + 0xF8 ), 1.f ) );
 	/* offsets */
+	auto backup_eflags = entity->get_ieflags ( );
 
-	auto speed = std::fmin ( animations::player_data[entity->index()].perdicted_velocity.length ( ), 260.0f );
+	entity->get_ieflags ( ) = ( 1 << 12 );
+	auto abs_velocity = *reinterpret_cast< vec3_t * > ( uintptr_t ( entity ) + 0x94 );
+	entity->get_ieflags ( ) = backup_eflags;
+
+	auto speed = std::fmin ( abs_velocity.length ( ), 260.0f );
 
 	auto goal_feet_yaw = animstate->m_abs_yaw;
 	/*static float shot [ 64 ];
@@ -341,7 +345,7 @@ float resolver::server_feet_yaw( player_t* entity, vec3_t angle )
 		return delta;
 	};
 
-	auto eye_feet_delta = angle_diff ( angle.y, goal_feet_yaw );
+	auto eye_feet_delta = angle_diff ( animstate->m_eye_yaw, goal_feet_yaw );
 
 	auto flYawModifier = ( ( ( ground_fraction * -0.3f ) - 0.2f ) * running_speed ) + 1.0f;
 
@@ -353,28 +357,25 @@ float resolver::server_feet_yaw( player_t* entity, vec3_t angle )
 
 	if ( eye_feet_delta <= flMaxYawModifier ) {
 		if ( flMinYawModifier > eye_feet_delta )
-			goal_feet_yaw = fabs ( flMinYawModifier ) + animstate->m_abs_yaw;
+			goal_feet_yaw = fabs ( flMinYawModifier ) + animstate->m_eye_yaw;
 	}
 	else
-		goal_feet_yaw = animstate->m_abs_yaw - fabs ( flMaxYawModifier );
+		goal_feet_yaw = animstate->m_eye_yaw - fabs ( flMaxYawModifier );
 
 	if ( goal_feet_yaw > 5000 || goal_feet_yaw < -5000 )
 		return 0.f;
 
 	math::normalize_yaw ( goal_feet_yaw );
 
-	if ( speed > 0.1f || fabs ( animations::player_data [ entity->index ( ) ].perdicted_velocity.z ) > 100.0f ) {
+	if ( speed > 0.1f || fabs ( abs_velocity.z ) > 100.0f ) {
 		goal_feet_yaw = math::fl_approach_angle (
-			angle.y,
+			animstate->m_eye_yaw,
 			goal_feet_yaw,
 			( ( ground_fraction * 20.0f ) + 30.0f )
 			* animstate->m_last_clientside_anim_update );
 	}
 	else {
-		goal_feet_yaw = math::fl_approach_angle (
-			entity->lower_body_yaw ( ),
-			goal_feet_yaw,
-			animstate->m_last_clientside_anim_update * 100.0f );
+		goal_feet_yaw = entity->lower_body_yaw ( );
 	}
 
 	if ( goal_feet_yaw > 5000 || goal_feet_yaw < -5000 )
@@ -545,7 +546,7 @@ void resolver::resolve_player ( player_t * player ) {
 	data.max_desync_delta = max_desync_delta ( player );
 
 	data.safe_point_angle = resolver::resolver_data [ i ].max_desync_delta / 2.f;
-	data.server_goal_feet = server_feet_yaw ( player, animations::player_data [ i ].last_networked_angle );
+//	data.server_goal_feet = server_feet_yaw ( player, animations::player_data [ i ].last_networked_angle );
 	data.desync_delta = fabs ( math::normalize_yaw ( yaw - data.server_goal_feet ) );
 	
 
@@ -616,7 +617,7 @@ void resolver::frame_stage ( ) {
 
 
 	manage_shots ( );
-
+	/*
 	for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
 		player_t * entity = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
 
@@ -661,22 +662,24 @@ void resolver::frame_stage ( ) {
 					if ( ( previousLayer.m_cycle != currentLayer.m_cycle ) || currentLayer.m_weight == 1.f ) {
 						resolver_data [ i ].lby_desync = true;
 						float lby =  entity->lower_body_yaw ( ) ;
-						float yaw =  animations::player_data [ entity->index ( ) ].last_networked_angle.y;
+					//	float yaw =  animations::player_data [ entity->index ( ) ].last_networked_angle.y;
 					//	interfaces::console->console_printf ( "HIGH LBY BREAK DETECTED FOR PLAYER %c LBY %f  YAW %f DELTA %f\n", entity_name.data ( ), lby, yaw, std::fabs(lby - yaw) );
 					
 					}
 					else if ( currentLayer.m_weight == 0.f && ( previousLayer.m_cycle > 0.92f && currentLayer.m_cycle > 0.92f ) ) // breaking lby with delta < 120; can fakewalk here aswell
 					{
 						float lby = math::normalize_yaw ( entity->lower_body_yaw ( ) );
-						float yaw = math::normalize_yaw ( animations::player_data [ entity->index ( ) ].last_networked_angle.y );
+					//	float yaw = math::normalize_yaw ( animations::player_data [ entity->index ( ) ].last_networked_angle.y );
 						//interfaces::console->console_printf ( "LOW DELTA LBY BREAK DETECTED FOR PLAYER %c LBY %f  YAW %f \n", entity_name.data ( ), lby, yaw );
 					}
 				}
 
 			}
-			float orig_goal_feet = server_feet_yaw ( entity, animations::player_data[i].last_networked_angle);
+			//float orig_goal_feet = server_feet_yaw ( entity, animations::player_data[i].last_networked_angle);
 		
 			resolver_data [ i ].extended_desync = currentLayer.m_cycle == 0.f && currentLayer.m_weight == 0.f;
 		}
 	}
+	*/
+
 }

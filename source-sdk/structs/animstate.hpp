@@ -86,6 +86,14 @@ public:
 
 	void reset ( );
 	void update ( vec3_t & ang );
+
+	float & time_since_in_air ( ) {
+		return *( float * ) ( ( uintptr_t ) this + 0x110 );
+	}
+
+	float & yaw_desync_adjustment ( ) {
+		return *( float * ) ( ( uintptr_t ) this + 0x334 );
+	}
 };
 class animationlayer {
 public:

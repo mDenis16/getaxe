@@ -25,7 +25,7 @@ float get_curtime( c_usercmd* ucmd ) {
 	return curtime;
 }
 
-
+static int last_bruteforce_change = 0;
 static int last_user_id = -1;
 static int shots_on_me = 0;
 static float last_angle_bullet_impact = 0.0f;
@@ -72,7 +72,7 @@ void anti_aim::event_logs::bullet_impact( i_game_event* event ) {
 	auto angDelta = (angle_head - angle_bullet).Length2D();
 	
 	if ( angDelta < 3.0f && last_time_shoot [ entity->index ( ) ] != interfaces::globals->tick_count) {
-	
+		last_bruteforce_change = interfaces::globals->tick_count + 256;
 		desync_side = !desync_side;
 		last_time_shoot [ entity->index ( ) ] = interfaces::globals->tick_count;
 	}
@@ -153,62 +153,77 @@ bool anti_aim::allow( c_usercmd* ucmd, bool& send_packet ) {
 
 	return true;
 }
- float anti_aim::get_freestanding_angle ( ) {
+ int anti_aim::freestanding_angle ( ) {
 
-	float Back, Right, Left;
+	 vec3_t view_angle = vec3_t ( );  interfaces::engine->get_view_angles ( view_angle );
+	 vec3_t freestand_angle = vec3_t(csgo::real_angle.x, math::normalize_yaw ( view_angle.y - 180.f ), 0 );
 
-	vec3_t src3D, dst3D, forward, right, up, src, dst;
-	trace_t tr;
-	ray_t ray, ray2, ray3, ray4, ray5;
-	trace_filter filter;
+	 if ( aimbot::targets.empty ( ) )
+		 return freestand_angle.y;
 
-	vec3_t engineViewAngles;
-	interfaces::engine->get_view_angles ( engineViewAngles );
+	 if ( !local_pointer->m_CachedBoneData ( ).m_Size )
+		 return freestand_angle.y;
 
-	engineViewAngles.x = 0;
+	 auto target = aimbot::targets.front ( );
+	 if ( target.player) {
+		 freestand_angle = vec3_t ( csgo::real_angle.x, math::normalize_yaw( math::calc_angle ( local_pointer->origin ( ), target.player->origin ( ) ).y - 180.f), 0);
+		 if ( target.player->active_weapon ( ) ) {
+			 autowall::FireBulletData_t awall = { };
 
-	math::angle_vectors ( engineViewAngles, &forward, &right, &up );
-	engineViewAngles.y = math::normalize_yaw ( engineViewAngles.y );
-	filter.skip = local_pointer;
-	src3D = engine_prediction::unpredicted_eye;
-	dst3D = src3D + ( forward * 384 );
+			 matrix3x4_t old_cache [ 128 ];
 
-	ray.initialize ( src3D, dst3D );
+			 std::memcpy ( old_cache, local_pointer->m_CachedBoneData ( ).Base ( ), local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
 
-	interfaces::trace_ray->trace_ray ( ray, MASK_SHOT, &filter, &tr );
+			 vec3_t old_abs_angles = local_pointer->abs_angles ( );
+			 vec3_t left_angles = vec3_t ( csgo::real_angle.x, math::normalize_yaw ( freestand_angle.y - 90.f ), 0 );
+			 vec3_t right_angles = vec3_t ( csgo::real_angle.x, math::normalize_yaw ( freestand_angle.y + 90.f ), 0 );
 
-	Back = ( tr.end - tr.start ).length ( );
+			 //player_manager::create_fake_matrix_based_on_angle ( local_pointer, localdata.left_matrix, left_angles );
+			 //player_manager::create_fake_matrix_based_on_angle ( local_pointer, localdata.right_matrix, right_angles );
+			 const float delta_left = math::normalize_yaw ( left_angles.y -csgo::real_angle.y );
+			 const float delta_right = math::normalize_yaw ( right_angles.y - csgo::real_angle.y );
+			 vec3_t extrapolated_origin ( ( local_pointer->origin ( ) + ( local_pointer->velocity ( ) * math::ticks_to_time(4) ) ) );
 
-	ray2.initialize ( src3D + right * 35, dst3D + right * 35 );
+			// player_manager::get_rotated_matrix ( local_pointer->origin ( ), old_cache, delta_left, localdata.left_matrix );
+			// player_manager::get_rotated_matrix ( local_pointer->origin ( ), old_cache, delta_right, localdata.right_matrix );
 
-	interfaces::trace_ray->trace_ray ( ray2, MASK_SHOT, &filter, &tr );
+			 local_pointer->set_abs_angles ( left_angles );
+			 std::memcpy ( local_pointer->m_CachedBoneData ( ).Base ( ), localdata.left_matrix, local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+			 auto bone_left = local_pointer->get_hitbox_position ( hitbox_head, localdata.left_matrix );
+		
+			 int left_dmg = autowall::get_damage ( target.player, target.player->get_eye_pos ( ), bone_left, awall );
+		 
+			 local_pointer->set_abs_angles ( right_angles );
+			 std::memcpy ( local_pointer->m_CachedBoneData ( ).Base ( ), localdata.right_matrix, local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+			 auto bone_right = local_pointer->get_hitbox_position ( hitbox_head, localdata.right_matrix );
 
-	Right = ( tr.end - tr.start ).length ( );
+			 int right_dmg = autowall::get_damage ( target.player, target.player->get_eye_pos ( ), bone_right, awall );
 
-	ray3.initialize ( src3D - right * 35, dst3D - right * 35 );
 
-	interfaces::trace_ray->trace_ray ( ray3, MASK_SHOT, &filter, &tr );
+			// interfaces::console->console_printf ( "FREESTANDING LEFT DAMAGE: %i | RIGHT DAMAGE: %i \n", left_dmg, right_dmg );
 
-	Left = ( tr.end - tr.start ).length ( );
-	static bool jiter = false;
 
-	if ( Left > Right ) {
-		return ( engineViewAngles.y - 90 );
-	}
-	else if ( Right > Left ) {
-		return ( engineViewAngles.y + 90 );
-	}
-	else if ( Back > Right || Back > Left ) {
-		jiter = !jiter;
-		if ( jiter )
-		return ( engineViewAngles.y - 160 );
-		else
-			return ( engineViewAngles.y - 190 );
-	}
-	return ( engineViewAngles.y - 180 );
+			 local_pointer->set_abs_angles ( old_abs_angles );
+			 std::memcpy ( local_pointer->m_CachedBoneData ( ).Base ( ), old_cache, local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
 
+
+			 if ( left_dmg == right_dmg || left_dmg == 0 && right_dmg == 0 || ((left_dmg > 40 && right_dmg > 30 && std::abs(left_dmg - right_dmg) < 30)) || (left_dmg > 20 && right_dmg  > 20 ))
+				 return freestand_angle.y;
+
+			 if ( left_dmg > right_dmg )
+				 return right_angles.y;
+			 else if ( right_dmg > left_dmg )
+				 return left_angles.y;
+			 else
+				 return freestand_angle.y;
+
+		 }
+	 }
 }
 void anti_aim::calculate_peek_real ( ) {
+	if ( interfaces::globals->tick_count <= last_bruteforce_change )
+		return;
+
 	if ( aimbot::targets.empty ( ) )
 		return;
 
@@ -261,6 +276,7 @@ void anti_aim::calculate_peek_real ( ) {
 //	}
 
 }
+
 int anti_aim::best_freestanding_angle ( ) {
 	anti_aim::points.clear ( );
 	auto local_origin = local_pointer->origin ( );
@@ -289,7 +305,7 @@ int anti_aim::best_freestanding_angle ( ) {
 		for ( int angle = -180; angle <= 180; angle += 45 ) {
 
 			matrix3x4_t rotated [ 128 ];
-			player_manager::get_rotated_matrix ( local_origin, local_pointer->m_CachedBoneData ( ).Base ( ), angle, rotated );
+			//player_manager::get_rotated_matrix ( local_origin, local_pointer->m_CachedBoneData ( ).Base ( ), angle, rotated );
 			//local_pointer->set_abs_angles ( vec3_t(0, angle, 0) );
 			std::memcpy ( local_pointer->m_CachedBoneData ( ).Base ( ), rotated, local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
 			auto bone = local_pointer->get_hitbox_position ( hitbox_head, rotated );
@@ -358,7 +374,7 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 
 	if ( localdata.freestanding_on_key ) {
 	
-		cmd->viewangles.y = math::normalize_yaw ( get_freestanding_angle ( ) );
+		cmd->viewangles.y = math::normalize_yaw ( freestanding_angle ( ) );
 	
 		return;
 	}
@@ -379,9 +395,9 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 		}
 
 		float fakelag_percent = interfaces::clientstate->m_choked_commands ? static_cast<float>(interfaces::clientstate->m_choked_commands) / 14.0 : 0.f;
-		float desync_delta = ( fakelag_percent / 1.f ) * 57.f;
+		float desync_delta = 58.f;
 
-		interfaces::console->console_printf ( "DESYNC DELTA %f \n", desync_delta );
+		//interfaces::console->console_printf ( "DESYNC DELTA %f \n", desync_delta );
 
 		if ( send_packet ) {
 			cmd->viewangles.y = viewangle.y;
@@ -419,7 +435,7 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 			viewangle.angle_normalize ( ); viewangle.angle_clamp ( );
 		}
 		
-		 calculate_peek_real ( );
+		// calculate_peek_real ( );
 		 float fakelag_percent = interfaces::clientstate->m_choked_commands ? static_cast< float >( interfaces::clientstate->m_choked_commands ) / 14.0 : 0.f;
 		 float desync_delta = 120.f;
 

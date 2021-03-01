@@ -36,6 +36,7 @@ void* interfaces::file_system = nullptr;
 
 bool interfaces::initialize() {
 
+
 	client = get_interface<i_base_client_dll, interface_type::index>("client.dll", "VClient018");
 
 	entity_list = get_interface<i_client_entity_list, interface_type::index>("client.dll", "VClientEntityList003");

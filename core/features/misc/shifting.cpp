@@ -19,7 +19,9 @@ namespace shifting {
 			if ( cmd->buttons & cmd_buttons::in_attack ) {
 
 				_shift.shift_ticks = _shift.next_tickbase_shift = config.ragebot_double_tap_ticks;
-
+				shifting::_shift.original_tickbase = local_pointer->get_tick_base ( );
+			
+			
 				_shift.can_shift = false;
 
 				_shift.shifted_command = cmd->command_number;

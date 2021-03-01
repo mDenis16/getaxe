@@ -25,6 +25,11 @@ namespace local_player {
 		vec3_t orig_viewangle = vec3_t();
 		vec3_t eye_position = vec3_t ( );
 		vec3_t velocity = vec3_t ( );
+		matrix3x4a_t left_matrix [ 128 ];
+		matrix3x4a_t right_matrix [ 128 ];
+
+		matrix3x4a_t predicted_desync [ 128 ];
+
 		weapon_t* active_weapon = nullptr;
 		weapon_info_t * weapon_data = nullptr;
 		player_t* pointer = nullptr;

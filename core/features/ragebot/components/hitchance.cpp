@@ -249,7 +249,7 @@ namespace aimbot {
 		return hitchance;
 	}
 	bool hitchance ( target & entity ) {
-		auto angle = math::calc_angle ( engine_prediction::unpredicted_eye, best_target.aimbot.best_point.position );
+		auto angle = math::calc_angle ( localdata.eye_position, best_target.aimbot.best_point.position );
 
 
 		constexpr int   SEED_MAX = 255;
@@ -307,8 +307,8 @@ namespace aimbot {
 
 		bool should_use_resolved = entity.aimbot.best_point.hitbox == hitbox_head && entity.aimbot.record.resolved;
 
-		VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x, _hitbox->maxs.y, _hitbox->maxs.z ), should_use_resolved ? entity.aimbot.record.bone_resolved [ _hitbox->bone ] : entity.aimbot.record.bone [ _hitbox->bone ], maxs );
-		VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x, _hitbox->mins.y, _hitbox->mins.z ), should_use_resolved ? entity.aimbot.record.bone_resolved [ _hitbox->bone ] : entity.aimbot.record.bone [ _hitbox->bone ], mins );
+		VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x, _hitbox->maxs.y, _hitbox->maxs.z ),  entity.aimbot.record.bone [ _hitbox->bone ], maxs );
+		VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x, _hitbox->mins.y, _hitbox->mins.z ), entity.aimbot.record.bone [ _hitbox->bone ], mins );
 		entity.aimbot.best_point.col.maxs = maxs;
 		entity.aimbot.best_point.col.mins = mins;
 		entity.aimbot.best_point.col.radius = radius;

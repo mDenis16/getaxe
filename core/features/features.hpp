@@ -124,11 +124,13 @@ namespace resolver {
 	std::string side_name ( desync_side side );
 	int get_desync_side ( vec3_t from, vec3_t to, player_t * entity, int hitbox );
 
+	float server_feet_yaw ( player_t * entity );
+
 	void side_think ( player_t * entity );
 
 	int get_desync_side ( player_t * entity, vec3_t from, vec3_t to );
 
-	float server_feet_yaw ( player_t * entity, vec3_t angle );
+
 
 	float max_desync_delta( player_t* entity );
 	bool is_player_peeking( player_t* player );
@@ -169,41 +171,54 @@ namespace engine_prediction {
 	void patch_attack_packet ( c_usercmd * m_nCmd, bool m_bPredicted );
 }
 namespace player_manager {
-
+	inline int old_simulation [ 65 ];
 	class lagcomp_t
 	{
 	private:
 		void manage_matrix ( player_t * entity );
+		void manage_animations ( player_t * entity );
+		void update_animations ( );
 		void matrix_resolve ( player_t * entity );
 	public:
+		
 		bool shoot = false;
 		bool failed = false;
 		int left_dmg, right_dmg = 0;
 		float simtime = 0.f;
 		int tick_count = 0;
-
+		vec3_t old_vec_origin;
+		player_t * entity = nullptr;
 		vec3_t origin, obbmin, obbmax, abs_origin, abs_angles, eye_angles, velocity;
 
 		matrix3x4_t bone [ 128 ];
-		int bone_count = 0;
-		matrix3x4_t bone_left [ 128 ];
-		matrix3x4_t bone_resolved [ 128 ];
-		matrix3x4_t bone_aim [ 128 ];
-		matrix3x4_t bone_right [ 128 ];
 		matrix3x4_t bone_at_me [ 128 ];
+		matrix3x4_t bone_left [ 128 ];
+		matrix3x4_t bone_right [ 128 ];
+
+		int bone_count = 0;
+		
 		float max_delta = 0.f;
 		float speed = 0.f;
-		int choked = 0;
+		int choked_ticks = 0;
+		int simulation_ticks = 0;
 		bool in_air  = false;
 		bool lag = false;
 		bool resolved = false;
+		float duck_amount = 0.f;
 		bool predicted = false;
 		float lby = 0.f;
+		bool setup = false;
+		bool network_update = false;
 		float goal_feet = 0.f;
 		bool invalid = false;
-		animationlayer anim_layer [ 15 ];
+		std::array<animationlayer, 15> anim_layers;
+		std::array<float, 24> pos_params;
+		anim_state animstate;
+
 		resolver::desync_side side = resolver::desync_side::dodge;
 		int flags = 0;
+		void apply_anims ( player_t * entity );
+		void receive_anims ( player_t * entity );
 		void apply (player_t* entity );
 		void restore ( player_t * entity );
 		void receive ( player_t * entity,bool predict );
@@ -214,7 +229,7 @@ namespace player_manager {
 		void simulate_movement ( player_t * entity, vec3_t & vecOrigin, vec3_t & vecVelocity, int & fFlags, bool bOnGround );
 		lagcomp_t (  ) {	}
 	};
-
+	inline std::array<std::vector< lagcomp_t >, 64> records;
 	player_t* util_player_by_index( int index );
 
 
@@ -240,7 +255,6 @@ namespace player_manager {
 	float interpolation_time( );
 	float get_lerp_time( );
 
-	extern std::array<std::vector< player_manager::lagcomp_t >, 64> records;
 	extern 	lagcomp_t backup_data [ 64 ];
 
 	bool is_tick_valid( lagcomp_t record );
@@ -258,6 +272,10 @@ namespace player_manager {
 	void restore_record( player_t* entity, lagcomp_t record );
 
 	void restore_player( player_t* entity );
+
+	inline bool is_dormant [ 65 ];
+	inline int update_tick = 0;
+	inline float previous_goal_feet_yaw [ 65 ];
 	extern float players_health [ 64 ];
 }
 namespace anti_aim {
@@ -275,8 +293,9 @@ namespace anti_aim {
 	float get_freestanding_angle( );
 
 	bool allow( c_usercmd* ucmd, bool& send_packet );
-	void freestanding_desync( c_usercmd* cmd, float& dirrection, player_t* p_entity, bool& send_packet, float max_desync );
-	void calculate_peek_real( );
+	int freestanding_angle ( );
+	void calculate_peek_real ( );
+	void desync_freestanding ( c_usercmd * cmd );
 	void on_create_move( c_usercmd* cmd, bool& send_packet );
 	int best_freestanding_angle ( );
 	struct freestand_point {
@@ -371,31 +390,63 @@ namespace animations {
 		bool init = false;
 	};
 	struct anim_info {
-		vec3_t last_networked_angle = vec3_t ( );
-		vec3_t last_networked_origin = vec3_t ( );
-		vec3_t interpolated_velocity = vec3_t ( );
+		
+
 		vec3_t perdicted_velocity = vec3_t ( );
 		vec3_t predicted_origin = vec3_t ( );
+		vec3_t simulated_origin = vec3_t ( );
 		vec3_t interpolated_origin = vec3_t ( );
-		float last_networked_duck_amount = 0.f;
+		float time_delta = 0.f;
+		struct backup_data {
+			anim_state state;
+			std::array<animationlayer, 13> layers;
+			std::array<float, 24U> poses;
+		};  backup_data backup;
+	   
+
+		struct network_data {
+			vec3_t angle = vec3_t ( );
+			vec3_t origin = vec3_t ( );
+			vec3_t velocity = vec3_t ( );
+		};  network_data network;
+
+	
 		bool network_update = false;
-		float at_target_abs_yaw = 0.f;
+		bool outdated_anims = false;
+	
 		bool update_anims = false;
 		bool update_bones = false;
-		bool init = false;
-		int last_tick = 0;
-		bool modify_bonecache = false;
-		std::array< float, 24 > m_poses;
-		std::array< animationlayer, 13 > m_layers;
-	};
-	extern std::array<anim_info, 64> player_data;
-	extern anim_data m_data;
-	void update_animations_local ( );
-	void update_fake_animations ( );
-	void update_anim_angle ( anim_state * state, vec3_t ang );
-	void update_player_animation ( player_t * player );
-	void post_data_end ( player_t * player );
 
+	
+	};
+	
+	inline anim_data m_data;
+	void update_animations_local ( );
+
+	void update_anim_angle ( anim_state * state, vec3_t ang );
+	void predict_velocity ( player_t * player );
+	void post_data_end ( player_t * player );
+	void update_player_animation ( player_t * player );
+	void update_globals ( player_t * player, float time );
+	void restore ( );
+	void backup ( );
+
+	inline std::array<anim_info, 64> player_data;
+
+
+	struct global_data {
+		float cur_time = 0.f;
+		float real_time = 0.f;
+		float frame_time = 0.f;
+		float abs_frametime = 0.f;
+		float interpolation_amount = 0.f;
+
+		int tickcount = 0;
+		int framecount = 0;
+
+	};
+
+	inline global_data globals;
 }
 namespace shifting {
 	void create_move( c_usercmd* cmd  );
@@ -413,7 +464,11 @@ namespace shifting {
 		bool was_zero_before = false;
 		int original_tickbase = 0;
 		int last_shift_tick = 0;
+		int backup_tickbase = 0;
+		float backup_curtime = 0.f;
+		bool recharging = false;
 		int shifted_command = 0;
+		int recharge_command = 0;
 		int wait_for_recharge = 0;
 		int current_shift = 0;
 		bool can_recharge = true;

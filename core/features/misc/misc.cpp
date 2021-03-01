@@ -278,7 +278,7 @@ bool misc::can_fire ( weapon_t* weapon, bool check_revolver ) {
 	if ( !owner )
 		return false;
 
-	auto server_time = math::ticks_to_time ( localdata.fixed_tickbase );
+	auto server_time = math::ticks_to_time ( local_pointer->get_tick_base ( ) );
 
 	if ( server_time < weapon->next_primary_attack ( ) )
 		return false;

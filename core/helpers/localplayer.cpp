@@ -59,19 +59,13 @@ namespace local_player {
 				m_data.weapon_data = m_data.active_weapon->get_weapon_data ( );
 				m_data.have_weapon = true;
 			}
-			m_data.eye_position = engine_prediction::unpredicted_eye;
+			m_data.eye_position = local_pointer->get_eye_pos ( );
 			m_data.velocity = engine_prediction::unpredicted_velocity;
 		}
 
 		m_data.backup_tickbase = local_pointer->get_tick_base ( );
 
-		if ( shifting::_shift.next_tickbase_shift ) {
-			m_data.fixed_tickbase = local_pointer->get_tick_base ( ) - shifting::_shift.next_tickbase_shift;
-			shifting::_shift.next_tickbase_shift = 0;
-		}
-		else
-			m_data.fixed_tickbase = m_data.backup_tickbase;
-
+	
 
 		
 	}
@@ -127,6 +121,9 @@ namespace local_player {
 				net_channel->choked_packets = backup_choke;
 			}
 		}
+
+
+
 	}
 	void post_predict ( c_usercmd * cmd ) {
 		if ( local_player::available ( ) ) {

@@ -17,10 +17,12 @@ void fake_lag::create_move( bool& send_packet ) {
 
 	if ( local_player::m_data.pointer->is_in_air ( ) )
 		player_state = 2;
-
-	if ( localdata.fakeducking )
-		choke_target = 14;
-
+	if ( shifting::_shift.allow )
+		choke_target = 1;
+	else {
+		if ( localdata.fakeducking )
+			choke_target = 14;
+	}
 	
 	send_packet = interfaces::clientstate->m_choked_commands >= choke_target;
 	if ( anti_aim::choke_next_tick  ) {

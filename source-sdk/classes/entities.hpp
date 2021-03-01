@@ -49,6 +49,14 @@ enum client_frame_stage_t {
 	// We've finished rendering the scene.
 	FRAME_RENDER_END
 };
+enum InvalidatePhysicsBits_t : int {
+	POSITION_CHANGED = 0x1,
+	ANGLES_CHANGED = 0x2,
+	VELOCITY_CHANGED = 0x4,
+	ANIMATION_CHANGED = 0x8,
+	BOUNDS_CHANGED = 0x10,
+	SEQUENCE_CHANGED = 0x20
+};
 
 enum move_type {
 	movetype_none = 0,
@@ -272,13 +280,7 @@ public:
 		return ( *( original_fn ** ) animating ( ) ) [ 1 ] ( animating ( ) );
 	}
 
-	bool setup_bones ( matrix3x4_t * out, int max_bones, int mask, float time ) {
-		if ( !this )
-			return false;
-
-		using original_fn = bool ( __thiscall * )( void *, matrix3x4_t *, int, int, float );
-		return ( *( original_fn ** ) animating ( ) ) [ 13 ] ( animating ( ), out, max_bones, mask, time );
-	}
+	
 	bool setup_bones_alternative ( BoneArray * out, int max_bones, int mask, float time ) {
 		if ( !this )
 			return false;
@@ -354,6 +356,7 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_fFlags", flags, int );
 	OFFSET ( bool, dormant, 0xED );
 	OFFSET ( int, get_take_damage, 0x27C )
+	OFFSET ( vec3_t, old_origin, 0x3A8 );
 		NETVAR ( "DT_BaseEntity", "m_hOwnerEntity", owner_handle, unsigned long );
 	NETVAR ( "DT_BaseEntity", "m_flSimulationTime", simulation_time, float );
 	OFFSET ( float, m_flVelocityModifier, 0xA38C );
@@ -644,6 +647,9 @@ public:
 
 class player_t : public entity_t {
 private:
+	
+
+public:
 	template <typename T>
 	T & read ( uintptr_t offset ) {
 		return *reinterpret_cast< T * >( reinterpret_cast< uintptr_t >( this ) + offset );
@@ -653,8 +659,6 @@ private:
 	void write ( uintptr_t offset, T data ) {
 		*reinterpret_cast< T * >( reinterpret_cast< uintptr_t >( this ) + offset ) = data;
 	}
-
-public:
 	OFFSET ( bool, JiggleBones, 0x292C );
 	NETVAR ( "DT_BasePlayer", "m_hViewModel[0]", view_model, int );
 	NETVAR ( "DT_CSPlayer", "m_bHasDefuser", has_defuser, bool );
@@ -663,8 +667,7 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_angEyeAngles", eye_angles, vec3_t );
 	 
 	NETVAR ( "DT_BaseAnimating", "m_bClientSideAnimation", m_bClientSideAnimation, bool );
-	POFFSET ( get_bone_cache, c_bone_cache, 0x2910 ) /*0x2900*/
-	POFFSET ( GetBoneAccessor, CBoneAccessor, 0x26A8 )
+	
 	NETVAR ( "DT_CSPlayer", "m_ArmorValue", armor, int );
 	NETVAR ( "DT_CSPlayer", "m_bHasHelmet", has_helmet, bool );
 	NETVAR ( "DT_CSPlayer", "m_bIsScoped", is_scoped, bool );
@@ -692,12 +695,7 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_bHasHeavyArmor", has_heavy_armor, bool );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", smoke_grenade_tick_begin, int );
 	
-
-	int & get_tick_base ( ) {
-		static auto m_nTickBase_var = netvar_manager::get_net_var ( fnv::hash ( "DT_BasePlayer" ), fnv::hash ( "m_nTickBase" ) );
-		return *( int * ) ( uintptr_t ( this ) + m_nTickBase_var );
-	}
-
+	NETVAR ( "DT_CSPlayer", "m_nTickBase", get_tick_base, int);
 	NETVAR ( "DT_CSPlayer", "m_nNextThinkTick", m_nNextThinkTick, int )
 	NETVAR ( "DT_BaseEntity", "m_fEffects", m_fEffects, int );
 	
@@ -705,15 +703,10 @@ public:
 		static auto m_CachedBoneData = *( DWORD * ) ( utilities::pattern_scan (  ( "client.dll" ),  ( "FF B7 ?? ?? ?? ?? 52" ) ) + 0x2 ) + 0x4;
 		return *( CUtlVector <matrix3x4_t> * )( uintptr_t ( this ) + m_CachedBoneData );
 	}
+	POFFSET ( get_bone_accessor, CBoneAccessor, 0x26A8 )
+	
 
-	CBoneAccessor & m_BoneAccessor ( ) {
-		static auto m_nForceBone = netvar_manager::get_net_var (  fnv::hash( "CBaseAnimating" ), fnv::hash ( "m_nForceBone" ) );
-		static auto BoneAccessor = m_nForceBone + 0x1C;
-
-		return *( CBoneAccessor * ) ( ( uintptr_t ) this + BoneAccessor );
-	}
-
-	OFFSET ( vec3_t, get_abs_velocity, 0x94 );
+	OFFSET ( vec3_t, get_abs_velocity, 0x94 )
 	OFFSET ( int, Effects, 0xF0 );
 	OFFSET ( int, get_ieflags, 0xE8 );
 
@@ -731,13 +724,18 @@ public:
 		 return *reinterpret_cast< bool * >( uintptr_t ( this ) + offset );
 	 }
 
-	c_bone_accessor & get_bone_accessor ( ) {
-		return *( c_bone_accessor * ) ( ( uintptr_t ) this + 0x26A8 );
-	}
 	
-
+	 std::array<animationlayer, 13> anim_layers ( ) {
+		return  *( std::array<animationlayer, 13> * )( uintptr_t ( this ) + 0x2980 );
+	 }
 	animationlayer * get_animoverlays ( ) {
 		return *( animationlayer ** ) ( ( uintptr_t ) this + 0x2980 );
+	}
+	int animlayer_count ( ) {
+		if ( !this ) //-V704
+			return 0;
+
+		return *( int * ) ( ( DWORD ) this + 0x298C );
 	}
 
 	void select_item ( const char * string, int sub_type = 0 ) {
@@ -807,6 +805,17 @@ public:
 
 		return pos;
 	}
+	bool setup_bones ( matrix3x4_t * out, int max_bones, int mask, float time ) {
+		if ( !this )
+			return false;
+
+		this->get_bone_accessor ( )->m_ReadableBones = this->get_bone_accessor ( )->m_WritableBones = 0;
+		this->invalidate_bone_cache ( );
+
+		using original_fn = bool ( __thiscall * )( void *, matrix3x4_t *, int, int, float );
+		return ( *( original_fn ** ) animating ( ) ) [ 13 ] ( animating ( ), out, max_bones, mask, time );
+	}
+
 	vec3_t get_eye_pos ( ) {
 
 		/*static auto Weapon_ShootPosition = reinterpret_cast< float * ( __thiscall * )( void *, vec3_t * ) >(
@@ -1121,6 +1130,21 @@ public:
 		unsigned long g_iModelBoneCounter = **( unsigned long ** ) ( invalidate_bone_bache_fn + 10 );
 		*( unsigned int * ) ( ( DWORD ) this + 0x2924 ) = 0xFF7FFFFF; // m_flLastBoneSetupTime = -FLT_MAX;
 		*( unsigned int * ) ( ( DWORD ) this + 0x2690 ) = ( g_iModelBoneCounter - 1 ); // m_iMostRecentModelBoneCounter = g_iModelBoneCounter - 1;
+
+		//m_flLastBoneSetupTime ( ) = -FLT_MAX;
+		//m_iMostRecentModelBoneCounter ( ) = UINT_MAX;
+	}
+	uint32_t & m_iMostRecentModelBoneCounter ( ) {
+		static auto invalidate_bone_cache = utilities::pattern_scan (  ( "client.dll" ),  ( "80 3D ?? ?? ?? ?? ?? 74 16 A1 ?? ?? ?? ?? 48 C7 81" ) );
+		static auto most_recent_model_bone_counter = *( uintptr_t * ) ( invalidate_bone_cache + 0x1B );
+
+		return *( uint32_t * ) ( ( uintptr_t ) this + most_recent_model_bone_counter );
+	}
+	float & m_flLastBoneSetupTime ( ) {
+		static auto invalidate_bone_cache = utilities::pattern_scan (  ( "client.dll" ),  ( "80 3D ?? ?? ?? ?? ?? 74 16 A1 ?? ?? ?? ?? 48 C7 81" ) );
+		static auto last_bone_setup_time = *( uintptr_t * ) ( invalidate_bone_cache + 0x11 );
+
+		return *( float * ) ( ( uintptr_t ) this + last_bone_setup_time );
 	}
 
 	void set_abs_angles ( vec3_t angles ) {

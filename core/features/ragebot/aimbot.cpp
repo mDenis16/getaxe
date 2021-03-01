@@ -42,8 +42,7 @@ namespace aimbot {
 			if ( !target.player )
 				continue;
 
-			if ( target.player->dormant ( ) )
-				continue;
+		
 
 			if ( !target.player->is_alive ( ) )
 				continue;
@@ -68,11 +67,10 @@ namespace aimbot {
 		bool can_fire = misc::can_fire ( local_player::m_data.active_weapon, true );
 
 
-		best_target.aimbot.angle = math::calc_angle ( engine_prediction::unpredicted_eye, best_target.aimbot.best_point.position );
+		best_target.aimbot.angle = math::calc_angle ( localdata.eye_position, best_target.aimbot.best_point.position );
 
 
 
-		if ( !shifting::_shift.shift_ticks ) {
 			if ( !hitchance ( best_target ) ) {
 				int ticks_to_stop = math::ticks_to_stop ( engine_prediction::unpredicted_velocity );
 				if ( !autostop::m_data.failed_hitchance ) {
@@ -81,8 +79,7 @@ namespace aimbot {
 				}
 				return;
 			}
-		}
-
+	
 
 
 
@@ -117,6 +114,6 @@ namespace aimbot {
 		}
 
 
-		interfaces::console->console_printf ( "CAN SHOOT: %s | SHIFT TICKS: %i | CURTIME: %f | ATTACK %s \n ", can_fire ? "TRUE" : "FALSE", shifting::_shift.shift_ticks, interfaces::globals->cur_time, cmd->buttons & in_attack ? "TRUE" : "FALSE" );
+		//interfaces::console->console_printf ( "CAN SHOOT: %s | SHIFT TICKS: %i | CURTIME: %f | ATTACK %s \n ", can_fire ? "TRUE" : "FALSE", shifting::_shift.shift_ticks, interfaces::globals->cur_time, cmd->buttons & in_attack ? "TRUE" : "FALSE" );
 	}
 }

@@ -33,29 +33,22 @@ namespace aimbot {
 		if ( min_dmg > local_player::m_data.weapon_data->iDamage )
 			min_dmg = local_player::m_data.weapon_data->iDamage - 1.f;
 
-		//if ( config.ragebot_double_tap )
-			//min_dmg = local_player::m_data.weapon_data->iDamage / 2 + 15.f;
-
 		for ( auto hitbox : hitscan_list ) { /*loop through our hitscan list*/
+	
 
 			auto points = multipoint ( );
-			multi_point ( entity, hitbox, record, points, !is_newest_record );
+			multi_point ( entity, hitbox, record, points, false );
 	
-		   if (hitbox == hitbox_head && record.resolved && record.max_delta > 45 )
-			   memcpy ( entity.player->m_CachedBoneData ( ).Base ( ), record.bone_resolved, entity.player->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+
 
 			for ( auto point : points.points ) {
 			
-			
-
-				//if ( hitbox == hitbox_head && !record.resolved  )
-				//	continue;
-
+		
 				if ( !point.safe )
 					continue;
 
 			
-				int dmg = autowall::get_damage ( local_pointer, engine_prediction::unpredicted_eye, point.pos, awall );
+				int dmg = autowall::get_damage ( local_pointer, localdata.eye_position, point.pos, awall );
 
 			
 				found_fatal_hit = ( dmg >= entity.player->health ( ) + 5 ) && hitbox != hitbox_head;

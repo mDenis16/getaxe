@@ -307,6 +307,7 @@ void shot_processor::manage_shots( ) {
 }
 
 void shot_processor::draw_shots ( ) {
+	return;
 	for ( size_t i = 0; i < shots.size ( ); i++ ) {
 		auto shot = shots.at ( i );
 		if ( shot.approved ) {

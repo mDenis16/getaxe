@@ -259,8 +259,12 @@ void visuals::player::name( visuals::player::data _data ) {
 	dsdsDrawText ( c_menu::get ( ).smallf, print, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y - 15.f ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, true, false );
 
 
-	
-	if ( !player_manager::records [ _data.index ].empty ( ) ) {
+	ImVec2 pred;
+
+	if ( visuals::world_to_screen ( animations::player_data [ _data.index ].predicted_origin, pred ) ) {
+		c_menu::get ( ).draw->AddCircleFilled ( pred, 5, ImColor ( 255, 0, 0, 255 ) );
+	}
+/*	if ( !player_manager::records [ _data.index ].empty ( ) ) {
 		if ( _data.index > 64 )
 			return;
 
@@ -269,7 +273,7 @@ void visuals::player::name( visuals::player::data _data ) {
 		if ( current.resolved ) {
 			dsdsDrawText ( c_menu::get ( ).smallf, "hit", ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 15 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
 		 }
-	}
+	}*/
 }
 void visuals::player::box( visuals::player::data _data ) {
 	bool should_show = _data.enemy ? config.visuals_enemy_box : config.visuals_team_box;

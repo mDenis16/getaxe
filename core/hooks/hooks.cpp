@@ -57,12 +57,15 @@ WNDPROC hooks::wndproc_original = NULL;
 
 hooks::packet_start::fn packet_start_original = nullptr;
 hooks::packet_end::fn packet_end_original = nullptr;
+typedef BOOL ( WINAPI * wpm )( HANDLE, LPVOID, LPCVOID, SIZE_T, SIZE_T * );
 
+wpm wpm_orig = nullptr;
 
 static constexpr auto BONE_USED_BY_SERVER = BONE_USED_BY_HITBOX | BONE_USED_BY_VERTEX_LOD0 | BONE_USED_BY_VERTEX_LOD1 | BONE_USED_BY_VERTEX_LOD2
 | BONE_USED_BY_VERTEX_LOD3 | BONE_USED_BY_VERTEX_LOD4 | BONE_USED_BY_VERTEX_LOD5 | BONE_USED_BY_VERTEX_LOD6 | BONE_USED_BY_VERTEX_LOD7;
 
 bool hooks::initialize ( ) {
+
 
 
 	static const auto c_cs_player_table = reinterpret_cast< uint32_t >( utilities::pattern_scan ( "client.dll",
@@ -86,8 +89,8 @@ bool hooks::initialize ( ) {
 	auto scene_end_target = reinterpret_cast< void * >( get_virtual ( interfaces::render_view, 9 ) );
 	auto setup_bones_target = reinterpret_cast< void * >( get_virtual ( sbf, 13 ) );
 	auto do_procedural_foot_plant_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F0 83 EC 78 56 8B F1 57 8B 56 60" ) );
-	//auto do_extra_bone_processing_target = reinterpret_cast< void * >( get_virtual ( pt, 197 ) );
-	auto should_skip_animation_frame_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "57 8B F9 8B 07 8B 80 ? ? ? ? FF D0 84 C0 75 02" ) );
+	auto do_extra_bone_processing_target = reinterpret_cast< void * >( get_virtual ( pt, 197 ) );
+	auto should_skip_animation_frame_target = reinterpret_cast< void * >( utilities::pattern_scan ( "client.dll", "57 8B F9 8B 07 8B 80 ? ? ? ? FF D0 84 C0 75 02 5F C3" ) );
 	auto list_leaves_in_box_target = reinterpret_cast< void * >( get_virtual ( interfaces::engine->get_bsp_tree_query(), 6 ) );
 
 	//auto in_prediction_target = ( void * ) get_virtual ( interfaces::prediction, 14 );
@@ -195,11 +198,15 @@ bool hooks::initialize ( ) {
 		  throw std::runtime_error ( "failed to initialize should_skip_animation_frame. (outdated index?)" );
 		  
 	  }
-	  if ( MH_CreateHook ( is_hltv_target, &is_hltv::hook, reinterpret_cast< void ** >( &is_hltv_original ) ) != MH_OK ) {
+	/*  if ( MH_CreateHook ( is_hltv_target, &is_hltv::hook, reinterpret_cast< void ** >( &is_hltv_original ) ) != MH_OK ) {
 		 throw std::runtime_error ( "failed to initialize is_hltv. (outdated index?)" );
 		 
-	 }
+	 }*/
+	/*  if ( MH_CreateHook ( do_extra_bone_processing_target, &do_extra_bone_processing::hook, reinterpret_cast< void ** >( &do_extra_bone_processing_original ) ) != MH_OK ) {
+		  throw std::runtime_error ( "failed to initialize do_extra_bone_processing. (outdated index?)" );
 
+	  }*/
+	  
 	 
 	 /*if ( MH_CreateHook ( get_color_modulation_target, &get_color_modulation::hook, reinterpret_cast< void ** >( &get_color_modulation_original ) ) != MH_OK ) {
 	 throw std::runtime_error ( "failed to initialize get_color_modulation. (outdated index?)" );
@@ -287,7 +294,7 @@ bool hooks::initialize ( ) {
 		throw std::runtime_error ( "failed to initialize override_view. (outdated index?)" );
 		
 	}
-
+	
 
 	if ( MH_EnableHook ( MH_ALL_HOOKS ) != MH_OK ) {
 		throw std::runtime_error ( "failed to enable hooks." );
@@ -435,17 +442,14 @@ bool __fastcall hooks::should_skip_animation_frame::hook ( void * , void *  ) {
 vec3_t vecAimPunch, vecViewPunch;
 vec3_t  pAimPunch = vec3_t();
 vec3_t  pViewPunch = vec3_t ( );
-void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, client_frame_stage_t stage ) {
-
-
+void __stdcall hooks::frame_stage::hook ( client_frame_stage_t stage ) {
 
 
 	if ( !interfaces::engine->is_in_game ( ) )
-		return frame_stage_original ( ecx, 0, stage );
+		return frame_stage_original ( stage );
 
 	if ( !interfaces::engine->is_connected ( ) )
-		return frame_stage_original ( ecx, 0, stage );
-
+		return frame_stage_original ( stage );
 
 
 	switch ( stage ) {
@@ -460,7 +464,11 @@ void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, client_frame_
 		shot_processor::manage_shots ( );
 		break;
 	case FRAME_NET_UPDATE_POSTDATAUPDATE_START:
-	
+		if ( interfaces::inputsystem->is_button_down ( KEY_Z ) && std::abs ( interfaces::globals->tick_count - localdata.force_invert_doubletap_on_key_tick ) > 125 ) {
+			localdata.force_invert_doubletap_on_key = !localdata.force_invert_doubletap_on_key;
+			shifting::_shift.allow = localdata.force_invert_doubletap_on_key;
+			localdata.force_invert_doubletap_on_key_tick = interfaces::globals->tick_count;
+		}
 		break;
 	case FRAME_NET_UPDATE_POSTDATAUPDATE_END:
 		
@@ -469,9 +477,9 @@ void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, client_frame_
 
 		break;
 	case FRAME_NET_UPDATE_END:
-		g_netdata.apply ( );
+		//g_netdata.apply ( );
 		player_manager::setup_players ( );
-		resolver::frame_stage ( );
+		//resolver::frame_stage ( );
 		break;
 	case FRAME_RENDER_START:
  
@@ -489,9 +497,9 @@ void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, client_frame_
 		if ( local_player::available )
 			animations::update_animations_local ( );
 
+
 		misc::removals::remove_flash ( );
 		misc::removals::remove_smoke ( );
-
 		
 		break;
 	case FRAME_RENDER_END:
@@ -501,16 +509,17 @@ void __fastcall hooks::frame_stage::hook ( void * ecx, void * edx, client_frame_
 		break;
 	}
 
-
-	frame_stage_original ( ecx, edx, stage );
-
 	player_manager::setup_records ( stage );
+	frame_stage_original ( stage );
+
+
 }
 
 
 
 void __fastcall hooks::override_view::hook ( void * edx, void * , view_setup_t * setup ) {
 	/*if ( interfaces::engine->is_in_game( ) ) {
+* 	   
 		if ( local_player::m_data.pointer && local_player::m_data.pointer->is_alive( ) && variables::visuals::fov > 0 )
 			setup->fov = 90 + variables::visuals::fov;
 	}*/
@@ -559,16 +568,11 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 		interfaces::engine->set_view_angles ( cmd->viewangles );
 	}
 
-/*	static c_usercmd shift_cmd = { };
-	if ( !shifting::_shift.shift_ticks )
-		std::memcpy ( &shift_cmd, cmd, sizeof ( shift_cmd ) );
-	else if ( shifting::_shift.shift_ticks ) {
-		cmd = &shift_cmd;
-		return false;
-	}*/
 
-
-
+	/*if ( shifting::_shift.shift_ticks ) {
+		cmd->forwardmove = 0.f;
+		cmd->sidemove = 0.f;
+     }*/
 
 	uintptr_t * frame_pointer;
 	__asm mov frame_pointer, ebp;
@@ -579,7 +583,10 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 	local_player::m_data.aimbot_working = false;
 
 	local_player::begin_tick ( cmd );
-
+	//interfaces::console->console_printf ( "VIEW ANGLE SIDE X: %f, Y: %f, Z: %f \n", csgo::cmd->viewangles.x, csgo::cmd->viewangles.y, csgo::cmd->viewangles.z );
+	/*if ( local_pointer && local_player::available() ) {
+		interfaces::console->console_printf ( "tickbase %i \n", local_pointer->get_tick_base ( ) );
+	}*/
 	misc::movement::slide ( cmd );
 
 	aimbot::autostop::m_data.slow_walk_this_tick = false;
@@ -610,7 +617,7 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 		aimbot::create_move ( cmd, csgo::send_packet );
 
 		shifting::create_move ( cmd );
-		autothrow::create_move ( cmd );
+		//autothrow::create_move ( cmd );
 
 
 		legit_bot::run ( cmd );
@@ -661,34 +668,29 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 		localdata.freestanding_on_key = !localdata.freestanding_on_key;
 		localdata.freestand_on_key_last_tick = interfaces::globals->tick_count;
 	}
-
-	if ( interfaces::inputsystem->is_button_down ( KEY_F ) && std::abs ( interfaces::globals->tick_count - localdata.force_safe_point_on_key_tick ) > 5 ){ 
+	else if ( interfaces::inputsystem->is_button_down ( KEY_F ) && std::abs ( interfaces::globals->tick_count - localdata.force_safe_point_on_key_tick ) > 5 ){ 
 		localdata.force_safe_point_on_key = !localdata.force_safe_point_on_key;
 
 		localdata.force_safe_point_on_key_tick = interfaces::globals->tick_count;
 	}
 
-	if ( interfaces::inputsystem->is_button_down ( KEY_G ) && std::abs ( interfaces::globals->tick_count - localdata.force_min_dmg_on_key_tick ) > 5 ){ 
+	else if ( interfaces::inputsystem->is_button_down ( KEY_G ) && std::abs ( interfaces::globals->tick_count - localdata.force_min_dmg_on_key_tick ) > 5 ){
 		localdata.force_min_dmg_on_key = !localdata.force_min_dmg_on_key;
 		localdata.force_min_dmg_on_key_tick = interfaces::globals->tick_count;
 	}
 
-	if ( interfaces::inputsystem->is_button_down ( KEY_T ) && std::abs ( interfaces::globals->tick_count - localdata.force_low_delta_on_key_tick ) > 5 ){ 
+	else if ( interfaces::inputsystem->is_button_down ( KEY_T ) && std::abs ( interfaces::globals->tick_count - localdata.force_low_delta_on_key_tick ) > 5 ){
 		localdata.force_low_delta_on_key = !localdata.force_low_delta_on_key;
 		localdata.force_low_delta_on_key_tick = interfaces::globals->tick_count;
 	}
 
-	if ( interfaces::inputsystem->is_button_down ( KEY_B ) && std::abs ( interfaces::globals->tick_count - localdata.force_invert_resolver_on_key_tick ) > 5 ){ 
+	else if ( interfaces::inputsystem->is_button_down ( KEY_B ) && std::abs ( interfaces::globals->tick_count - localdata.force_invert_resolver_on_key_tick ) > 5 ){
 		localdata.force_invert_resolver_on_key = !localdata.force_invert_resolver_on_key;
 		localdata.force_invert_resolver_on_key_tick = interfaces::globals->tick_count;
 	}
-	if ( interfaces::inputsystem->is_button_down ( KEY_Z ) && std::abs ( interfaces::globals->tick_count - localdata.force_invert_doubletap_on_key ) > 25 ) {
-		localdata.force_invert_doubletap_on_key = !localdata.force_invert_doubletap_on_key;
-		shifting::_shift.allow = localdata.force_invert_doubletap_on_key;
-		localdata.force_invert_doubletap_on_key_tick = interfaces::globals->tick_count;
-	}
-//	interfaces::console->console_printf ( "tickbase %i fixed tickbase %i \n", local_pointer->get_tick_base(), localdata.fixed_tickbase );
-
+	
+	//interfaces::console->console_printf ( "tickbase %i \n", local_pointer->get_tick_base() );
+	//*/
 	return false;
 }
 
@@ -712,12 +714,12 @@ LRESULT __stdcall hooks::wnd_proc::hook ( HWND hwnd, UINT message, WPARAM wparam
 
 	if ( !pressed && GetAsyncKeyState ( VK_INSERT ) ) {
 		pressed = true;
-	}
-	else if ( pressed && !GetAsyncKeyState ( VK_INSERT ) ) {
+}
+else if ( pressed && !GetAsyncKeyState ( VK_INSERT ) ) {
 		pressed = false;
 
 		c_menu::get ( ).opened = !c_menu::get ( ).opened;
-	}
+	}//
 
 	if ( c_menu::get ( ).opened && ImGui_ImplDX9_WndProcHandler ( hwnd, message, wparam, lparam ) )
 		return true;
@@ -756,7 +758,7 @@ void __stdcall hooks::paint_traverse::hook ( unsigned int panel, bool force_repa
 	
 		interfaces::engine->get_screen_size ( csgo::screen_width, csgo::screen_height );
 		if ( interfaces::engine->is_in_game ( ) && interfaces::engine->is_connected ( ) && local_pointer && local_pointer->is_alive ( ) ) {
-			/*
+			
 
 			for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {
 				player_t * player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
@@ -768,7 +770,7 @@ void __stdcall hooks::paint_traverse::hook ( unsigned int panel, bool force_repa
 				if ( !player->dormant ( ) && player->is_alive ( ) ) {
 					draw_angles ( player, vec3_t ( 0, player->lower_body_yaw ( ), 0 ), color ( 0, 255, 0, 255 ), "LBY" );
 				}
-			}*/
+			}
 		
 		}
 	}
@@ -837,49 +839,23 @@ bool __fastcall hooks::post_screen_space_fx::hook ( uintptr_t ecx, uintptr_t, co
 
 	return post_screen_space_original ( ecx, setup );
 }
-/*
-void _fastcall hooks::do_extra_bone_processing::hook( void* ecx, uint32_t, void* hdr, vec3_t* pos, void* q, void* matrix, uint8_t* bone_computed, void* context ) {
+//void* ecx, void* edx, game::studio_hdr* hdr, sdk::vec3d* pos, float* quaternion, game::matrix3x4* matrix, void* bone_computed, void* ik_context
+void _fastcall hooks::do_extra_bone_processing::hook( void * ecx, void * edx, void * hdr, vec3_t * pos, float * quaternion, void * matrix, void * bone_computed, void * ik_context ) {
 	auto player = ( player_t* ) ecx;
 
-
-	//if ( player->m_fEffects( ) & 8 )
-		//return;
-	//printf( " player->m_fEffects( ) ptr = %i \n", player->m_fEffects( ) );
-	const auto state =  player->get_anim_state( );
-
-	 bool old_on_ground = state->m_bOnGround;
-
-	if ( !state )
-		return do_extra_bone_processing_original( player, hdr, pos, q, matrix, bone_computed, context );
-	state->m_bOnGround = false;
-
-	do_extra_bone_processing_original( player, hdr, pos, q, matrix, bone_computed, context );
-
-	state->m_bOnGround = old_on_ground;
-}*/
+	if ( player != local_pointer ) {
+		interfaces::console->console_printf ( "called debp for player  %i \n", player->get_info().name );
+	}
+}
 
 void _fastcall hooks::standard_blending_rules::hook ( player_t * player, uint32_t, c_studio_hdr * hdr, vec3_t * pos, quaternion_t * q, const float time, int mask ) {
-	if ( !config.standard_blending_rules_target ) {
-		standard_blending_rules_original ( player, hdr, pos, q, time, mask );
-		return;
-	}
-
-	if (!local_player::m_data.pointer )
-		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
-
+	
+	
 	if ( !player )
 		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
 
-	if (!player->is_alive() )
-		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
 
-	if ( player->dormant() )
-		return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
-
-	//if ( player->is_teammate() )
-		//return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
-
-	if ( local_player::m_data.pointer && player ) {
+	if ( player ) {
 
 		player->m_fEffects ( ) |= 0x008;
 		standard_blending_rules_original ( player, hdr, pos, q, time, BONE_USED_BY_SERVER );
@@ -890,8 +866,6 @@ void _fastcall hooks::standard_blending_rules::hook ( player_t * player, uint32_
 
 void __fastcall hooks::update_client_side_animation::hook ( player_t * player, uint32_t ) {
 	
-	if (!config.update_client_side_animation )
-		return update_client_side_animation_original ( player );
 
 
 	if ( !player )
@@ -906,25 +880,27 @@ void __fastcall hooks::update_client_side_animation::hook ( player_t * player, u
 	if ( player->is_teammate ( ) )
 	   return update_client_side_animation_original ( player );
 
+	if ( player == local_pointer )
+		return update_client_side_animation_original ( player );
+
 	auto & anim_data = animations::player_data [ player->index ( ) ];
 
-	if ( anim_data.update_anims ) 
-		update_client_side_animation_original ( player );
-	
+
+	//interfaces::console->console_printf ( "called update client side animation for player %s \n", player->get_info ( ).name );
 }
 
 static bool init = false;
 
 bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bone_to_world_out, int max_bones, int bone_mask, float curtime ) {
-	if ( !config.setup_bones )
-		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+	//if ( !config.setup_bones )
+	//	return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
 	auto result = true;
 
 	auto e = reinterpret_cast < player_t * >( reinterpret_cast < uintptr_t > ( ecx ) - 0x4 );
 
-	if ( e == local_player::m_data.pointer )
-		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+
+	//return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
 	if ( !e )
 		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
@@ -932,9 +908,7 @@ bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bo
 	if ( e->dormant() )
 		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
-	//if ( e->is_teammate ( ) )
-	//	return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
-		//
+
 	if ( !e->is_alive ( ) )
 		return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
@@ -943,7 +917,11 @@ bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bo
 	auto r_jiggle_bones_backup = r_jiggle_bones->get_int ( );
 
 	r_jiggle_bones->set_value ( 0 );
+	auto animstate = e->get_anim_state ( );
+	auto previous_weapon = animstate ? animstate->m_pLastBoneSetupWeapon : nullptr;
 
+	if ( previous_weapon )
+	animstate->m_pLastBoneSetupWeapon = animstate->m_weapon; //-V1004
 
 	
 	if ( e->index ( ) > 64 )
@@ -952,22 +930,21 @@ bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bo
 	    auto& anim = animations::player_data [ e->index ( ) ];
 	
 
-		
-		 //if ( !e->m_CachedBoneData ( ).Count ( ) )
-			// return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+
 		 if ( anim.update_bones || !e->m_CachedBoneData ( ).Count ( ) )
 		    result = setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 		else if (bone_to_world_out && max_bones != -1 )
 		   memcpy ( bone_to_world_out, e->m_CachedBoneData ( ).Base ( ), e->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
-	
+	                                    
 		 r_jiggle_bones->set_value ( r_jiggle_bones_backup );
+		if ( previous_weapon )
+			 animstate->m_pLastBoneSetupWeapon = previous_weapon;
 		return result;
 }
 
 
 void __fastcall hooks::build_transformations::hook ( void * ecx, void * edx, int a2, int a3, int a4, int a5, int a6, int a7 ) {
-	if (!config.build_transformations_target )
-		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
+	return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 
 	auto player = ( player_t * ) ( ecx );
 
@@ -980,29 +957,20 @@ void __fastcall hooks::build_transformations::hook ( void * ecx, void * edx, int
 	if ( !player->is_alive() )
 		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 
-	//if ( player->is_teammate() )
-		//return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
-
-	auto o_jiggle_bones_enabled = player->JiggleBones ( );
-
-     player->JiggleBones ( ) = false;
+	if (player == local_pointer )
+		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
+	
 	build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
-	player->JiggleBones ( ) = o_jiggle_bones_enabled;
+	interfaces::console->console_printf ( "called build_transformations_original for player %s \n", player->get_info ( ).name );
 }
 bool __fastcall hooks::is_hltv::hook ( void * ecx, void *  ) {
+   return is_hltv_original ( ecx );
 
-//f ( !config.is_hltv_target ) {
-	 	return is_hltv_original ( ecx );
-	//
-
-	
 	static const auto accumulate_layers_call = reinterpret_cast< void * >(utilities::pattern_scan ( "client.dll", "84 C0 75 0D F6 87" ));
 	static const auto setupvelocity_call = reinterpret_cast< void * >(utilities::pattern_scan ( "client.dll", "84 C0 75 38 8B 0D ? ? ? ? 8B 01 8B 80 ? ? ? ? FF D0" ));
 
 	if ( _ReturnAddress ( ) == accumulate_layers_call || _ReturnAddress ( ) == setupvelocity_call )
 		return true;
-
-
 
 	return is_hltv_original ( ecx );
 }
@@ -1021,6 +989,7 @@ void WriteUserCmd ( void * buf, c_usercmd * incmd, c_usercmd * outcmd ) {
 }
 bool __fastcall hooks::write_user_cmd::hook ( void * ecx, void * , int slot, bf_write * buf, int from, int to, bool is_new_command ) {
 	
+	return write_user_cmd_original ( ecx, slot, buf, from, to, is_new_command );
 
 	int shift_target = config.ragebot_double_tap_ticks;
 	if ( !shift_target )
@@ -1096,16 +1065,29 @@ next_cmd:
 
 void __fastcall hooks::clip_ray_collideable::hook ( void * ecx, void * edx, const ray_t & ray, uint32_t fMask, collideable_t * pCollide, void * pTrace ) {
 	
-
+	 clip_ray_collideable_original ( ecx, ray, fMask, pCollide, pTrace );
+	 return;
 	if ( pCollide ) {
 		// extend the tracking
 		const auto old_max = pCollide->maxs ( ).z;
 
-		//auto v9 = (C_BasePlayer*)(uintptr_t(pCollide) - 4);
+		auto v9 = (player_t*)(uintptr_t(pCollide) - 4);
 
-	//	if (v9 && *(void**)v9 && !v9->IsDead() && *(int*)(uintptr_t(v9) + 0x64) < 64 && v9->get_weapon() && v9->get_weapon()->is_knife())
-		pCollide->maxs ( ).z += 5; // if the player is holding a knife and ducking in air we can still trace to this faggot and hit him
+		if ( v9 == local_pointer ) 			{
+			printf ( "modify local traceray \n" );
+			pCollide->maxs ( ).z += 5;
+			pCollide->maxs ( ).z -= 5;
+			
+			pCollide->maxs ( ).x += 10;
+			pCollide->maxs ( ).x -= 10;
 
+			pCollide->maxs ( ).y += 10;
+			pCollide->maxs ( ).y -= 10;
+		}
+		else {
+
+			pCollide->maxs ( ).z += 5; // if the player is holding a knife and ducking in air we can still trace to this faggot and hit him
+		}
 		clip_ray_collideable_original ( ecx, ray, fMask, pCollide, pTrace );
 
 		// restore Z
@@ -1118,9 +1100,11 @@ void __fastcall hooks::clip_ray_collideable::hook ( void * ecx, void * edx, cons
 
 void __cdecl hooks::cl_move::hook ( float accumulated_extra_samples, bool final_tick ) {
 	
-
-	if ( shifting::_shift.allow && shifting::_shift.recharge_ticks && ( localdata.fixed_tickbase >= shifting::_shift.wait_for_recharge || !shifting::_shift.wait_for_recharge ) ) {
+	if ( !local_pointer )
+		return cl_move_original ( accumulated_extra_samples, final_tick );
+	if ( shifting::_shift.allow && shifting::_shift.recharge_ticks && ( local_pointer->get_tick_base() >= shifting::_shift.wait_for_recharge || !shifting::_shift.wait_for_recharge ) ) {
 		shifting::_shift.recharge_ticks--;
+	//	++local_pointer->get_tick_base ( );
 		if ( shifting::_shift.recharge_ticks <= 0 ) {
 			shifting::_shift.can_shift = true;
 			shifting::_shift.can_recharge = false;
@@ -1135,17 +1119,20 @@ void __cdecl hooks::cl_move::hook ( float accumulated_extra_samples, bool final_
 	
 		while ( shifting::_shift.shift_ticks ) {
 
+			
+		
+
+			cl_move_original ( accumulated_extra_samples , false );
+	
 			shifting::_shift.shift_ticks--;
-	
-			cl_move_original ( accumulated_extra_samples , shifting::_shift.shift_ticks <= 0 );
-	
 
 			if ( shifting::_shift.shift_ticks <= 0 ) {
 				shifting::_shift.recharge_ticks = config.ragebot_double_tap_ticks;
-				shifting::_shift.wait_for_recharge = localdata.fixed_tickbase + 32;
+				shifting::_shift.wait_for_recharge = local_pointer->get_tick_base ( ) + 128;
 				shifting::_shift.next_tickbase_shift = 0;
+				final_tick = true;
 			}
-
+		
 
 		}
 
@@ -1159,43 +1146,40 @@ void __cdecl hooks::cl_move::hook ( float accumulated_extra_samples, bool final_
 	cl_move_original ( accumulated_extra_samples, final_tick );
 }
 
-void _fastcall hooks::run_commmand::hook ( void * , void * , player_t * player, c_usercmd * cmd, player_move_helper * move_helper ) {
+void _fastcall hooks::run_commmand::hook ( void * ecx, void * edx, player_t * player, c_usercmd * cmd, player_move_helper * move_helper ) {
 	
-	local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+	//local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 
-	if ( !player || player != local_player::m_data.pointer )
-		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
-
+	if ( !player || player != local_pointer )
+		return run_commmand_original ( ecx, 0, player, cmd, move_helper );
+	//return o_run_command( ecx, 0, e, cmd, move_helper );
 	if ( !cmd )
-		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
+		return run_commmand_original ( ecx, 0, player, cmd, move_helper );
 
-	if (!csgo::cmd )
-		return run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
+	
 
-	if ( cmd->tick_count >= (csgo::cmd->tick_count + int ( 1 / interfaces::globals->interval_per_tick ) + 8 ) ) {
+	if ( cmd->tick_count >= (localdata.m_tick + int ( 1 / interfaces::globals->interval_per_tick ) + 8 ) ) {
 		cmd->hasbeenpredicted = true;
 		return;
 	}
 
-	int backup_tickbase = player->get_tick_base ( );
-	float backup_curtime = interfaces::globals->cur_time;
-
-
-/*	if ( cmd->command_number == shifting::_shift.shifted_command ) {
+	/* backup */
+	shifting::_shift.backup_tickbase = local_pointer->get_tick_base ( );
+	shifting::_shift.backup_curtime = interfaces::globals->cur_time;
+	
+	/* fix our tickbase */
+	if ( cmd->command_number == shifting::_shift.shifted_command ) {
 		player->get_tick_base ( ) = ( shifting::_shift.original_tickbase - shifting::_shift.shift_ticks + 1 );
 		++player->get_tick_base ( );
+		interfaces::globals->cur_time = math::ticks_to_time ( player->get_tick_base ( ) );
+	}
+	run_commmand_original ( ecx, 0, player, cmd, move_helper );
+	if ( cmd->command_number == shifting::_shift.shifted_command ) {
+		player->get_tick_base ( ) = shifting::_shift.backup_tickbase;
+		interfaces::globals->cur_time = shifting::_shift.backup_curtime;
+	}
+	/* restore */
 
-		interfaces::globals->cur_time = math::ticks_to_time( player->get_tick_base ( ) );
-	}*/
-
-
-	run_commmand_original ( interfaces::prediction, player, cmd, move_helper );
-
-	/*if ( cmd->command_number == shifting::_shift.shifted_command ) {
-		player->get_tick_base ( ) = backup_tickbase;
-
-		interfaces::globals->cur_time = backup_curtime;
-	}*/
 
 	g_netdata.store ( );
 }
@@ -1364,6 +1348,22 @@ void __stdcall hooks::scene_end::hook ( ) {
 	visuals::local_esp_think ( );
 	nade_pred.paint_traverse ( );
 	visuals::projectiles::think ( );
+	if ( !interfaces::engine->is_connected ( ) || !interfaces::engine->is_in_game ( ) ) {
+		scene_end_original ( interfaces::render_view );
+		return;
+	}
+
+	static const auto mat = interfaces::material_system ->find_material ( "dev/glow_armsrace.vmt", nullptr );
+	if ( local_pointer ) {
+
+		vec3_t abs_origin = local_pointer->abs_origin ( );
+		interfaces::model_render->override_material ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );
+		interfaces::render_view->modulate_color ( config.visuals_modulation_enemy_xyz_color );
+		local_pointer->set_abs_origin ( csgo::real_origin );
+		local_pointer->draw_model ( 0x0, 255);
+		interfaces::model_render->override_material ( nullptr );
+		local_pointer->set_abs_origin ( abs_origin );
+	}
 
 	scene_end_original ( interfaces::render_view );
 }

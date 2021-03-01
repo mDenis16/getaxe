@@ -278,27 +278,14 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 
 				override_mat ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );
 				
-				/*float delta = interfaces::globals->cur_time - ( local_player::m_data.pointer->simulation_time ( ) - local_player::m_data.pointer->get_old_simulation_time ( ) );
-				float mul = 1.0 / 0.2f;
+				if ( localdata.left_matrix && localdata.right_matrix ) {
+					interfaces::render_view->modulate_color ( red );
+					o_draw_model_exec ( ecx, edx, ctx, state, info, localdata.left_matrix );
 
-				vec3_t lerp = math::lerp ( local_player::m_data.pointer->origin(), csgo::real_origin, std::clamp ( delta * mul, 0.f, 1.f ) );
+					interfaces::render_view->modulate_color ( blue );
+					o_draw_model_exec ( ecx, edx, ctx, state, info, localdata.right_matrix );
+				}
 
-				matrix3x4_t ret [ 128 ];
-				memcpy ( ret, csgo::fake_matrix, sizeof ( matrix3x4_t [ 128 ] ) );
-
-			
-
-				float flTimeDelta =  local_player::m_data.pointer->simulation_time ( ) - local_player::m_data.pointer->get_old_simulation_time ( );
-				
-			
-
-				for ( size_t i {}; i < 128; ++i ) {
-					const vec3_t curent_origin = matrix_get_origin ( custom_bone_to_world [ i ] );
-					const vec3_t old_origin = matrix_get_origin ( csgo::fake_matrix [ i ] );
-					auto interpolated_origin = math::lerp ( curent_origin, old_origin, flTimeDelta );
-
-					matrix_set_origin ( interpolated_origin, ret [ i ] );
-				}*/
 				matrix3x4_t ret [ 128 ];
 				
 				for ( auto & i : csgo::fake_matrix ) {
@@ -307,31 +294,20 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 					i [ 2 ][ 3 ] += info.origin.z;
 				}
 				o_draw_model_exec ( ecx, edx, ctx, state, info, csgo::fake_matrix );
-				/*int angle_color = 0;
-				for ( int angle = -180; angle <= 180; angle += 45 ) {
-					matrix3x4_t newmat [ 128 ];
-					const float color_rotate [ 4 ] = { 255 / angle_color,   255 / angle_color,  255 / angle_color, 255 };
-					interfaces::render_view->modulate_color ( config.visuals_modulation_enemy_visible_color );
-					player_manager::get_rotated_matrix ( local_pointer->abs_origin ( ), custom_bone_to_world, angle, newmat );
-					override_mat ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );
-					o_draw_model_exec ( ecx, edx, ctx, state, info, newmat );
-					angle_color++;
-				}*/
+			
 				interfaces::render_view->modulate_color ( old_modulation );
 				interfaces::model_render->override_material ( NULL );
 
-				/*if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
-					for ( auto record : player_manager::records [ entity->index ( ) ] ) {
-						if ( record.predicted )
-							interfaces::render_view->modulate_color ( red );
-						else
-							interfaces::render_view->modulate_color ( blue );
+				for ( auto & i : csgo::real_matrix ) {
+					i [ 0 ][ 3 ] += info.origin.x;
+					i [ 1 ][ 3 ] += info.origin.y;
+					i [ 2 ][ 3 ] += info.origin.z;
+				}
+				o_draw_model_exec ( ecx, edx, ctx, state, info, csgo::real_matrix );
 
-						o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone );
-					}
+				interfaces::model_render->override_material ( NULL );
 
-				}*/
-
+				return;
 			}
 			else if (entity->is_alive()) {
 
@@ -362,34 +338,21 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 						}
 				
 
-						override_mat ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );
-						o_draw_model_exec ( ecx, edx, ctx, state, info, custom_bone_to_world );
-						if ( csgo::right_player_bones [ entity->index ( ) ] && csgo::left_player_bones [ entity->index ( ) ] ) {
-
-							//auto oldest = player_manager::records [ entity->index ( ) ].front ( );
-							
-							interfaces::render_view->modulate_color ( red );
-							o_draw_model_exec ( ecx, edx, ctx, state, info, csgo::left_player_bones[entity->index()] );
-
-							interfaces::render_view->modulate_color ( blue );
-
-							o_draw_model_exec ( ecx, edx, ctx, state, info, csgo::right_player_bones [ entity->index ( ) ] );
-
-
-						}
+					
+					
 						if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
-							for ( auto record : player_manager::records [ entity->index ( ) ] ) {
-								if (record.predicted )
-									interfaces::render_view->modulate_color ( red );
-								else
-									interfaces::render_view->modulate_color ( blue );
+							  auto record = player_manager::records [ entity->index ( ) ].back ( );
 
+								interfaces::render_view->modulate_color ( red );
+							
 								o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone );
-							}
+							
 				
 						}
 						interfaces::model_render->override_material ( NULL );
 
+						override_mat ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );
+						o_draw_model_exec ( ecx, edx, ctx, state, info, custom_bone_to_world );
 					}
 					if ( config.visuals_modulation_enemy_visible ) {
 

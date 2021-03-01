@@ -180,6 +180,7 @@ vec3_t math::lerp ( const vec3_t & a, const vec3_t & b, const float t ) {
 
 	return vec3_t ( std::lerp ( a.x, b.x, t ), std::lerp ( a.y, b.y, t ), std::lerp ( a.z, b.z, t ) );
 }
+
 void math::clamp ( vec3_t & angles ) {
 	while ( angles.x > 89.0f )
 		angles.x -= 180.f;
