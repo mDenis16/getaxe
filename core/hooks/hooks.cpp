@@ -146,10 +146,10 @@ bool hooks::initialize ( ) {
 		throw std::runtime_error ( "failed to initialize frame_stage. (outdated index?)" );
 		
 	}
-	if ( MH_CreateHook ( run_commmand_target, &run_commmand::hook, reinterpret_cast< void ** >( &run_commmand_original ) ) != MH_OK ) {
+	/*if ( MH_CreateHook ( run_commmand_target, &run_commmand::hook, reinterpret_cast< void ** >( &run_commmand_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize run_commmand. (outdated index?)" );
 
-	}
+	}*/
 	if ( MH_CreateHook ( clip_ray_collideable_target, &clip_ray_collideable::hook, reinterpret_cast< void ** >( &clip_ray_collideable_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize clip_ray_collideable. (outdated index?)" );
 
@@ -173,10 +173,10 @@ bool hooks::initialize ( ) {
 		throw std::runtime_error ( "failed to initialize cl_move. (outdated index?)" );
 		
 	}
-	if ( MH_CreateHook ( write_user_cmd_target, &write_user_cmd::hook, reinterpret_cast< void ** >( &write_user_cmd_original ) ) != MH_OK ) {
+/*	if ( MH_CreateHook ( write_user_cmd_target, &write_user_cmd::hook, reinterpret_cast< void ** >( &write_user_cmd_original ) ) != MH_OK ) {
 		throw std::runtime_error ( "failed to initialize write_user_cmd. (outdated index?)" );
 
-	}
+	}*/
 
 
 	if ( MH_CreateHook ( crc_server_check_target, &crc_server_check::hook, reinterpret_cast< void ** >( &crc_server_check_original ) ) != MH_OK ) {
@@ -477,7 +477,7 @@ void __stdcall hooks::frame_stage::hook ( client_frame_stage_t stage ) {
 
 		break;
 	case FRAME_NET_UPDATE_END:
-		//g_netdata.apply ( );
+		g_netdata.apply ( );
 		player_manager::setup_players ( );
 		//resolver::frame_stage ( );
 		break;
@@ -509,9 +509,9 @@ void __stdcall hooks::frame_stage::hook ( client_frame_stage_t stage ) {
 		break;
 	}
 
-	player_manager::setup_records ( stage );
-	frame_stage_original ( stage );
 
+	frame_stage_original ( stage );
+	player_manager::setup_records ( stage );
 
 }
 
@@ -601,11 +601,10 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 	misc::movement::fake_duck ( cmd );
 
 
-	engineprediction::get ( ).prediction_data.reset ( ); //-V807
-	engineprediction::get ( ).setup ( );
 
-	engineprediction::get ( ).predict ( cmd );
+	engine_prediction::initialize ( local_pointer, cmd );
 	{
+
 		local_player::post_predict ( cmd );
 
 		fake_lag::create_move ( csgo::send_packet );
@@ -617,16 +616,15 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 		aimbot::create_move ( cmd, csgo::send_packet );
 
 		shifting::create_move ( cmd );
-		//autothrow::create_move ( cmd );
-
+	
 
 		legit_bot::run ( cmd );
 
+		
 
     
 	}
-
-	engineprediction::get ( ).finish ( );
+	engine_prediction::unload ( local_pointer );
 
 
 	misc::movement::fix_move ( cmd );
@@ -640,7 +638,7 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 	local_player::end_tick ( cmd );
 	
 
-	*reinterpret_cast< bool * >( *frame_pointer - 0x1C ) =  shifting::_shift.shift_ticks ? false: csgo::send_packet;
+	*reinterpret_cast< bool * >( *frame_pointer - 0x1C ) =  shifting::_shift.shift_ticks ? false : csgo::send_packet;
 	
 	//if ( shifting::_shift.shift_ticks )
 	//	cmd->tick_count -= shifting::_shift.shift_ticks;
@@ -658,7 +656,7 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 	if ( config.antiaim_3way )
 		did_shoot = false;
 
-	if ( csgo::send_packet  && !did_shoot )
+	if ( csgo::send_packet && !did_shoot )
 		localdata.antiaim_yaw = csgo::real_angle.y;
 
 	//if (shifting::_shift.shift_ticks && cmd->buttons & cmd_buttons::in_attack )
@@ -689,7 +687,15 @@ bool __fastcall hooks::create_move::hook ( void * ecx, void * edx, int input_sam
 		localdata.force_invert_resolver_on_key_tick = interfaces::globals->tick_count;
 	}
 	
-	//interfaces::console->console_printf ( "tickbase %i \n", local_pointer->get_tick_base() );
+	
+	
+	if ( localdata.active_weapon ) {
+		interfaces::console->console_printf ( "tickbase %i | shift ticks %i  | fixed tickbase %i |  can_shoot %s \n", local_pointer->get_tick_base ( ), shifting::_shift.shift_ticks, localdata.fixed_tickbase,  misc::can_fire ( localdata.active_weapon, false ) ? "true" : "false" );
+
+		if (!misc::can_fire ( localdata.active_weapon, false ) && (cmd->buttons & cmd_buttons::in_attack))
+			cmd->buttons &= ~cmd_buttons::in_attack;
+
+	}
 	//*/
 	return false;
 }
@@ -844,7 +850,7 @@ void _fastcall hooks::do_extra_bone_processing::hook( void * ecx, void * edx, vo
 	auto player = ( player_t* ) ecx;
 
 	if ( player != local_pointer ) {
-		interfaces::console->console_printf ( "called debp for player  %i \n", player->get_info().name );
+		//interfaces::console->console_printf ( "called debp for player  %i \n", player->get_info().name );
 	}
 }
 
@@ -913,19 +919,12 @@ bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bo
 		return  setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
 
-	static auto r_jiggle_bones = interfaces::console->get_convar (  ( "r_jiggle_bones" ) );
-	auto r_jiggle_bones_backup = r_jiggle_bones->get_int ( );
-
-	r_jiggle_bones->set_value ( 0 );
 	auto animstate = e->get_anim_state ( );
 	auto previous_weapon = animstate ? animstate->m_pLastBoneSetupWeapon : nullptr;
 
 	if ( previous_weapon )
-	animstate->m_pLastBoneSetupWeapon = animstate->m_weapon; //-V1004
+	    animstate->m_pLastBoneSetupWeapon = animstate->m_weapon; 
 
-	
-	if ( e->index ( ) > 64 )
-		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 
 	    auto& anim = animations::player_data [ e->index ( ) ];
 	
@@ -936,9 +935,13 @@ bool __fastcall hooks::setup_bones::hook ( void * ecx, void * , matrix3x4_t * bo
 		else if (bone_to_world_out && max_bones != -1 )
 		   memcpy ( bone_to_world_out, e->m_CachedBoneData ( ).Base ( ), e->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
 	                                    
-		 r_jiggle_bones->set_value ( r_jiggle_bones_backup );
+		
+
 		if ( previous_weapon )
 			 animstate->m_pLastBoneSetupWeapon = previous_weapon;
+
+
+
 		return result;
 }
 
@@ -961,7 +964,7 @@ void __fastcall hooks::build_transformations::hook ( void * ecx, void * edx, int
 		return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 	
 	build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
-	interfaces::console->console_printf ( "called build_transformations_original for player %s \n", player->get_info ( ).name );
+	//interfaces::console->console_printf ( "called build_transformations_original for player %s \n", player->get_info ( ).name );
 }
 bool __fastcall hooks::is_hltv::hook ( void * ecx, void *  ) {
    return is_hltv_original ( ecx );
@@ -991,7 +994,7 @@ bool __fastcall hooks::write_user_cmd::hook ( void * ecx, void * , int slot, bf_
 	
 	return write_user_cmd_original ( ecx, slot, buf, from, to, is_new_command );
 
-	int shift_target = config.ragebot_double_tap_ticks;
+	int shift_target = 14;
 	if ( !shift_target )
 		return write_user_cmd_original ( ecx, slot, buf, from, to, is_new_command );
 
@@ -1119,10 +1122,9 @@ void __cdecl hooks::cl_move::hook ( float accumulated_extra_samples, bool final_
 	
 		while ( shifting::_shift.shift_ticks ) {
 
-			
-		
+	
 
-			cl_move_original ( accumulated_extra_samples , false );
+			cl_move_original ( accumulated_extra_samples , true );
 	
 			shifting::_shift.shift_ticks--;
 
@@ -1130,7 +1132,6 @@ void __cdecl hooks::cl_move::hook ( float accumulated_extra_samples, bool final_
 				shifting::_shift.recharge_ticks = config.ragebot_double_tap_ticks;
 				shifting::_shift.wait_for_recharge = local_pointer->get_tick_base ( ) + 128;
 				shifting::_shift.next_tickbase_shift = 0;
-				final_tick = true;
 			}
 		
 
@@ -1143,45 +1144,21 @@ void __cdecl hooks::cl_move::hook ( float accumulated_extra_samples, bool final_
 		shifting::_shift.can_shift = false;
 	}
 
-	cl_move_original ( accumulated_extra_samples, final_tick );
+	cl_move_original ( accumulated_extra_samples, true );
 }
 
 void _fastcall hooks::run_commmand::hook ( void * ecx, void * edx, player_t * player, c_usercmd * cmd, player_move_helper * move_helper ) {
-	
-	//local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 
 	if ( !player || player != local_pointer )
 		return run_commmand_original ( ecx, 0, player, cmd, move_helper );
-	//return o_run_command( ecx, 0, e, cmd, move_helper );
+
 	if ( !cmd )
 		return run_commmand_original ( ecx, 0, player, cmd, move_helper );
 
 	
 
-	if ( cmd->tick_count >= (localdata.m_tick + int ( 1 / interfaces::globals->interval_per_tick ) + 8 ) ) {
-		cmd->hasbeenpredicted = true;
-		return;
-	}
-
-	/* backup */
-	shifting::_shift.backup_tickbase = local_pointer->get_tick_base ( );
-	shifting::_shift.backup_curtime = interfaces::globals->cur_time;
-	
-	/* fix our tickbase */
-	if ( cmd->command_number == shifting::_shift.shifted_command ) {
-		player->get_tick_base ( ) = ( shifting::_shift.original_tickbase - shifting::_shift.shift_ticks + 1 );
-		++player->get_tick_base ( );
-		interfaces::globals->cur_time = math::ticks_to_time ( player->get_tick_base ( ) );
-	}
-	run_commmand_original ( ecx, 0, player, cmd, move_helper );
-	if ( cmd->command_number == shifting::_shift.shifted_command ) {
-		player->get_tick_base ( ) = shifting::_shift.backup_tickbase;
-		interfaces::globals->cur_time = shifting::_shift.backup_curtime;
-	}
-	/* restore */
-
-
 	g_netdata.store ( );
+
 }
 void __fastcall hooks::packet_start::hook ( void * ecx, void * , int incoming, int outgoing ) {
 

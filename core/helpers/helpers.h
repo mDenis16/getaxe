@@ -21,7 +21,8 @@ namespace local_player {
 
 	struct data {
 		bool in_game = false;
-
+		bool break_lby = false;
+		vec3_t last_lby_angle = vec3_t ( );
 		vec3_t orig_viewangle = vec3_t();
 		vec3_t eye_position = vec3_t ( );
 		vec3_t velocity = vec3_t ( );

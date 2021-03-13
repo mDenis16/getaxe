@@ -34,6 +34,7 @@ void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {
 	if ( !move_data )
 		move_data = std::malloc ( 182 );
 
+
 	static auto oldorigin = local_player::m_data.pointer->origin ( );
 	engine_prediction::unpredicted_eye = player->get_eye_pos ( );
 	engine_prediction::unpredicted_velocity = ( local_player::m_data.pointer->origin ( ) - oldorigin ) * ( 1.0f / interfaces::globals->interval_per_tick );
@@ -46,7 +47,7 @@ void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {
 		*reinterpret_cast< int * >( reinterpret_cast< uintptr_t >( interfaces::prediction + 0x24 ) ) = 1;
 	}
 
-	interfaces::globals->cur_time = math::ticks_to_time ( localdata.fixed_tickbase );
+	interfaces::globals->cur_time = local_pointer->get_tick_base() * interfaces::globals->interval_per_tick;
 	interfaces::globals->frame_time = interfaces::prediction->EnginePaused ? 0.0f : interfaces::globals->interval_per_tick;
 	
 	if ( !prediction_random_seed || !prediction_player ) {
@@ -144,6 +145,16 @@ void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {
 		};
 
 		post_think ( player );
+
+		//-----------------------------------------------------------------------------
+// Purpose: Called after any movement processing
+// Input  : *player - 
+//-----------------------------------------------------------------------------
+
+		*prediction_random_seed = NULL;
+		*prediction_player = NULL;
+
+		interfaces::game_movement->Reset ( );
 	}
 }
 

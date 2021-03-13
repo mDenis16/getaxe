@@ -4,7 +4,7 @@ void engineprediction::setup ( ) {
 	if ( !local_player::available ( ) )
 		return;
 
-
+	
 	if ( prediction_data.prediction_stage != SETUP )
 		return;
 

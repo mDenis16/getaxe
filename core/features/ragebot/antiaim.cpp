@@ -79,32 +79,54 @@ void anti_aim::event_logs::bullet_impact( i_game_event* event ) {
 
 }
 
-bool should_predict( )
-{
+bool will_lby_update ( ) {
+	static float next_update = 0.f;
+	const auto nci = interfaces::engine->get_net_channel_info ( );
 
-	float server_time = get_curtime( csgo::cmd );
-	static float predirect_time = 0.f;
-	static bool initialized;
-	bool will_update = false;
+	float curtime = interfaces::globals->cur_time;
 
-	if ( !initialized && !local_player::m_data.pointer->is_moving( ) )
-	{
-		initialized = true;
-		predirect_time = server_time + 0.22f;
-	}
-	else if ( local_player::m_data.pointer->is_moving( ) )
-	{
-		initialized = false;
+	if ( local_pointer->velocity ( ).Length2D ( ) >= .1f ) {
+		next_update = curtime + .22f;
 	}
 
-	if ( server_time >= ( predirect_time ) && local_player::m_data.pointer->flags( ) & fl_onground )
-	{
-		predirect_time = server_time + 1.1f;
-		will_update = true;
+	else {
+		if ( next_update < curtime ) {
+			next_update = curtime + 1.1f;
+			return true;
+		}
 	}
-	return will_update;
+
+	return false;
 }
 
+void anti_aim::lowerbody_desync (c_usercmd* cmd, bool& send_packet ) {
+	const float desync_delta = config.ragebot_double_tap_ticks;
+	if ( will_lby_update ( ) ) {
+	
+		cmd->viewangles.y = localdata.antiaim_yaw + config.lby_offset;
+
+
+		localdata.last_lby_angle.y = cmd->viewangles.y;
+
+		send_packet = false;
+
+		localdata.break_lby = true;
+	}
+
+	else if ( !send_packet ) {
+
+		cmd->viewangles.y = localdata.antiaim_yaw + config.fake_offset;
+	
+
+		cmd->viewangles.angle_normalize ( );
+	}
+
+	else {
+		cmd->viewangles.y += 180.f;
+		cmd->viewangles.angle_normalize ( );
+		localdata.antiaim_yaw = cmd->viewangles.y;
+	}
+}
 
 bool anti_aim::allow( c_usercmd* ucmd, bool& send_packet ) {
 
@@ -157,6 +179,13 @@ bool anti_aim::allow( c_usercmd* ucmd, bool& send_packet ) {
 
 	 vec3_t view_angle = vec3_t ( );  interfaces::engine->get_view_angles ( view_angle );
 	 vec3_t freestand_angle = vec3_t(csgo::real_angle.x, math::normalize_yaw ( view_angle.y - 180.f ), 0 );
+
+	 if ( anti_aim::desync_side )
+		 freestand_angle.y -= 90.f;
+	 else
+		 freestand_angle.y += 90.f;
+
+	 return freestand_angle.y;
 
 	 if ( aimbot::targets.empty ( ) )
 		 return freestand_angle.y;
@@ -365,7 +394,7 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 
 	
 	static int tick = 0;
-	if ( interfaces::inputsystem->is_button_down( button_code_t::KEY_V ) && ( interfaces::globals->tick_count  - tick) > 3 )
+	if ( interfaces::inputsystem->is_button_down( button_code_t::KEY_V ) && ( interfaces::globals->tick_count  - tick) > 2 )
 	{
 		desync_side = !desync_side;
 		//send_packet  = true;
@@ -382,7 +411,7 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 	switch ( config.antiaim_yaw ) {
 	case 1:
 	{
-		vec3_t viewangle = vec3_t ( );
+		/*vec3_t viewangle = vec3_t ( );
 		static vec3_t temp_angle = vec3_t ( );
 		interfaces::engine->get_view_angles ( viewangle );
 		if ( !( cmd->buttons & in_use ) ) {
@@ -398,26 +427,9 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 		float desync_delta = 58.f;
 
 		//interfaces::console->console_printf ( "DESYNC DELTA %f \n", desync_delta );
-
-		if ( send_packet ) {
-			cmd->viewangles.y = viewangle.y;
-		}
-		else {
-			if ( anti_aim::desync_side )
-				cmd->viewangles.y = localdata.antiaim_yaw - desync_delta;
-			else
-				cmd->viewangles.y = localdata.antiaim_yaw + desync_delta;
-		}
-
-
-		if ( should_predict ( ) ) {
-			if ( anti_aim::desync_side )
-				cmd->viewangles.y = localdata.antiaim_yaw - 120.f;
-			else
-				cmd->viewangles.y = localdata.antiaim_yaw + 120.f;
-
-			send_packet = false;
-		}
+		lowerbody_desync ( cmd, send_packet );*/
+		cmd->viewangles.y = best_freestanding_angle ( );
+		
 	}
 
 	break;
@@ -435,24 +447,27 @@ void anti_aim::on_create_move( c_usercmd* cmd, bool& send_packet )
 			viewangle.angle_normalize ( ); viewangle.angle_clamp ( );
 		}
 		
-		// calculate_peek_real ( );
-		 float fakelag_percent = interfaces::clientstate->m_choked_commands ? static_cast< float >( interfaces::clientstate->m_choked_commands ) / 14.0 : 0.f;
-		 float desync_delta = 120.f;
+		 calculate_peek_real ( );
+		 float delta = 120.f;
 
 		 if ( send_packet ) {
+			     cmd->viewangles.angle_normalize ( );
 				 cmd->viewangles.y = viewangle.y;
+				 localdata.antiaim_yaw = cmd->viewangles.y;
 		 }
 		 else {
+			 cmd->viewangles.angle_normalize ( );
 			 if ( anti_aim::desync_side )
-				 cmd->viewangles.y = localdata.antiaim_yaw - desync_delta;
+				 cmd->viewangles.y = localdata.antiaim_yaw - delta;
 			 else
-				 cmd->viewangles.y = localdata.antiaim_yaw + desync_delta;
+				 cmd->viewangles.y = localdata.antiaim_yaw + delta;
 		 }
+
 		if ( fabsf ( cmd->sidemove ) < 2.0f ) {
 			cmd->sidemove = cmd->tick_count % 2 ? 1.10f : -1.10f;
 		}
 
-		if ( should_predict ( ) ) {
+		if ( will_lby_update ( )  ) {
 			if ( anti_aim::desync_side )
 				cmd->viewangles.y = localdata.antiaim_yaw - 120.f;
 			else

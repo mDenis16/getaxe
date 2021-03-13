@@ -15,12 +15,12 @@ namespace shifting {
 		}
 
 
-		if ( _shift.can_shift && localdata.active_weapon->can_double_tap ( ) ) {
+		if ( _shift.can_shift && localdata.active_weapon->can_double_tap ( ) && misc::can_fire(localdata.active_weapon, false) ) {
 			if ( cmd->buttons & cmd_buttons::in_attack ) {
 
 				_shift.shift_ticks = _shift.next_tickbase_shift = config.ragebot_double_tap_ticks;
 				shifting::_shift.original_tickbase = local_pointer->get_tick_base ( );
-			
+				shifting::_shift.predicted_tickbase += _shift.shift_ticks;
 			
 				_shift.can_shift = false;
 

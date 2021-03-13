@@ -49,17 +49,7 @@ namespace overlay {
 
 }
 namespace resolver {
-	enum desync_side
-	{
-		dodge,
-		left,
-		right
-	};
-	enum antiaim_type {
-		none,
-		backwards,
-		sideways
-	};
+
 	namespace event_logs {
 		void bullet_impact ( i_game_event * event  );
 		void weapon_fire ( i_game_event * event );
@@ -89,39 +79,12 @@ namespace resolver {
 		bool hit = false;
 		bool approved = false;
 	};
-	struct resolve_info {
-		float max_desync_delta = 0.f;
-		float desync_delta = 0.f;
-		float server_goal_feet = 0.f;
-		float goal_feet_yaw = 0.f;
-		int missed_shots = 0;
-		bool is_using_desync = false;
-		bool is_usync_max_desync = false;
-		bool extended_desync = false;
-		bool lby_desync = false;
-		float lby_angle = 0.f;
-		antiaim_type antiaim_type;
-
-		int choke_ticks = 0;
-
-
-		float last_resolved_time = 0.f;
-		desync_side side;
-		float safe_point_angle = 0.f;
-		float brute_angle = 0.f;
-		float angle_at_me = 0.f;
-		bool standing_hitable = false;
-		int left_damage = 0;
-		int right_damage = 0;
-
-		float left_fraction = 0.f;
-		float right_fraction = 0.f;
-	};
+	
 	extern std::deque<resolve_shot> shots;
-	extern resolve_info resolver_data [ 65 ];
+	
 	player_t * get_closest_player_by_point ( vec3_t from, vec3_t point );
 	resolver::resolve_shot * closest_shot ( int tickcount, player_t* player );
-	std::string side_name ( desync_side side );
+
 	int get_desync_side ( vec3_t from, vec3_t to, player_t * entity, int hitbox );
 
 	float server_feet_yaw ( player_t * entity );
@@ -172,15 +135,40 @@ namespace engine_prediction {
 }
 namespace player_manager {
 	inline int old_simulation [ 65 ];
+	enum desync_type {
+		NONE,
+		MICROMOVEMENTS,
+		LBY_OPOSITE,
+		LBY_SIDEWAYS
+	};
+	enum predicted_side {
+		UNKNOWN, 
+		LEFT,
+		RIGHT
+	};
+	struct resolve_info {
+		desync_type type;
+		predicted_side side = UNKNOWN;
+		predicted_side wall_side = UNKNOWN;
+		float delta = 0.f;
+
+	};
+	std::string side_name ( predicted_side side );
+	std::string method_name ( desync_type type );
+
 	class lagcomp_t
 	{
 	private:
 		void manage_matrix ( player_t * entity );
 		void manage_animations ( player_t * entity );
 		void update_animations ( );
+		lagcomp_t & get_latest_networked ( ); 
 		void matrix_resolve ( player_t * entity );
+		void body_rotation ( );
+		void delta ( );
 	public:
 		
+		resolve_info resolve_info;
 		bool shoot = false;
 		bool failed = false;
 		int left_dmg, right_dmg = 0;
@@ -188,16 +176,38 @@ namespace player_manager {
 		int tick_count = 0;
 		vec3_t old_vec_origin;
 		player_t * entity = nullptr;
+		float m_flSpeed = 0.f;
+		bool changed_this_tick = false;
+		int third_delta = 0;
 		vec3_t origin, obbmin, obbmax, abs_origin, abs_angles, eye_angles, velocity;
+		vec3_t old_origin;
 
 		matrix3x4_t bone [ 128 ];
-		matrix3x4_t bone_at_me [ 128 ];
 		matrix3x4_t bone_left [ 128 ];
 		matrix3x4_t bone_right [ 128 ];
 
+	    matrix3x4_t* bones ( predicted_side i ) {
+			switch ( i ) {
+			case predicted_side::UNKNOWN:
+				return this->bone;
+				break;
+			case predicted_side::LEFT:
+				return this->bone_left;
+				break;
+
+			case predicted_side::RIGHT:
+				return this->bone_right;
+				break;
+			default:
+				break;
+			}
+		}
+
+
 		int bone_count = 0;
-		
+		int delta_rate = 0;
 		float max_delta = 0.f;
+		float time_delta = 0.f;
 		float speed = 0.f;
 		int choked_ticks = 0;
 		int simulation_ticks = 0;
@@ -211,25 +221,36 @@ namespace player_manager {
 		bool network_update = false;
 		float goal_feet = 0.f;
 		bool invalid = false;
-		std::array<animationlayer, 15> anim_layers;
+		animationlayer layer [ 15 ];
+		animationlayer resolve_layers [ 15 ];
 		std::array<float, 24> pos_params;
 		anim_state animstate;
 
-		resolver::desync_side side = resolver::desync_side::dodge;
+		anim_state fake_left_state;
+		anim_state fake_right_state;
+
+		animationlayer fake_left_layers [ 15 ];
+		animationlayer fake_right_layers [ 15 ];
+
+		animationlayer predicted_layers [ 15 ];
+
 		int flags = 0;
 		void apply_anims ( player_t * entity );
 		void receive_anims ( player_t * entity );
-		void apply (player_t* entity );
+		void apply (player_t* entity, bool collision = false, bool restore = false );
 		void restore ( player_t * entity );
 		void receive ( player_t * entity,bool predict );
 
 		bool is_valid ( );
 		void predict ( player_t * entity );
 		void receive ( player_t * entity );
-		void simulate_movement ( player_t * entity, vec3_t & vecOrigin, vec3_t & vecVelocity, int & fFlags, bool bOnGround );
+		void wall_detection ( );
+		void resolve ( );
 		lagcomp_t (  ) {	}
+		
 	};
-	inline std::array<std::vector< lagcomp_t >, 64> records;
+	inline std::array<std::deque< lagcomp_t >, 64> records;
+
 	player_t* util_player_by_index( int index );
 
 
@@ -260,8 +281,8 @@ namespace player_manager {
 	bool is_tick_valid( lagcomp_t record );
 
 
-	void get_rotated_matrix ( vec3_t origin, matrix3x4_t from_matrix [ MAXSTUDIOBONES ], float angle, matrix3x4_t new_matrix [ MAXSTUDIOBONES ] );
 
+	void get_rotated_matrix ( vec3_t origin, matrix3x4_t * from_matrix, float angle, matrix3x4_t * new_matrix );
 
 	void filter_records ( );
 
@@ -291,6 +312,8 @@ namespace anti_aim {
 	void update_local_animations( );
 
 	float get_freestanding_angle( );
+
+	void lowerbody_desync ( c_usercmd * cmd, bool & send_packet );
 
 	bool allow( c_usercmd* ucmd, bool& send_packet );
 	int freestanding_angle ( );
@@ -439,6 +462,7 @@ namespace animations {
 		float real_time = 0.f;
 		float frame_time = 0.f;
 		float abs_frametime = 0.f;
+		float absolute_frame_start_time = 0.f;
 		float interpolation_amount = 0.f;
 
 		int tickcount = 0;
@@ -463,6 +487,7 @@ namespace shifting {
 		bool allow = false;
 		bool was_zero_before = false;
 		int original_tickbase = 0;
+		int predicted_tickbase = 0;
 		int last_shift_tick = 0;
 		int backup_tickbase = 0;
 		float backup_curtime = 0.f;

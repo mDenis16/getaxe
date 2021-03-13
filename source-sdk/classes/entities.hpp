@@ -714,7 +714,7 @@ public:
 	OFFSET ( int, m_iOcclusionFramecount, 0xA30 );
 
 	NETVAR ( "DT_BaseAnimating", "m_flCycle",  get_cycle, float );
-
+	//NETVAR ( "DT_BaseAnimating", "m_flPoseParameter", m_flPoseParameter, float * );
 	 std::array<float, 24> & m_flPoseParameter ( ) {
 		 static int _m_flPoseParameter = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseAnimating" ), fnv::hash ( "m_flPoseParameter" ) );
 		 return *( std::array<float, 24> * )( uintptr_t ( this ) + _m_flPoseParameter );
@@ -730,6 +730,10 @@ public:
 	 }
 	animationlayer * get_animoverlays ( ) {
 		return *( animationlayer ** ) ( ( uintptr_t ) this + 0x2980 );
+	}
+	float * posparams ( ) {
+		static int _m_flPoseParameter = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseAnimating" ), fnv::hash ( "m_flPoseParameter" ) );
+		return *( float ** ) ( ( uintptr_t ) this + _m_flPoseParameter );
 	}
 	int animlayer_count ( ) {
 		if ( !this ) //-V704
@@ -818,14 +822,7 @@ public:
 
 	vec3_t get_eye_pos ( ) {
 
-		/*static auto Weapon_ShootPosition = reinterpret_cast< float * ( __thiscall * )( void *, vec3_t * ) >(
-			utilities::pattern_scan ( "client.dll", "55 8B EC 56 8B 75 08 57 8B F9 56 8B 07 FF 90 ? ? ? ?" )
-			);
-
-		vec3_t pos;
-		Weapon_ShootPosition ( this, &pos );
-		*/
-
+	
 		vec3_t pos = this->origin ( ) + this->view_offset ( );
 
 		if ( interfaces::inputsystem->is_button_down(KEY_C) && this->index ( ) ==  interfaces::engine->get_local_player ( ) ) {
@@ -849,6 +846,7 @@ public:
 		}
 
 		auto anim_state = this->get_anim_state ( );
+
 		if ( anim_state )
 			modify_eye_pos ( anim_state, &pos );
 

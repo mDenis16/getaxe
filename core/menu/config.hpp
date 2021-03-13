@@ -164,6 +164,10 @@ public:
 		 bool update_client_side_animation = true;
 
 		 bool abs_angles = false;
+
+		 int real_offset = 0;
+		 int fake_offset = 0;
+		 int lby_offset = 0;
 };
 
 #define config c_config::get ( )

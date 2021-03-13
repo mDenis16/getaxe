@@ -18,7 +18,7 @@ namespace menu {
 			option_combobox ( "Hitbox priority", "Prefered target hitbox", std::vector<std::string>{"head", "body"}, config.ragebot_prioritize_hitbox );
 			option_multicombobox ( "Hitscan selection", "Select hitboxes to scan", {{ "head", &config.ragebot_head_scan }, { "body", &config.ragebot_body_scan },{ "feet", &config.ragebot_feet_scan },{ "arms scan", &config.ragebot_arms_scan } } );
 			option_multicombobox ( "Auto Stop", "Automatic stops movement", { { "early", &config.ragebot_autostop[0] },  { "minimal", &config.ragebot_autostop [ 1 ] }, { "between shots", &config.ragebot_autostop [ 2 ] } } );
-		}, ImGui::GetWindowHeight ( ), config.ragebot_enabled );
+		}, ImGui::GetWindowHeight ( ), config.ragebot_enabled ); 
 		option ( "Anti aim", "Makes getting hit harder", [ = ] ( ) {
 		
 			option_combobox ( "Pitch", "Where you aimbot shot", std::vector<std::string>{"none", "down", "up"}, config.antiaim_pitch );
@@ -33,10 +33,11 @@ antiaim_fakelag_flags [ 3 ] }, { "on shot", &config.
 antiaim_fakelag_flags [ 4 ] } } );
 
 		}, 600, config.antiaim_enable );
-		option ( "Exploits", "Gives you a big advatage", [ = ] ( ) {
-			option_slider_int ( "exploit", "Amount of fakelag", 0, 32, config.ragebot_double_tap_ticks );
-	
-			
+		option ( "Debugge", "Gives you a big advatage", [ = ] ( ) {
+			option_slider_int ( "a", "Real yaw offset ", -180, 180, config.real_offset );
+			option_slider_int ( "b", "Fake yaw offset", -180, 180, config.fake_offset );
+			option_slider_int ( "c", "Lby break offset", -180, 180, config.lby_offset );
+			option_slider_int ( "Dbtap ticks", "Amount of shift", 0, 18, config.ragebot_double_tap_ticks );
 
 		}, 300, config.antiaim_enable );
 	

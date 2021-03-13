@@ -1,5 +1,6 @@
 #include "../../../features.hpp"
 #include "../../../../helpers/helpers.h"
+using  player_manager::predicted_side;
 
 namespace aimbot {
 #define scale(a, b)  hitbox->radius * (a / b )
@@ -18,13 +19,12 @@ namespace aimbot {
 		if ( !hitbox_set )
 			return;
 
-		bool should_use_resolved = hit_box == hitbox_head && record.resolved;
-
+		
 		studio_box_t * hitbox = hitbox_set->hitbox ( hit_box );
-
+		 
 		const auto mod = hitbox->radius != -1.f ? hitbox->radius : 0.f;
-		auto maxs = math::vector_transform ( hitbox->maxs + mod, record.bone [ hitbox->bone ] );
-		auto  mins = math::vector_transform ( hitbox->mins - mod, record.bone [ hitbox->bone ] );
+		auto maxs = math::vector_transform ( hitbox->maxs + mod,  record.bones( record.resolve_info.side )[ hitbox->bone ]);
+		auto  mins = math::vector_transform ( hitbox->mins - mod, record.bones ( record.resolve_info.side)[ hitbox->bone ] );
 
 		points.center = ( mins + maxs ) * 0.5f;
 
@@ -49,17 +49,17 @@ namespace aimbot {
 
 		if ( hit_box == hitbox_head ) {
 
-			for ( auto i = 0; i < 4; ++i ) {
+			for ( auto i = 0; i < 5; ++i ) {
 				points.points.push_back ( point );
 			}
 			vec3_t middle = ( top - bot );
-			//points.points [ 0 ].pos.z += middle.z;
+			points.points [ 0 ].pos.z += middle.z;
 
-			points.points [ 0 ].pos += vec3_t ( right.x * scale ( config.ragebot_head_scale, 100.f ), right.y * scale ( config.ragebot_head_scale, 100.f ), top.z * hitbox->radius * 0.95f );
-			points.points [1 ].pos += vec3_t ( left.x * scale ( config.ragebot_head_scale, 100.f ), left.y * scale ( config.ragebot_head_scale, 100.f ), top.z * hitbox->radius * 0.95f );
-			points.points [ 2 ].pos += vec3_t ( right.x * scale ( config.ragebot_head_scale, 100.f ), right.y * scale ( config.ragebot_head_scale, 100.f ), middle.z );
-			points.points [ 3 ].pos += vec3_t ( left.x * scale ( config.ragebot_head_scale, 100.f ), left.y * scale ( config.ragebot_head_scale, 100.f ), middle.z );
-			points.points [ 4 ].pos = vec3_t ( points.center.x, points.center.y, points.center.z + top.z * hitbox->radius * (entity.player->is_moving() ? 0.65f : 0.99f ) );
+			points.points [ 1 ].pos += vec3_t ( right.x * scale ( config.ragebot_head_scale, 100.f ), right.y * scale ( config.ragebot_head_scale, 100.f ), top.z * hitbox->radius * 0.95f );
+			points.points [ 2 ].pos += vec3_t ( left.x * scale ( config.ragebot_head_scale, 100.f ), left.y * scale ( config.ragebot_head_scale, 100.f ), top.z * hitbox->radius * 0.95f );
+			points.points [ 3 ].pos += vec3_t ( right.x * scale ( config.ragebot_head_scale, 100.f ), right.y * scale ( config.ragebot_head_scale, 100.f ), middle.z );
+			points.points [ 4 ].pos += vec3_t ( left.x * scale ( config.ragebot_head_scale, 100.f ), left.y * scale ( config.ragebot_head_scale, 100.f ), middle.z );
+			points.points [ 5 ].pos = vec3_t ( points.center.x, points.center.y, points.center.z + top.z * hitbox->radius * (entity.player->is_moving() ? 0.65f : 0.99f ) );
 			
 
 		}
@@ -85,27 +85,18 @@ namespace aimbot {
 		}
 
 		/*safepoint implementation after i sleep*/
-	/*	for ( size_t i = 0; i < points.points.size ( ); i++ ) {
-		
-			if ( hit_box == hitbox_head ) {
-				if ( (!record.shoot && ( record.in_air || record.max_delta <= 45 )) || localdata.force_safe_point_on_key ) {
-					points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_left ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_right );
-				}
-				else if ( config.ragebot_safe_point <= 3 ) {
+		if ( record.shoot ) {
+			for ( size_t i = 0; i < points.points.size ( ); i++ ) {
 
-					if ( ( record.resolved && record.max_delta >= 55 && record.max_delta <= 57) || record.shoot )
-						points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_resolved ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone );
-
-				}
-			}
-			else {
 				points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_left ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone_right );
 			}
-		     
-			
-		
-		
-		}*/
+		}
+		else if ( record.max_delta <= 30 && record.resolve_info.side > predicted_side::UNKNOWN ) {
+			for ( size_t i = 0; i < points.points.size ( ); i++ ) {
+
+				points.points.at ( i ).safe = does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bones(record.resolve_info.side) ) && does_point_intersect ( entity, points.points.at ( i ).pos, hit_box, record.bone );
+			}
+		}
 		aimbot::m_visual_debug.points = points.points;
 
 	}

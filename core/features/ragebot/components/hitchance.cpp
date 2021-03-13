@@ -277,7 +277,7 @@ namespace aimbot {
 		int traces_hit = 0;
 		int needed_hits = static_cast< int >( SEED_MAX * ( hitchance / 100.f ) );
 		vec3_t forward, right, up;
-		const vec3_t eye_position = engine_prediction::unpredicted_eye;
+		const vec3_t eye_position = localdata.eye_position;
 		math::angle_vectors ( angle, &forward, &right, &up );
 
 		auto weapon = local_player->active_weapon ( );
@@ -305,10 +305,10 @@ namespace aimbot {
 		vec3_t mins = vec3_t ( ), maxs = vec3_t ( );
 		float radius = _hitbox->radius != -1.f ? _hitbox->radius : 0.f;
 
-		bool should_use_resolved = entity.aimbot.best_point.hitbox == hitbox_head && entity.aimbot.record.resolved;
 
-		VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x, _hitbox->maxs.y, _hitbox->maxs.z ),  entity.aimbot.record.bone [ _hitbox->bone ], maxs );
-		VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x, _hitbox->mins.y, _hitbox->mins.z ), entity.aimbot.record.bone [ _hitbox->bone ], mins );
+
+		VectorTransform_Wrapper ( vec3_t ( _hitbox->maxs.x, _hitbox->maxs.y, _hitbox->maxs.z ),  entity.aimbot.record.bones(entity.aimbot.record.resolve_info.side) [ _hitbox->bone ], maxs );
+		VectorTransform_Wrapper ( vec3_t ( _hitbox->mins.x, _hitbox->mins.y, _hitbox->mins.z ), entity.aimbot.record.bones ( entity.aimbot.record.resolve_info.side ) [ _hitbox->bone ], mins );
 		entity.aimbot.best_point.col.maxs = maxs;
 		entity.aimbot.best_point.col.mins = mins;
 		entity.aimbot.best_point.col.radius = radius;

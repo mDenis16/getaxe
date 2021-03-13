@@ -46,7 +46,8 @@ namespace local_player {
 			return MD5_PseudoRandom ( cmd->command_number ) & 0x7FFFFFFF;
 		};
 
-		cmd->randomseed = get_random_seed ( );
+
+		 
 
 		localdata.m_tick = cmd->tick_count;
 		m_data.orig_viewangle = cmd->viewangles;
@@ -54,12 +55,26 @@ namespace local_player {
 		csgo::local_player = local_player::m_data.pointer;
 		m_data.alive = m_data.pointer->health ( ) > 0;
 		if ( m_data.alive ) {
+			auto original_tickbase = local_pointer->get_tick_base ( );
+			cmd->randomseed = get_random_seed ( );
+			if ( shifting::_shift.shift_ticks ) {
+				if ( shifting::_shift.shift_ticks == config.ragebot_double_tap_ticks )
+					localdata.fixed_tickbase = local_pointer->get_tick_base ( ) - shifting::_shift.shift_ticks;
+				else
+					localdata.fixed_tickbase++;
+			}
+			else
+				localdata.fixed_tickbase = original_tickbase;
+
 			m_data.active_weapon = m_data.pointer->active_weapon ( );
 			if ( m_data.active_weapon ) {
 				m_data.weapon_data = m_data.active_weapon->get_weapon_data ( );
 				m_data.have_weapon = true;
 			}
-			m_data.eye_position = local_pointer->get_eye_pos ( );
+	
+
+			localdata.eye_position = local_pointer->get_eye_pos ( );
+
 			m_data.velocity = engine_prediction::unpredicted_velocity;
 		}
 
@@ -127,20 +142,15 @@ namespace local_player {
 	}
 	void post_predict ( c_usercmd * cmd ) {
 		if ( local_player::available ( ) ) {
-			engine_prediction::unpredicted_eye = local_pointer->get_eye_pos ( );
-			engine_prediction::unpredicted_velocity = engineprediction::get ( ).backup_data.velocity;
+			
 
 			if ( localdata.active_weapon ) {
 				auto backup_velocity = local_pointer->velocity ( );
 				auto backup_abs_velocity = local_pointer->get_abs_velocity ( );
 
-				local_pointer->velocity ( ) = engineprediction::get ( ).backup_data.velocity;
-				local_pointer->get_abs_velocity ( ) = engineprediction::get ( ).backup_data.velocity;
-
 				localdata.active_weapon->update_accuracy_penalty ( );
 
-				local_pointer->velocity ( ) = backup_velocity;
-				local_pointer->get_abs_velocity ( ) = backup_abs_velocity;
+		
 			}
 		}
 	}

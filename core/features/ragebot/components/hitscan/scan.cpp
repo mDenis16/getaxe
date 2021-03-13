@@ -7,7 +7,7 @@ namespace aimbot {
 		auto index = entity.player->index ( );
 
 		std::vector< player_manager::lagcomp_t > best_records;
-		best_records.resize ( 2 );
+
 
 		if ( !player_manager::records [ index ].size ( ) )
 			return best_records;
@@ -40,20 +40,23 @@ namespace aimbot {
 			switch ( config.ragebot_record_selection ) {
 			case 1:
 			{
-				/*if ( config.ragebot_prioritize_hitbox == hitbox_head ) {
+				if ( config.ragebot_prioritize_hitbox == hitbox_head ) {
+					const auto old = record.resolve_info.side;
+					record.resolve_info.side = player_manager::predicted_side::UNKNOWN;
 					auto points = multipoint ( );
 					multi_point ( entity, hitbox_head, record, points );
 					if ( points.points.size ( ) >= min_points ) {
 						best_record = record;
 						min_points = points.points.size ( );
 					}
+					record.resolve_info.side = old;
 				}
-				else {*/
-				if ( record.max_delta <= min_delta ) {
-					best_record = record;
-					min_delta = record.max_delta;
+				else {
+					if ( record.max_delta <= min_delta ) {
+						best_record = record;
+						min_delta = record.max_delta;
+					}
 				}
-				//}
 				break;
 			}
 			case 2:
@@ -101,12 +104,13 @@ namespace aimbot {
 
 
 		if ( best_record.shoot || entity.is_current_record_hidden ) {
-			best_records [ 1 ] = player_manager::records [ index ].back ( );
-			best_records [ 0 ] = best_record;
+			best_records.push_back ( best_record );
+			best_records.push_back ( player_manager::records [ index ].back ( ) );
+
 		}
 		else {
-			best_records [ 0 ] = player_manager::records [ index ].back ( );
-			best_records [ 1 ] = best_record;
+			best_records.push_back ( player_manager::records [ index ].back ( ) );
+			best_records.push_back ( best_record );
 		}
 		return best_records;
 	}
@@ -114,25 +118,29 @@ namespace aimbot {
 
 	void scan ( target & entity ) {
 
+		if ( player_manager::records [ entity.index ].empty ( ) ) {
+			interfaces::console->console_printf ( "EMPTY RECORDS \n" );
+			return;
+		}
 
 		for ( auto & record : filter_records ( entity ) ) {
-			if ( player_manager::records [ entity.index ].empty ( ) ) {
-				interfaces::console->console_printf ( "EMPTY RECORDS \n" );
-				return;
+
+
+
+				
+				record.apply ( entity.player );
+				bestpoint data = data = best_point ( entity, record );
+				record.restore ( entity.player );
+
+
+				//	interfaces::console->console_printf ( "best_point dmg %i | hitbox %i \n", data.dmg, data.hitbox );
+
+				if ( data.dmg >= ( entity.aimbot.best_point.dmg + 15.f ) ) {
+					entity.aimbot.best_point = data;
+					entity.aimbot.record = record;
+
+				}
 			}
-
-			record.apply ( entity.player );
-			bestpoint data = data = best_point ( entity, record );
-			record.restore ( entity.player );
-
-			interfaces::console->console_printf ( "best_point dmg %i | hitbox %i \n", data.dmg, data.hitbox );
-
-			if ( data.dmg >= ( entity.aimbot.best_point.dmg + 5.f ) ) {
-				entity.aimbot.best_point = data;
-				entity.aimbot.record = record;
-				if ( record.shoot )
-					break;
-			}
-		}
+		
 	}
 }

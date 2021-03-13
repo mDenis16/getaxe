@@ -6,17 +6,17 @@ void event_listener::fire_game_event( i_game_event* event ) {
 	switch ( fnv::hash (event->get_name() ) ) {
 	case fnv::hash("player_hurt" ):
 		shot_processor::hurt_event ( event );
-		resolver::event_logs::player_hurt ( event );
+		//resolver::event_logs::player_hurt ( event );
 		break;
 	case fnv::hash ( "bullet_impact" ):
 		player_manager::event_logs::bullet_impact ( event );
 		anti_aim::event_logs::bullet_impact ( event );
 		shot_processor::bullet_impact ( event );
-		resolver::event_logs::bullet_impact ( event );
+		//resolver::event_logs::bullet_impact ( event );
 		break;
 	case fnv::hash ( "weapon_fire" ):
 		shot_processor::weapon_fire ( event );
-		resolver::event_logs::weapon_fire ( event );
+		//resolver::event_logs::weapon_fire ( event );
 		break;
 	case fnv::hash ( "player_death" ):
 		visuals::player::player_death ( event );

@@ -262,6 +262,9 @@ void misc::removals::remove_flash( ) {
 		local_player::m_data.pointer->flash_duration( ) = 0.0f;
 }
 bool misc::can_fire ( weapon_t* weapon, bool check_revolver ) {
+	if ( shifting::_shift.shift_ticks == config.ragebot_double_tap_ticks )
+		return false;
+
 	if ( !weapon ) //-V704
 		return false;
 
@@ -278,7 +281,7 @@ bool misc::can_fire ( weapon_t* weapon, bool check_revolver ) {
 	if ( !owner )
 		return false;
 
-	auto server_time = math::ticks_to_time ( local_pointer->get_tick_base ( ) );
+	auto server_time = math::ticks_to_time ( localdata.fixed_tickbase );
 
 	if ( server_time < weapon->next_primary_attack ( ) )
 		return false;

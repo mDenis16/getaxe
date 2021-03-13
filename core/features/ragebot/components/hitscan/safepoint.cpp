@@ -22,7 +22,7 @@ namespace aimbot {
 		vec3_t max = math::vector_transform ( _hitbox->maxs, bones [ _hitbox->bone ] );
 		vec3_t min = math::vector_transform ( _hitbox->mins, bones [ _hitbox->bone ] );
 
-		if ( auto intersection = get_intersect_point ( engine_prediction::unpredicted_eye, point, min, max, _hitbox->radius ); intersection )
+		if ( auto intersection = get_intersect_point ( localdata.eye_position, point, min, max, _hitbox->radius ); intersection )
 			return true;
 			
 		return false;

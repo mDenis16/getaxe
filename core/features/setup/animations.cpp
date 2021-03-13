@@ -61,15 +61,20 @@ namespace animations {
 	
 
 	void update_anim_angle ( anim_state * state, vec3_t ang ) {
-		using fn = void ( __vectorcall * )( void *, void *, float, float, float, void * );
-		static auto ret = reinterpret_cast< fn >( utilities::pattern_scan ( "client.dll", ( "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24" ) ) );
+		try {
+			using fn = void ( __vectorcall * )( void *, void *, float, float, float, void * );
+			static auto ret = reinterpret_cast< fn >( utilities::pattern_scan ( "client.dll", ( "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24" ) ) );
 
-		if ( !ret || !state )
-			return;
+			if ( !ret || !state )
+				return;
 
 
 
-		ret ( state, nullptr, 0.f, ang.y, ang.x, nullptr );
+			ret ( state, nullptr, 0.f, ang.y, ang.x, nullptr );
+		}
+		catch ( int ex ) {
+			
+		}
 	}
 
 	void post_data_end ( player_t * player ) {
@@ -143,6 +148,7 @@ namespace animations {
 		globals.abs_frametime = interfaces::globals->absolute_frametime;
 		globals.interpolation_amount = interfaces::globals->interpolation_amount;
 		globals.tickcount = interfaces::globals->tick_count;
+		globals.absolute_frame_start_time = interfaces::globals->absolute_frame_start_time;
 		globals.framecount = interfaces::globals->frame_count;
 	}
 
@@ -173,7 +179,7 @@ namespace animations {
 		interfaces::globals->frame_time = globals.frame_time;
 		interfaces::globals->absolute_frametime = globals.abs_frametime;
 		interfaces::globals->interpolation_amount = globals.interpolation_amount;
-
+		interfaces::globals->absolute_frame_start_time = globals.absolute_frame_start_time;
 		interfaces::globals->tick_count = globals.tickcount;
 		interfaces::globals->frame_count = globals.framecount;
 	}

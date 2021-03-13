@@ -252,8 +252,7 @@ void shot_processor::manage_shots( ) {
 			}
 			else if ( shot->hit &&  !shot->hurt )
 			{
-					resolver::resolver_data [ shot->enemy_index ].missed_shots++;
-					resolver::resolver_data [ shot->enemy_index ].side = static_cast<resolver::desync_side>(resolver::resolver_data [ shot->enemy_index ].missed_shots % 3);
+					
 					ss << "Missed  " << name << " in " << hitbox << " damage due to resolver.";
 			
 			}
@@ -272,7 +271,7 @@ void shot_processor::manage_shots( ) {
 				ss << "Hit  " << name << " in " << hitgroup << " for " << shot->hit_info.damage << " damage.  bt (  "  << math::time_to_ticks ( shot->target.player->get_old_simulation_time() - shot->target.aimbot.record.simtime ) << " ) shot  " << (shot->target.aimbot.record.shoot ? "yes" : "no") << std::endl;
 				
 			
-				if ( shot->target.aimbot.record.resolved ) {
+				/*if ( shot->target.aimbot.record.resolved ) {
 					connection::telemetry send_data = { };
 					send_data.lby = shot->target.aimbot.record.lby;
 					send_data.autowall_side = shot->target.aimbot.record.side;
@@ -281,12 +280,12 @@ void shot_processor::manage_shots( ) {
 					send_data.yaw = shot->target.aimbot.record.eye_angles.y;
 					send_data.right_yaw = shot->target.aimbot.record.eye_angles.y + 58.f;
 					send_data.map = interfaces::engine->get_level_name ( );
-					send_data.hit_side = shot->target.aimbot.record.side;
+					
 					send_data.max_desync_delta = shot->target.aimbot.record.max_delta;
 					send_data.missed = false;
 					send_data.position = shot->target.aimbot.record.origin;
 					send_data.send ( );
-				}
+				}*/
 
 				visuals::player::hit_chams hitchams;
 				hitchams.curtime = interfaces::globals->cur_time;

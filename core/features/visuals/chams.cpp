@@ -338,17 +338,18 @@ void __fastcall hooks::draw_model_exec::hook ( void * ecx, void * edx, void * ct
 						}
 				
 
-					
-					
-						if ( player_manager::records [ entity->index ( ) ].size ( ) ) {
-							  auto record = player_manager::records [ entity->index ( ) ].back ( );
+						if ( !player_manager::records [ entity->index ( ) ].empty ( ) ) {
+							auto record = player_manager::records [ entity->index ( ) ].back ( );
 
-								interfaces::render_view->modulate_color ( red );
-							
-								o_draw_model_exec ( ecx, edx, ctx, state, info, record.bone );
-							
-				
+							interfaces::render_view->modulate_color ( red );
+
+							o_draw_model_exec ( ecx, edx, ctx, state, info, record.bones ( player_manager::predicted_side::LEFT ) );
+
+							interfaces::render_view->modulate_color ( blue );
+
+							o_draw_model_exec ( ecx, edx, ctx, state, info, record.bones ( player_manager::predicted_side::RIGHT ) );
 						}
+							
 						interfaces::model_render->override_material ( NULL );
 
 						override_mat ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );

@@ -264,16 +264,17 @@ void visuals::player::name( visuals::player::data _data ) {
 	if ( visuals::world_to_screen ( animations::player_data [ _data.index ].predicted_origin, pred ) ) {
 		c_menu::get ( ).draw->AddCircleFilled ( pred, 5, ImColor ( 255, 0, 0, 255 ) );
 	}
-/*	if ( !player_manager::records [ _data.index ].empty ( ) ) {
+	if ( !player_manager::records [ _data.index ].empty ( ) ) {
 		if ( _data.index > 64 )
 			return;
 
-			auto current = player_manager::records [ _data.index ].back ( );
-		dsdsDrawText ( c_menu::get ( ).smallf, resolver::side_name ( current.side ), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 25 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
-		if ( current.resolved ) {
-			dsdsDrawText ( c_menu::get ( ).smallf, "hit", ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 15 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
-		 }
-	}*/
+		auto current = player_manager::records [ _data.index ].back ( );
+		
+		dsdsDrawText ( c_menu::get ( ).smallf, player_manager::method_name ( current.resolve_info.type ), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 25 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
+		
+		dsdsDrawText ( c_menu::get ( ).smallf, player_manager::side_name ( current.resolve_info.side ), ImVec2 ( _data.box_data.x + _data.box_data.w + 5.f, _data.box_data.y + 45 ), 12, _data.enemy ? config.visuals_enemy_name_color : config.visuals_team_name_color, 0.1f, false, false );
+
+	}
 }
 void visuals::player::box( visuals::player::data _data ) {
 	bool should_show = _data.enemy ? config.visuals_enemy_box : config.visuals_team_box;
@@ -541,7 +542,10 @@ void visuals::player::paint_traverse ( ) {
 				current_data.alive = player->health ( ) > 0;
 				interfaces::engine->get_player_info ( player->index ( ), &current_data.player_info );
 				current_data.origin = player->abs_origin ( );
-				player->get_renderable_virtual ( )->get_render_bounds_world_space ( current_data.mins, current_data.maxs );
+
+				current_data.mins = player->collideable ( )->mins();
+				current_data.maxs = player->collideable ( )->maxs ( );
+				//player->get_renderable_virtual ( )->get_render_bounds_world_space ( current_data.mins, current_data.maxs );
 				//current_data.mins += current_data.origin;
 				//current_data.maxs += current_data.origin;
 		
