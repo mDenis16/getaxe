@@ -1,10 +1,9 @@
 ﻿#pragma once
 #include "../../dependencies/utilities/csgo.hpp"
-#include "../menu/config.hpp"
+
 #include "misc/events/events.hpp"
 #include "../helpers/helpers.h"
-#include "../menu/ImGui/imgui.h"
-#include "../menu/ImGui/imgui_internal.h"
+
 #include <optional>
 
 #define DEBUG_LOG printf
@@ -44,8 +43,11 @@ namespace event_manager {
 	void round_end ( i_game_event * );
 }
 namespace overlay {
-	void initialize ( );
-	void render ( );
+	void initialize ( IDirect3DDevice9 * device );
+	void __stdcall end_present ( IDirect3DDevice9 * /*device*/ );
+	void __stdcall pre_render ( IDirect3DDevice9 * device );
+	void present ( IDirect3DDevice9 * device );
+	inline IDirect3DDevice9 * g_pDevice;
 
 }
 namespace resolver {
@@ -598,76 +600,9 @@ namespace prediction {
 	void post_think( player_t* local );
 };
 
-class NetData {
-private:
-	class StoredData_t {
-	public:
-		int    m_tickbase;
-		vec3_t  m_punch;
-		vec3_t  m_punch_vel;
-		vec3_t m_view_offset;
-		float  m_velocity_modifier;
 
-	public:
-		__forceinline StoredData_t( ) : m_tickbase { }, m_punch { }, m_punch_vel { }, m_view_offset { }, m_velocity_modifier { } {};
-	};
 
-	std::array< StoredData_t, 150 > m_data;
 
-public:
-	void store( );
-	void apply( );
-	void reset( );
-};
-
-extern NetData g_netdata;
-namespace tickbase_system {
-	struct shift_data {
-		bool should_recharge = false;
-		int recharge_ticks = 0;
-		bool should_shift = true;
-		int shift_ticks = 0;
-	};
-	extern shift_data m_shift_data;
-	// Used to fix prediction when shifting tickbase
-	struct prediction {
-		int m_shifted_command;
-		int m_shifted_ticks;
-		int m_original_tickbase;
-	};
-	extern prediction m_prediction;
-	// Prototypes - main functions necessary for tickbase shifting
-	void write_user_cmd ( bf_write * buf, c_usercmd * incmd, c_usercmd * outcmd );
-
-	void pre_movement ( );
-	void post_movement ( );
-}
-
-namespace exploit
-{
-	inline int shot_tickbase;
-	inline int shot_cmdnr;
-	inline int shot_tick;
-	inline int shift_rate;
-	inline bool dt_restore;
-	inline bool can_dt_again;
-	inline int shift_amt;
-}
-
-class dbtap : public singleton <dbtap> {
-public:
-
-	bool double_tap ( c_usercmd * m_pcmd );
-	void hide_shots ( c_usercmd * m_pcmd, bool should_work );
-
-	bool recharging_double_tap = false;
-
-	bool double_tap_enabled = false;
-	bool double_tap_key = false;
-
-	bool hide_shots_enabled = false;
-	bool hide_shots_key = false;
-};
 namespace misc {
 	bool can_fire ( weapon_t * weapon, bool check_revolver );
 	namespace movement {
@@ -901,292 +836,7 @@ namespace autothrow {
 }
 namespace visuals {
 
-	struct data {
-		float width, height;
-	};
-	struct autowall_crosshair_data {
-		vec3_t plane;
-		vec3_t end_pos_2d;
-		float dmg = 0.f;
-		std::vector<ImVec2> points;
-	};
-	struct capsule {
-		vec3_t mins = vec3_t ( );
-		vec3_t maxs = vec3_t ( );
-		float radius = 0.f;
-	};
-
-	struct local_data {
-		bool scoped = false;
-		std::vector<capsule> capsule_local;
-		autowall_crosshair_data autowall_crosshair;
-	};
-	extern local_data m_local;
-	void draw_debug_points ( );
-
-	void circle_filled ( float x, float y, float rad, float rotate, int resolution, const float color [ 4 ] );
-
-
-	void draw_noscope ( );
-	void autowall_crosshair ( );
-	void draw_texture_polygon ( );
-	ImVec2 render_text ( const ImFont * font, int size, const float textCfg [ 4 ], const char * text, const ImVec2 & pos, bool centered = true , bool adjustHeight = true ) noexcept;
-	void local_esp_think ( );
-
-	void capsule_overlay ( aimbot::target target, float duration, color color );
-
-	void RenderCapsule ( const vec3_t & vStart, const vec3_t & vEnd, const float & flRadius, ImColor c );
-
-	void local_esp ( );
-	bool world_to_screen ( const vec3_t & origin, ImVec2 & screen );
-	void draw_projectile ( );
-	extern data m_data;
-	struct box {
-		float x, y, w, h;
-		box ( ) = default;
-		box ( float x, float y, float w, float h ) {
-			this->x = x;
-			this->y = y;
-			this->w = w;
-			this->h = h;
-		}
-	};
-	void circle_filled ( float x, float y, float rad, float rotate, int resolution, const DWORD color );
-	bool get_playerbox ( entity_t * ent, visuals::box & in );
-	namespace projectiles {
-		struct debug_fire {
-			vec3_t pos_3d = vec3_t ( );
-			vec3_t pos2_d = vec3_t ( );
-			float dist = 0.f;
-			bool used = false;
-		};
-		class proj_data {
-		public:
-			visuals::box box_data;
-			float distance = 0.f;
-			std::string owner_name;
-			std::string name;
-			bool on_screen = false;
-			vec3_t origin = vec3_t ( );
-			vec3_t text_location = vec3_t ( );
-			bool time_able = false;
-			float progress = 0.f;
-			vec3_t screen_origin = vec3_t ( );
-			float radius = 0.f;
-			bool is_smoke = false;
-			int class_id = -1;
-			struct fire_location {
-				vec3_t pos = vec3_t ( );
-				float dist = 0.f;
-				float radius = 0.f;
-				bool used = false;
-			};
-			std::vector<fire_location> fires;
-			virtual bool is_weapon ( ) = 0;
-			virtual bool is_grenade ( ) = 0;
-			virtual std::string get_name ( ) = 0;
-		protected:
-			entity_t * entity;
-		};
-
-		namespace weapons {
-			class weapon_data : public proj_data {
-			public:
-				std::string weapon_icon;
-
-				std::string get_name ( ) {
-					return "skeet dump";
-				}
-				bool is_weapon ( ) {
-					return false;
-				}
-				bool is_grenade ( ) {
-					return false;
-				}
-			};
-			extern std::vector<weapon_data> weapons;
-			void think ( weapon_t * weapon );
-			void draw ( );
-		}
-		namespace grenades {
-			
-			enum grenade_type {
-				flashbang,
-				smokegrenade,
-				incendiarygrenade,
-				molotov,
-				fraggrenade,
-				decoy
-			};
-			class grenade_data : public proj_data {
-			public:
-				std::string weapon_icon;
-				std::string get_name ( ) {
-					return "";
-				}
-				std::string name;
-			
-				bool is_weapon ( ) {
-					return entity->is_weapon ( );
-				}
-				bool is_grenade ( ) {
-					return true;
-				}
-			};
-			extern std::vector<grenade_data> grenades;
-			void think ( entity_t * grenade );
-			void draw ( );
-
-			namespace proximity {
-				class proximity_data {
-				public:
-					vec3_t position = vec3_t ( );
-					vec3_t predicted_position = vec3_t ( );
-					float curtime = 0.f;
-					float damage = 0.f;
-
-					int spawn_tick = 0;
-					entity_t * grenade;
-					bool predicted = false;
-					bool visible = false;
-					vec3_t w2s = vec3_t ( );
-					void predict ( );
-					bool detonated ( float time, trace_t & trace );
-					proximity_data ( entity_t* _grenade ) {
-						grenade = _grenade;
-						position = _grenade->origin ( );
-						spawn_tick = interfaces::globals->tick_count;
-					}
-
-
-				};
-			
-				extern std::vector<proximity_data*> proximity_grenades;
-				void think ( );
-				void draw ( );
-				void think_paint ( );
-			}
-		}
-		void think ( );
-		void draw ( );
-	}
-	namespace notifications {
-		struct notify {
-			std::string text;
-			float time;
-			float shown_time;
-			float width = 300.f;
-			float max_width = 700.f;
-			float height = 10;
-			bool seen = false;
-
-			float from_start = -width;
-			float to_end = 0.0f;
-			float current = from_start;
-			float seen_time = 0.f;
-			ImVec2 min;
-			ImVec2 max;
-		};
-		extern std::vector<notify> list;
-
-		void fne ( );
-		void present ( );
-		void add ( std::string _text );
-	}
-
-	namespace player {
-		struct hit_chams {
-			matrix3x4a_t bones [ 128 ];
-			float curtime = 0.f;
-		};
 	
-		extern std::array<std::vector<hit_chams>, 64> chams_log;
-		struct data {
-			visuals::box box_data;
-			bool ready = false;
-			float distance = 0.f;
-			int index;
-			std::string weapon_icon;
-			std::string weapon_name;
-			int health;
-			bool alive;
-			bool on_screen;
-			bool valid;
-			bool dormant;
-			bool enemy;
-			bool out_of_pov = false;
-			float last_seen_time = 0.f;
-			vec3_t origin, mins, maxs;
-			player_info_t player_info;
-		};
-
-
-		extern std::array<visuals::player::data, 65 > m_data;
-		void player_death ( i_game_event * event );
-
-		void name ( data _data );
-
-		void box ( data _data );
-
-		void health ( visuals::player::data _data );
-
-		void weapon ( visuals::player::data _data );
-
-		void arrow ( visuals::player::data _data );
-
-		void present ( );
-
-		void sound ( );
-
-		void paint_traverse ( void );
-
-		void aimbot ( visuals::player::data _data );
-
-		void think ( );
-	};
-
-	namespace chams {
-		enum class shader_type_t {
-			VertexLitGeneric = 0,
-			UnlitGeneric,
-			Modulate
-		};
-
-		enum mat_type {
-			regular,	
-			flat,	
-			reflective,
-		    glow
-		};
-
-		extern std::array<i_material *, 4> materials;
-
-		i_material * create_material ( shader_type_t shade, bool ignorez, bool wireframe );
-		void init ( );
-	
-		void modulate ( float color [ 4 ], mat_type material, bool xyz );
-		namespace hook {
-		
-			using fn = void ( __thiscall * )( iv_model_render *, i_mat_render_context *, const draw_model_state_t &, const model_render_info_t &, matrix3x4_t * );
-			extern  fn draw_model_execute_original;
-			static void __stdcall draw_model_execute ( i_mat_render_context * ctx, const draw_model_state_t & state, const model_render_info_t & info, matrix3x4_t * bone_to_world );
-		
-		}
-	};
-
-
-
-
-
-
-	float draw_name_text ( ImFont * pFont, const std::string text, const ImVec2 & pos, float size, float const * color, float shadow, bool center, bool bold );
-
-	std::string weapon_to_icon ( const int id );
-
-	std::tuple<std::string, std::string> grenade_name (entity_t* ent, class_ids id );
-
-
-
 
 
 

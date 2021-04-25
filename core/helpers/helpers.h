@@ -1,9 +1,6 @@
 #pragma once
 #include "../../dependencies/utilities/csgo.hpp"
 
-#include "../menu/ImGui/imgui.h"
-#include "../menu/ImGui/imgui_internal.h"
-
 
 namespace local_player {
 	struct command {

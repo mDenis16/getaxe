@@ -1,6 +1,6 @@
 #include "../dependencies/utilities/csgo.hpp"
 #include "features/features.hpp"
-
+#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS 
 
 unsigned long WINAPI initialize(void* instance) {
 	while (!GetModuleHandleA("serverbrowser.dll"))
@@ -19,6 +19,7 @@ unsigned long WINAPI initialize(void* instance) {
 	try {
 		interfaces::initialize();
 		hooks::initialize();
+		hooks::create_hooks ( );
 	}
 
 	catch (const std::runtime_error & error) {
@@ -33,7 +34,7 @@ unsigned long WINAPI initialize(void* instance) {
 }
 
 unsigned long WINAPI release() {
-	hooks::release();
+	//hooks::release();
 
 
 	console::release();

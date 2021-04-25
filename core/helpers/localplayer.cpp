@@ -57,7 +57,7 @@ namespace local_player {
 		if ( m_data.alive ) {
 			auto original_tickbase = local_pointer->get_tick_base ( );
 			cmd->randomseed = get_random_seed ( );
-			if ( shifting::_shift.shift_ticks ) {
+			/*if ( shifting::_shift.shift_ticks ) {
 				if ( shifting::_shift.shift_ticks == config.ragebot_double_tap_ticks )
 					localdata.fixed_tickbase = local_pointer->get_tick_base ( ) - shifting::_shift.shift_ticks;
 				else
@@ -65,6 +65,7 @@ namespace local_player {
 			}
 			else
 				localdata.fixed_tickbase = original_tickbase;
+				*/
 
 			m_data.active_weapon = m_data.pointer->active_weapon ( );
 			if ( m_data.active_weapon ) {
@@ -75,7 +76,7 @@ namespace local_player {
 
 			localdata.eye_position = local_pointer->get_eye_pos ( );
 
-			m_data.velocity = engine_prediction::unpredicted_velocity;
+		//	m_data.velocity = engine_prediction::unpredicted_velocity;
 		}
 
 		m_data.backup_tickbase = local_pointer->get_tick_base ( );

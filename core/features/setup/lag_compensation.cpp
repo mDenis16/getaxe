@@ -634,9 +634,9 @@ namespace player_manager {
 
 					float backup_duck_amount = this->entity->duck_amount ( );
 
-					auto velocity_per_tick = ( this->velocity - previous.velocity ) / this->choked_ticks;
+					auto velocity_per_tick = ( this->velocity - previous.velocity ) / static_cast<float>(this->choked_ticks);
 
-					auto origin_per_tick = ( this->origin - previous.origin ) / this->choked_ticks;
+					auto origin_per_tick = ( this->origin - previous.origin ) / static_cast< float >( this->choked_ticks);
 
 
 					for ( size_t i = 0; i < this->choked_ticks; i++ ) {
