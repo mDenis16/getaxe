@@ -7,7 +7,8 @@ namespace hooks::callback {
 		if ( !local_player::m_data.pointer )
 			return post_screen_space_fx_original ( ecx, setup );
 
-		//visuals::player::think ( );
+		visuals::on_queue ( );
+	
 
 		return post_screen_space_fx_original ( ecx, setup );
 	}

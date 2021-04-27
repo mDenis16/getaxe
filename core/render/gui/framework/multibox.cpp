@@ -42,7 +42,7 @@ namespace ui {
 		this->title = text;
 	
 	
-
+		this->value_array = &_value_array;
 		this->parrent = parent;
 		this->renderer = this->parrent->renderer;
 		this->type = multibox_element;

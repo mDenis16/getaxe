@@ -18,6 +18,7 @@
 #pragma comment(lib, "d3d9.lib")
 #pragma comment(lib, "d3dx9.lib")
 #include "../core/menu/ImGui/imgui.h"
+#include "../core/menu/ImGui/imgui_internal.h"
 #include "../core/menu/ImGui/impl/imgui_impl_dx9.h"
 #include "utilities/singleton.hpp"
 #include "utilities/fnv.hpp"

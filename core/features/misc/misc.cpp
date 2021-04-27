@@ -1,5 +1,6 @@
 #include "../features.hpp"
 #include "../../helpers/helpers.h"
+/*
 void misc::movement::fake_duck ( c_usercmd * cmd ) {
 	cmd->buttons |= in_bullrush;
 
@@ -113,36 +114,19 @@ void misc::thirdperson::think( ) {
 	if ( !interfaces::engine->is_connected( ) )
 		return;
 
-	static bool enabled = false;
-	static bool was_in_thirdperson = false;
-	static auto thirdperson = false;
 
-	thirdperson = true;
 
-	static auto pressed = false;
-
-	static auto key = false;
-
-	if ( interfaces::inputsystem->is_button_down( button_code_t::MOUSE_MIDDLE ) && !pressed )
-		pressed = true;
-	else if ( !interfaces::inputsystem->is_button_down( button_code_t::MOUSE_MIDDLE ) && pressed ) {
-		pressed = false;
-		key = !key;
-	}
-
-	if ( key )
-		thirdperson = false;
 
 	static auto current_fraction = 0.0f;
 	static vec3_t vecAngles;
 	interfaces::engine->get_view_angles( vecAngles );
+	float ideal_distance = config.local.thirdperson_distance;
 
-	if ( thirdperson && local_player::m_data.pointer->health( ) > 0 ) {
-		if ( !interfaces::input->m_camera_in_third_person ) {
+	interfaces::input->m_camera_in_third_person = config.local.thirdperson;
 
+	if ( interfaces::input->m_camera_in_third_person && local_player::m_data.pointer->health( ) > 0 ) {
 
-			float ideal_distance = 100.f;
-			vec3_t inverse_angles = vecAngles;
+			    vec3_t inverse_angles = vecAngles;
 
 				inverse_angles.x *= -1.f, inverse_angles.y += 180.f;
 
@@ -160,135 +144,14 @@ void misc::thirdperson::think( ) {
 			
 		
 			 ideal_distance *= trace.flFraction;
-			
-
-			interfaces::input->m_camera_in_third_person = true;
+	
 			interfaces::input->m_camera_offset = interfaces::input->m_camera_offset = vec3_t ( vecAngles.x, vecAngles.y, ideal_distance );
-		}
+		
 	}
 	else {
-		interfaces::input->m_camera_in_third_person = false;
 		interfaces::input->m_camera_offset = vec3_t( vecAngles.x, vecAngles.y, 0 );
 	}
 
 }
 
-void misc::removals::remove_smoke( ) {
-	if ( !config.visuals_world_removals[2] )
-		return;
-
-	if ( !interfaces::engine->is_connected( ) && !interfaces::engine->is_in_game( ) )
-		return;
-
-	static auto smoke_count = *reinterpret_cast< int** >( utilities::pattern_scan( "client.dll", "A3 ? ? ? ? 57 8B CB" ) + 1 );
-
-	static std::vector<const char*> smoke_materials = {
-		"particle/vistasmokev1/vistasmokev1_fire",
-		"particle/vistasmokev1/vistasmokev1_smokegrenade",
-		"particle/vistasmokev1/vistasmokev1_emods",
-		"particle/vistasmokev1/vistasmokev1_emods_impactdust"
-	};
-
-	for ( auto material_name : smoke_materials ) {
-		i_material* smoke = interfaces::material_system->find_material( material_name, TEXTURE_GROUP_OTHER );
-		smoke->increment_reference_count( );
-		smoke->set_material_var_flag( material_var_wireframe, true );
-
-		*( int* ) smoke_count = 0;
-	}
-}
-void copy_command ( c_usercmd * cmd, int tickbase_shift ) {
-	static auto cl_forwardspeed = interfaces::console->get_convar (  ( "cl_forwardspeed" ) );
-	static auto cl_sidespeed = interfaces::console->get_convar (  ( "cl_sidespeed" ) );
-	bool slow_teleport = false; /*in menuu*/
-	if ( slow_teleport ) {
-		cmd->forwardmove = 0.0f;
-		cmd->sidemove = 0.0f;
-	}
-	else {
-		if ( local_player::m_data.original_forwardmove >= 5.0f )
-			cmd->forwardmove = cl_forwardspeed->get_float ( );
-		else if ( local_player::m_data.original_forwardmove <= -5.0f )
-			cmd->forwardmove = -cl_forwardspeed->get_float ( );
-
-		if ( local_player::m_data.original_sidemove >= 5.0f )
-			cmd->sidemove = cl_sidespeed->get_float ( );
-		else if ( local_player::m_data.original_sidemove <= -5.0f )
-			cmd->sidemove = -cl_sidespeed->get_float ( );
-	}
-
-	auto commands_to_add = 0;
-
-	do {
-		auto sequence_number = commands_to_add + cmd->command_number;
-
-		auto command = interfaces::input->get_user_cmd ( sequence_number );
-		auto verified_command = interfaces::input->get_verified_user_cmd ( sequence_number );
-
-		memcpy ( command, cmd, sizeof ( c_usercmd ) ); //-V598
-
-		if ( command->tick_count != INT_MAX && interfaces::clientstate->m_delta_tick > 0 )
-			interfaces::prediction->update ( interfaces::clientstate->m_delta_tick, true,interfaces::clientstate->m_last_command_ack, interfaces::clientstate->m_last_outgoing_command + interfaces::clientstate->m_choked_commands );
-
-		command->command_number = sequence_number;
-		command->hasbeenpredicted = command->tick_count != INT_MAX;
-
-		++interfaces::clientstate->m_choked_commands; //-V807
-
-		if ( interfaces::clientstate->m_net_channel ) {
-			++interfaces::clientstate->m_net_channel->choked_packets;
-			++interfaces::clientstate->m_net_channel->out_sequence_nr;
-		}
-		command->viewangles.angle_normalize ( );
-
-
-		memcpy ( &verified_command->m_cmd, command, sizeof ( c_usercmd ) ); //-V598
-		verified_command->m_crc = command->get_checksum ( );
-
-		++commands_to_add;
-	} while ( commands_to_add != tickbase_shift );
-
-	*( bool * ) ( ( uintptr_t ) interfaces::prediction + 0x24 ) = true;
-	*( int * ) ( ( uintptr_t ) interfaces::prediction + 0x1C ) = 0;
-}
-
-void misc::removals::remove_flash( ) {
-	if ( !config.visuals_world_removals [ 1 ] )
-		return;
-	if ( !local_player::m_data.alive )
-		return;
-
-	if ( local_player::m_data.pointer->flash_duration( ) > 0.0f )
-		local_player::m_data.pointer->flash_duration( ) = 0.0f;
-}
-bool misc::can_fire ( weapon_t* weapon, bool check_revolver ) {
-	if ( shifting::_shift.shift_ticks == config.ragebot_double_tap_ticks )
-		return false;
-
-	if ( !weapon ) //-V704
-		return false;
-
-	if ( !weapon->is_non_aim ( ) && weapon->is_empty ( ) )
-		return false;
-
-	const auto nci = interfaces::engine->get_net_channel_info ( );
-
-	if ( !nci )
-		return false;
-
-	auto owner = ( player_t * ) interfaces::entity_list->get_client_entity_handle ( weapon->owner_handle ( ) );
-
-	if ( !owner )
-		return false;
-
-	auto server_time = math::ticks_to_time ( localdata.fixed_tickbase );
-
-	if ( server_time < weapon->next_primary_attack ( ) )
-		return false;
-
-	if ( server_time < owner->next_attack ( ) )
-		return false;
-
-
-	return true;
-}
+*/

@@ -66,8 +66,9 @@ namespace ui {
 		key_selector_element,
 		config_box_element,
 		config_item_element,
-		button_element
-		
+		button_element,
+		panel_element,
+		panel_cotainer_element
 
 	};
 
@@ -120,6 +121,7 @@ namespace ui {
 		float hsv_val = 0.f;
 		float last_open = 0.f;
 		ImVec2 mins, maxs;
+		ImVec2 old_mins, old_maxs;
 		int _id = -1;
 		double animation_step = 1.0;
 		flex_direction flex = flex_direction::line;

@@ -123,7 +123,7 @@ struct player_visual {
 	ImColor name_color = ImColor ( 255, 0, 0, 255 );
 
 	bool weapon = false;
-
+	ImColor weapon_color = ImColor ( 255, 0, 0, 255 );
 	int weapon_mode = 0;
 
 	bool ammo = false;
@@ -150,16 +150,21 @@ struct player_visual {
 
 	bool out_of_pov = false;
 	ImColor out_of_pov_color = ImColor ( 255, 200, 21, 225 );
-
+	float out_of_pov_radius = 10.f;
+	float out_of_pov_base_size = 13.f;
+	float out_of_pov_circle_radius_distance = 13.f;
 	bool foot_steps = false;
 	ImColor foot_steps_color = ImColor ( 255, 200, 21, 225 );
 
 	bool force_radar_reveal = false;
 
-	std::vector<int> flags = { 0, 0 };
+	bool flags = false;
 
-
-
+	float slider_a = 1.f;
+	float slider_b = 1.f;
+	std::vector<int> flags_input = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	
+	ImColor flags_color = ImColor ( 255, 200, 21, 225 );
 	config_manager::key_bind_item flags_keybind;
 
 
@@ -182,3 +187,18 @@ public:
 	local local;
 
 };
+
+enum {
+	FLAGS_MONEY,
+	FLAGS_ARMOR,
+	FLAGS_KIT,
+	FLAGS_SCOPED,
+	FLAGS_FAKEDUCKING,
+	FLAGS_C4,
+	FLAGS_LC,
+	FLAGS_TASER,
+	FLAGS_HIT,
+	FLAGS_MAX
+};
+
+extern bool menu_opened;

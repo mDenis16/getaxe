@@ -11,20 +11,25 @@ namespace hooks::callback {
 		}*/
 
 
-		/*
-		misc::thirdperson::think ( );
+		
+		//misc::thirdperson::think ( );
 
-		if ( config.visuals_world_removals [ 0 ] && local_player::m_data.pointer && local_player::m_data.pointer->is_alive ( ) ) {
+		/*if ( config.visuals_world_removals [ 0 ] && local_player::m_data.pointer && local_player::m_data.pointer->is_alive ( ) ) {
 			vec3_t viewPunch = local_player::m_data.pointer->punch_angle ( );
 			vec3_t aimPunch = local_player::m_data.pointer->aim_punch_angle ( );
 
 			setup->angles [ 0 ] -= ( viewPunch [ 0 ] + ( aimPunch [ 0 ] * 2 * 0.4499999f ) );
 			setup->angles [ 1 ] -= ( viewPunch [ 1 ] + ( aimPunch [ 1 ] * 2 * 0.4499999f ) );
 			setup->angles [ 2 ] -= ( viewPunch [ 2 ] + ( aimPunch [ 2 ] * 2 * 0.4499999f ) );
-		}
-		if ( local_pointer && local_pointer->is_alive ( ) && interfaces::input->m_camera_in_third_person && interfaces::inputsystem->is_button_down ( KEY_C ) )
+		}*/
+		static vec3_t last_origin = vec3_t ( );
+
+		if ( local_pointer && local_pointer->is_alive ( ) && interfaces::input->m_camera_in_third_person ) {
 			setup->origin.z = local_pointer->abs_origin ( ).z + 64.f;
-		*/
+		
+		}
+		
+		last_origin = setup->origin;
 
 		override_view_original ( interfaces::clientmode, ecx, setup );
 

@@ -55,7 +55,6 @@
     <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="dependencies\imgui\impl\imgui_impl_dx9.cpp" />
     <ClCompile Include="dependencies\imgui\impl\imgui_impl_win32.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
     <ClCompile Include="core\render\render.cpp" />
     <ClCompile Include="core\render\gui\initialize.cpp" />
@@ -85,6 +84,14 @@
     <ClCompile Include="core\render\gui\menu\visuals_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\settings_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\local_visuals_menu.cpp" />
+    <ClCompile Include="core\features\misc\misc.cpp" />
+    <ClCompile Include="core\features\setup\animations.cpp" />
+    <ClCompile Include="core\features\visuals\player.cpp" />
+    <ClCompile Include="core\features\visuals\visuals.cpp" />
+    <ClCompile Include="core\render\gui\framework\panel_container.cpp" />
+    <ClCompile Include="core\render\gui\framework\panel.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -200,10 +207,18 @@
     <ClInclude Include="core\render\gui\framework\config_box.h" />
     <ClInclude Include="core\render\gui\framework\config_item.h" />
     <ClInclude Include="core\render\gui\framework\button.h" />
+    <ClInclude Include="core\features\setup\animations.h" />
+    <ClInclude Include="core\features\visuals\visuals.h" />
+    <ClInclude Include="dependencies\imgui\imgui_freetype.h" />
+    <ClInclude Include="core\render\gui\framework\panel_container.h" />
+    <ClInclude Include="core\render\gui\framework\panel.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
       <UniqueIdentifier>{8ca6b55b-cca8-4930-881e-5b27a381cfe8}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="freetype.lib" />
   </ItemGroup>
 </Project>

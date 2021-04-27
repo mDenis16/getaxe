@@ -38,7 +38,7 @@ namespace ui {
         return ( integral.z - integral.x ) * ( integral.w - integral.y );
     }
     /**/
-    void  addtempshadow ( ImDrawList * drawList, RectangleShadowSettings & settings ) {
+   /* void  addtempshadow ( ImDrawList * drawList, RectangleShadowSettings & settings ) {
         settings.rectSize = ImVec2 ( settings.maxs.x - settings.mins.x, settings.maxs.y - settings.mins.y );
 
         const int    samplesSpan = settings.samplesPerCornerSide * settings.spacingBetweenSamples;
@@ -249,13 +249,11 @@ namespace ui {
                 drawList->AddRectFilled ( bmin, bmax, ImColor ( 255, 0, 0, 50 ) );
             }
         }
-    }
+    }*/
 
 	void child_window::draw ( ) {
-		RectangleShadowSettings dsamp;
-		dsamp.mins = this->mins;
-		dsamp.maxs = this->maxs;
 
+	
 		//this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), this->rounding );
 		if ( this->type_child == child_type::main_container ) {
 			//	&& !static_cast< sub_tab * >( this->tab_assign )->selected && static_cast< tab * >( this->parrent )->selected )

@@ -1,17 +1,20 @@
 #pragma once
 #include "../../dependencies/utilities/csgo.hpp"
 #include "../features/features.hpp"
-
+#pragma comment (lib, "d3d9.lib")
+#pragma comment (lib, "d3dx9.lib")
 
 #include <d3dx9.h>
+#include "../../dependencies/imgui/impl/imgui_impl_dx9.h"
+#include "../../dependencies/imgui/impl/imgui_impl_win32.h"
 
-
-aimbot::target aimbot::last_target;
-aimbot::target aimbot::best_target;
 
 
 
 namespace hooks {
+
+	bool unloading = false;
+
 	void CREATE_HOOK ( void * _target,  void* _detour ) {
 		list.push_back(new hook (  _target, _detour ));
 	}
@@ -32,16 +35,15 @@ namespace hooks {
  				throw std::runtime_error ( std::to_string( index).c_str());
 			}
 
+			if ( MH_EnableHook ( MH_ALL_HOOKS ) != MH_OK ) {
+				throw std::runtime_error ( "failed to enable hooks." );
+			}
 
-
-			printf ( "cica A MERS \n" );
+			printf ( "hooked address %i \n", std::addressof( hook->detour ) );
 			index++;
 
 		}
 
-		if ( MH_EnableHook ( MH_ALL_HOOKS ) != MH_OK ) {
-			throw std::runtime_error ( "failed to enable hooks." );
-		}
 
 		return true;
 	}
@@ -94,7 +96,7 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual ( interfaces::prediction, 19 ), &callback::run_command );
 		CREATE_HOOK ( get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 5 ), &callback::packet_start );
 		CREATE_HOOK ( get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 6 ), &callback::packet_end );
-		CREATE_HOOK ( /* get_virtual ( interfaces::clientmode, 18 )*/nullptr, &callback::override_view );
+		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 18 ), &callback::override_view );
 		CREATE_HOOK ( nullptr /* utilities::pattern_scan ( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 56 57 8B 3D ? ? ? ? 8A" )*/, &callback::cl_move );
 		CREATE_HOOK ( nullptr /*  get_virtual ( interfaces::trace_ray, 4 )*/, &callback::clip_ray_collideable );
 		CREATE_HOOK ( get_virtual ( interfaces::render_view, 9 ), &callback::scene_end );
@@ -104,17 +106,28 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual ( d3d_device, 16 ), &reset_hook );
 
 
+
 		wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( window, GWL_WNDPROC, ( LONG ) &callback::wnd_proc );
 	}
+
+	void release ( ) {
+
+		//ImGui_ImplDX9_Shutdown ( );
+		//ImGui_ImplWin32_Shutdown ( );
+		//ImGui::DestroyContext ( );
+
+		for ( auto & hook : hooks::list ) {
+			if ( !hook->target )
+				continue;
+
+			MH_DisableHook ( hook->target );
+			MH_RemoveHook ( hook->target );
+		}
+
+
+		MH_Uninitialize ( );
+		//SetWindowLongA ( csgo::window, GWLP_WNDPROC, long ( wndproc_original ) );
+	}
 }
-/*
-void hooks::release ( ) {
-
-	events.release ( );
-
-	MH_Uninitialize ( );
-
-	MH_DisableHook ( MH_ALL_HOOKS );
-}*/
 
 

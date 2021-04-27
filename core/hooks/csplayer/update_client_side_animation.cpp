@@ -13,8 +13,7 @@ namespace hooks::callback {
 		if ( player->dormant ( ) )
 			return update_client_side_animation_original ( player );
 
-		if ( player->is_teammate ( ) ) {
-			if ( player->simulation_time ( ) != player->get_old_simulation_time ( ) )
+		if ( player != local_pointer ) {
 				update_client_side_animation_original ( player );
 		}
 	}

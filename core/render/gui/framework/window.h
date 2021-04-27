@@ -10,11 +10,13 @@ namespace ui {
 		std::string title;
 		float rounding = 0.f;
 		bool dragging = false;
-		bool open = true;
+		bool failed_dragging = false;
+		bool pressed_drag = false;
+		bool* open;
 	public:
 		
-		window ( std::string title_font, int width, int height,  ImDrawList* dr, float rounding = 0.f ) {
-
+		window ( std::string title_font, int width, int height,  ImDrawList* dr, bool & window_open, float rounding = 0.f ) {
+			this->open = &window_open;
 			this->title = title_font;
 			this->width = width;
 			this->height = height;

@@ -2,17 +2,21 @@
 #include "features/features.hpp"
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS 
 
+
 unsigned long WINAPI initialize(void* instance) {
-	while (!GetModuleHandleA("serverbrowser.dll"))
-		Sleep(10000);
+	
+	while ( !GetModuleHandleA ( "serverbrowser.dll" ) )
+		std::this_thread::sleep_for ( std::chrono::milliseconds ( 100 ) );
+
 
 	csgo::window = FindWindowA ( "Valve001", nullptr );
 
 	while ( ! csgo::window )
-		Sleep( 100 );
+		std::this_thread::sleep_for ( std::chrono::milliseconds ( 100 ) );
 
 
 	console::initialize("csgo-cheat console");
+
 //#if RELEASE
 	//connection::main ( );
 
@@ -28,15 +32,17 @@ unsigned long WINAPI initialize(void* instance) {
 	}
 
 	while (!GetAsyncKeyState(VK_END))
-		std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
+
+	hooks::unloading = true;
+
 
 	FreeLibraryAndExitThread(static_cast<HMODULE>(instance), 0);
 }
 
 unsigned long WINAPI release() {
-	//hooks::release();
 
-
+	hooks::release();
 	console::release();
 
 	return TRUE;

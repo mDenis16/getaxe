@@ -2,6 +2,7 @@
 #include <d3dx9.h>
 #include <any>
 
+
 //framestage missing
 #define draw_model_execute_original reinterpret_cast<void ( __fastcall * )( void *, void *, void *, const draw_model_state_t &, const model_render_info_t &, matrix3x4_t * ) >( hooks::list.at ( hooks::hook_index::draw_model_execute )->original )
 #define crc_server_check_original reinterpret_cast<void ( __thiscall * )( void *, void * ) >( hooks::list.at ( hooks::hook_index::crc_server_check )->original )
@@ -39,8 +40,13 @@
 
 namespace hooks {
 
+
+	extern bool unloading;
+
 	void initialize ( );
 	bool create_hooks ( );
+	void release ( );
+
 
 	enum hook_index {
 		frame_stage_notify,

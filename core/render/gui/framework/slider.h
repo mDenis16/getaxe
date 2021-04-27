@@ -16,7 +16,7 @@ namespace ui {
 		ImVec2 bb_min;
 		ImVec2 bb_max;
 		void*  value;
-		void * old_value;
+		void * old_value = nullptr;
 		bool updated_last_time = false;
 		long last_access = 0;
 		void * value_mins = nullptr;

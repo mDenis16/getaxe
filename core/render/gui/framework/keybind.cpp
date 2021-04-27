@@ -12,7 +12,16 @@ namespace ui {
 		this->type = keybind_element;
 		this->key = &key_bind->key;
 		this->key_mode = &key_bind->mode;
-		
+
+		if ( this->parrent->type == slider_element )
+			this->open = &static_cast< slider * >( this->parrent )->key_bind_open;
+		else if ( this->parrent->type == checkbox_element )
+			this->open = &static_cast< checkbox * >( this->parrent )->key_bind_open;
+		else if ( this->parrent->type == combobox_element )
+			this->open = &static_cast< combobox * >( this->parrent )->key_bind_open;
+		else if ( this->parrent->type == multibox_element )
+			this->open = &static_cast< multibox * >( this->parrent )->key_bind_open;
+
 		if ( this->parrent->type != multibox_element )
 		  key_bind->new_value = &this->new_value;
 
@@ -72,18 +81,11 @@ namespace ui {
 
 	void key_bind_muie::draw ( ) {
 
-		if ( !this->open ) {
-			if ( this->parrent->type == slider_element )
-				this->open = &static_cast< slider * >( this->parrent )->key_bind_open;
-			else if ( this->parrent->type == checkbox_element )
-				this->open = &static_cast< checkbox * >( this->parrent )->key_bind_open;
-			else if ( this->parrent->type == combobox_element )
-				this->open = &static_cast< combobox * >( this->parrent )->key_bind_open;
-			else if ( this->parrent->type == multibox_element )
-				this->open = &static_cast< multibox * >( this->parrent )->key_bind_open;
-		}
+		
+		
+		
 
-		if ( !*this->open )
+		if (  !*this->open )
 			return;
 
 		this->handle ( );

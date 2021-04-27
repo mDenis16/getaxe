@@ -5,10 +5,11 @@
 namespace hooks::callback {
 	bool __fastcall setup_bones ( void * ecx, void *, matrix3x4_t * bone_to_world_out, int max_bones, int bone_mask, float curtime ) {
 		
+		return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
+
 		auto result = true;
 
 		auto e = reinterpret_cast < player_t * >( reinterpret_cast < uintptr_t > ( ecx ) - 0x4 );
-
 
 		if ( !e )
 			return setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );

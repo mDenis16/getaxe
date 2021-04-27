@@ -84,7 +84,10 @@ namespace ui {
 		   ImVec2 middle = ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f, ( this->maxs.y + this->mins.y ) / 2.f );
 
 		   middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
+		   float offset_x = 1.2f;
+		   float offset_y = 1.2f;
 
+		   this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x + offset_x, middle.y + offset_y ), ImColor ( 0, 0, 0, 225 ), this->title.c_str ( ) );
 		   this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), this->title.c_str() );
 		
 
@@ -197,12 +200,32 @@ namespace ui {
 				this->animation_step = this->bb_min.x;
 		}
 		else {
-			this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40 );
- 			this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
+			bool is_parent_panel = this->parrent->type == panel_element || this->parrent->type == panel_cotainer_element;
+			if ( is_parent_panel ) {
+
+				/*if ( this->parrent->parrent && this->parrent->parrent->children.size() > 0 ) {
+					auto previous_element = this->parrent->parrent->children.at ( this->parrent->index  - 1);
+
+					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, previous_element->maxs.y + 8 );
+				}
+				else {
+					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 8);
+				}*/
+				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y );
+				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
 
 
-			this->bb_min = ImVec2 ( this->maxs.x - 20, this->mins.y );
-			this->bb_max = ImVec2 ( this->maxs.x  - 3, this->maxs.y );
+				this->bb_min = ImVec2 ( this->maxs.x - 20, this->mins.y );
+				this->bb_max = ImVec2 ( this->maxs.x - 3, this->maxs.y );
+			}
+			else {
+				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40 );
+				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
+
+
+				this->bb_min = ImVec2 ( this->maxs.x - 20, this->mins.y );
+				this->bb_max = ImVec2 ( this->maxs.x - 3, this->maxs.y );
+			}
 
 			if ( *this->value )
 				this->animation_step = this->bb_max.x;

@@ -33,8 +33,8 @@ namespace hooks::callback {
 		break;
 
 		case fnv::hash ( "FocusOverlayPanel" ):
-		//	interfaces::panel->set_keyboard_input_enabled ( panel, c_menu::get ( ).opened );
-			//interfaces::panel->set_mouse_input_enabled ( panel, c_menu::get ( ).opened );
+			interfaces::panel->set_keyboard_input_enabled ( panel, menu_opened );
+			interfaces::panel->set_mouse_input_enabled ( panel, menu_opened );
 			break;
 		}
 

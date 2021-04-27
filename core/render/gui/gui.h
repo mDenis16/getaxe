@@ -25,6 +25,7 @@ namespace ui {
 	extern ImFont * font_icons;
 	extern ImFont * font_menu_icons;
 	extern ImFont * menuicons;
+	extern ImFont * test;
 	extern int focused_item;
 	extern long last_time_clicked_element;
 	extern bool key_state [ 256 ];

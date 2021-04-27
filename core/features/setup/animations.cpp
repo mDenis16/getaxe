@@ -58,50 +58,24 @@ enum e_anim_layer {
 };
 
 namespace animations {
-	
-
-	void update_anim_angle ( anim_state * state, vec3_t ang ) {
-		try {
-			using fn = void ( __vectorcall * )( void *, void *, float, float, float, void * );
-			static auto ret = reinterpret_cast< fn >( utilities::pattern_scan ( "client.dll", ( "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24" ) ) );
-
-			if ( !ret || !state )
-				return;
 
 
+	void update_anim_angle ( player_t * ent, anim_state * state, vec3_t ang ) {
 
-			ret ( state, nullptr, 0.f, ang.y, ang.x, nullptr );
-		}
-		catch ( int ex ) {
-			
-		}
-	}
+		using fn = void ( __vectorcall * )( void *, void *, float, float, float, void * );
+		static auto ret = reinterpret_cast< fn >( utilities::pattern_scan ( "client.dll", ( "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24" ) ) );
 
-	void post_data_end ( player_t * player ) {
-		auto & anim = player_data [ player->index ( ) ];
-		if ( player->simulation_time ( ) != player->get_old_simulation_time ( ) ) {
-			
-			predict_velocity ( player );
+		if ( !ret || !state )
+			return;
 
-			anim.network.angle = player->eye_angles ( );
-			anim.network.origin = player->origin ( );
-			anim.outdated_anims = anim.network_update = true;
+		//std::cout << "state entity | " << state->m_entity << " player entity " << ent << std::endl;
+		//state->m_entity = ent;
 
-			anim.simulated_origin = anim.network.origin + ( player->velocity ( ) * ( interfaces::globals->interval_per_tick  ) );
-
-		}
-	}
-
-	void predict_velocity ( player_t * player ) {
-
-		 auto & anim = player_data [ player->index ( ) ];
-		 anim.time_delta = player->simulation_time ( ) - player->get_old_simulation_time ( );
-
-		 anim.predicted_origin = anim.network.origin + ( anim.perdicted_velocity * ( interfaces::globals->interval_per_tick * ( float ) math::time_to_ticks ( anim.time_delta ) ) );
-		 anim.perdicted_velocity = ( player->velocity() - anim.network.origin ) / anim.time_delta;
-
+		ret ( state, nullptr, 0.f, ang.y, ang.x, nullptr );
 
 	}
+
+
 	void __declspec( naked ) feet_wobble_fix ( ) {
 		__asm
 		{
@@ -164,16 +138,16 @@ namespace animations {
 
 	void restore_animations ( player_t * player ) {
 		auto & backup = player_data [ player->index ( ) ].backup;
-		
+
 		auto anim_pointer = player->get_anim_state ( );
 
 
-		memcpy ( player->m_flPoseParameter ( ).data(), backup.poses.data(), sizeof ( float ) * 24 );
-		memcpy ( player->get_anim_state(), &backup.state, sizeof ( anim_state ) );
-		memcpy ( player->anim_layers ().data(), backup.layers.data(), sizeof ( animationlayer ) * 13 );
+		memcpy ( player->m_flPoseParameter ( ).data ( ), backup.poses.data ( ), sizeof ( float ) * 24 );
+		memcpy ( player->get_anim_state ( ), &backup.state, sizeof ( anim_state ) );
+		memcpy ( player->anim_layers ( ).data ( ), backup.layers.data ( ), sizeof ( animationlayer ) * 13 );
 
 	}
-	void restore (  ) {
+	void restore ( ) {
 		interfaces::globals->cur_time = globals.cur_time;
 		interfaces::globals->realtime = globals.real_time;
 		interfaces::globals->frame_time = globals.frame_time;
@@ -202,139 +176,266 @@ namespace animations {
 
 
 	}
-	void update_player_animation ( player_t * player ) {
 
-	
+	void update_fake_animation ( ) {
+
+
+		static int tickcount = 0;
+
+		local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+		csgo::local_player = local_player::m_data.pointer;
+
+
+		if ( tickcount != interfaces::globals->tick_count && csgo::send_packet ) {
+			std::array<float, 24> pos_params;
+
+			std::memcpy ( pos_params.data ( ), local_pointer->m_flPoseParameter ( ).data ( ),
+				sizeof ( float ) * 24 );
+
+			anim_state backup_state;
+			std::memcpy ( &backup_state, local_pointer->get_anim_state ( ), sizeof ( anim_state ) );
+			animationlayer backup_layers [ 15 ];
+			std::memcpy ( backup_layers, local_pointer->get_animoverlays ( ),
+				( sizeof ( animationlayer ) * 15 ) );
+
+
+			matrix3x4_t old_cache [ 128 ];
+			std::memcpy ( &old_cache, local_pointer->m_CachedBoneData ( ).Base ( ), local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+
+
+			float delta_time = math::ticks_to_time ( 14 );
+
+			vec3_t simulated_fake_velocity = ( localdata.real_origin - localdata.old_real_origin ) / delta_time;
+			if ( delta_time ) {
+				//interfaces::console->console_printf ( "simulated_fake_velocity %f  tick delta %i\n", simulated_fake_velocity.Length2D ( ), math::time_to_ticks ( delta_time ) );
+				localdata.fake_velocity = simulated_fake_velocity;
+			}
+
+
+			auto & anim_data = player_data [ local_pointer->index ( ) ];
+
+
+
+
+
+			auto backup_frametime = interfaces::globals->frame_time; //-V807
+			auto backup_curtime = interfaces::globals->cur_time;
+
+			//	interfaces::globals->frame_time = 300;
+
+
+			anim_data.update_anims = true;
+			localdata.fake_state.m_last_clientside_anim_framecount = 0;
+			vec3_t backup_velocity = local_pointer->get_abs_velocity ( );
+			local_pointer->get_abs_velocity ( ) = simulated_fake_velocity;
+			update_anim_angle ( local_pointer, &localdata.fake_state, csgo::cmd->viewangles );
+			local_pointer->get_abs_velocity ( ) = backup_velocity;
+			anim_data.update_anims = false;
+
+
+			//		interfaces::globals->frame_time = backup_frametime;
+
+
+
+
+
+			anim_data.update_bones = true;
+			vec3_t abs_angles = local_pointer->abs_angles ( );
+
+
+			local_pointer->invalidate_bone_cache ( );
+			local_pointer->get_bone_accessor ( )->m_WritableBones = local_pointer->get_bone_accessor ( )->m_ReadableBones = 0;
+			local_pointer->set_abs_angles ( vec3_t ( 0, localdata.fake_state.m_abs_yaw, 0 ) );
+			std::memcpy ( local_pointer->get_anim_state ( ), &localdata.fake_state, sizeof ( anim_state ) ); /*override with our fake matrix*/
+			local_pointer->setup_bones ( csgo::fake_matrix, 128, 0x7FF00, interfaces::globals->cur_time + 1.f );
+			anim_data.update_bones = false;
+
+
+			for ( auto & i : csgo::fake_matrix ) {
+				i [ 0 ][ 3 ] -= local_pointer->abs_origin ( ).x; //-V807
+				i [ 1 ][ 3 ] -= local_pointer->abs_origin ( ).y;
+				i [ 2 ][ 3 ] -= local_pointer->abs_origin ( ).z;
+			}
+
+			/*restore*/
+
+
+			std::memcpy ( local_pointer->m_CachedBoneData ( ).Base ( ), &old_cache, local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+			local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, m_data.proper_abs_yaw, 0 ) );
+
+
+			//interfaces::console->console_printf ( "real abs yaw %f  fake abs yaw %f, delta %f \n",local_pointer->get_anim_state()->m_abs_yaw, localdata.fake_state.m_abs_yaw, math::angle_diff (local_pointer->get_anim_state()->m_abs_yaw, localdata.fake_state.m_abs_yaw ) );
+
+			tickcount = interfaces::globals->tick_count;
+
+			std::memcpy ( local_pointer->m_flPoseParameter ( ).data ( ), pos_params.data ( ), sizeof ( float ) * 24 );
+			std::memcpy ( local_pointer->get_anim_state ( ), &backup_state, sizeof ( anim_state ) );
+			std::memcpy ( local_pointer->get_animoverlays ( ), backup_layers,
+				( sizeof ( animationlayer ) * 15 ) ); /*interpolated layers*/
+
+		}
 
 	}
+
 	/*local player*/
-	void update_animations_local ( ) {
+	void update_local_update_start ( client_frame_stage_t stage ) {
+
+		if ( stage != FRAME_NET_UPDATE_POSTDATAUPDATE_END )
+			return;
+
+
+		auto predict_origin = [ ] ( vec3_t origin, vec3_t velocity, int ticks ) {
+			return origin + ( velocity * ( interfaces::globals->interval_per_tick * static_cast< float >( ticks ) ) );
+		};
+
 
 
 		static int last_tick = 0;
-	
-		/*if ( local_pointer &&  local_pointer->is_alive ( ) ) {
-		/*	if ( local_pointer->get_anim_state ( )->m_hit_ground ) {
-				*reinterpret_cast< float * >( reinterpret_cast< uintptr_t >( local_pointer->get_anim_state ( ) ) + 0x110 ) = 0.0f;
-			}*/
-			//local_pointer->m_flPoseParameter ( ) [ 12 ] = 0.f;
-			//local_pointer->m_flPoseParameter ( ) [ 11 ] = 120.f;
-			//if ( local_pointer->get_anim_state ( )->m_hit_ground ) {
-			//	float height = static_cast< float >( reinterpret_cast< uintptr_t >( local_pointer->get_anim_state ( ) ) + 0x118 );
 
-				//if ( height ) {
-			//		update_anim_angle ( local_pointer->get_anim_state ( ), vec3_t ( 0.f, local_pointer->get_anim_state ( )->m_eye_yaw, 0.f ) );
-				//}
-			//}
-				
-			
-
-		//}
-		/*if ( local_pointer->is_in_air ( ) ) {
-		  
-			//if ( local_pointer->get_anim_state ( )->m_hit_ground )
-				
-
-			local_pointer->get_anim_state ( )->m_time_in_air = 999.f;
-
-
-			//entity.set_prop ( entity.get_local_player ( ), "m_flPoseParameter", 0.5, 12 )
-		}*/
-
-//		return;
-
-		bool should_update = true;
-		if ( interfaces::globals->tick_count != last_tick ) {
-			should_update = true;
-			last_tick = interfaces::globals->tick_count;
-		}
-
-		
 		if ( !local_player::m_data.pointer )
 			return;
 
 		if ( !csgo::cmd || !local_player::m_data.pointer->is_alive ( ) )
 			return;
 
-
-		/* vars */
-		const auto o_eflags = local_player::m_data.pointer->get_ieflags ( );
-		auto animstate = local_player::m_data.pointer->get_anim_state ( );
-
 		auto local_index = local_player::m_data.pointer->index ( );
-		auto& anim_data = player_data [ local_index ];
-		if ( !animstate ) return;
-		std::memcpy ( m_data.m_layers.data ( ), local_player::m_data.pointer->get_animoverlays ( ), sizeof ( m_data.m_layers ) );
-		if ( should_update ) {
-			
-			*reinterpret_cast< bool * >( uintptr_t ( animstate ) + 0x5 ) = true;
-			animstate->m_last_clientside_anim_framecount = 0;
+		auto & anim_data = player_data [ local_index ];
+
+		if ( !local_pointer->get_anim_state ( ) ) return;
+
+		auto animstate = local_pointer->get_anim_state ( );
 
 
+		static bool initials = false;
 
-			m_data.should_animate = true;
-			anim_data.update_anims = true;
-			//local_player::m_data.pointer->update_client_side_animations ( );
-			update_anim_angle ( local_player::m_data.pointer->get_anim_state ( ), csgo::cmd->viewangles );
-			anim_data.update_anims = false;
-			m_data.should_animate = false;
+		if ( !initials ) {
+			std::memcpy ( &localdata.fake_state, local_pointer->get_anim_state ( ), sizeof ( anim_state ) );
+			std::memcpy ( &localdata.real_state, local_pointer->get_anim_state ( ), sizeof ( anim_state ) );
+			initials = true;
 
-			local_player::m_data.pointer->get_ieflags ( ) = o_eflags;
-
+			localdata.init_local_anim = true;
+		}
 
 		
+		std::memcpy ( m_data.m_layers.data ( ), local_pointer->get_animoverlays ( ),
+			( sizeof ( animationlayer ) * 15 ) ); /*dont fuck with interpolated layers, restore them*/
+
+		//m_data.m_layers.at ( 3 ).m_weight = 0.0f;
+		//m_data.m_layers.at ( 3 ).m_cycle = 0.0f;
+		//m_data.m_layers.at ( 12 ).m_weight = 0.0f;
+
+		bool should_update = false;
+		if ( interfaces::globals->tick_count != last_tick ) {
+			should_update = true;
+			last_tick = interfaces::globals->tick_count;
+		}
+
+		if ( should_update ) {
+
+			anim_data.update_anims = true;
+			update_anim_angle ( local_pointer, animstate, csgo::cmd->viewangles ); /*update animstate to viewangle*/
+			anim_data.update_anims = false;
+
+			std::memcpy ( local_player::m_data.pointer->get_animoverlays ( ), m_data.m_layers.data ( ), sizeof ( m_data.m_layers ) ); /*restore server layers*/
+
 			if ( !interfaces::clientstate->m_choked_commands ) {
 				m_data.proper_abs_yaw = animstate->m_abs_yaw;
-				std::memcpy ( m_data.m_poses.data ( ), local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), sizeof ( m_data.m_poses ) );
+				std::memcpy ( m_data.m_poses.data ( ), local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), sizeof ( m_data.m_poses ) ); /*grab uninterpolated poses*/
+				m_data.last_update_time = interfaces::globals->cur_time;
+				std::memcpy ( m_data.m_current_posses.data ( ), local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), sizeof ( m_data.m_poses ) ); /*grab uninterpolated poses*/
 			}
 
-	
-			
-
-			m_data.init = true;
+			localdata.init_local_anim = true;
 		}
 
-		if ( m_data.init ) {
-		
-			std::memcpy ( local_player::m_data.pointer->get_animoverlays ( ), m_data.m_layers.data ( ), sizeof ( m_data.m_layers ) );
-			std::memcpy ( local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), m_data.m_poses.data ( ), sizeof ( m_data.m_poses ) );
-
-			//local_player::m_data.pointer->GetBoneAccessor ( )->m_ReadableBones = local_player::m_data.pointer->GetBoneAccessor ( )->m_WritableBones = 0;
-			auto delta = math::normalize_yaw ( ( csgo::real_angle.y - m_data.proper_abs_yaw ) ) / 2.f;
-			delta = math::normalize_yaw ( delta );
-
-			local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, math::normalize_yaw( m_data.proper_abs_yaw + delta) , 0 ) );
-
-			anim_data.update_bones = true;
-			auto old = local_pointer->get_anim_state ( )->m_duck_amount;
-			local_pointer->get_anim_state ( )->m_duck_amount = 0.f;
-			local_player::m_data.pointer->setup_bones ( csgo::fake_matrix, 128, 0x7FF00, interfaces::globals->cur_time );
-			local_pointer->get_anim_state ( )->m_duck_amount = old;
-			anim_data.update_bones = false;
-
-			for ( auto & i : csgo::fake_matrix ) {
-				i [ 0 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).x; //-V807
-				i [ 1 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).y;
-				i [ 2 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).z;
-			}
-			std::memcpy ( local_player::m_data.pointer->get_animoverlays ( ), m_data.m_layers.data ( ), sizeof ( m_data.m_layers ) );
-			std::memcpy ( local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), m_data.m_poses.data ( ), sizeof ( m_data.m_poses ) );
-		
-
-			local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, m_data.proper_abs_yaw, 0 ) );
-
-			anim_data.update_bones = true;
-			local_player::m_data.pointer->setup_bones ( csgo::real_matrix, 128, 0x7FF00, interfaces::globals->cur_time );
-			anim_data.update_bones = false;
-
-			for ( auto & i : csgo::real_matrix ) {
-				i [ 0 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).x; //-V807
-				i [ 1 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).y;
-				i [ 2 ][ 3 ] -= local_player::m_data.pointer->abs_origin ( ).z;
-			}
-		
-		}
 	}
+	void update_animations_update_end ( ) {
+
+
+		if ( !local_pointer )
+			return;
+
+		if ( !local_pointer->is_alive ( ) )
+			return;
+
+
+		auto local_index = local_player::m_data.pointer->index ( );
+
+		auto & anim_data = player_data [ local_index ];
+
+		if ( !localdata.init_local_anim )
+			return;
+
+		auto animstate = local_player::m_data.pointer->get_anim_state ( );
+
+
+		if ( !animstate ) return;
+		
+		if ( local_pointer->flags() & fl_onground)
+		   animstate->m_time_in_air = 0;
+
+
+
+
+		animationlayer backup_layers [ 15 ];
+		std::memcpy ( backup_layers, local_pointer->get_animoverlays ( ),
+			( sizeof ( animationlayer ) * 15 ) ); /*dont fuck with interpolated layers, restore them, NEEEDED FOR DESYNC CHAMS*/
+
+
+
+
+		vec3_t old_abs = local_pointer->abs_angles ( );
+		local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, m_data.proper_abs_yaw, 0 ) );
+
+	/*	float lerp = interfaces::globals->cur_time - m_data.last_update_time; lerp = std::clamp ( lerp, 0.f, 1.f );
+
+		for ( size_t i = 0; i < m_data.m_current_posses.size(); i++ ) {
+			float old_val = m_data.m_old_poses.at ( i );
+			float new_val = m_data.m_poses.at ( i );
+
+			m_data.m_current_posses.at ( i ) = std::lerp ( old_val, new_val, lerp );
+
+		}*/
+
+		std::memcpy ( local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), m_data.m_poses.data ( ), sizeof ( m_data.m_poses ) ); /*overide networked poses*/
+		std::memcpy ( local_player::m_data.pointer->get_animoverlays ( ), m_data.m_layers.data ( ), sizeof ( m_data.m_layers ) ); /*override uninterpolated layers*/
+
+		/*invalidate */
+		//local_pointer->invalidate_bone_cache ( );
+		//local_pointer->get_bone_accessor ( )->m_WritableBones = local_pointer->get_bone_accessor ( )->m_ReadableBones = 0;
+		/*end*/
+
+		anim_data.update_bones = true;
+
+		//	local_pointer->interpolate ( interfaces::globals->cur_time );
+
+		local_player::m_data.pointer->setup_bones ( nullptr, 128, 0x7FF00, local_pointer->simulation_time ( ) );
+
+		anim_data.update_bones = false;
+
+
+		std::memcpy ( local_player::m_data.pointer->get_animoverlays ( ), backup_layers, sizeof ( animationlayer ) * 15 ); /*restore interpolated layers */
+		local_pointer->abs_angles ( ) = old_abs;
+
+		
+	//	std::memcpy ( local_pointer->get_anim_state ( ), &localdata.real_state, sizeof ( localdata.real_state ) );
+
+		using UpdateAllViewmodelAddons_t = int ( __fastcall * )( base_view_model_t * );
+		static UpdateAllViewmodelAddons_t UpdateAllViewmodelAddonsFn = nullptr;
+
+		if ( !UpdateAllViewmodelAddonsFn ) {
+			UpdateAllViewmodelAddonsFn = reinterpret_cast< UpdateAllViewmodelAddons_t >( utilities::pattern_scan ( "client.dll", ( "55 8B EC 83 E4 ? 83 EC ? 53 8B D9 56 57 8B 03 FF 90 ? ? ? ? 8B F8 89 7C 24 ? 85 FF 0F 84 ? ? ? ? 8B 17 8B CF" ) ) );
+		}
+		auto hViewModel = local_pointer->view_model ( );
+		if ( hViewModel != 0xFFFFFFFF ) {
+			auto pViewModel = reinterpret_cast< base_view_model_t * >( interfaces::entity_list->get_client_entity_handle ( hViewModel ) );
+			if ( pViewModel )
+				UpdateAllViewmodelAddonsFn ( pViewModel );
+		}
+
+	}
+
+
 	void reset_animation_state ( anim_state * state ) {
 
 		using ResetAnimState_t = void ( __thiscall * )( anim_state * );
@@ -345,5 +446,5 @@ namespace animations {
 
 		func ( state );
 	}
-	
+
 }

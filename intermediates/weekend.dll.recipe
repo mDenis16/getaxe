@@ -2,14 +2,10 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Users\topor\source\repos\getaxe\output\debug\weekend.dll</FullPath>
+      <FullPath>E:\repos\getaxe\output\debug\weekend.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
-  <ContentFiles>
-    <ContentFile>
-      <FullPath>E:\repos\getaxe\dependencies\interfaces\i_player_movement.hpp</FullPath>
-    </ContentFile>
-  </ContentFiles>
+  <ContentFiles />
   <SatelliteDlls />
   <NonRecipeFileRefs />
 </Project>

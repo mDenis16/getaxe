@@ -25,6 +25,9 @@
 #include "framework/config_item.h"
 #include "framework/config_box.h"
 #include "framework/button.h"
+#include "framework/panel.h"
+#include "framework/panel_container.h"
+
 #include "config.h"
 
 

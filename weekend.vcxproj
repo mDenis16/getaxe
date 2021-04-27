@@ -51,11 +51,11 @@
     <TargetName>weekend</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>C:\Users\topor\source\repos\getaxe\output\debug</OutDir>
+    <OutDir>.\output\</OutDir>
     <IntDir>.\intermediates\</IntDir>
     <LibraryPath>F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>F:\includes\nlohmann;F:\includes\cef-master\include;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\ultralight\include;F:\includes\clip-master</IncludePath>
-    <TargetName>weekend</TargetName>
+    <IncludePath>F:\includes\nlohmann;F:\includes\cef-master\include;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\ultralight\include;F:\includes\clip-master;F:\includes\freetype\include</IncludePath>
+    <TargetName>cheat</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -103,6 +103,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\features\features.cpp" />
+    <ClCompile Include="core\features\misc\misc.cpp" />
+    <ClCompile Include="core\features\setup\animations.cpp" />
+    <ClCompile Include="core\features\visuals\player.cpp" />
+    <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\helpers\checksum_crc.cpp" />
     <ClCompile Include="core\helpers\checksum_md5.cpp" />
     <ClCompile Include="core\helpers\localplayer.cpp" />
@@ -153,6 +157,8 @@
     <ClCompile Include="core\render\gui\framework\keybind.cpp" />
     <ClCompile Include="core\render\gui\framework\key_selector.cpp" />
     <ClCompile Include="core\render\gui\framework\multibox.cpp" />
+    <ClCompile Include="core\render\gui\framework\panel.cpp" />
+    <ClCompile Include="core\render\gui\framework\panel_container.cpp" />
     <ClCompile Include="core\render\gui\framework\slider.cpp" />
     <ClCompile Include="core\render\gui\framework\small_text_input.cpp" />
     <ClCompile Include="core\render\gui\framework\sub_tab.cpp" />
@@ -169,6 +175,7 @@
     <ClCompile Include="core\render\render.cpp" />
     <ClCompile Include="dependencies\imgui\imgui.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="dependencies\imgui\impl\imgui_impl_dx9.cpp" />
     <ClCompile Include="dependencies\imgui\impl\imgui_impl_win32.cpp" />
@@ -189,6 +196,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
+    <ClInclude Include="core\features\setup\animations.h" />
+    <ClInclude Include="core\features\visuals\visuals.h" />
     <ClInclude Include="core\helpers\checksum_crc.h" />
     <ClInclude Include="core\helpers\checksum_md5.h" />
     <ClInclude Include="core\helpers\helpers.h" />
@@ -208,6 +217,8 @@
     <ClInclude Include="core\render\gui\framework\keybind.h" />
     <ClInclude Include="core\render\gui\framework\key_selector.h" />
     <ClInclude Include="core\render\gui\framework\multibox.h" />
+    <ClInclude Include="core\render\gui\framework\panel.h" />
+    <ClInclude Include="core\render\gui\framework\panel_container.h" />
     <ClInclude Include="core\render\gui\framework\slider.h" />
     <ClInclude Include="core\render\gui\framework\small_text_input.h" />
     <ClInclude Include="core\render\gui\framework\sub_tab.h" />
@@ -221,6 +232,7 @@
     <ClInclude Include="dependencies\common_includes.hpp" />
     <ClInclude Include="dependencies\imgui\imconfig.h" />
     <ClInclude Include="dependencies\imgui\imgui.h" />
+    <ClInclude Include="dependencies\imgui\imgui_freetype.h" />
     <ClInclude Include="dependencies\imgui\imgui_internal.h" />
     <ClInclude Include="dependencies\imgui\impl\imgui_impl_dx9.h" />
     <ClInclude Include="dependencies\imgui\impl\imgui_impl_win32.h" />
@@ -303,6 +315,9 @@
     <ClInclude Include="source-sdk\structs\models.hpp" />
     <ClInclude Include="source-sdk\structs\vertex_t.hpp" />
     <ClInclude Include="source-sdk\structs\weaponinfo.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="freetype.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

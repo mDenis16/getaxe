@@ -22,6 +22,21 @@ namespace hooks::callback {
 
 		/*code bellow*/
 
+		uintptr_t * frame_pointer;
+		__asm mov frame_pointer, ebp;
 
+
+		csgo::in_create_move = false;
+		csgo::send_packet = true;
+
+
+		local_player::begin_tick ( cmd );
+		
+
+
+		local_player::end_tick ( cmd );
+
+
+	
 	}
 }

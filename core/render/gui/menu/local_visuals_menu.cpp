@@ -27,7 +27,7 @@ namespace ui {
 				static int keybind_type = 0;
 
 				new ui::checkbox ( "Thirdperson", main_tab, config.local.thirdperson, &config.local.key_bind_thirdperson );
-				new ui::slider ( "Distance", main_tab, config.local.thirdperson_distance, 0.f, 100.f, slider_type::floates, &config.local.key_bind_thirdperson_distance);
+				new ui::slider ( "Distance", main_tab, config.local.thirdperson_distance, 0.f, 200.f, slider_type::floates, &config.local.key_bind_thirdperson_distance);
 
 			}
 

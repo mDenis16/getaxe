@@ -8,7 +8,7 @@ namespace hooks::callback {
 	//	if ( !local_pointer )
 			return cl_move_original ( accumulated_extra_samples, final_tick );
 
-		if ( shifting::_shift.allow && shifting::_shift.recharge_ticks && ( local_pointer->get_tick_base ( ) >= shifting::_shift.wait_for_recharge || !shifting::_shift.wait_for_recharge ) ) {
+		/*if ( shifting::_shift.allow && shifting::_shift.recharge_ticks && ( local_pointer->get_tick_base ( ) >= shifting::_shift.wait_for_recharge || !shifting::_shift.wait_for_recharge ) ) {
 			shifting::_shift.recharge_ticks--;
 			//	++local_pointer->get_tick_base ( );
 			if ( shifting::_shift.recharge_ticks <= 0 ) {
@@ -46,7 +46,7 @@ namespace hooks::callback {
 			shifting::_shift.recharge_ticks = 14;
 			shifting::_shift.can_shift = false;
 		}
-
+		*/
 		cl_move_original ( accumulated_extra_samples, true );
 	}
 }

@@ -119,6 +119,8 @@ namespace ui {
 	ImFont * font_icons = nullptr;
 	ImFont * font_menu_icons = nullptr;
 	ImFont * menuicons = nullptr;
+	ImFont * test = nullptr;
+
 	static bool init = false;
 
 	int focused_item = -1;
@@ -135,7 +137,7 @@ namespace ui {
 
 
 
-		main_window = new ui::window ( "neverwin", 600, 700, draw_imgui, 12.f );
+		main_window = new ui::window ( "neverwin", 600, 700, draw_imgui, menu_opened, 12.f );
 		main_window->flex = flex_direction::automatic;
 		window_pointer_cheat = static_cast< void * >( main_window );
 
@@ -160,13 +162,13 @@ namespace ui {
 		{
 			auto enemies_sub_tab = new ui::sub_tab ( "Enemy", VISUALS_ENEMIES, font_icons, -0.5875f, 20.f, visuals_tab );
 
-			menu::visuals_player_menu ( main_window, enemies_sub_tab, 0 );
+			menu::visuals_player_menu ( main_window, enemies_sub_tab, 1 );
 
 
 
 			auto teammates_sub_tab = new ui::sub_tab ( "Team", VISUALS_TEAMMATES, font_icons, -0.5875f, 20.f, visuals_tab );
 
-			menu::visuals_player_menu ( main_window, teammates_sub_tab, 1 );
+			menu::visuals_player_menu ( main_window, teammates_sub_tab, 0  );
 
 			auto local_sub_tab = new ui::sub_tab ( "Local", ICON_LOCAL, font_icons, -0.5875f, 20.f, visuals_tab );
 			menu::visuals_local_menu ( main_window, local_sub_tab );

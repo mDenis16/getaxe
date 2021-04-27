@@ -10,7 +10,7 @@ namespace hooks::callback {
 		if ( !player )
 			return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
 
-
+		
 		if ( player ) {
 
 			if ( !( player->m_fEffects ( ) & 0x008 ) )
