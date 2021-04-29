@@ -280,7 +280,7 @@ namespace animations {
 	/*local player*/
 	void update_local_update_start ( client_frame_stage_t stage ) {
 
-		if ( stage != FRAME_NET_UPDATE_POSTDATAUPDATE_END )
+		if ( stage != FRAME_RENDER_START )
 			return;
 
 
@@ -320,37 +320,37 @@ namespace animations {
 		std::memcpy ( m_data.m_layers.data ( ), local_pointer->get_animoverlays ( ),
 			( sizeof ( animationlayer ) * 15 ) ); /*dont fuck with interpolated layers, restore them*/
 
-		//m_data.m_layers.at ( 3 ).m_weight = 0.0f;
-		//m_data.m_layers.at ( 3 ).m_cycle = 0.0f;
-		//m_data.m_layers.at ( 12 ).m_weight = 0.0f;
 
-		bool should_update = false;
-		if ( interfaces::globals->tick_count != last_tick ) {
-			should_update = true;
-			last_tick = interfaces::globals->tick_count;
-		}
 
-		if ( should_update ) {
-
-			anim_data.update_anims = true;
+            int bkp = local_pointer->get_ieflags ( );
+			//local_pointer->get_ieflags ( ) &= ~0x1000; 
+			
+			//vec3_t vel = local_pointer->get_abs_velocity ( ); local_pointer->get_abs_velocity ( ) = local_pointer->velocity ( );
+			//update_globals ( local_pointer, math::ticks_to_time(local_pointer->get_tick_base()) );
 			update_anim_angle ( local_pointer, animstate, csgo::cmd->viewangles ); /*update animstate to viewangle*/
-			anim_data.update_anims = false;
+			//restore ( );
 
+
+			//local_pointer->get_abs_velocity ( ) = vel;
+
+			//local_pointer->get_ieflags ( ) = bkp;
 			std::memcpy ( local_player::m_data.pointer->get_animoverlays ( ), m_data.m_layers.data ( ), sizeof ( m_data.m_layers ) ); /*restore server layers*/
 
 			if ( !interfaces::clientstate->m_choked_commands ) {
 				m_data.proper_abs_yaw = animstate->m_abs_yaw;
+				localdata.real_state = *animstate;
 				std::memcpy ( m_data.m_poses.data ( ), local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), sizeof ( m_data.m_poses ) ); /*grab uninterpolated poses*/
-				m_data.last_update_time = interfaces::globals->cur_time;
-				std::memcpy ( m_data.m_current_posses.data ( ), local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), sizeof ( m_data.m_poses ) ); /*grab uninterpolated poses*/
+		
 			}
 
 			localdata.init_local_anim = true;
-		}
+	
 
 	}
-	void update_animations_update_end ( ) {
+	void update_animations_update_end ( client_frame_stage_t stage ) {
 
+		if ( stage != FRAME_RENDER_START )
+			return;
 
 		if ( !local_pointer )
 			return;
@@ -371,8 +371,8 @@ namespace animations {
 
 		if ( !animstate ) return;
 		
-		if ( local_pointer->flags() & fl_onground)
-		   animstate->m_time_in_air = 0;
+		//if ( local_pointer->flags() & fl_onground)
+		  // animstate->m_time_in_air = 0;
 
 
 
@@ -387,15 +387,8 @@ namespace animations {
 		vec3_t old_abs = local_pointer->abs_angles ( );
 		local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, m_data.proper_abs_yaw, 0 ) );
 
-	/*	float lerp = interfaces::globals->cur_time - m_data.last_update_time; lerp = std::clamp ( lerp, 0.f, 1.f );
+		m_data.m_layers [ 12 ].m_weight = 0.f;
 
-		for ( size_t i = 0; i < m_data.m_current_posses.size(); i++ ) {
-			float old_val = m_data.m_old_poses.at ( i );
-			float new_val = m_data.m_poses.at ( i );
-
-			m_data.m_current_posses.at ( i ) = std::lerp ( old_val, new_val, lerp );
-
-		}*/
 
 		std::memcpy ( local_player::m_data.pointer->m_flPoseParameter ( ).data ( ), m_data.m_poses.data ( ), sizeof ( m_data.m_poses ) ); /*overide networked poses*/
 		std::memcpy ( local_player::m_data.pointer->get_animoverlays ( ), m_data.m_layers.data ( ), sizeof ( m_data.m_layers ) ); /*override uninterpolated layers*/
@@ -408,8 +401,10 @@ namespace animations {
 		anim_data.update_bones = true;
 
 		//	local_pointer->interpolate ( interfaces::globals->cur_time );
+		
 
 		local_player::m_data.pointer->setup_bones ( nullptr, 128, 0x7FF00, local_pointer->simulation_time ( ) );
+		
 
 		anim_data.update_bones = false;
 

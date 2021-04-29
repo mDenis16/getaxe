@@ -27,6 +27,7 @@
 #include "i_player_movement.hpp"
 #include "i_weapon_system.hpp"
 #include "i_hud_chat.hpp"
+#include "c_csplayerresource.h"
 #include "engine_sounds.hpp"
 
 namespace interfaces {
@@ -106,6 +107,7 @@ namespace interfaces {
 	extern c_physics_api* physics;
 	extern iv_engine_sound * engine_sound;
 	extern IMemAlloc * memalloc;
+	extern c_csplayer_resource * player_resource;
 	extern void* model_cache;
 	extern void* file_system;
 

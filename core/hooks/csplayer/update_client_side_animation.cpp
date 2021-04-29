@@ -16,5 +16,7 @@ namespace hooks::callback {
 		if ( player != local_pointer ) {
 				update_client_side_animation_original ( player );
 		}
+		
+
 	}
 }

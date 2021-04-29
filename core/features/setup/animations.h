@@ -50,8 +50,7 @@ namespace animations {
 	};
 
 	inline anim_data m_data;
-	void update_animations_local ( );
-	void update_animations_update_end ( );
+	
 	void update_anim_angle ( player_t * ent, anim_state * state, vec3_t ang );
 	void predict_velocity ( player_t * player );
 	void post_data_end ( player_t * player );
@@ -62,7 +61,7 @@ namespace animations {
 	void update_fake_animation ( );
 
 	void update_local_update_start ( client_frame_stage_t state );
-
+	void update_animations_update_end ( client_frame_stage_t stage );
 	inline std::array<anim_info, 64> player_data;
 
 

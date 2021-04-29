@@ -107,7 +107,7 @@ namespace hooks {
 
 
 
-		wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( window, GWL_WNDPROC, ( LONG ) &callback::wnd_proc );
+		wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( csgo::window, GWL_WNDPROC, ( LONG ) callback::wnd_proc );
 	}
 
 	void release ( ) {
@@ -126,7 +126,7 @@ namespace hooks {
 
 
 		MH_Uninitialize ( );
-		//SetWindowLongA ( csgo::window, GWLP_WNDPROC, long ( wndproc_original ) );
+		SetWindowLongA ( csgo::window, GWLP_WNDPROC, long ( wndproc_original ) );
 	}
 }
 

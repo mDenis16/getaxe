@@ -280,8 +280,8 @@ namespace ui {
 		}
 		
 
-		this->renderer->AddText ( ui::font_title, 14.f, ImVec2 ( this->mins.x + 13, this->mins.y + 13 ), ImColor ( 25, 125, 123, 200 ) , this->title.c_str ( ) );
-
+        this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 14, this->mins.y + 14 ), ImColor ( 0, 0, 0, 225 ), this->title.c_str ( ) );
+        this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 13, this->mins.y + 13 ), ImColor ( 255, 255, 255, 225 ), this->title.c_str ( ) );
 
 		for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
 			this->children.at ( i )->draw ( );

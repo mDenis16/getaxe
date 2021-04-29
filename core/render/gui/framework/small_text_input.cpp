@@ -18,7 +18,8 @@ namespace ui {
 		//	this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 0, 255, 225 ), this->title.c_str() );
 		ImVec2 middle = ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f, ( this->maxs.y + this->mins.y ) / 2.f );
 
-		middle.y -= ImGui::CalcTextSize ( this->text_val.c_str ( ) ).y / 6.f;
+		middle.y -= ImGui::CalcTextSize ( this->text_val.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
+
 	
 		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 46, 49, 52, ui::focused_item == this->_id ? 211 : 45 ), 4.5f );
 		this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 15 ), 4.5f );

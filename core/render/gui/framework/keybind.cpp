@@ -144,6 +144,7 @@ namespace ui {
 
 		for ( auto & child : this->children )
 			child->update ( );
+
 		if ( !this->children.empty ( ) ) {
 			this->maxs.y = this->children.back ( )->maxs.y + 10.f;
 		}

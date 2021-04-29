@@ -4,7 +4,7 @@
 
 namespace ui {
 
-	inline void * window_pointer_cheat = nullptr;
+	extern void * window_pointer_cheat;
 
 	void initialize ( );
 	void render ( );

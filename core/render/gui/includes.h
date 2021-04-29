@@ -27,6 +27,8 @@
 #include "framework/button.h"
 #include "framework/panel.h"
 #include "framework/panel_container.h"
+#include "framework/element_extender.h"
+
 
 #include "config.h"
 

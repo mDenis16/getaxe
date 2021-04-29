@@ -4,7 +4,7 @@
 namespace ui {
 	void panel::draw ( ) {
 	
-		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 23, 255, 150 ) );
+		//this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 255, 255, 150 ) );
 
 		for ( auto & child : this->children )
 			child->draw ( );
@@ -33,5 +33,7 @@ namespace ui {
 
 		if ( !this->children.empty ( ) )
 			this->maxs.y = this->children.back ( )->maxs.y;
+		else
+			this->maxs.y = this->mins.y;
 	}
 }

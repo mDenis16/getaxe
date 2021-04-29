@@ -11,13 +11,13 @@ namespace hooks::callback {
 		if ( hooks::unloading )
 			return present_original ( device );
 
-		//static uintptr_t firstAddress = reinterpret_cast< uintptr_t >( _ReturnAddress ( ) );
-		//if ( firstAddress != reinterpret_cast< uintptr_t >(_ReturnAddress ( )) )
-		//return present_original ( device );
+		static uintptr_t firstAddress = reinterpret_cast< uintptr_t >( _ReturnAddress ( ) );
+		if ( firstAddress != reinterpret_cast< uintptr_t >(_ReturnAddress ( )) )
+		return present_original ( device );
 
 		overlay::initialize ( device );
 
-	
+
 
 		ImGui_ImplDX9_NewFrame ( );
 		ImGui_ImplWin32_NewFrame ( );

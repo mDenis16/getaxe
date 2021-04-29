@@ -30,6 +30,7 @@ i_hud_chat* interfaces::chat_element = nullptr;
 c_physics_api* interfaces::physics = nullptr;
 iv_engine_sound * interfaces::engine_sound = nullptr;
 IMemAlloc * interfaces::memalloc = nullptr;
+c_csplayer_resource * interfaces::player_resource = nullptr;
 
 void* interfaces::model_cache = nullptr;
 void* interfaces::file_system = nullptr;
@@ -102,6 +103,8 @@ bool interfaces::initialize() {
 
 	memalloc = *reinterpret_cast< IMemAlloc ** > ( GetProcAddress ( GetModuleHandleA ( "tier0.dll" ), "g_pMemAlloc" ) );
 
+	player_resource = **reinterpret_cast< c_csplayer_resource *** >( utilities::pattern_scan ( crypt_str ( "client.dll" ), "8B 3D ? ? ? ? 85 FF 0F 84 ? ? ? ? 81 C7" ) + 0x2 );
+		 
 	console::log("[setup] interfaces initialized!\n");
 
 	return true;

@@ -68,7 +68,8 @@ namespace ui {
 		config_item_element,
 		button_element,
 		panel_element,
-		panel_cotainer_element
+		panel_cotainer_element,
+		element_extender_element
 
 	};
 
@@ -150,6 +151,9 @@ namespace ui {
 
 			update ( );
 		}
+		bool is_focused ( );
+		void out_of_focus ( );
+		bool can_focus ( );
 
 		virtual void update ( ) = 0;
 		virtual void handle ( ) = 0;

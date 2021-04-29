@@ -14,22 +14,20 @@ namespace hooks::callback {
 		local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 		csgo::local_player = local_player::m_data.pointer;
 
-
+		
 		if ( localdata.alive && local_pointer && local_pointer->is_alive ( ) ) {
 			animations::update_local_update_start ( stage );
 		}
 
 		reinterpret_cast< void ( __stdcall * )( client_frame_stage_t ) >( list.at ( hook_index::frame_stage_notify )->original )( stage ); /*original function call*/
 
+		if ( local_player::available ( ) ) { /*update animations here to get interpolated origin by game. ps: it uses uninterpolated data*/
+			animations::update_animations_update_end ( stage );
 
-		if ( FRAME_NET_UPDATE_END ) {
-			if ( local_player::available() ) { /*update animations here to get interpolated origin by game. ps: it uses uninterpolated data*/
-				animations::update_animations_update_end ( );
-				
 
-				//animations::update_fake_animation ( );
-			}
+			//animations::update_fake_animation ( );
 		}
+	
 
 	}
 }

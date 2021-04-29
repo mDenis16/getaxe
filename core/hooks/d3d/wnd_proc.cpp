@@ -14,7 +14,7 @@ namespace hooks::callback {
 	
 		if ( ImGui_ImplWin32_WndProcHandler ( hwnd, message, wparam, lparam ) )
 			return true;
-		
+	
 	
 		return CallWindowProcA ( wndproc_original, hwnd, message, wparam, lparam );
 	}

@@ -9,6 +9,8 @@ namespace hooks::callback {
 		ImGui_ImplDX9_InvalidateDeviceObjects ( );
 		ImGui_ImplDX9_CreateDeviceObjects ( );
 
+		overlay::invalidate_device_objects ( );
+
 		long hr = reset_original ( thisptr, params );
 
 		return hr;

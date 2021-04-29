@@ -130,23 +130,10 @@ namespace ui {
 		middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
 
 
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), this->title.c_str ( ) );
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), std::to_string( ImGui::GetIO ( ).MouseWheel).c_str() );
 
 		this->max_scroll_progress = 18.f * this->children.size ( );
-		if ( ImGui::GetIO ( ).MouseWheel > 0.0f ) {
-			this->scroll_progress -= 18;
-			this->thumb_percent = ( this->scroll_progress / this->max_scroll_progress ) * 100.f;
-		}
-		else if ( ImGui::GetIO ( ).MouseWheel < 0.0f && children.back ( )->maxs.y >= this->bb_max.y ) {
-			this->scroll_progress += 18;
-			this->thumb_percent = ( this->scroll_progress / this->max_scroll_progress ) * 100.f;
-		}
-
-		if ( this->scroll_progress <= 0.f )
-			this->scroll_progress = 0.f;
-		else if ( this->scroll_progress >= this->max_scroll_progress )
-			this->scroll_progress = this->max_scroll_progress;
-
+		
 
 
 		float limit_max = this->children.empty ( ) ? this->bb_min.y + 120 : this->children.back ( )->maxs.y + 10;
@@ -198,6 +185,20 @@ namespace ui {
 					child->update ( );
 				}
 
+				if ( ImGui::GetIO ( ).MouseWheel > 0.0f ) {
+					this->scroll_progress -= 18;
+					this->thumb_percent = ( this->scroll_progress / this->max_scroll_progress ) * 100.f;
+				}
+				else if ( ImGui::GetIO ( ).MouseWheel < 0.0f && children.back ( )->maxs.y >= this->bb_max.y ) {
+					this->scroll_progress += 18;
+					this->thumb_percent = ( this->scroll_progress / this->max_scroll_progress ) * 100.f;
+				}
+
+				if ( this->scroll_progress <= 0.f )
+					this->scroll_progress = 0.f;
+				else if ( this->scroll_progress >= this->max_scroll_progress )
+					this->scroll_progress = this->max_scroll_progress;
+
 			}
 		}
 		else if ( !opened && in_animation ) {
@@ -233,7 +234,8 @@ namespace ui {
 
 				ImVec2 middle = ImVec2 ( ( t_mins.x + t_maxs.x ) / 2.f, ( t_maxs.y + t_mins.y ) / 2.f );
 
-				middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ) ).y / 6.f;
+				middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
+
 
 				this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->bb_min.x + 5.f, middle.y ), ImColor ( 255, 255, 255, 215 ), this->preview.data ( ) );
 

@@ -68,7 +68,7 @@ namespace ui {
 	  float progress = ( this->animation_step - this->bb_min.x ) / ( this->bb_max.x - this->bb_min.x );
 
 	    this->renderer->AddRect (ImVec2( this->bb_min.x - 9.f, this->bb_min.y), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 0,0, 0, 15 ), 8.5f );
-	     this->renderer->AddRectFilled ( ImVec2 ( this->bb_min.x - 9.f, this->bb_min.y ), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 46, 49, 52, 45 ), 8.5f );
+	     this->renderer->AddRectFilled ( ImVec2 ( this->bb_min.x - 9.f, this->bb_min.y ), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 46, 49, 52, 170 ), 8.5f );
 		 //25, 125, 123, 255
 
 		 int r = static_cast<int>( std::lerp ( 255, 25, progress ));
@@ -87,18 +87,21 @@ namespace ui {
 		   float offset_x = 1.2f;
 		   float offset_y = 1.2f;
 
-		   this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x + offset_x, middle.y + offset_y ), ImColor ( 0, 0, 0, 225 ), this->title.c_str ( ) );
+	
 		   this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), this->title.c_str() );
 		
 
-		   for ( auto & child : this->children )
-			   child->draw ( );
+		   for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
+			   this->children.at ( i )->draw ( );
 
 		   draw_keybind ( );
 	}
 	void checkbox::handle_mouse_input ( ) {
-		if ( ui::focused_item != -1)
+
+		if ( !can_focus ( ) )
 			return;
+
+
 
 		auto mouse_pos = ui::get_cursor ( );
 

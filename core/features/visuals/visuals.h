@@ -32,6 +32,8 @@ namespace visuals {
 		bool on_screen;
 		bool valid;
 		bool dormant;
+
+
 	
 
 
@@ -51,7 +53,14 @@ namespace visuals {
 		void virtual queue_entity ( void* ent ) = 0;
 	};
 
-
+	struct bone_data {
+		vec3_t child;
+		vec3_t parent;
+	};
+	struct flag_struct {
+		ImColor color;
+		std::string flag;
+	};
 	class visual_player : public visual_data {
 	public:
 		std::string weapon_icon;
@@ -69,7 +78,22 @@ namespace visuals {
 		bool scoped = false;
 		bool defuser = false;
 		bool fake_duck = false;
+		int clip = 0;
+		int max_clip = 0;
+		float l1_cycle = 0.f;
+		int last_tick = 0;
+		int act = 0;
+		float l1_weight = 0.f;
+		std::vector<bone_data> bones;
+		std::vector<ImVec2> offscreen_points;
+		ImVec2 base_pos;
+		ImVec2 animated_clip_mins;
+		ImVec2 animated_clip_maxs;
+		int last_flags_update_tickcount = 0;
+		bool never_seen = true;
+		bool in_animation = false;
 		bool bomb_carrier = false;
+		std::vector<flag_struct> flags_list;
 		float alpha = 255;
 		player_info_t player_info;
 		bool out_of_pov = false;
@@ -82,6 +106,11 @@ namespace visuals {
 		void render_entity ( ) override;
 		void render_offscreen ( ) override;
 		void queue_entity ( void * entity ) override;
+		void render_skeleton ( );
+		void visibility_check ( );
+
+		void animate ( );
+
 		void handle_flags ( );
 	};
 

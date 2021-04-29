@@ -63,26 +63,29 @@ namespace ui {
 		
 		
 
-		this->renderer->AddRectFilled ( this->bb_min, this->bb_max, ImColor ( 46, 49, 52, 45 ), 12.f );
+		this->renderer->AddRectFilled ( this->bb_min, this->bb_max, ImColor ( 46, 49, 52, 170 ), 12.f );
 	
 		auto filled = this->fill_percent * ( ( this->bb_max.x - this->bb_min.x ) ) / 100.f;
 		this->renderer->AddRectFilled (this->bb_min, ImVec2( this->bb_min.x + filled, this->bb_max.y), ImColor(25, 125, 123, 255), 12.f );
 
 		ImVec2 middle = ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f, ( this->maxs.y + this->mins.y ) / 2.f );
 
-		middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ) ).y / 6.f;
+		middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
+
 
 		this->renderer->AddCircleFilled ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 255, 255, 255, 255 ) );
 		
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), std::to_string( (float)*( float * ) this->value).c_str() );
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ),  this->title.c_str() );
 
 		for ( auto & child : this->children )
 			child->draw ( );
 
 	}
 	void slider::handle_mouse_input ( ) {
-		if ( ui::focused_item != -1 )
+		
+		if ( !can_focus ( ) )
 			return;
+
 
 		auto mouse_pos = ui::get_cursor ( );
 
@@ -189,12 +192,14 @@ namespace ui {
 			}
 
 			else if ( ui::focused_item == this->_id ) {
-				ui::focused_item = -1;
+				out_of_focus ( );
 			}
 		
 	}
 	void slider::update ( ) {
-
+		bool is_parent_panel = this->parrent->type == panel_element || this->parrent->type == panel_cotainer_element;
+		
+		
 		if ( this->index > 0 ) {
 			auto & back = this->parrent->children.at ( this->index - 1 );
 			this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, back->maxs.y + 8 );
@@ -210,12 +215,27 @@ namespace ui {
 				this->animation_step = this->bb_min.x;
 		}
 		else {
-			this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40 );
-			this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
+			if ( is_parent_panel ) {
 
+				/*if ( this->parrent->parrent && this->parrent->parrent->children.size() > 0 ) {
+					auto previous_element = this->parrent->parrent->children.at ( this->parrent->index  - 1);
 
-			this->bb_min = ImVec2 ( this->maxs.x - 30, this->mins.y );
-			this->bb_max = ImVec2 ( this->maxs.x - 25, this->maxs.y );
+					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, previous_element->maxs.y + 8 );
+				}
+				else {
+					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 8);
+				}*/
+				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y );
+				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
+
+			}
+			else {
+				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40 );
+				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
+			}
+
+			this->bb_min = ImVec2 ( ( this->maxs.x + this->mins.x ) / 2.f - 10.f, this->mins.y + 7 );
+			this->bb_max = ImVec2 ( this->maxs.x - 35, this->maxs.y - 7 );
 
 			if ( this->value )
 				this->animation_step = this->bb_max.x;

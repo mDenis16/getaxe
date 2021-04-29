@@ -92,6 +92,9 @@
     <ClCompile Include="core\render\gui\framework\panel.cpp" />
     <ClCompile Include="dependencies\imgui\imgui.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
+    <ClCompile Include="core\render\gui\framework\element_extender.cpp" />
+    <ClCompile Include="core\render\d3dfont.cpp" />
+    <ClCompile Include="core\features\visuals\chams.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -212,6 +215,9 @@
     <ClInclude Include="dependencies\imgui\imgui_freetype.h" />
     <ClInclude Include="core\render\gui\framework\panel_container.h" />
     <ClInclude Include="core\render\gui\framework\panel.h" />
+    <ClInclude Include="core\render\gui\framework\element_extender.h" />
+    <ClInclude Include="core\render\d3dfont.h" />
+    <ClInclude Include="dependencies\interfaces\c_csplayerresource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

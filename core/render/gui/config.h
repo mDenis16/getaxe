@@ -100,27 +100,89 @@ extern config_manager * cfg_manager;
 
 #define config c_config::get ( )
 
+enum FLAGS_LIST {
+	FLAGS_MONEY,
+	FLAGS_ARMOR,
+	FLAGS_KIT,
+	FLAGS_SCOPED,
+	FLAGS_FLASHED,
+	FLAGS_FAKEDUCKING,
+	FLAGS_C4,
+	FLAGS_LC,
+	FLAGS_TASER,
+	FLAGS_HIT,
+	FLAGS_EXPLOIT,
+	FLAGS_PING,
+	FLAGS_HOSTAGE,
+	FLAGS_DEFUSING,
+	FLAGS_RELOAD,
+	FLAGS_DORMANT,
+	FLAGS_DISTANCE,
+	FLAGS_MAX
+};
+
+
 enum player_visual_type {
 	ENEMY,
 	TEAM
 };
 
+enum bounding_box_type {
+    NORMAL, 
+	CORNERED,
+    THREE_DIMENSIONAL
+};
 
+enum chams_model {
+	VISIBLE,
+	HIDDEN,
+	BACKTRACK,
+	HIT,
+	ATTACHMENTS,
+	CHAMS_MODEL_MAX
+};
+enum chams_material {
+	CHAMS_SOLID,
+	CHAMS_FLAT,
+	CHAMS_REFLECTIVE,
+	CHAMS_GLOW,
+	CHAMS_MAX
+};
+
+
+struct chams_visual {
+	ImColor color;
+	int material;
+	bool enable = false;
+};
 
 struct player_visual {
 
 	bool bounding_box = false;
+	bool dynamic_box = false;
+
+	int box_type = 0;
 	ImColor bound_box_color = ImColor ( 255, 0, 0, 255 );
+	float bound_box_thickness = 1.f;
+	float bound_box_border_thickness = 3.f;
+	float bound_box_border_rounding = 0.f;
+
 	config_manager::key_bind_item bound_box_keybind;
 
 	bool glow = false;
 	ImColor glow_color = ImColor ( 255, 255, 0, 255 );
 
 	bool health = false;
+	ImColor health_color = ImColor ( 255, 255, 0, 255 );
 
+	chams_visual chams [ CHAMS_MODEL_MAX ];
 
 	bool name = false;
 	ImColor name_color = ImColor ( 255, 0, 0, 255 );
+	float name_size = 12.f;
+	bool shadow_name = false;
+	bool dynamic_name_size = false;
+	int name_render_type = 0;
 
 	bool weapon = false;
 	ImColor weapon_color = ImColor ( 255, 0, 0, 255 );
@@ -139,14 +201,7 @@ struct player_visual {
 	int chams_material = 0;
 	config_manager::key_bind_item chams_material_keybind;
 
-	bool visible_chams = false;
-	ImColor visible_chams_color = ImColor ( 255, 0, 100, 255 );
 
-	bool hidden_chams = false;
-	ImColor  hidden_chams_color = ImColor ( 255, 0, 100, 255 );
-
-	bool history_chams = false;
-	ImColor history_chams_color = ImColor ( 255, 0, 100, 255 );
 
 	bool out_of_pov = false;
 	ImColor out_of_pov_color = ImColor ( 255, 200, 21, 225 );
@@ -162,7 +217,8 @@ struct player_visual {
 
 	float slider_a = 1.f;
 	float slider_b = 1.f;
-	std::vector<int> flags_input = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	std::vector<int> flags_input;
+	
 	
 	ImColor flags_color = ImColor ( 255, 200, 21, 225 );
 	config_manager::key_bind_item flags_keybind;
@@ -183,22 +239,40 @@ struct local {
 
 class c_config : public singleton< c_config > {
 public:
-	player_visual player_visual [ 2 ];
+	c_config ( ) {
+		for ( size_t i = 0; i < 2; i++ ) {
+			player_visual [ i ].flags_input.resize ( FLAGS_MAX );
+		}
+	}
+	player_visual player_visual [ 2 ]; 
 	local local;
 
-};
 
-enum {
-	FLAGS_MONEY,
+
+	std::vector<std::string> flags_list = { "Money", "Armor", "Kit",  "Scoped", "Flashed", "Fakeduck", "Bomb", "Break LC", "Taser", "Hit", "Exploit", "Ping", "Hostage", "Defusing", "Reload", "Dormant", "Distance" };
+
+	/*
+	
+		FLAGS_MONEY,
 	FLAGS_ARMOR,
 	FLAGS_KIT,
 	FLAGS_SCOPED,
+	FLAGS_FLASHED,
 	FLAGS_FAKEDUCKING,
 	FLAGS_C4,
 	FLAGS_LC,
 	FLAGS_TASER,
 	FLAGS_HIT,
-	FLAGS_MAX
+	FLAGS_EXPLOIT,
+	FLAGS_PING,
+	FLAGS_HOSTAGE,
+	FLAGS_DEFUSING,
+	FLAGS_RELOAD,
+	FLAGS_DORMANT,
+	FLAGS_DISTANCE,
+	FLAGS_MAX*/
 };
+
+
 
 extern bool menu_opened;

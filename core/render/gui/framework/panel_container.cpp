@@ -7,8 +7,7 @@ namespace ui {
 
 		this->handle ( );
 
-		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 12, 12, 150 ) );
-
+	
 		if ( *this->selected_index < this->children.size() ) 
 			this->children.at ( *this->selected_index )->draw ( );
 		
@@ -18,7 +17,12 @@ namespace ui {
 	void panel_container::handle ( ) {
 
 		if ( *this->selected_index != this->old_index ) {
-			this->parrent->update ( );
+
+			if (this->parrent->type == element_extender_element )
+			 static_cast<ui::element_extender*>(this->parrent)->update_isolate ( );
+			else
+				this->parrent->update ( );
+
 			for ( object * child : this->children ) {
 
 				std::queue<ui::object *> q;

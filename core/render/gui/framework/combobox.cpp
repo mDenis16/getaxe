@@ -192,19 +192,7 @@ namespace ui {
 				float progress = ( limit_max - this->bb_max.y ) * 100 / ( limit_max - this->original_bb_max_y ) / 100;
 
 
-				int current_child = this->children.size ( ) - static_cast< int >( std::roundf ( ( progress / 1.f ) * static_cast< float >( this->children.size ( ) ) ) );
 
-				if ( current_child == 0 ) {
-					auto t_mins = ImVec2 ( this->bb_min.x + 3, this->bb_min.y + 1 );
-					auto t_maxs = ImVec2 ( this->bb_max.x + 3, this->bb_min.y + 15 );
-
-					ImVec2 middle = ImVec2 ( ( t_mins.x + t_maxs.x ) / 2.f, ( t_maxs.y + t_mins.y ) / 2.f );
-
-					middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ) ).y / 6.f;
-
-					this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->bb_min.x + 5.f, middle.y ), ImColor ( 255, 255, 255, 215 ), cur_text );
-
-				}
 
 				for ( auto & child : children ) {
 					if ( child->type == keybind_element )
@@ -231,7 +219,9 @@ namespace ui {
 			if ( this->bb_max.y < this->original_bb_max_y ) {
 				this->bb_max.y = this->original_bb_max_y;
 				//update ( );
-				ui::focused_item = -1;
+			
+				out_of_focus ( );
+
 				opened = false;
 				in_animation = false;
 			}
@@ -244,19 +234,8 @@ namespace ui {
 			float progress = ( limit_max - this->bb_max.y ) * 100 / ( limit_max - this->original_bb_max_y ) / 100;
 
 
-			int current_child = this->children.size ( ) - static_cast< int >( std::roundf ( ( progress / 1.f ) * static_cast< float >( this->children.size ( ) ) ) );
+			//int current_child = this->children.size ( ) - static_cast< int >( std::roundf ( ( progress / 1.f ) * static_cast< float >( this->children.size ( ) ) ) );
 
-			if ( current_child == 0 ) {
-				auto t_mins = ImVec2 ( this->bb_min.x + 3, this->bb_min.y + 1 );
-				auto t_maxs = ImVec2 ( this->bb_max.x + 3, this->bb_min.y + 15 );
-
-				ImVec2 middle = ImVec2 ( ( t_mins.x + t_maxs.x ) / 2.f, ( t_maxs.y + t_mins.y ) / 2.f );
-
-				middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ) ).y / 6.f;
-
-				this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->bb_min.x + 5.f, middle.y ), ImColor ( 255, 255, 255, 215 ), cur_text );
-
-			}
 			for ( auto & child : children ) {
 				if ( child->maxs.y <= this->bb_max.y && child->mins.y >= this->bb_min.y )
 					child->draw ( );
@@ -269,12 +248,12 @@ namespace ui {
 		}
 		else {
 			scroll_progress = 0.f;
-			auto t_mins = ImVec2 ( this->bb_min.x + 3, this->bb_min.y + 1 );
-			auto t_maxs = ImVec2 ( this->bb_max.x + 3, this->bb_min.y + 15 );
 
-			ImVec2 middle = ImVec2 ( ( t_mins.x + t_maxs.x ) / 2.f, ( t_maxs.y + t_mins.y ) / 2.f );
+			ImVec2 middle = ImVec2 ( ( this->bb_min.x + this->bb_max.x ) / 2.f, ( this->bb_max.y + this->bb_min.y ) / 2.f );
 
-			middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ) ).y / 6.f;
+			middle.y -= ImGui::CalcTextSize ( cur_text, 13.f, ui::font_widgets ).y / 2.f;
+
+
 
 
 			this->renderer->AddRectFilled ( this->bb_min, this->bb_max, ImColor ( 27, 28, 31, 255 ), 3.5f );
@@ -319,7 +298,8 @@ namespace ui {
 			this->key_bind_open = !this->key_bind_open;
 
 		}
-		if ( ui::focused_item != -1 && ui::focused_item != this->_id)
+		
+		if ( !this->opened && !can_focus ( ) )
 			return;
 
 		
@@ -364,13 +344,13 @@ namespace ui {
 					}
 					else {
 						in_animation = true;
-						ui::focused_item = -1;
+						out_of_focus ( );
 					}
 				}
 				else if ( this->opened && !this->hovering || hovering_bb ) {
 					this->opened = false;
 					in_animation = true;
-					ui::focused_item = -1; 
+					out_of_focus ( );
 				}
 			}
 			thumb_locked = false; 

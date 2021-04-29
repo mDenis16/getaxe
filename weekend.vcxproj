@@ -105,6 +105,7 @@
     <ClCompile Include="core\features\features.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
+    <ClCompile Include="core\features\visuals\chams.cpp" />
     <ClCompile Include="core\features\visuals\player.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\helpers\checksum_crc.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="core\hooks\renderview\scene_end.cpp" />
     <ClCompile Include="core\hooks\traceray\clip_ray_collideable.cpp" />
     <ClCompile Include="core\hooks\traceray\trace_ray.cpp" />
+    <ClCompile Include="core\render\d3dfont.cpp" />
     <ClCompile Include="core\render\gui\config.cpp" />
     <ClCompile Include="core\render\gui\framework\bind_manager.cpp" />
     <ClCompile Include="core\render\gui\framework\button.cpp" />
@@ -154,6 +156,7 @@
     <ClCompile Include="core\render\gui\framework\config_box.cpp" />
     <ClCompile Include="core\render\gui\framework\config_item.cpp" />
     <ClCompile Include="core\render\gui\framework\element.cpp" />
+    <ClCompile Include="core\render\gui\framework\element_extender.cpp" />
     <ClCompile Include="core\render\gui\framework\keybind.cpp" />
     <ClCompile Include="core\render\gui\framework\key_selector.cpp" />
     <ClCompile Include="core\render\gui\framework\multibox.cpp" />
@@ -204,6 +207,7 @@
     <ClInclude Include="core\helpers\threadsafe_deque.h" />
     <ClInclude Include="core\hooks\d3d\reset_hk.cpp" />
     <ClInclude Include="core\hooks\hooks.hpp" />
+    <ClInclude Include="core\render\d3dfont.h" />
     <ClInclude Include="core\render\gui\config.h" />
     <ClInclude Include="core\render\gui\framework\button.h" />
     <ClInclude Include="core\render\gui\framework\checkbox.h" />
@@ -214,6 +218,7 @@
     <ClInclude Include="core\render\gui\framework\config_box.h" />
     <ClInclude Include="core\render\gui\framework\config_item.h" />
     <ClInclude Include="core\render\gui\framework\element.h" />
+    <ClInclude Include="core\render\gui\framework\element_extender.h" />
     <ClInclude Include="core\render\gui\framework\keybind.h" />
     <ClInclude Include="core\render\gui\framework\key_selector.h" />
     <ClInclude Include="core\render\gui\framework\multibox.h" />
@@ -239,6 +244,7 @@
     <ClInclude Include="dependencies\imgui\imstb_rectpack.h" />
     <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
     <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
+    <ClInclude Include="dependencies\interfaces\c_csplayerresource.h" />
     <ClInclude Include="dependencies\interfaces\engine_sounds.hpp" />
     <ClInclude Include="dependencies\interfaces\i_hud_chat.hpp" />
     <ClInclude Include="dependencies\interfaces\i_memalloc.h" />

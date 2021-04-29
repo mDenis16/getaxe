@@ -234,9 +234,14 @@ namespace visuals {
 			auto entity = static_cast<player_t*>(interfaces::entity_list->get_client_entity ( i ));
 			auto & data = player_data.at ( i );
 
-			if ( !entity || !entity->is_alive() || entity == local_pointer ) {
+			if ( !entity || !entity->is_alive() ) {
 				if ( data.valid )
 					data.valid = false;
+
+				data.never_seen = true;
+				data.ent = nullptr;
+				data.player = nullptr;
+
 				continue;
 			}
 

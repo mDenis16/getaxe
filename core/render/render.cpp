@@ -5,7 +5,25 @@
 #include "gui/gui.h"
 #include "../../dependencies/imgui/impl/imgui_impl_win32.h"
 
+
 namespace overlay {
+	std::vector<std::shared_ptr<c_font>> fonts;
+
+	 IDirect3DDevice9 * dev;
+	 D3DVIEWPORT9 port;
+	namespace fonts_ns {
+	
+			std::shared_ptr<c_font> esp = std::make_shared<c_font> ( "Tahoma", 9, 300 );
+			std::shared_ptr<c_font> esp_small = std::make_shared<c_font> ( "Smallest Pixel-7", 9, 400 ); //Visitor TT2 VRK", 11, 400
+			std::shared_ptr<c_font> lby = std::make_shared<c_font> ( "Verdana", 18, 600 ); // "Porter", 27, 800 
+			std::shared_ptr<c_font> controlfont = std::make_shared<c_font> ( "Verdana", 10, 700 );
+			std::shared_ptr<c_font> tabfont = std::make_shared<c_font> ( "Tahoma", 10, 400 );
+			std::shared_ptr<c_font> tabfontthicc = std::make_shared<c_font> ( "Tahoma", 10, 800 );
+			std::shared_ptr<c_font> subtabfont = std::make_shared<c_font> ( "Verdana", 10, 800 );
+			std::shared_ptr<c_font> smallfont = std::make_shared<c_font> ( "Tahoma", 6, 400 );
+			std::shared_ptr<c_font> keybindfont = std::make_shared<c_font> ( "Verdana", 6, 400 );
+		
+	}
 	static std::vector<unsigned char> weaponicons =
 	{
 		0x00, 0x01, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x80, 0x00, 0x03, 0x00, 0x60, 0x46, 0x46, 0x54, 0x4D,
@@ -2800,6 +2818,10 @@ namespace overlay {
 
 	// The original WndProc used by the game window.
 	WNDPROC game_wndproc = NULL;
+	bool file_exists ( const char * fileName ) {
+		std::ifstream infile ( fileName );
+		return infile.good ( );
+	}
 
 	void __stdcall end_present ( IDirect3DDevice9 * /*device*/ ) {
 
@@ -2810,7 +2832,19 @@ namespace overlay {
 		state_block->Release ( );
 	}
 
+	void init_device_ojects ( IDirect3DDevice9 * dev ) {
+		for ( auto & font : fonts ) {
+			font->init_device_objects ( dev );
+			font->restore_device_objects ( );
+		}
+	}
+	void invalidate_device_objects ( ) 		{
+		dev = nullptr;
 
+		for ( auto & font : fonts )
+			font->invalidate_device_objects ( );
+
+	}
 	void __stdcall pre_render ( IDirect3DDevice9 * device ) {
 
 		D3DVIEWPORT9 d3d_viewport;
@@ -2886,17 +2920,37 @@ namespace overlay {
 	         D3DXCreateFont ( device, 15, 0, FW_REGULAR, 1, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH, "Verdana", &visuals::fonts [ visuals::fonts::ESP ] );
 			 D3DXCreateFont ( device, 9, 0, FW_REGULAR, 1, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH, "Choktoff", &visuals::fonts [ visuals::fonts::FLAGS ] );
 
-			visuals::esp_font = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\MaisonNeue-Medium.ttf", 13.f );
+			visuals::esp_font = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\MaisonNeue-Medium.ttf", 25.f );
 
 			visuals::device = device;
 
 			ImGui_ImplDX9_Init ( device );
 			ImGui_ImplWin32_Init ( FindWindow ( "Valve001", NULL ) );
 
+			fonts.push_back ( fonts_ns::esp );
+			fonts.push_back ( fonts_ns::esp_small );
+			fonts.push_back ( fonts_ns::lby );
+
+			fonts.push_back ( fonts_ns::controlfont );
+			fonts.push_back ( fonts_ns::tabfont );
+			fonts.push_back ( fonts_ns::tabfontthicc );
+			fonts.push_back ( fonts_ns::subtabfont );
+			fonts.push_back ( fonts_ns::smallfont );
+			fonts.push_back ( fonts_ns::keybindfont );
+
+			// Init fonts
+			init_device_ojects ( device );
+
 			initialized = true;
 		}
 
 	}
+
+	void text ( ImVec2 pos, std::wstring string, ImColor color, std::shared_ptr<c_font> & font, uint8_t flags ) {
+		font->draw_string ( std::roundf ( pos.x ), std::roundf ( pos.y ), D3DCOLOR_COLORVALUE ( color.Value.x, color.Value.y, color.Value.z, color.Value.w), string.c_str ( ), flags );
+	}
+
+
 
 	void present ( IDirect3DDevice9 * device ) {
 		if ( initialized ) {
@@ -2905,8 +2959,6 @@ namespace overlay {
 			ui::render ( );
 
 	
-			
-			
 		}
 	}
 

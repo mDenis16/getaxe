@@ -110,6 +110,7 @@ std::vector<std::string> weapons {  };
 namespace ui {
 	bool key_state [ 256 ];
 	bool prev_key_state [ 256 ];
+	void * window_pointer_cheat = nullptr;
 
 	std::vector< key_bind_component *> key_bind_list;
 	ui::window * main_window = nullptr;
@@ -196,7 +197,7 @@ namespace ui {
 
 		old_time = ImGui::GetIO ( ).DeltaTime;
 
-		ImGui::Text ( std::to_string ( old_time ).c_str ( ) );
+	//	ImGui::Text ( std::to_string ( old_time ).c_str ( ) );
 
 		for ( auto & item : cfg_manager->items ) {
 			if ( item->key_bind ) {
