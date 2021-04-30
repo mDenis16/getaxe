@@ -6,8 +6,10 @@ namespace ui {
 	
 		//this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 255, 255, 150 ) );
 
-		for ( auto & child : this->children )
-			child->draw ( );
+
+		for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
+			this->children.at ( i )->draw ( );
+
 	}
 	void panel::handle ( ) {
 		

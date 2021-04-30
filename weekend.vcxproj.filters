@@ -94,7 +94,9 @@
     <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="core\render\gui\framework\element_extender.cpp" />
     <ClCompile Include="core\render\d3dfont.cpp" />
-    <ClCompile Include="core\features\visuals\chams.cpp" />
+    <ClCompile Include="core\features\visuals\modulation\materials.cpp" />
+    <ClCompile Include="core\features\visuals\modulation\modulation.cpp" />
+    <ClCompile Include="core\features\visuals\modulation\player_modulation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -218,6 +220,7 @@
     <ClInclude Include="core\render\gui\framework\element_extender.h" />
     <ClInclude Include="core\render\d3dfont.h" />
     <ClInclude Include="dependencies\interfaces\c_csplayerresource.h" />
+    <ClInclude Include="core\features\visuals\modulation\modulation.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

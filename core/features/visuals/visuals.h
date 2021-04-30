@@ -2,7 +2,7 @@
 
 namespace visuals {
 
-	void initialize ( );
+
 
 	class box {
 	public:
@@ -65,6 +65,8 @@ namespace visuals {
 	public:
 		std::string weapon_icon;
 		std::string weapon_name;
+		vec3_t barrel_start, barrel_end;
+
 		player_t * player;
 		int health;
 		bool alive;
@@ -87,6 +89,7 @@ namespace visuals {
 		std::vector<bone_data> bones;
 		std::vector<ImVec2> offscreen_points;
 		ImVec2 base_pos;
+		ImVec2 barrel_start_w2s, barrel_end_w2s;
 		ImVec2 animated_clip_mins;
 		ImVec2 animated_clip_maxs;
 		int last_flags_update_tickcount = 0;
@@ -107,6 +110,7 @@ namespace visuals {
 		void render_offscreen ( ) override;
 		void queue_entity ( void * entity ) override;
 		void render_skeleton ( );
+		void render_barrel ( );
 		void visibility_check ( );
 
 		void animate ( );

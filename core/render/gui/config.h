@@ -141,6 +141,7 @@ enum chams_model {
 	ATTACHMENTS,
 	CHAMS_MODEL_MAX
 };
+
 enum chams_material {
 	CHAMS_SOLID,
 	CHAMS_FLAT,
@@ -151,9 +152,10 @@ enum chams_material {
 
 
 struct chams_visual {
-	ImColor color;
-	int material;
+	ImColor color = ImColor( 255, 255, 255, 255);
+	int material = 0;
 	bool enable = false;
+	bool force_z = false;
 };
 
 struct player_visual {
@@ -176,6 +178,7 @@ struct player_visual {
 	ImColor health_color = ImColor ( 255, 255, 0, 255 );
 
 	chams_visual chams [ CHAMS_MODEL_MAX ];
+	bool ragdoll_chams = false;
 
 	bool name = false;
 	ImColor name_color = ImColor ( 255, 0, 0, 255 );
@@ -212,6 +215,9 @@ struct player_visual {
 	ImColor foot_steps_color = ImColor ( 255, 200, 21, 225 );
 
 	bool force_radar_reveal = false;
+
+	bool view_barrel = false;
+	ImColor view_barrel_color = ImColor ( 255, 0, 0, 255 );
 
 	bool flags = false;
 

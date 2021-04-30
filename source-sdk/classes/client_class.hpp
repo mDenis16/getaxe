@@ -9,7 +9,7 @@ typedef i_client_networkable* (*create_client_class_fn)(int ent_number, int seri
 typedef i_client_networkable* (*create_event_fn)();
 
 enum class_ids {
-	ai_base_npc = 0,
+	ai_base_npc,
 	c_ak47,
 	base_animating,
 	base_animating_overlay,

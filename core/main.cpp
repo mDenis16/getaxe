@@ -22,6 +22,7 @@ unsigned long WINAPI initialize(void* instance) {
 
 	try {
 		interfaces::initialize();
+		modulation::create_materials ( );
 		hooks::initialize();
 		hooks::create_hooks ( );
 	}
@@ -36,6 +37,7 @@ unsigned long WINAPI initialize(void* instance) {
 
 	hooks::unloading = true;
 
+	modulation::release_mem ( );
 
 	FreeLibraryAndExitThread(static_cast<HMODULE>(instance), 0);
 }

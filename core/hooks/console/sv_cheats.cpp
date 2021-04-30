@@ -4,6 +4,10 @@
 
 namespace hooks::callback {
 	bool __fastcall sv_cheats ( void * ecx, void * ) {
+
+		if (hooks::unloading )
+			return sv_cheats_original ( ecx );
+
 		if ( !ecx )
 			return false;
 

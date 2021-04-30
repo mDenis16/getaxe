@@ -1,5 +1,4 @@
 #pragma once
-#include "imageformats.h"
 
 enum material_var_flags_t {
 	material_var_debug = (1 << 0),
@@ -122,6 +121,9 @@ class i_material_var {
 	void SetVectorInternal ( const float x, const float y, const float z ) {
 		utilities::get_virtual_function<void ( __thiscall * )( void *, float, float, float )> ( this, 11 )( this, x, y, z );
 	}
+	void SetVectorInternal ( const float* vec ) {
+		utilities::get_virtual_function<void ( __thiscall * )( void *, float, float, float )> ( this, 11 )( this, vec[0], vec[1], vec[2] );
+	}
 
 public:
 	void SetFloat ( const float val ) {
@@ -147,7 +149,9 @@ public:
 	void SetVector ( const vec2_t vector ) {
 		SetVectorInternal ( vector.x, vector.y );
 	}
-
+	void SetVector ( const float* vector ) {
+		SetVectorInternal ( vector );
+	}
 	void SetVector ( const vec3_t vector ) {
 		SetVectorInternal ( vector.x, vector.y, vector.z );
 	}
@@ -212,8 +216,8 @@ class i_material {
 public:
 	virtual const char* get_name( ) const = 0;
 	virtual const char* GetTextureGroupName( ) const = 0;
-	virtual preview_image_retval_t get_preview_image_properties( int* width, int* height, image_format* imageFormat, bool* isTranslucent ) const = 0;
-	virtual preview_image_retval_t get_preview_image( unsigned char* data, int width, int height, image_format imageFormat ) const = 0;
+	virtual preview_image_retval_t get_preview_image_properties( int* width, int* height, void* imageFormat, bool* isTranslucent ) const = 0;
+	virtual preview_image_retval_t get_preview_image( unsigned char* data, int width, int height, void* imageFormat ) const = 0;
 	virtual int get_mapping_width( ) = 0;
 	virtual int get_mapping_height( ) = 0;
 	virtual int get_num_animation_frames( ) = 0;

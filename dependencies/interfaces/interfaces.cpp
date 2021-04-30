@@ -101,7 +101,7 @@ bool interfaces::initialize() {
 
 	file_system = get_interface<void, interface_type::index>( "filesystem_stdio.dll", "VFileSystem017" );
 
-	memalloc = *reinterpret_cast< IMemAlloc ** > ( GetProcAddress ( GetModuleHandleA ( "tier0.dll" ), "g_pMemAlloc" ) );
+	memalloc = *reinterpret_cast< IMemAlloc ** >( GetProcAddress ( GetModuleHandle (  ( "tier0.dll" ) ),  ( "g_pMemAlloc" ) ) );
 
 	player_resource = **reinterpret_cast< c_csplayer_resource *** >( utilities::pattern_scan ( crypt_str ( "client.dll" ), "8B 3D ? ? ? ? 85 FF 0F 84 ? ? ? ? 81 C7" ) + 0x2 );
 		 

@@ -357,7 +357,8 @@ public:
 	OFFSET ( bool, dormant, 0xED );
 	OFFSET ( int, get_take_damage, 0x27C )
 	OFFSET ( vec3_t, old_origin, 0x3A8 );
-		NETVAR ( "DT_BaseEntity", "m_hOwnerEntity", owner_handle, unsigned long );
+	NETVAR ( "DT_BaseEntity", "m_hOwnerEntity", owner_handle, unsigned long );
+	NETVAR ( "DT_BaseEntity", "m_hOwner", original_owner_handle, unsigned long );
 	NETVAR ( "DT_BaseEntity", "m_flSimulationTime", simulation_time, float );
 	OFFSET ( float, m_flVelocityModifier, 0xA38C );
 	NETVAR ( "DT_BaseEntity", "m_vecOrigin", origin, vec3_t );

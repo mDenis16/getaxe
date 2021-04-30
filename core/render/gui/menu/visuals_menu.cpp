@@ -76,23 +76,35 @@ namespace ui {
 			{
 				new ui::checkbox ( "Glow", second_tab, cfg.glow, cfg.glow_color );
 				static int model_select = 0;
-				auto model_selector = new ui::combobox ( "Model selector", second_tab, std::vector<std::string>{"visible", "hidden", "history", "hit"}, &model_select);
+				auto model_selector = new ui::combobox ( "Model selector", second_tab, std::vector<std::string>{"visible", "hidden", "history", "hit", "attachments"}, &model_select);
 				
 				auto panel_container = new ui::panel_container ( second_tab, model_select );
 				{
 
 					for ( size_t i = 0; i < CHAMS_MODEL_MAX; i++ ) {
+					
 						auto chams_panel = new ui::panel ( panel_container );
 						{
-							new ui::checkbox ( "Enable model", chams_panel, cfg.chams[i].enable, cfg.health_color );
+
+							new ui::checkbox ( "Enable model", chams_panel, cfg.chams[i].enable, cfg.chams [ i ].color );
 							new ui::combobox ( "Material", chams_panel, std::vector<std::string>{"solid", "flat", "reflective", "glow"}, &cfg.chams[i].material );
+							if (i == chams_model::ATTACHMENTS )
+								new ui::checkbox ( "Override Z", chams_panel, cfg.chams [ i ].force_z );
 						}
 					}
+					/*
+					VISIBLE,
+	HIDDEN,
+	BACKTRACK,
+	HIT,
+	ATTACHMENTS,
+	CHAMS_MODEL_MAX
+					*/
 				     
 					
 				
 				}
-				
+				new ui::checkbox ( "Ragdoll filter", second_tab, cfg.ragdoll_chams );
 			}
 
 			auto third_tab = new ui::child_window ( "Misc", 45.f, 60.0, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
@@ -107,7 +119,8 @@ namespace ui {
 
 				new ui::checkbox ( "Reveal on radar", third_tab, cfg.force_radar_reveal );
 				new ui::checkbox ( "Footsteps", third_tab, cfg.foot_steps, cfg.foot_steps_color );
-				new ui::checkbox ( "View barrel", third_tab, cfg.foot_steps, cfg.foot_steps_color );
+				
+			  	new ui::checkbox ( "View barrel", third_tab, cfg.view_barrel, cfg.view_barrel_color );
 
 				/*
 				

@@ -2187,6 +2187,13 @@ struct ImColor
     inline void    SetHSV(float h, float s, float v, float a = 1.0f){ ImGui::ColorConvertHSVtoRGB(h, s, v, Value.x, Value.y, Value.z); Value.w = a; }
     static ImColor HSV(float h, float s, float v, float a = 1.0f)   { float r, g, b; ImGui::ColorConvertHSVtoRGB(h, s, v, r, g, b); return ImColor(r, g, b, a); }
 
+    float * getValueRGB ( ) {
+        rgb.x = Value.x * 255.f;
+        rgb.y = Value.y * 255.f;
+        rgb.z = Value.z * 255.f;
+        rgb.w = Value.w * 255.f;
+        return reinterpret_cast< float * >( &rgb );
+    }
     inline void get_rgb ( ) {
         rgb.x = Value.x * 255.f;
         rgb.y = Value.y * 255.f;

@@ -328,6 +328,14 @@ namespace visuals {
 			}
 		}
 	}
+	void visual_player::render_barrel ( ) {
+
+		if ( world_to_screen ( barrel_start, barrel_start_w2s ) && world_to_screen ( barrel_end, barrel_end_w2s ) ) {
+			render->AddLine ( barrel_start_w2s, barrel_end_w2s, config.player_visual [ type ].view_barrel_color );
+			render->AddCircleFilled ( barrel_end_w2s, 3.f, ImColor ( 255, 0, 0, 125 ) );
+			render->AddCircle ( barrel_end_w2s, 3.f, ImColor ( 255, 255, 255, 125 ) );
+		}
+	}
 	void visual_player::render_entity ( ) {
 		
 		auto & cfg = config.player_visual [ type ];
@@ -354,6 +362,8 @@ namespace visuals {
 			  render_flags ( );
 			if ( cfg.skeleton )
 				render_skeleton ( );
+			if ( cfg.view_barrel )
+				render_barrel ( );
 
 			if ( in_animation )
 			  render->PopClipRect ( );
@@ -380,6 +390,7 @@ namespace visuals {
 		maxs = player->maxs ( );
 		type = player->is_enemy ( ) ? 1 : 0;
 		valid = true;
+
 		on_screen = calculate_box ( );
 		distance = localdata.eye_position.distance_to ( player->abs_origin ( ) );
 
@@ -413,6 +424,28 @@ namespace visuals {
 					bones.at ( i ).parent = player->get_bone_position ( bone->parent );
 				}
 			}
+		}
+		if ( config.player_visual [ type ].view_barrel && on_screen && !dormant && player && player->is_alive()  && player->active_weapon ( )  && player->active_weapon ( )->get_weapon_data()) {
+
+
+			barrel_start = player->eye_pos ( );
+
+			vec3_t  dst, forward;
+			trace_t tr;
+			ray_t ray;
+			trace_filter filter;
+
+			math::angle_vectors ( player->eye_angles ( ), forward );
+			filter.skip = player;
+			
+			barrel_end = barrel_start + ( forward * 4091.f );
+
+			ray.initialize ( barrel_start, barrel_end );
+
+			interfaces::trace_ray->trace_ray ( ray, MASK_SHOT, &filter, &tr );
+
+			barrel_end = tr.end;
+
 		}
 
 		handle_flags ( );

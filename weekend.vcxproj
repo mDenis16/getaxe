@@ -48,7 +48,7 @@
     <LibraryPath>"F:\includes\boost_1_73_0\stage\lib";$(LibraryPath)</LibraryPath>
     <OutDir>.\output\debug\</OutDir>
     <IntDir>.\intermediates\</IntDir>
-    <TargetName>weekend</TargetName>
+    <TargetName>cheat</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\output\</OutDir>
@@ -72,6 +72,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -105,7 +106,9 @@
     <ClCompile Include="core\features\features.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
-    <ClCompile Include="core\features\visuals\chams.cpp" />
+    <ClCompile Include="core\features\visuals\modulation\materials.cpp" />
+    <ClCompile Include="core\features\visuals\modulation\modulation.cpp" />
+    <ClCompile Include="core\features\visuals\modulation\player_modulation.cpp" />
     <ClCompile Include="core\features\visuals\player.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\helpers\checksum_crc.cpp" />
@@ -200,6 +203,7 @@
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
     <ClInclude Include="core\features\setup\animations.h" />
+    <ClInclude Include="core\features\visuals\modulation\modulation.h" />
     <ClInclude Include="core\features\visuals\visuals.h" />
     <ClInclude Include="core\helpers\checksum_crc.h" />
     <ClInclude Include="core\helpers\checksum_md5.h" />

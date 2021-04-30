@@ -119,6 +119,7 @@ namespace ui {
 	ImFont * font_tab = nullptr;
 	ImFont * font_icons = nullptr;
 	ImFont * font_menu_icons = nullptr;
+	ImFont * weapon_icons = nullptr;
 	ImFont * menuicons = nullptr;
 	ImFont * test = nullptr;
 
@@ -172,6 +173,9 @@ namespace ui {
 			menu::visuals_player_menu ( main_window, teammates_sub_tab, 0  );
 
 			auto local_sub_tab = new ui::sub_tab ( "Local", ICON_LOCAL, font_icons, -0.5875f, 20.f, visuals_tab );
+			menu::visuals_local_menu ( main_window, local_sub_tab );
+
+			auto projectiles_sub_tab = new ui::sub_tab ( "Projectiles", "o", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
 			menu::visuals_local_menu ( main_window, local_sub_tab );
 
 			auto world_sub_tab = new ui::sub_tab ( "World", ICON_WORLD, font_icons, -0.5875f, 20.f, visuals_tab );

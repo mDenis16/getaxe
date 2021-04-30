@@ -11,6 +11,7 @@
 #define localdata local_player::m_data
 
 #include "../features/setup/animations.h"
+#include "../features/visuals/modulation/modulation.h"
 #include "../features/visuals/visuals.h"
 #include "../render/d3dfont.h"
 
