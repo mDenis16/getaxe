@@ -5,8 +5,12 @@
 
 namespace ui {
 	void window::draw ( ) {
+
+	//	renderer = ImGui::GetBackgroundDrawList ( );
+
 		if ( !*this->open )
 			return;
+
 		auto& imgdata = ImGui::GetIO ( );
 
 		this->handle_mouse_input ( );

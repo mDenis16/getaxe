@@ -78,7 +78,7 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual ( interfaces::console->get_convar ( "sv_cheats" ), 13 ), &callback::sv_cheats );
 		CREATE_HOOK ( get_virtual ( interfaces::engine->get_bsp_tree_query ( ), 6 ), &callback::list_leaves_in_box );
 		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 24 ), &callback::create_move );
-		CREATE_HOOK ( utilities::pattern_scan ( "engine.dll", "55 8B EC 83 E4 C0 81 EC ? ? ? ? 53 56" ), &callback::process_packet );
+		CREATE_HOOK ( /*utilities::pattern_scan ( "engine.dll", "55 8B EC 83 E4 C0 81 EC ? ? ? ? 53 56" )*/ nullptr, &callback::process_packet );
 		CREATE_HOOK ( get_virtual ( interfaces::panel, 41 ), &callback::paint_traverse );
 		CREATE_HOOK ( nullptr/* get_virtual ( interfaces::engine, 93 )*/, &callback::is_hltv );
 		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 44 ), &callback::post_screen_space_fx );
@@ -94,8 +94,8 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual ( pt, 223 ), &callback::update_client_side_animations );
 		CREATE_HOOK ( nullptr /*  get_virtual ( interfaces::engine, 59 )*/, &callback::fire_event );
 		CREATE_HOOK ( get_virtual ( interfaces::prediction, 19 ), &callback::run_command );
-		CREATE_HOOK ( get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 5 ), &callback::packet_start );
-		CREATE_HOOK ( get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 6 ), &callback::packet_end );
+		CREATE_HOOK ( nullptr /*get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 5 )*/, &callback::packet_start );
+		CREATE_HOOK ( nullptr /*get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 6 )*/, &callback::packet_end );
 		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 18 ), &callback::override_view );
 		CREATE_HOOK ( nullptr /* utilities::pattern_scan ( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 56 57 8B 3D ? ? ? ? 8A" )*/, &callback::cl_move );
 		CREATE_HOOK ( nullptr /*  get_virtual ( interfaces::trace_ray, 4 )*/, &callback::clip_ray_collideable );

@@ -29,6 +29,7 @@
 #include "i_hud_chat.hpp"
 #include "c_csplayerresource.h"
 #include "engine_sounds.hpp"
+#include "iv_render_beams.hpp"
 
 namespace interfaces {
 	enum class interface_type { index, bruteforce };
@@ -108,6 +109,7 @@ namespace interfaces {
 	extern iv_engine_sound * engine_sound;
 	extern IMemAlloc * memalloc;
 	extern c_csplayer_resource * player_resource;
+	extern i_view_render_beams* render_beams;
 	extern void* model_cache;
 	extern void* file_system;
 

@@ -26,6 +26,24 @@ namespace hooks::callback {
 			local_pointer->set_abs_origin ( abs_origin );
 		}*/
 
+		if ( !interfaces::engine->is_connected ( ) || !interfaces::engine->is_in_game ( ) ) {
+			scene_end_original ( interfaces::render_view );
+			return;
+		}
+		if ( local_pointer && local_pointer->is_alive ( ) ) {
+			auto hViewModel = local_pointer->view_model ( );
+			if ( hViewModel != 0xFFFFFFFF && modulation::materials.at ( 0 ).mat_address ) {
+				auto pViewModel = reinterpret_cast< base_view_model_t * >( interfaces::entity_list->get_client_entity_handle ( hViewModel ) );
+				if ( pViewModel ) {
+					//interfaces::model_render->override_material ( modulation::materials.at ( 0 ).mat_address );
+
+					//interfaces::render_view->modulate_color ( ( float * ) &config.local_visual.chams [ WEAPON ].color.Value );
+
+					//pViewModel->draw_model ( 0x0, 255 );
+					//interfaces::model_render->override_material ( nullptr );
+				}
+			}
+		}
 		scene_end_original ( interfaces::render_view );
 	}
 	

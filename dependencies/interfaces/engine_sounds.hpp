@@ -104,7 +104,7 @@ public:
 	virtual bool	IsSoundStillPlaying ( int guid ) = 0;
 	virtual void	StopSoundByGuid ( int guid, bool bForceSync ) = 0;
 	virtual void	SetVolumeByGuid ( int guid, float fvol ) = 0;
-	virtual void	get_active_sounds ( CUtlVector<sound_info> & sndlist ) = 0;
+	virtual void	get_active_sounds ( c_utl_vector<sound_info> & sndlist ) = 0;
 	virtual void	PrecacheSentenceGroup ( const char * pGroupName ) = 0;
 	virtual void	NotifyBeginMoviePlayback ( ) = 0;
 	virtual void	NotifyEndMoviePlayback ( ) = 0;

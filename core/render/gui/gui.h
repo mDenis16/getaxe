@@ -7,7 +7,7 @@ namespace ui {
 	extern void * window_pointer_cheat;
 
 	void initialize ( );
-	void render ( );
+	void render ( ImDrawList* render );
 
 	void render_debug ( );
 
@@ -25,6 +25,7 @@ namespace ui {
 	extern ImFont * font_icons;
 	extern ImFont * font_menu_icons;
 	extern ImFont * menuicons;
+	extern ImFont * weapon_font;
 	extern ImFont * weapon_icons;
 	extern ImFont * test;
 	extern int focused_item;

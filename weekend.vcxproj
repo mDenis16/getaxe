@@ -109,8 +109,12 @@
     <ClCompile Include="core\features\visuals\modulation\materials.cpp" />
     <ClCompile Include="core\features\visuals\modulation\modulation.cpp" />
     <ClCompile Include="core\features\visuals\modulation\player_modulation.cpp" />
-    <ClCompile Include="core\features\visuals\player.cpp" />
+    <ClCompile Include="core\features\visuals\player\visual_player.cpp" />
+    <ClCompile Include="core\features\visuals\projectile\visual_project.cpp" />
+    <ClCompile Include="core\features\visuals\projectile_prediction.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
+    <ClCompile Include="core\features\visuals\visual_handler.cpp" />
+    <ClCompile Include="core\features\visuals\weapon\visual_weapon.cpp" />
     <ClCompile Include="core\helpers\checksum_crc.cpp" />
     <ClCompile Include="core\helpers\checksum_md5.cpp" />
     <ClCompile Include="core\helpers\localplayer.cpp" />
@@ -174,10 +178,11 @@
     <ClCompile Include="core\render\gui\framework\window.cpp" />
     <ClCompile Include="core\render\gui\gui.cpp" />
     <ClCompile Include="core\render\gui\initialize.cpp" />
-    <ClCompile Include="core\render\gui\menu\local_visuals_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\projectiles_visuals_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\ragebot_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\settings_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\visuals_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\weapons_visuals_menu.cpp" />
     <ClCompile Include="core\render\render.cpp" />
     <ClCompile Include="dependencies\imgui\imgui.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
@@ -204,7 +209,11 @@
     <ClInclude Include="core\features\features.hpp" />
     <ClInclude Include="core\features\setup\animations.h" />
     <ClInclude Include="core\features\visuals\modulation\modulation.h" />
+    <ClInclude Include="core\features\visuals\player\visual_player.h" />
+    <ClInclude Include="core\features\visuals\projectile\visual_projectile.h" />
     <ClInclude Include="core\features\visuals\visuals.h" />
+    <ClInclude Include="core\features\visuals\visual_entities.h" />
+    <ClInclude Include="core\features\visuals\weapon\visual_weapon.h" />
     <ClInclude Include="core\helpers\checksum_crc.h" />
     <ClInclude Include="core\helpers\checksum_md5.h" />
     <ClInclude Include="core\helpers\helpers.h" />
@@ -250,6 +259,7 @@
     <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="dependencies\interfaces\c_csplayerresource.h" />
     <ClInclude Include="dependencies\interfaces\engine_sounds.hpp" />
+    <ClInclude Include="dependencies\interfaces\iv_render_beams.hpp" />
     <ClInclude Include="dependencies\interfaces\i_hud_chat.hpp" />
     <ClInclude Include="dependencies\interfaces\i_memalloc.h" />
     <ClInclude Include="dependencies\interfaces\i_weapon_system.hpp" />
@@ -307,7 +317,9 @@
     <ClInclude Include="source-sdk\classes\collideable.hpp" />
     <ClInclude Include="source-sdk\classes\convar.hpp" />
     <ClInclude Include="source-sdk\classes\c_usercmd.hpp" />
+    <ClInclude Include="source-sdk\classes\ehandle.h" />
     <ClInclude Include="source-sdk\classes\entities.hpp" />
+    <ClInclude Include="source-sdk\classes\ihandleentity.h" />
     <ClInclude Include="source-sdk\classes\net_channel.hpp" />
     <ClInclude Include="source-sdk\classes\recv_props.hpp" />
     <ClInclude Include="source-sdk\classes\studio.hpp" />

@@ -40,7 +40,7 @@ namespace overlay {
 	void initialize ( IDirect3DDevice9 * device );
 	void __stdcall end_present ( IDirect3DDevice9 * /*device*/ );
 	void __stdcall pre_render ( IDirect3DDevice9 * device );
-	void present ( IDirect3DDevice9 * device );
+	void present ( IDirect3DDevice9 * device, ImDrawList * render );
 	void text ( ImVec2 pos, std::wstring string, ImColor color, std::shared_ptr<c_font> & font, uint8_t flags );
 	void invalidate_device_objects ( );
 	void init_device_ojects ( IDirect3DDevice9 * dev );

@@ -2915,6 +2915,8 @@ namespace overlay {
 			ui::font_menu_icons = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\undefeated.ttf", 50.0f );
 			ui::menuicons = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\menuicons.ttf", 50.0f );
 			visuals::weapon_font = ImGui::GetIO ( ).Fonts->AddFontFromMemoryTTF ( weaponicons.data ( ), weaponicons.size ( ), 20 );
+			ui::weapon_icons = ImGui::GetIO ( ).Fonts->AddFontFromMemoryTTF ( weaponicons.data ( ), weaponicons.size ( ), 20 );
+
 			visuals::render = ImGui::GetBackgroundDrawList ( );
 			
 	         D3DXCreateFont ( device, 15, 0, FW_REGULAR, 1, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH, "Verdana", &visuals::fonts [ visuals::fonts::ESP ] );
@@ -2952,11 +2954,11 @@ namespace overlay {
 
 
 
-	void present ( IDirect3DDevice9 * device ) {
+	void present ( IDirect3DDevice9 * device, ImDrawList * render ) {
 		if ( initialized ) {
 
 	
-			ui::render ( );
+			ui::render ( render );
 
 	
 		}

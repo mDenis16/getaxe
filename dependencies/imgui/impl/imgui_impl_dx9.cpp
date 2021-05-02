@@ -11,10 +11,7 @@
 
 // CHANGELOG
 // (minor and older changes stripped away, please see git history for details)
-//  2021-04-23: DirectX9: Explicitly setting up more graphics states to increase compatibility with unusual non-default states.
-//  2021-03-18: DirectX9: Calling IDirect3DStateBlock9::Capture() after CreateStateBlock() as a workaround for state restoring issues (see #3857).
-//  2021-03-03: DirectX9: Added support for IMGUI_USE_BGRA_PACKED_COLOR in user's imconfig file.
-//  2021-02-18: DirectX9: Change blending equation to preserve alpha in output buffer.
+//  2020-04-24: DirectX9: Add support for updating font textures.
 //  2019-05-29: DirectX9: Added support for large mesh (64K+ vertices), enable ImGuiBackendFlags_RendererHasVtxOffset flag.
 //  2019-04-30: DirectX9: Added support for special ImDrawCallback_ResetRenderState callback to reset render state.
 //  2019-03-29: Misc: Fixed erroneous assert in ImGui_ImplDX9_InvalidateDeviceObjects().
@@ -26,17 +23,21 @@
 //  2018-02-16: Misc: Obsoleted the io.RenderDrawListsFn callback and exposed ImGui_ImplDX9_RenderDrawData() in the .h file so you can call it yourself.
 //  2018-02-06: Misc: Removed call to ImGui::Shutdown() which is not available from 1.60 WIP, user needs to call CreateContext/DestroyContext themselves.
 
-#include "..\imgui.h"
+#include "../imgui.h"
 #include "imgui_impl_dx9.h"
 
 // DirectX
 #include <d3d9.h>
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
 
 // DirectX data
 static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
 static LPDIRECT3DVERTEXBUFFER9  g_pVB = NULL;
 static LPDIRECT3DINDEXBUFFER9   g_pIB = NULL;
 static LPDIRECT3DTEXTURE9       g_FontTexture = NULL;
+static int                      g_FontTextureWidth = 0;
+static int                      g_FontTextureHeight = 0;
 static int                      g_VertexBufferSize = 5000, g_IndexBufferSize = 10000;
 
 struct CUSTOMVERTEX
@@ -46,12 +47,6 @@ struct CUSTOMVERTEX
     float    uv[2];
 };
 #define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)
-
-#ifdef IMGUI_USE_BGRA_PACKED_COLOR
-#define IMGUI_COL_TO_DX9_ARGB(_COL)     (_COL)
-#else
-#define IMGUI_COL_TO_DX9_ARGB(_COL)     (((_COL) & 0xFF00FF00) | (((_COL) & 0xFF0000) >> 16) | (((_COL) & 0xFF) << 16))
-#endif
 
 static void ImGui_ImplDX9_SetupRenderState(ImDrawData* draw_data)
 {
@@ -67,26 +62,17 @@ static void ImGui_ImplDX9_SetupRenderState(ImDrawData* draw_data)
     // Setup render state: fixed-pipeline, alpha-blending, no face culling, no depth testing, shade mode (for gradient)
     g_pd3dDevice->SetPixelShader(NULL);
     g_pd3dDevice->SetVertexShader(NULL);
-    g_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-    g_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
-    g_pd3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-    g_pd3dDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
     g_pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+    g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
     g_pd3dDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
     g_pd3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+    g_pd3dDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
     g_pd3dDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
     g_pd3dDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
     g_pd3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-    g_pd3dDevice->SetRenderState(D3DRS_SEPARATEALPHABLENDENABLE, TRUE);
-    g_pd3dDevice->SetRenderState(D3DRS_SRCBLENDALPHA, D3DBLEND_ONE);
-    g_pd3dDevice->SetRenderState(D3DRS_DESTBLENDALPHA, D3DBLEND_INVSRCALPHA);
     g_pd3dDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+    g_pd3dDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
     g_pd3dDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
-    g_pd3dDevice->SetRenderState(D3DRS_RANGEFOGENABLE, FALSE);
-    g_pd3dDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
-    g_pd3dDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
-    g_pd3dDevice->SetRenderState(D3DRS_CLIPPING, TRUE);
-    g_pd3dDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
     g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
     g_pd3dDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
@@ -145,11 +131,6 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
     IDirect3DStateBlock9* d3d9_state_block = NULL;
     if (g_pd3dDevice->CreateStateBlock(D3DSBT_ALL, &d3d9_state_block) < 0)
         return;
-    if (d3d9_state_block->Capture() < 0)
-    {
-        d3d9_state_block->Release();
-        return;
-    }
 
     // Backup the DX9 transform (DX9 documentation suggests that it is included in the StateBlock but it doesn't appear to)
     D3DMATRIX last_world, last_view, last_projection;
@@ -158,7 +139,7 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
     g_pd3dDevice->GetTransform(D3DTS_PROJECTION, &last_projection);
 
     // Copy and convert all vertices into a single contiguous buffer, convert colors to DX9 default format.
-    // FIXME-OPT: This is a minor waste of resource, the ideal is to use imconfig.h and
+    // FIXME-OPT: This is a waste of resource, the ideal is to use imconfig.h and
     //  1) to avoid repacking colors:   #define IMGUI_USE_BGRA_PACKED_COLOR
     //  2) to avoid repacking vertices: #define IMGUI_OVERRIDE_DRAWVERT_STRUCT_LAYOUT struct ImDrawVert { ImVec2 pos; float z; ImU32 col; ImVec2 uv; }
     CUSTOMVERTEX* vtx_dst;
@@ -176,7 +157,7 @@ void ImGui_ImplDX9_RenderDrawData(ImDrawData* draw_data)
             vtx_dst->pos[0] = vtx_src->pos.x;
             vtx_dst->pos[1] = vtx_src->pos.y;
             vtx_dst->pos[2] = 0.0f;
-            vtx_dst->col = IMGUI_COL_TO_DX9_ARGB(vtx_src->col);
+            vtx_dst->col = (vtx_src->col & 0xFF00FF00) | ((vtx_src->col & 0xFF0000) >> 16) | ((vtx_src->col & 0xFF) << 16);     // RGBA --> ARGB for DirectX9
             vtx_dst->uv[0] = vtx_src->uv.x;
             vtx_dst->uv[1] = vtx_src->uv.y;
             vtx_dst++;
@@ -243,6 +224,7 @@ bool ImGui_ImplDX9_Init(IDirect3DDevice9* device)
     ImGuiIO& io = ImGui::GetIO();
     io.BackendRendererName = "imgui_impl_dx9";
     io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;  // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
+    io.BackendFlags |= ImGuiBackendFlags_RendererHasTexReload;  // We support font atlas texture reloading (IsDirty() check in ImGui_ImplDX11_NewFrame)
 
     g_pd3dDevice = device;
     g_pd3dDevice->AddRef();
@@ -255,43 +237,74 @@ void ImGui_ImplDX9_Shutdown()
     if (g_pd3dDevice) { g_pd3dDevice->Release(); g_pd3dDevice = NULL; }
 }
 
-static bool ImGui_ImplDX9_CreateFontsTexture()
+static bool ImGui_ImplDX9_UpdateFontsTexture()
 {
-    // Build texture atlas
     ImGuiIO& io = ImGui::GetIO();
+   
+    // Build texture atlas
     unsigned char* pixels;
-    int width, height, bytes_per_pixel;
-    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, &bytes_per_pixel);
-
-    // Convert RGBA32 to BGRA32 (because RGBA32 is not well supported by DX9 devices)
-#ifndef IMGUI_USE_BGRA_PACKED_COLOR
-    if (io.Fonts->TexPixelsUseColors)
+    int width, height;
+    int dirty_x, dirty_y, dirty_width, dirty_height;
+    io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height, NULL, &dirty_x, &dirty_y, &dirty_width, &dirty_height);
+    
+    if ((!g_FontTexture) || (g_FontTextureWidth != width) || (g_FontTextureHeight != height))
     {
-        ImU32* dst_start = (ImU32*)ImGui::MemAlloc(width * height * bytes_per_pixel);
-        for (ImU32* src = (ImU32*)pixels, *dst = dst_start, *dst_end = dst_start + width * height; dst < dst_end; src++, dst++)
-            *dst = IMGUI_COL_TO_DX9_ARGB(*src);
-        pixels = (unsigned char*)dst_start;
+        // (Re-)create texture
+        if (g_FontTexture)
+            g_FontTexture->Release();
+        io.Fonts->TexID = NULL;
+        g_FontTexture = NULL;
+        if (g_pd3dDevice->CreateTexture(width, height, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &g_FontTexture, NULL) < 0)
+            return false;
+
+        // Store size
+        g_FontTextureWidth = width;
+        g_FontTextureHeight = height;
+
+        // Store our identifier
+        io.Fonts->SetTexID((ImTextureID)g_FontTexture);
+
+        // If we recreated the texture we need to upload everything
+        dirty_x = dirty_y = 0;
+        dirty_width = width;
+        dirty_height = height;
     }
-#endif
 
-    // Upload texture to graphics system
-    g_FontTexture = NULL;
-    if (g_pd3dDevice->CreateTexture(width, height, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &g_FontTexture, NULL) < 0)
-        return false;
-    D3DLOCKED_RECT tex_locked_rect;
-    if (g_FontTexture->LockRect(0, &tex_locked_rect, NULL, 0) != D3D_OK)
-        return false;
-    for (int y = 0; y < height; y++)
-        memcpy((unsigned char*)tex_locked_rect.pBits + tex_locked_rect.Pitch * y, pixels + (width * bytes_per_pixel) * y, (width * bytes_per_pixel));
-    g_FontTexture->UnlockRect(0);
+    if ((dirty_width > 0) && (dirty_height > 0))
+    {
+        // Upload the dirty region
 
-    // Store our identifier
-    io.Fonts->SetTexID((ImTextureID)g_FontTexture);
+        D3DLOCKED_RECT tex_locked_rect;
+        RECT dirty_rect;
+        dirty_rect.left = dirty_x;
+        dirty_rect.right = dirty_x + dirty_width;
+        dirty_rect.top = dirty_y;
+        dirty_rect.bottom = dirty_y + dirty_height;
+        if (g_FontTexture->LockRect(0, &tex_locked_rect, &dirty_rect, 0) != D3D_OK)
+            return false;
 
-#ifndef IMGUI_USE_BGRA_PACKED_COLOR
-    if (io.Fonts->TexPixelsUseColors)
-        ImGui::MemFree(pixels);
-#endif
+        if ((dirty_x == 0) && (dirty_y == 0) && (dirty_width == width) && (dirty_height == height) && (tex_locked_rect.Pitch == (width * 4)))
+        {
+            memcpy(tex_locked_rect.pBits, pixels, width * height * 4); // Fast path for full image upload
+        }
+        else
+        {
+            // Sub-region upload
+            const int src_stride = width * 4;
+            const int dest_stride = tex_locked_rect.Pitch;
+            const int copy_bytes = dirty_width * 4; // Bytes to copy for each line
+            unsigned char* read_ptr = pixels + (dirty_x * 4) + (dirty_y * src_stride);
+            char* write_ptr = (char*)tex_locked_rect.pBits;
+
+            for (int y = 0; y < dirty_height; y++)
+            {
+                memcpy(write_ptr, read_ptr, copy_bytes);
+                write_ptr += dest_stride;
+                read_ptr += src_stride;
+            }
+        }
+        g_FontTexture->UnlockRect(0);
+    }
 
     return true;
 }
@@ -300,7 +313,7 @@ bool ImGui_ImplDX9_CreateDeviceObjects()
 {
     if (!g_pd3dDevice)
         return false;
-    if (!ImGui_ImplDX9_CreateFontsTexture())
+    if (!ImGui_ImplDX9_UpdateFontsTexture())
         return false;
     return true;
 }
@@ -316,6 +329,11 @@ void ImGui_ImplDX9_InvalidateDeviceObjects()
 
 void ImGui_ImplDX9_NewFrame()
 {
+    ImGuiIO& io = ImGui::GetIO();
+
     if (!g_FontTexture)
         ImGui_ImplDX9_CreateDeviceObjects();
+
+    if (io.Fonts->IsDirty())
+        ImGui_ImplDX9_UpdateFontsTexture(); // We ignore the return value because if it fails that almost certainly means the device is invalid, and the font will get reinitialised by ImGui_ImplDX9_CreateDeviceObjects() later
 }

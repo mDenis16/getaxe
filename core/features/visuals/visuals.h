@@ -1,122 +1,17 @@
-
+#pragma once
+#include "../visuals/visual_entities.h"
+#include "../visuals/player/visual_player.h"
+#include "../visuals/projectile/visual_projectile.h"
+#include "../visuals/weapon/visual_weapon.h"
+#include "../../../dependencies/interfaces/i_client_entity_list.hpp"
 
 namespace visuals {
 
-
-
-	class box {
-	public:
-	
-		float x, y, w, h;
-		ImVec2 top_center;
-		ImVec2 bottom_center;
-		ImVec2 mins, maxs;
-
-		box ( ) = default;
-		box ( float x, float y, float w, float h ) {
-			this->x = x;
-			this->y = y;
-			this->w = w;
-			this->h = h;
-		}
-	};
-	
-	class visual_data {
-	public:
-		box box_data;
-		entity_t * ent;
-		bool ready = false;
-		float distance = 0.f;
-		int index;
-
-		bool on_screen;
-		bool valid;
-		bool dormant;
-
-
 	
 
 
-		float last_seen_time = 0.f;
-		vec3_t origin, mins, maxs;
-	
-		bool calculate_box ( );
 
-		void virtual render_name ( ) = 0;
-		void virtual render_box ( ) = 0;
-		void virtual render_flags ( ) = 0;
-		void virtual render_ammo ( ) = 0;
-		void virtual render_health ( ) = 0;
-		void virtual render_weapon ( ) = 0;
-		void virtual render_entity ( ) = 0;
-		void virtual render_offscreen ( ) = 0;
-		void virtual queue_entity ( void* ent ) = 0;
-	};
 
-	struct bone_data {
-		vec3_t child;
-		vec3_t parent;
-	};
-	struct flag_struct {
-		ImColor color;
-		std::string flag;
-	};
-	class visual_player : public visual_data {
-	public:
-		std::string weapon_icon;
-		std::string weapon_name;
-		vec3_t barrel_start, barrel_end;
-
-		player_t * player;
-		int health;
-		bool alive;
-		bool enemy;
-		int type = 0;
-		int ammo = 0;
-		int money = 0;
-		bool taze = false;
-		bool kevlar = false;
-		bool helmet = false;
-		bool scoped = false;
-		bool defuser = false;
-		bool fake_duck = false;
-		int clip = 0;
-		int max_clip = 0;
-		float l1_cycle = 0.f;
-		int last_tick = 0;
-		int act = 0;
-		float l1_weight = 0.f;
-		std::vector<bone_data> bones;
-		std::vector<ImVec2> offscreen_points;
-		ImVec2 base_pos;
-		ImVec2 barrel_start_w2s, barrel_end_w2s;
-		ImVec2 animated_clip_mins;
-		ImVec2 animated_clip_maxs;
-		int last_flags_update_tickcount = 0;
-		bool never_seen = true;
-		bool in_animation = false;
-		bool bomb_carrier = false;
-		std::vector<flag_struct> flags_list;
-		float alpha = 255;
-		player_info_t player_info;
-		bool out_of_pov = false;
-		void render_name ( ) override;
-		void render_box ( ) override;
-		void render_flags ( ) override;
-		void render_ammo ( ) override;
-		void render_health ( ) override;
-		void render_weapon ( ) override;
-		void render_entity ( ) override;
-		void render_offscreen ( ) override;
-		void queue_entity ( void * entity ) override;
-		void render_skeleton ( );
-		void render_barrel ( );
-		void visibility_check ( );
-
-		void animate ( );
-
-		void handle_flags ( );
-	};
 
 
 	enum font_align {
@@ -125,8 +20,7 @@ namespace visuals {
 		font_right
 	};
 
-	void on_render ( );
-	void on_queue ( );
+
 
 	void primitive_string ( bool borderedl, ID3DXFont * font, float x, float y, ImColor _color, ImColor background, int orientation, const char * input, ... );
 	bool world_to_screen ( const vec3_t & origin, ImVec2 & screen );
@@ -142,6 +36,9 @@ namespace visuals {
 	};
 	inline std::array< ID3DXFont *, 4> fonts;
 	inline std::array< visual_player, 64> player_data;
+	inline std::array< visual_weapon_t, 64> weapon_data;
+	inline std::array< visual_projectile, 64> projectile_data;
+
 	inline IDirect3DDevice9 * device;
 	inline ImFont * esp_font;
 	inline ImFont * weapon_font;
@@ -206,4 +103,45 @@ namespace visuals {
 	{ weapon_incgrenade, 'p' },
 	{ weapon_c4, 'q' },
 	};
+
+	namespace grenade_prediction {
+
+
+		void Simulate ( grenade_t * grenade, std::vector<vec3_t> & path, float elasticty, int type, vec3_t * vecSrc );
+		int Step ( grenade_t * grenade, vec3_t & vecSrc, vec3_t & vecThrow, float elasticity, int tick, float interval, int type );
+		int Step ( grenade_t * grenade, vec3_t & vecSrc, vec3_t & vecThrow, int tick, float interval, int type );
+		bool CheckDetonate ( grenade_t * grenade, const vec3_t & vecThrow, const trace_t & tr, int tick, float interval, int type );
+		void TraceHull ( grenade_t * grenade, vec3_t & src, vec3_t & end, trace_t & tr );
+		void AddGravityMove ( grenade_t * grenade, vec3_t & move, vec3_t & vel, float frametime, bool onground );
+		void PushEntity ( grenade_t * grenade, vec3_t & src, const vec3_t & move, trace_t & tr );
+		void ResolveFlyCollisionCustom ( grenade_t * grenade, trace_t & tr, float elasticity, vec3_t & vecVelocity, float interval );
+
+		int PhysicsClipVelocity ( grenade_t * grenade, const vec3_t & in, const vec3_t & normal, vec3_t & out, float overbounce );
+
+	}
+
+
+	class c_handler : public i_client_entity_listener {
+	public:
+		void on_entity_created ( void * ent ) override;
+		void on_entity_deleted ( void * ent ) override;
+
+		void init ( );
+		void remove ( );
+
+		void on_update ( );
+
+		void on_render ( );
+
+		void local_player ( );
+		void intialization ( );
+
+		std::vector<visual_data *> entity_list;
+
+		//std::array< container_t, 64 > m_track;
+	};
+
+	extern c_handler * handler;
+
+
 }

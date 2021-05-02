@@ -71,7 +71,7 @@ namespace modulation {
 		/* never trust win32 memory management inside game hooks */
 
 	
-		materials.at ( mat_type::regular ).mat_address = interfaces::material_system->find_material ( "material_textured", NULL );
+		materials.at ( mat_type::regular ).mat_address = interfaces::material_system->find_material ( "material_textured", NULL ); 
 		materials.at ( mat_type::flat ).mat_address = interfaces::material_system->find_material ( "material_flat", NULL );
 		materials.at ( mat_type::reflective ).mat_address = interfaces::material_system->find_material ( "material_reflective", NULL );
 		materials.at ( mat_type::glow ).mat_address = interfaces::material_system->find_material ( "overlayglow", NULL );

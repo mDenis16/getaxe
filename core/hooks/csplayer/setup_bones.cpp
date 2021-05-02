@@ -33,10 +33,10 @@ namespace hooks::callback {
 
 
 
-		if ( anim.update_bones || !e->m_CachedBoneData ( ).Count ( ) )
+		if ( anim.update_bones || !e->m_CachedBoneData ( ).count ( ) )
 			result = setup_bones_original ( ecx, bone_to_world_out, max_bones, bone_mask, curtime );
 		else if ( bone_to_world_out && max_bones != -1 )
-			memcpy ( bone_to_world_out, e->m_CachedBoneData ( ).Base ( ), e->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
+			memcpy ( bone_to_world_out, e->m_CachedBoneData ( ).base ( ), e->m_CachedBoneData ( ).count ( ) * sizeof ( matrix3x4_t ) );
 
 
 

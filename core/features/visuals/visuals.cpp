@@ -1,10 +1,16 @@
 #include "../features.hpp"
 
+
 namespace visuals {
+
+
+
 	void initialize ( ) {
-		
+
 
 	}
+	
+
 	int string_height ( ID3DXFont * font, const char * string ) {
 		RECT rect = RECT ( );
 		font->DrawTextA ( nullptr, string, strlen ( string ), &rect, DT_CALCRECT, D3DCOLOR_RGBA ( 0, 0, 0, 0 ) );
@@ -27,7 +33,7 @@ namespace visuals {
 		vsprintf_s ( szBuffer, input, ( char * ) &input + _INTSIZEOF ( input ) );
 
 		RECT rect;
-		
+
 
 		switch ( orientation ) {
 		case font_left:
@@ -43,7 +49,7 @@ namespace visuals {
 				font->DrawTextA ( nullptr, szBuffer, -1, &rect, DT_LEFT | DT_NOCLIP, b_color );
 			}
 			SetRect ( &rect, x, y, x, y );
-			font->DrawTextA ( nullptr, szBuffer, -1, &rect, DT_LEFT | DT_NOCLIP, D3DCOLOR_COLORVALUE ( _color.Value.x, _color.Value.y, _color.Value.z,_color.Value.w) );
+			font->DrawTextA ( nullptr, szBuffer, -1, &rect, DT_LEFT | DT_NOCLIP, D3DCOLOR_COLORVALUE ( _color.Value.x, _color.Value.y, _color.Value.z, _color.Value.w ) );
 		} break;
 		case font_center:
 		{
@@ -143,11 +149,11 @@ namespace visuals {
 		return false;
 
 	}
-	bool visual_data::calculate_box(  ) {
-		matrix3x4_t & tran_frame = ent->coord_frame ( );
+	bool visual_data::calculate_box ( ) {
+		matrix3x4_t & tran_frame = entity->coord_frame ( );
 
-		const vec3_t min = ent->mins ( );
-		const vec3_t max = ent->maxs ( );
+		const vec3_t min = entity->mins ( );
+		const vec3_t max = entity->maxs ( );
 
 		ImVec2 screen_boxes [ 8 ];
 
@@ -207,9 +213,12 @@ namespace visuals {
 		return true;
 	}
 
-	void on_render ( ) {
+
+
+
+	/*void on_render ( ) {
 		initialize ( );
-		
+
 		render = ImGui::GetBackgroundDrawList ( );
 
 
@@ -219,34 +228,153 @@ namespace visuals {
 
 			auto & data = player_data.at ( i );
 
-			if ( !data.valid )
+			if ( !entity || !data.valid ) {
+				data.invalidate ( );
 				continue;
+			}
+
+			data.render_entity ( );
+
+		}
+	/*	const auto is_grenade = [ ] ( const int id ) {
+			return  id == 114 || id == 157 || id == 48 || id == 9 || id == 100 || id == 156;
+		};
+		auto curtime = interfaces::globals->cur_time;
+		for ( size_t i = 0; i < 63; i++ ) {
+
+
+
+			auto & data = weapon_data.at ( i );
+
+			if ( data.index == 0 )
+				continue;
+
+			auto weapon = static_cast< weapon_t * >( interfaces::entity_list->get_client_entity ( data.index ) );
+			if ( weapon && data.valid ) {
+				bool is_viable = weapon->client_class ( )->class_id >= CWeaponAug && weapon->client_class ( )->class_id <= CWeaponXM1014 || weapon->client_class ( )->class_id == CAK47 || weapon->client_class ( )->class_id == CDEagle;
+
+				if ( !is_viable || weapon->origin ( ) == vec3_t ( 0, 0, 0 ) || weapon->owner_handle ( ) != -1 || curtime >= data.last_seen_time ) {
+					data.valid = false;
+					data.index = 0;
+					data.weapon = nullptr;
+					data.on_screen = false;
+					continue;
+				}
+			}
+
+			if ( !data.valid || !weapon ) {
+				data.valid = false;
+				data.valid = false;
+				data.index = 0;
+				data.weapon = nullptr;
+				continue;
+			}
 
 			data.render_entity ( );
 
 		}
 
-	}
+		/*for ( size_t i = 0; i < 63; i++ ) {
 
-	void on_queue ( ) {
-		for ( size_t i = 1; i < interfaces::globals->max_clients; i++ ) {
-			
-			auto entity = static_cast<player_t*>(interfaces::entity_list->get_client_entity ( i ));
-			auto & data = player_data.at ( i );
 
-			if ( !entity || !entity->is_alive() ) {
-				if ( data.valid )
-					data.valid = false;
 
-				data.never_seen = true;
-				data.ent = nullptr;
-				data.player = nullptr;
+			auto & data = projectile_data.at ( i );
 
+			if ( !data.valid || data.index == 0 )
 				continue;
-			}
 
-			data.queue_entity ( entity );
-		}
+			auto projectile = static_cast< entity_t * >( interfaces::entity_list->get_client_entity ( data.index ) );
+
+
+			data.render_entity ( );
+
+		}*/
 	}
-	
-}
+
+	/*void on_queue ( ) {
+
+		/*int item_index = 0;
+		
+		for ( size_t i = 1; i < interfaces::entity_list->get_highest_index ( ); i++ ) {
+
+			auto entity = static_cast< entity_t * >( interfaces::entity_list->get_client_entity ( i ) );
+
+			if ( !entity )
+				continue;
+
+
+			auto client_class = entity->client_class ( );
+
+			if ( !client_class )
+				continue;
+
+			switch ( client_class->class_id ) {
+			case class_ids::CCSPlayer:
+			{
+				auto player = reinterpret_cast< player_t * >( entity );
+				auto & data = player_data [ i ];
+				if ( !player || !player->is_alive ( ) ) {
+					if ( data.valid )
+						data.valid = false;
+
+					data.never_seen = true;
+					data.ent = nullptr;
+					data.player = nullptr;
+
+					continue;
+				}
+
+				data.queue_entity ( entity );
+			}
+			break;
+			default:
+			{
+				auto weapon = reinterpret_cast< entity_t * >( entity );
+
+				const auto is_grenade = [ ] ( const int id ) {
+					return  id == 114 || id == 157 || id == 48 || id == 9 || id == 100 || id == 156;
+				};
+
+				if ( weapon->origin ( ) == vec3_t ( 0, 0, 0 ) )
+					continue;
+
+				if ( weapon->client_class ( )->class_id >= CWeaponAug && weapon->client_class ( )->class_id <= CWeaponXM1014 || weapon->client_class ( )->class_id == CAK47 || weapon->client_class ( )->class_id == CDEagle ) {
+
+
+					if ( item_index > 63 ) /*already filled all map data*/ //{
+				/*		continue;
+					}
+
+					auto & data = world_data [ item_index ];
+
+					data.queue_entity ( weapon );
+					item_index++;
+				}
+				else if ( is_grenade ( weapon->client_class ( )->class_id )) {
+					
+					if ( item_index > 63 ) /*already filled all map data*/ //{
+				/*		continue;
+					}
+
+					auto & data =  static_cast< visual_projectile >(world_data [ item_index ]);
+
+					data.queue_entity ( weapon );
+					item_index++;
+
+					if ( data.valid && data.index != weapon->index ( ) ) {
+						data.reset ( );
+						continue;
+					}
+
+					data.queue_entity ( weapon );
+						
+						
+				}
+			}
+			break;
+
+			}
+			*/
+	//	}
+	//}
+//}

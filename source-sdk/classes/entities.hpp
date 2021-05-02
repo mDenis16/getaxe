@@ -186,23 +186,7 @@ struct RenderableInstance_t {
 	__forceinline RenderableInstance_t ( ) : m_alpha { 255ui8 } { }
 };
 
-class IHandleEntity {
-public:
-	virtual ~IHandleEntity ( ) { }
-	virtual void SetRefEHandle ( const void * handle ) = 0;
-	virtual const unsigned long & GetRefEHandle ( ) const = 0;
-};
 
-class IClientUnknown : public IHandleEntity {
-public:
-	virtual void * GetCollideable ( ) = 0;
-	virtual void * GetClientNetworkable ( ) = 0;
-	virtual void * GetClientRenderable ( ) = 0;
-	virtual void * GetIClientEntity ( ) = 0;
-	virtual void * GetBaseEntity ( ) = 0;
-	virtual void * GetClientThinkable ( ) = 0;
-	virtual void * GetClientAlphaProperty ( ) = 0;
-};
 
 class entity_t {
 public:
@@ -212,6 +196,29 @@ public:
 	i_client_renderable * get_renderable_virtual ( void ) {
 		return ( i_client_renderable * ) ( ( uintptr_t ) this + 0x4 );
 	}
+
+	bool IsStandable ( )  {
+		if ( this->collideable()->GetSolidFlags ( ) & FSOLID_NOT_STANDABLE )
+			return false;
+
+		if ( this->collideable ( )->GetSolid ( ) == SOLID_BSP || this->collideable ( )->GetSolid ( ) == SOLID_VPHYSICS || this->collideable ( )->GetSolid ( ) == SOLID_BBOX )
+			return true;
+
+		return IsBSPModel ( );
+	}
+
+	bool IsBSPModel ( )  {
+		if ( this->collideable ( )->GetSolid ( ) == SOLID_BSP )
+			return true;
+
+	
+		if ( this->collideable ( )->GetSolid ( ) == SOLID_VPHYSICS && interfaces::model_info->get_model_type ( this->model() ) == mod_brush )
+			return true;
+
+		return false;
+	}
+
+
 	matrix3x4_t & coord_frame ( ) {
 		const static auto m_CollisionGroup = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseEntity" ), fnv::hash ( "m_CollisionGroup" ) );
 
@@ -221,9 +228,11 @@ public:
 	}
 
 	NETVAR ( "DT_BaseCSGrenadeProjectile", "m_vInitialVelocity", m_vInitialVelocity, vec3_t );
-
+	NETVAR ( "DT_BaseEntity", "m_iHealth", m_iHealth, int );
 	NETVAR ( "DT_BaseEntity", "m_vecMins", mins, vec3_t );
 	NETVAR ( "DT_BaseEntity", "m_vecMaxs", maxs, vec3_t );
+	NETVAR ( "DT_BaseEntity", "m_vecBaseVelocity", m_vecBaseVelocity, vec3_t );
+	
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_bDidSmokeEffect", m_bDidSmokeEffect, bool );
 	NETVAR ( "DT_CSRagdoll", "m_hPlayer", m_hPlayer, void* );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", m_nSmokeEffectTickBegin, int );
@@ -290,7 +299,7 @@ public:
 	}
 
 
-	__forceinline IClientUnknown * GetIClientUnknown ( ) {
+	/*__forceinline IClientUnknown * GetIClientUnknown ( ) {
 		return utilities::get_virtual_function< IClientUnknown * ( __thiscall * )( void * ) > ( networkable ( ), 0 )( networkable ( ) );
 	}
 	__forceinline unsigned long GetRefEHandle ( ) {
@@ -298,7 +307,7 @@ public:
 			return NULL;
 
 		return this->GetIClientUnknown ( )->GetRefEHandle ( );
-	}
+	}*/
 	model_t * model ( ) {
 		using original_fn = model_t * ( __thiscall * )( void * );
 		return ( *( original_fn ** ) animating ( ) ) [ 8 ] ( animating ( ) );
@@ -362,6 +371,9 @@ public:
 	NETVAR ( "DT_BaseEntity", "m_flSimulationTime", simulation_time, float );
 	OFFSET ( float, m_flVelocityModifier, 0xA38C );
 	NETVAR ( "DT_BaseEntity", "m_vecOrigin", origin, vec3_t );
+
+	NETVAR ( "DT_BaseEntity", "m_vecVelocity[0]", vec_velocity, vec3_t );
+
 	NETVAR ( "DT_BasePlayer", "m_vecViewOffset[0]", view_offset, vec3_t );
 	NETVAR ( "DT_CSPlayer", "m_iTeamNum", team, int );
 	NETVAR ( "DT_BaseEntity", "m_bSpotted", spotted, bool );
@@ -405,6 +417,8 @@ public:
 	NETVAR ( "CWeaponCSBase", "m_fLastShotTime", last_shot_time, float );
 	NETVAR ( "DT_BaseCSGrenade", "m_fThrowTime", throw_time, float );
 	NETVAR ( "DT_BaseCSGrenade", "m_bPinPulled", pin_pulled, bool );
+	NETVAR ( "CBaseEntity", "m_hOwnerEntity", h_prev_owner, uintptr_t );
+
 	bool is_non_aim ( ) {
 		if ( !this ) //-V704
 			return true;
@@ -642,8 +656,9 @@ public:
 class grenade_t : public entity_t {
 public:
 	NETVAR ( "DT_BaseGrenade", "m_hThrower", thrower, int );
-
-
+	NETVAR ( "DT_BaseGrenade", "m_vecVelocity", velocity, vec3_t );
+	NETVAR ( "DT_BaseEntity", "m_flElasticity", elasticty, float );
+	
 };
 
 class player_t : public entity_t {
@@ -700,9 +715,9 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_nNextThinkTick", m_nNextThinkTick, int )
 	NETVAR ( "DT_BaseEntity", "m_fEffects", m_fEffects, int );
 	
-	CUtlVector <matrix3x4_t> & m_CachedBoneData ( ) {
+	c_utl_vector <matrix3x4_t> & m_CachedBoneData ( ) {
 		static auto m_CachedBoneData = *( DWORD * ) ( utilities::pattern_scan (  ( "client.dll" ),  ( "FF B7 ?? ?? ?? ?? 52" ) ) + 0x2 ) + 0x4;
-		return *( CUtlVector <matrix3x4_t> * )( uintptr_t ( this ) + m_CachedBoneData );
+		return *( c_utl_vector <matrix3x4_t> * )( uintptr_t ( this ) + m_CachedBoneData );
 	}
 	POFFSET ( get_bone_accessor, CBoneAccessor, 0x26A8 )
 	
@@ -764,14 +779,14 @@ public:
 		return ( UINT * ) ( ( uintptr_t ) this + ( netvar_manager::get_net_var ( fnv::hash ( "DT_CSPlayer" ), fnv::hash ( "m_hMyWeapons" ) ) ) );
 	}
 
-	CUtlVector<matrix3x4_t> & GetBoneCache ( ) {
+	c_utl_vector<matrix3x4_t> & GetBoneCache ( ) {
 		static auto m_CachedBoneData = *( DWORD * ) ( utilities::pattern_scan ("client.dll",
 			"FF B7 ?? ?? ?? ?? 52" ) + 0x2 ) + 0x4;
-		return *( CUtlVector<matrix3x4_t> * )( uintptr_t ( this ) + m_CachedBoneData );
+		return *( c_utl_vector<matrix3x4_t> * )( uintptr_t ( this ) + m_CachedBoneData );
 	}
 	void SetBoneCache ( matrix3x4_t * m ) {
 		auto& cache = GetBoneCache ( );
-		memcpy ( cache.Base ( ), m, sizeof ( matrix3x4_t ) * cache.Count ( ) );
+		memcpy ( cache.base ( ), m, sizeof ( matrix3x4_t ) * cache.count ( ) );
 	}
 
 	void modify_eye_pos ( anim_state * animstate, vec3_t * pos ) {
@@ -899,7 +914,7 @@ public:
 		if ( !this->is_enemy ( ) )
 			return false;
 
-		if ( this->client_class ( )->class_id != class_ids::cs_player )
+		if ( this->client_class ( )->class_id != class_ids::CCSPlayer )
 			return false;
 
 		if ( this == csgo::local_player )
@@ -999,7 +1014,7 @@ public:
 			return vec3_t ( );
 
 		if ( bone_matrix == nullptr )
-			bone_matrix = this->m_CachedBoneData ( ).Base ( );
+			bone_matrix = this->m_CachedBoneData ( ).base ( );
 
 		if ( !bone_matrix )
 			return vec3_t ( );
@@ -1017,10 +1032,10 @@ public:
 			return vec3_t ( );
 
 		if ( bone_matrix == nullptr ) {
-			if ( !this->m_CachedBoneData ( ).m_Size )
+			if ( !this->m_CachedBoneData ( ).count() )
 				return vec3_t ( );
 			bone_matrix = new matrix3x4_t [ 128 ];
-			memcpy ( bone_matrix, this->m_CachedBoneData ( ).Base ( ), this->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
+			memcpy ( bone_matrix, this->m_CachedBoneData ( ).base ( ), this->m_CachedBoneData ( ).count ( ) * sizeof ( matrix3x4_t ) );
 		}
 
 		if ( !bone_matrix )
@@ -1054,7 +1069,7 @@ public:
 			return vec3_t ( );
 
 		if ( !bone_matrix ) {
-			memcpy ( bone_matrix, this->m_CachedBoneData ( ).Base ( ), this->m_CachedBoneData ( ).Count ( ) * sizeof ( matrix3x4_t ) );
+			memcpy ( bone_matrix, this->m_CachedBoneData ( ).base ( ), this->m_CachedBoneData ( ).count ( ) * sizeof ( matrix3x4_t ) );
 		}
 
 		if ( !bone_matrix )

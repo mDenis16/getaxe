@@ -8,6 +8,10 @@ public:
 		using original_fn = model_t * (__thiscall*)(iv_model_info*, int);
 		return (*(original_fn * *)this)[1](this, index);
 	}
+	int get_model_type ( model_t* model ) {
+		using original_fn =  int ( __thiscall * )( iv_model_info *, model_t * );
+		return ( *( original_fn ** ) this ) [ 7 ] ( this, model );
+	}
 	int get_model_index(const char* filename) {
 		using original_fn = int(__thiscall*)(iv_model_info*, const char*);
 		return (*(original_fn * *)this)[2](this, filename);

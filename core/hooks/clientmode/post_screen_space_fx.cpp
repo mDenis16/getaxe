@@ -7,8 +7,10 @@ namespace hooks::callback {
 		if ( !local_player::m_data.pointer )
 			return post_screen_space_fx_original ( ecx, setup );
 
-		visuals::on_queue ( );
-	
+		
+	   
+		modulation::run_glow ( );
+
 
 		return post_screen_space_fx_original ( ecx, setup );
 	}

@@ -20,11 +20,13 @@ unsigned long WINAPI initialize(void* instance) {
 //#if RELEASE
 	//connection::main ( );
 
-	try {
+	try { 
 		interfaces::initialize();
-		modulation::create_materials ( );
+		visuals::handler->init ( );
 		hooks::initialize();
 		hooks::create_hooks ( );
+		std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
+	
 	}
 
 	catch (const std::runtime_error & error) {
@@ -32,12 +34,19 @@ unsigned long WINAPI initialize(void* instance) {
 		FreeLibraryAndExitThread(static_cast<HMODULE>(instance), 0);
 	}
 
-	while (!GetAsyncKeyState(VK_END))
+	
+
+
+
+
+
+	while (!GetAsyncKeyState(VK_END) && !hooks::unloading )
 		std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
 
-	hooks::unloading = true;
+	std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
 
-	modulation::release_mem ( );
+	hooks::unloading = true;
+	std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
 
 	FreeLibraryAndExitThread(static_cast<HMODULE>(instance), 0);
 }
@@ -45,6 +54,7 @@ unsigned long WINAPI initialize(void* instance) {
 unsigned long WINAPI release() {
 
 	hooks::release();
+	visuals::handler->remove ( );
 	console::release();
 
 	return TRUE;

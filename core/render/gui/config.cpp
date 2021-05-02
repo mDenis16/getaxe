@@ -18,7 +18,7 @@ config_manager * cfg_manager = new config_manager ( );
 
 void config_manager::setup ( ) {
 
-
+	/*
 	setup_item ( &config.local.thirdperson, false, "local.thirdperson", &config.local.key_bind_thirdperson );
 	setup_item ( &config.local.thirdperson_distance, 0.f, "local.thirdperson.distance", &config.local.key_bind_thirdperson_distance );
 
@@ -32,12 +32,13 @@ void config_manager::setup ( ) {
 		setup_item ( &config.player_visual [ i ].bounding_box, false, per_player ( "visual.bounding_box" ), &config.player_visual [ i ].bound_box_keybind );
 		setup_item ( &config.player_visual [ i ].bound_box_color, ImColor(255,0,255), per_player ( "visual.bounding_box_color" ));
 
+
 		std::vector<int> d( FLAGS_MAX);
 	
 
 
 		setup_item_multiarray ( &config.player_visual [ i ].flags_input, &d, per_player ( "visual.flags_input" ), & config.player_visual [ i ].flags_keybind );
-	}
+	}*/
 	
 
 

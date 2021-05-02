@@ -1,15 +1,19 @@
-#include "../features.hpp"
-#include "../../../dependencies/imgui/imgui.h"
+#pragma once
 
-#include "../../../dependencies/imgui/imgui_internal.h"
-#include "../../render/gui/gui.h"
+#include "../../../../dependencies/imgui/imgui.h"
 
+#include "../../../../dependencies/imgui/imgui_internal.h"
+#include "../../../render/gui/gui.h"
+
+#include "../../features.hpp"
 
 namespace visuals {
 
 	void visual_player::render_name ( ) {
 
-		auto & cfg = config.player_visual [ type ];
+
+
+
 		std::string print ( player_info.fakeplayer ? std::string ( "bot " ).append ( player_info.name ).c_str ( ) : player_info.name );
 
 		std::transform ( print.begin ( ), print.end ( ), print.begin ( ), ::tolower );
@@ -17,19 +21,19 @@ namespace visuals {
 		//primitive_string ( true, fonts [ ESP ], box_data.top_center.x, box_data.top_center.y - 15.f, config.player_visual [ type ].name_color, font_center, print.data ( ) );
 
 		float name_size = 0.f;
-		if ( cfg.dynamic_name_size ) {
+		if ( cfg->dynamic_name_size ) {
 			auto box_size = ( box_data.maxs.x - box_data.mins.x );
 
 
-			name_size = box_size / cfg.name_size;
+			name_size = box_size / cfg->name_size;
 
 		}
 
-		if ( name_size < cfg.name_size - 2 )
-			name_size = cfg.name_size - 2;
+		if ( name_size < cfg->name_size - 2 )
+			name_size = cfg->name_size - 2;
 
 
-		auto text_size = ImGui::CalcTextSize ( print.c_str ( ), cfg.dynamic_name_size ? name_size : cfg.name_size, visuals::esp_font );
+		auto text_size = ImGui::CalcTextSize ( print.c_str ( ), cfg->dynamic_name_size ? name_size : cfg->name_size, visuals::esp_font );
 		auto center_x = box_data.top_center.x - text_size.x / 2.f;
 		auto center_y = box_data.top_center.y - 2.f - text_size.y;
 
@@ -38,49 +42,48 @@ namespace visuals {
 
 
 
-		/*if (cfg.shadow_name )
-		render->AddText ( visuals::esp_font, cfg.dynamic_name_size ? name_size : cfg.name_size, ImVec2 ( center_x + offset_x, center_y + offset_y ), ImColor(0,0, 0, 255), print.c_str ( ) );
-		
-		render->AddText ( visuals::esp_font, cfg.dynamic_name_size ? name_size : cfg.name_size, ImVec2( center_x, center_y ), config.player_visual [ type ].name_color, print.c_str ( ) );*/
-		if ( cfg.name_render_type == 1 ) {
+		/*if (cfg->shadow_name )
+		render->AddText ( visuals::esp_font, cfg->dynamic_name_size ? name_size : cfg->name_size, ImVec2 ( center_x + offset_x, center_y + offset_y ), ImColor(0,0, 0, 255), print.c_str ( ) );
+
+		render->AddText ( visuals::esp_font, cfg->dynamic_name_size ? name_size : cfg->name_size, ImVec2( center_x, center_y ), config.player_visual [ type ].name_color, print.c_str ( ) );*/
+		if ( cfg->name_render_type == 1 ) {
 			std::wstring wsTmp ( print.begin ( ), print.end ( ) );
 			int flags = c_font::centered_x;
-			
-			if ( cfg.shadow_name )
-			  flags |= c_font::drop_shadow;
+
+			if ( cfg->shadow_name )
+				flags |= c_font::drop_shadow;
 
 			overlay::text ( ImVec2 ( box_data.top_center.x, box_data.top_center.y - 16 ), wsTmp, config.player_visual [ type ].name_color, overlay::fonts_ns::esp, flags );
 		}
 		else {
-			if ( cfg.shadow_name )
-			render->AddText ( visuals::esp_font, cfg.dynamic_name_size ? name_size : cfg.name_size, ImVec2 ( center_x + offset_x, center_y + offset_y ), ImColor ( 0, 0, 0, 255 ), print.c_str ( ) );
+			if ( cfg->shadow_name )
+				render->AddText ( visuals::esp_font, cfg->dynamic_name_size ? name_size : cfg->name_size, ImVec2 ( center_x + offset_x, center_y + offset_y ), ImColor ( 0, 0, 0, 255 ), print.c_str ( ) );
 
-			render->AddText ( visuals::esp_font, cfg.dynamic_name_size ? name_size : cfg.name_size, ImVec2 ( center_x, center_y ), config.player_visual [ type ].name_color, print.c_str ( ) );
+			render->AddText ( visuals::esp_font, cfg->dynamic_name_size ? name_size : cfg->name_size, ImVec2 ( center_x, center_y ), config.player_visual [ type ].name_color, print.c_str ( ) );
 		}
 
 
 
 	}
 	void visual_player::render_box ( ) {
-		auto & cfg = config.player_visual [ type ];
 
 		if ( !player ) {
 			return;
 		}
-		
-		switch ( cfg.box_type ) {
+
+		switch ( cfg->box_type ) {
 		case NORMAL:
 		{
 
 			int old_flags = render->Flags;
 			render->Flags = ImDrawListFlags_AntiAliasedLines | ImDrawListFlags_AntiAliasedLines;
 
-			render->AddRect ( this->box_data.mins, this->box_data.maxs, ImColor ( 0, 0, 0, 125 ), cfg.bound_box_border_rounding, 0, cfg.bound_box_border_thickness );
-			render->AddRect ( this->box_data.mins, this->box_data.maxs, config.player_visual [ type ].bound_box_color, cfg.bound_box_border_rounding, 0, cfg.bound_box_thickness );
+			render->AddRect ( this->box_data.mins, this->box_data.maxs, ImColor ( 0, 0, 0, 125 ), cfg->bound_box_border_rounding, 0, cfg->bound_box_border_thickness );
+			render->AddRect ( this->box_data.mins, this->box_data.maxs, config.player_visual [ type ].bound_box_color, cfg->bound_box_border_rounding, 0, cfg->bound_box_thickness );
 
 			render->Flags = old_flags;
 		}
-			break;
+		break;
 		case CORNERED:
 		{
 			static auto RectangleD = [ ] ( float x, float y, float x1, float y1, ImColor color ) {
@@ -100,8 +103,8 @@ namespace visuals {
 			float w = box_data.w;
 
 			// top-left corner / ImColor
-			RectangleD ( x, y, x + squareLine, y + 1, cfg.bound_box_color );
-			RectangleD ( x, y, x + 1, y + squareLine, cfg.bound_box_color );
+			RectangleD ( x, y, x + squareLine, y + 1, cfg->bound_box_color );
+			RectangleD ( x, y, x + 1, y + squareLine, cfg->bound_box_color );
 
 			// top-left corner / outer outline
 			RectangleD ( x - 1, y - 1, x + squareLine, y, ImColor ( 10, 10, 10, 190 ) );
@@ -117,8 +120,8 @@ namespace visuals {
 
 
 			// top-right corner / ImColor
-			RectangleD ( x + w - squareLine, y, x + w, y + 1, cfg.bound_box_color );
-			RectangleD ( x + w - 1, y, x + w, y + squareLine, cfg.bound_box_color );
+			RectangleD ( x + w - squareLine, y, x + w, y + 1, cfg->bound_box_color );
+			RectangleD ( x + w - 1, y, x + w, y + squareLine, cfg->bound_box_color );
 
 			// top-right corner / outer outline
 			RectangleD ( x + w - squareLine, y - 1, x + w + 1, y, ImColor ( 10, 10, 10, 190 ) );
@@ -134,8 +137,8 @@ namespace visuals {
 
 
 			// bottom-left corner / ImColor
-			RectangleD ( x, y + h - 1, x + squareLine, y + h, cfg.bound_box_color );
-			RectangleD ( x, y + h - squareLine, x + 1, y + h, cfg.bound_box_color );
+			RectangleD ( x, y + h - 1, x + squareLine, y + h, cfg->bound_box_color );
+			RectangleD ( x, y + h - squareLine, x + 1, y + h, cfg->bound_box_color );
 
 			// bottom-left corner / outer outline
 			RectangleD ( x - 1, y + h, x + squareLine, y + h + 1, ImColor ( 10, 10, 10, 190 ) );
@@ -151,8 +154,8 @@ namespace visuals {
 
 
 			// bottom-right corner / ImColor
-			RectangleD ( x + w - squareLine, y + h - 1, x + w, y + h, cfg.bound_box_color );
-			RectangleD ( x + w - 1, y + h - squareLine, x + w, y + h, cfg.bound_box_color );
+			RectangleD ( x + w - squareLine, y + h - 1, x + w, y + h, cfg->bound_box_color );
+			RectangleD ( x + w - 1, y + h - squareLine, x + w, y + h, cfg->bound_box_color );
 
 			// bottom-right corner / outer outline
 			RectangleD ( x + w - squareLine, y + h, x + w + 1, y + h + 1, ImColor ( 10, 10, 10, 190 ) );
@@ -166,7 +169,7 @@ namespace visuals {
 			RectangleD ( x + w - squareLine, y + h - 2, x + w - squareLine + 1, y + h + 1, ImColor ( 10, 10, 10, 190 ) );
 			RectangleD ( x + w - 2, y + h - squareLine - 1, x + w + 1, y + h - squareLine, ImColor ( 10, 10, 10, 190 ) );
 		}
-			break;
+		break;
 		case THREE_DIMENSIONAL:
 		{
 			vec3_t vOrigin = origin;
@@ -191,17 +194,17 @@ namespace visuals {
 
 			std::vector<ImVec2> points_Arr;
 
-			for ( auto& it : edges ) {
-				
-				if (!world_to_screen ( points [ it [ 0 ] ], p1 ) || !world_to_screen ( points [ it [ 1 ] ], p2 ) )
+			for ( auto & it : edges ) {
+
+				if ( !world_to_screen ( points [ it [ 0 ] ], p1 ) || !world_to_screen ( points [ it [ 1 ] ], p2 ) )
 					return;
 
-		
-				render->AddLine ( p1, p2, cfg.bound_box_color );
+
+				render->AddLine ( p1, p2, cfg->bound_box_color );
 			}
 
 		}
-			break;
+		break;
 		default:
 			break;
 		}
@@ -213,17 +216,17 @@ namespace visuals {
 	}
 	void visual_player::render_flags ( ) {
 
-		 auto _x = box_data.x + box_data.w + 8, _y = box_data.y + 3;
+		auto _x = box_data.x + box_data.w + 8, _y = box_data.y + 3;
 
-		auto & flags_cfg = config.player_visual [ type ].flags_input;
+		auto & flags_cfg = cfg->flags_input;
 
 		for ( size_t i = 0; i < flags_list.size ( ); i++ ) {
 
-			if ( flags_cfg.at ( i ) == 1 && flags_list.at ( i ).flag.size() > 0 ) {
+			if ( flags_cfg.at ( i ) == 1 && flags_list.at ( i ).flag.size ( ) > 0 ) {
 				primitive_string ( true, fonts [ FLAGS ], _x, _y, flags_list.at ( i ).color, ImColor ( 0, 0, 0, 255 ), visuals::font_left, flags_list.at ( i ).flag.c_str ( ) );
 				_y += 8;
 			}
-			
+
 		}
 
 	}
@@ -231,10 +234,10 @@ namespace visuals {
 
 		clip = std::clamp ( clip, 0, 1000 );
 		max_clip = std::clamp ( max_clip, 1, 1000 );
-	
+
 		render->AddRect ( ImVec2 ( box_data.mins.x, box_data.maxs.y + 3 ), ImVec2 ( box_data.maxs.x, box_data.maxs.y + 6 ), ImColor ( 0, 0, 0, 125 ), 3.f );
-		render->AddRectFilled ( ImVec2 ( box_data.mins.x + 1 , box_data.maxs.y + 4 ), ImVec2 ( box_data.maxs.x - 1, box_data.maxs.y + 5 ), ImColor ( 0, 0, 200, 255 ), 3.f );
-		
+		render->AddRectFilled ( ImVec2 ( box_data.mins.x + 1, box_data.maxs.y + 4 ), ImVec2 ( box_data.maxs.x - 1, box_data.maxs.y + 5 ), ImColor ( 0, 0, 200, 255 ), 3.f );
+
 
 
 	}
@@ -268,7 +271,7 @@ namespace visuals {
 
 
 		static auto filled_box_outlined = [ ] ( const float x, const float y, const float w, const float h, const ImColor color, const ImColor outline, const float thickness ) {
-		    render->AddRectFilled ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h ), color );
+			render->AddRectFilled ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h ), color );
 			render->AddRect ( ImVec2 ( x, y ), ImVec2 ( x + w, y + h ), outline, 0.f, 15, thickness );
 		};
 		static auto filled_box = [ ] ( const float x, const float y, const float w, const float h, const ImColor color ) {
@@ -289,14 +292,14 @@ namespace visuals {
 		const int red = static_cast< int >( 255 - health * 2.55f );
 		const int green = static_cast< int >( health * 2.55f );
 
-	
+
 
 		//render->Flags = 0;
 
 		//render->Flags = ImDrawListFlags_AntiAliasedLines || ImDrawListFlags_AntiAliasedLinesUseTex || ImDrawListFlags_AntiAliasedFill;
 
 		render->AddRectFilled ( ImVec2 ( box_data.mins.x - 5, box_data.mins.y ), ImVec2 ( box_data.mins.x - 2, box_data.maxs.y ), ImColor ( 0, 0, 0, 125 ) );
-		render->AddRectFilled ( ImVec2 ( box_data.mins.x - 4, box_data.mins.y + 1 ), ImVec2 ( box_data.mins.x - 3, box_data.maxs.y - 1 ), config.player_visual[type].health_color );
+		render->AddRectFilled ( ImVec2 ( box_data.mins.x - 4, box_data.mins.y + 1 ), ImVec2 ( box_data.mins.x - 3, box_data.maxs.y - 1 ), config.player_visual [ type ].health_color );
 
 		//filled_box ( box_data.x - 5.7f, box_data.y + box_data.h - height - 1, 1.0f, height - 1.5f, ImColor ( red, green, 0, static_cast< int >( 255 ) ) );
 		//primitive_string ( true, fonts [ FLAGS ],  rend_pos.x, rend_pos.y, ImColor(0, 0, 0, 255), ImColor ( 255, 255, 255, 255 ), font_center, std::to_string ( health ).c_str ( ) );
@@ -304,18 +307,18 @@ namespace visuals {
 	}
 	void visual_player::render_weapon ( ) {
 		//dsdsDrawText ( c_menu::get ( ).weapon_icons, _data.weapon_icon, ImVec2 ( ( _data.box_data.x + ( ( _data.box_data.x + _data.box_data.w ) - _data.box_data.x ) / 2.0f ), _data.box_data.y + _data.box_data.h + 5 ), 8.f, clr_h, 0.1f, true, true );
-		 
 
-		auto text_size = ImGui::CalcTextSize ( weapon_icon.c_str(), 11.f, weapon_font );
-		
+
+		auto text_size = ImGui::CalcTextSize ( weapon_icon.c_str ( ), 11.f, weapon_font );
+
 
 		float add_offset = 0.f;
 		if ( config.player_visual [ type ].ammo )
 			add_offset += 2.f;
 
 
-		render->AddText ( visuals::weapon_font, 11.f, ImVec2 ( box_data.bottom_center.x - text_size.x / 2.f + 1.f, box_data.bottom_center.y + add_offset + ( text_size.y / 2.f ) + 1.f ), ImColor(0,0,0, 125), weapon_icon.c_str ( ) );
-		render->AddText ( visuals::weapon_font, 11.f, ImVec2 ( box_data.bottom_center.x - text_size.x / 2.f, box_data.bottom_center.y + add_offset + (text_size.y/ 2.f) ), config.player_visual [ type ].weapon_color, weapon_icon.c_str ( ) );
+		render->AddText ( visuals::weapon_font, 11.f, ImVec2 ( box_data.bottom_center.x - text_size.x / 2.f + 1.f, box_data.bottom_center.y + add_offset + ( text_size.y / 2.f ) + 1.f ), ImColor ( 0, 0, 0, 125 ), weapon_icon.c_str ( ) );
+		render->AddText ( visuals::weapon_font, 11.f, ImVec2 ( box_data.bottom_center.x - text_size.x / 2.f, box_data.bottom_center.y + add_offset + ( text_size.y / 2.f ) ), config.player_visual [ type ].weapon_color, weapon_icon.c_str ( ) );
 
 	}
 	void visual_player::render_skeleton ( ) {
@@ -324,7 +327,7 @@ namespace visuals {
 			ImVec2 child, parent;
 			for ( auto & bone : bones ) {
 				if ( world_to_screen ( bone.child, child ) && world_to_screen ( bone.parent, parent ) )
-					render->AddLine ( parent,  child, config.player_visual[type].skeleton_color );
+					render->AddLine ( parent, child, config.player_visual [ type ].skeleton_color );
 			}
 		}
 	}
@@ -336,49 +339,68 @@ namespace visuals {
 			render->AddCircle ( barrel_end_w2s, 3.f, ImColor ( 255, 255, 255, 125 ) );
 		}
 	}
-	void visual_player::render_entity ( ) {
-		
-		auto & cfg = config.player_visual [ type ];
+	void visual_player::on_render ( ) {
+
+		if ( !cfg )
+			return;
+
 
 		if ( on_screen ) {
 
 			animate ( );
 
-		
-			if (in_animation )
-			   render->PushClipRect ( animated_clip_mins, animated_clip_maxs, false );
-			
-			if ( cfg.bounding_box )
+
+			//	if (in_animation )
+				  // render->PushClipRect ( animated_clip_mins, animated_clip_maxs, false );
+
+			if ( cfg->bounding_box )
 				render_box ( );
-			if ( cfg.name )
+			if ( cfg->name )
 				render_name ( );
-			if ( cfg.health )
+			if ( cfg->health )
 				render_health ( );
-			if ( cfg.ammo )
+			if ( cfg->ammo )
 				render_ammo ( );
-			if ( cfg.weapon )
+			if ( cfg->weapon )
 				render_weapon ( );
-			if ( cfg.flags )
-			  render_flags ( );
-			if ( cfg.skeleton )
+			if ( cfg->flags )
+				render_flags ( );
+			if ( cfg->skeleton )
 				render_skeleton ( );
-			if ( cfg.view_barrel )
+
+			if ( type <= 1 && static_cast< player_visual * >( cfg )->view_barrel )
 				render_barrel ( );
 
-			if ( in_animation )
-			  render->PopClipRect ( );
+			//if ( in_animation )
+			  //render->PopClipRect ( );
 
 			visibility_check ( );
 
 		}
-		 
-			if ( cfg.out_of_pov )
-				render_offscreen ( );
-		
+
+		if ( cfg->out_of_pov )
+			render_offscreen ( );
+
 	}
-	void visual_player::queue_entity ( void* entity ) {
-		ent = reinterpret_cast <entity_t*>(entity);
+	void visual_player::on_update (  ) {
+
+		
+		if ( !entity )
+			return;
+
+
 		player = reinterpret_cast < player_t * >( entity );
+
+		type = player->is_teammate ( ) ? 0 : 1;
+
+		if ( player == local_pointer )
+			type = 2;
+
+		if ( type > 1 )
+			cfg = &config.local_visual;
+		else
+			cfg = &config.player_visual [ type ];
+
 
 		dormant = player->dormant ( );
 		enemy = player->is_enemy ( );
@@ -404,7 +426,7 @@ namespace visuals {
 		if ( player->active_weapon ( ) )
 			weapon_icon = weapon_icons [ player->active_weapon ( )->item_definition_index ( ) ];
 
-		if ( config.player_visual[type].skeleton && on_screen && !dormant && player && player->is_alive() ) {
+		if ( config.player_visual [ type ].skeleton && on_screen && !dormant && player && player->is_alive ( ) ) {
 			auto p_studio_hdr = interfaces::model_info->get_studio_model ( player->model ( ) );
 			if ( !p_studio_hdr )
 				return;
@@ -415,7 +437,7 @@ namespace visuals {
 			for ( int i = 0; i < p_studio_hdr->bones_count; i++ ) {
 				studio_bone_t * bone = p_studio_hdr->bone ( i );
 
-			
+
 				if ( !bone )
 					return;
 
@@ -425,7 +447,7 @@ namespace visuals {
 				}
 			}
 		}
-		if ( config.player_visual [ type ].view_barrel && on_screen && !dormant && player && player->is_alive()  && player->active_weapon ( )  && player->active_weapon ( )->get_weapon_data()) {
+		if ( config.player_visual [ type ].view_barrel && on_screen && !dormant && player && player->is_alive ( ) && player->active_weapon ( ) && player->active_weapon ( )->get_weapon_data ( ) ) {
 
 
 			barrel_start = player->eye_pos ( );
@@ -437,7 +459,7 @@ namespace visuals {
 
 			math::angle_vectors ( player->eye_angles ( ), forward );
 			filter.skip = player;
-			
+
 			barrel_end = barrel_start + ( forward * 4091.f );
 
 			ray.initialize ( barrel_start, barrel_end );
@@ -449,7 +471,7 @@ namespace visuals {
 		}
 
 		handle_flags ( );
-		
+
 	}
 	void visual_player::visibility_check ( ) {
 		return;
@@ -488,7 +510,7 @@ namespace visuals {
 			screen_boxes [ 7 ] // fl
 		};
 
-	
+
 		//render->AddCircleFilled ( p, 5.f, ImColor ( 255, 0, 0, 255 ) );
 
 
@@ -499,7 +521,7 @@ namespace visuals {
 			animated_clip_maxs.x = box_data.maxs.x + 50;
 			animated_clip_mins.y = box_data.mins.y - 50;
 
-			animated_clip_maxs.y +=  ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 2.0;
+			animated_clip_maxs.y += ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 2.0;
 
 			if ( animated_clip_maxs.y > box_data.maxs.y + 20 ) {
 				animated_clip_maxs.y = box_data.maxs.y + 20;
@@ -509,23 +531,23 @@ namespace visuals {
 	}
 
 	void visual_player::handle_flags ( ) {
-		if ( !config.player_visual [ type ].flags )
-			return;
 
+		if ( !cfg->flags )
+			return;
 
 		if ( flags_list.size ( ) < FLAGS_MAX )
 			flags_list.resize ( FLAGS_MAX );
 
 		if ( last_flags_update_tickcount != interfaces::globals->tick_count ) {
 			last_flags_update_tickcount = interfaces::globals->tick_count;
-			auto & flags = config.player_visual [ type ].flags_input;
+			auto & flags = cfg->flags_input;
 
 			for ( size_t i = 0; i < flags_list.size ( ); i++ ) {
 				if ( flags.at ( i ) == 0 )
 					continue;
 
 				auto & flag_object = flags_list.at ( i );
-				flag_object.color = config.player_visual [ type ].flags_color;
+				flag_object.color = cfg->flags_color;
 
 				auto & flag = flag_object.flag;
 
@@ -586,7 +608,7 @@ namespace visuals {
 
 
 				}
-					break;
+				break;
 				case FLAGS_C4:
 					//not implemented yet
 
@@ -664,7 +686,7 @@ namespace visuals {
 
 		}
 
-		
+
 
 	}
 
@@ -701,8 +723,6 @@ namespace visuals {
 
 			return xOk && yOk;
 		};
-		const auto radius = config.player_visual [ type ].out_of_pov_radius;
-		auto size = config.player_visual [ type ].out_of_pov_base_size;
 
 
 		if ( interfaces::globals->tick_count != last_tick ) {
@@ -722,9 +742,9 @@ namespace visuals {
 			auto screenCenter = ImVec2 ( width * 0.5f, height * 0.5f );
 			auto angleYawRad = DEG2RAD ( viewAngles.y - math::calc_angle ( localdata.eye_position, origin ).y - 90.0f );
 
-			
-			base_pos.x = screenCenter.x + ( ( ( ( width - ( size * 3 ) ) * 0.5f ) * ( radius / 100.0f ) ) * cos ( angleYawRad ) ) + ( int ) ( 6.0f * ( ( ( float ) size - 4.0f ) / 16.0f ) );
-			base_pos.y = screenCenter.y + ( ( ( ( height - ( size * 3 ) ) * 0.5f ) * ( radius / 100.0f ) ) * sin ( angleYawRad ) );
+
+			base_pos.x = screenCenter.x + ( ( ( ( width - ( cfg->out_of_pov_base_size * 3 ) ) * 0.5f ) * ( cfg->out_of_pov_radius / 100.0f ) ) * cos ( angleYawRad ) ) + ( int ) ( 6.0f * ( ( ( float ) cfg->out_of_pov_base_size - 4.0f ) / 16.0f ) );
+			base_pos.y = screenCenter.y + ( ( ( ( height - ( cfg->out_of_pov_base_size * 3 ) ) * 0.5f ) * ( cfg->out_of_pov_radius / 100.0f ) ) * sin ( angleYawRad ) );
 
 			if ( config.player_visual [ type ].foot_steps )
 				base_pos = ImVec2 ( width * 0.7f, height * 0.7f );
@@ -749,12 +769,12 @@ namespace visuals {
 
 			int count = 0;
 			while ( a <= M_PI + ( step * 4.0 ) ) {
-				offscreen_points.at ( count ) = ( ImVec2 ( base_pos.x + size * cos ( a ), base_pos.y + size * sin ( a ) ) );
+				offscreen_points.at ( count ) = ( ImVec2 ( base_pos.x + cfg->out_of_pov_base_size * cos ( a ), base_pos.y + cfg->out_of_pov_base_size * sin ( a ) ) );
 				a += step;
 				count++;
 			}
 
-			offscreen_points.at ( count ) = ( ImVec2 ( base_pos.x, base_pos.y - size * 2.f ) );
+			offscreen_points.at ( count ) = ( ImVec2 ( base_pos.x, base_pos.y - cfg->out_of_pov_base_size * 2.f ) );
 
 			auto rot = viewAngles.y - math::calc_angle ( localdata.eye_position, origin ).y;// -90.0f;
 
@@ -771,19 +791,19 @@ namespace visuals {
 		}
 
 
-		if ( offscreen_points.size ( ) > 0 && !on_screen) {
+		if ( offscreen_points.size ( ) > 0 && !on_screen ) {
 			render->AddConvexPolyFilled ( offscreen_points.data ( ), offscreen_points.size ( ), config.player_visual [ type ].out_of_pov_color );
 			render->AddPolyline ( offscreen_points.data ( ), offscreen_points.size ( ), ImColor ( 255, 255, 255, 125 ), ImDrawListFlags_AntiAliasedLines, 1.f );
 
 
-			auto text_size = ImGui::CalcTextSize ( "e", size, ui::font_icons );
+			auto text_size = ImGui::CalcTextSize ( "e", cfg->out_of_pov_base_size, ui::font_icons );
 
 			ImVec2 original_pos = base_pos;
 			original_pos.x -= text_size.x / 2.f;
 			original_pos.y -= text_size.y / 2.f;
 
 
-			render->AddText ( ui::font_icons, size, original_pos, ImColor ( 255, 255, 255, 255 ), "e" );
+			render->AddText ( ui::font_icons, cfg->out_of_pov_base_size, original_pos, ImColor ( 255, 255, 255, 255 ), &config.player_types.at ( type ).second [ 0 ] );
 		}
 	}
 }

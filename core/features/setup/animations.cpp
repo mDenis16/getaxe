@@ -200,7 +200,7 @@ namespace animations {
 
 
 			matrix3x4_t old_cache [ 128 ];
-			std::memcpy ( &old_cache, local_pointer->m_CachedBoneData ( ).Base ( ), local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+			std::memcpy ( &old_cache, local_pointer->m_CachedBoneData ( ).base ( ), local_pointer->m_CachedBoneData ( ).count() * sizeof ( matrix3x4_t ) );
 
 
 			float delta_time = math::ticks_to_time ( 14 );
@@ -260,7 +260,7 @@ namespace animations {
 			/*restore*/
 
 
-			std::memcpy ( local_pointer->m_CachedBoneData ( ).Base ( ), &old_cache, local_pointer->m_CachedBoneData ( ).m_Size * sizeof ( matrix3x4_t ) );
+			std::memcpy ( local_pointer->m_CachedBoneData ( ).base ( ), &old_cache, local_pointer->m_CachedBoneData ( ).count() * sizeof ( matrix3x4_t ) );
 			local_player::m_data.pointer->set_abs_angles ( vec3_t ( 0, m_data.proper_abs_yaw, 0 ) );
 
 

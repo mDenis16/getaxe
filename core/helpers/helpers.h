@@ -29,6 +29,7 @@ namespace local_player {
 		matrix3x4a_t left_matrix [ 128 ];
 		matrix3x4a_t right_matrix [ 128 ];
 
+
 		bool init_local_anim = false;
 		anim_state real_state;
 		anim_state fake_state;
@@ -41,6 +42,7 @@ namespace local_player {
 		weapon_t * active_weapon = nullptr;
 		weapon_info_t * weapon_data = nullptr;
 		player_t * pointer = nullptr;
+		player_t * old_pointer = nullptr;
 		bool alive = false;
 		bool have_weapon = false;
 		float weapon_spread = 0.f;

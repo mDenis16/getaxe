@@ -23,8 +23,10 @@ namespace hooks::callback {
 		ImGui_ImplWin32_NewFrame ( );
 		ImGui::NewFrame ( );
 
-		visuals::on_render ( );
-		overlay::present ( device );
+		//visuals::on_render ( );
+		visuals::render = ImGui::GetBackgroundDrawList ( );
+		visuals::handler->on_render ( );
+		overlay::present ( device, visuals::render );
 
 		ImGui::Render ( );
 		ImGui_ImplDX9_RenderDrawData ( ImGui::GetDrawData ( ) );

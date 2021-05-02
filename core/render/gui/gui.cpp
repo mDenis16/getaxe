@@ -121,6 +121,7 @@ namespace ui {
 	ImFont * font_menu_icons = nullptr;
 	ImFont * weapon_icons = nullptr;
 	ImFont * menuicons = nullptr;
+    ImFont * weapon_font = nullptr;
 	ImFont * test = nullptr;
 
 	static bool init = false;
@@ -130,16 +131,14 @@ namespace ui {
 	static int weapon_id = 0;
 
 
-	void initialize ( ) {
+	void initialize ( ImDrawList * render ) {
 
 		for ( auto const & weap : weapon_names )
 			weapons.push_back ( weap.second );
 
-		auto draw_imgui = ImGui::GetBackgroundDrawList ( );
+	
 
-
-
-		main_window = new ui::window ( "neverwin", 600, 700, draw_imgui, menu_opened, 12.f );
+		main_window = new ui::window ( "neverwin", 600, 700, render, menu_opened, 12.f );
 		main_window->flex = flex_direction::automatic;
 		window_pointer_cheat = static_cast< void * >( main_window );
 
@@ -162,21 +161,17 @@ namespace ui {
 
 		auto visuals_tab = new ui::tab ( "Visuals", top_side, 13 );
 		{
-			auto enemies_sub_tab = new ui::sub_tab ( "Enemy", VISUALS_ENEMIES, font_icons, -0.5875f, 20.f, visuals_tab );
+		
+			for ( size_t i = 0; i < 3; i++ ) {
+				auto player_sub_tab = new ui::sub_tab ( config.player_types.at(i).first, config.player_types.at ( i ).second, font_icons, -0.5875f, 20.f, visuals_tab );
+				menu::visuals_player_menu ( main_window, player_sub_tab, i );
+			}
 
-			menu::visuals_player_menu ( main_window, enemies_sub_tab, 1 );
-
-
-
-			auto teammates_sub_tab = new ui::sub_tab ( "Team", VISUALS_TEAMMATES, font_icons, -0.5875f, 20.f, visuals_tab );
-
-			menu::visuals_player_menu ( main_window, teammates_sub_tab, 0  );
-
-			auto local_sub_tab = new ui::sub_tab ( "Local", ICON_LOCAL, font_icons, -0.5875f, 20.f, visuals_tab );
-			menu::visuals_local_menu ( main_window, local_sub_tab );
+			auto weapons_sub_tab = new ui::sub_tab ( "Weapons", "W", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
+			menu::visuals_weapons_menu ( main_window, weapons_sub_tab );
 
 			auto projectiles_sub_tab = new ui::sub_tab ( "Projectiles", "o", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
-			menu::visuals_local_menu ( main_window, local_sub_tab );
+			menu::projectiles_weapons_menu ( main_window, projectiles_sub_tab );
 
 			auto world_sub_tab = new ui::sub_tab ( "World", ICON_WORLD, font_icons, -0.5875f, 20.f, visuals_tab );
 
@@ -219,10 +214,13 @@ namespace ui {
 
 	}
 
-	void render ( ) {
+	void render ( ImDrawList * render ) {
+
+		if ( !ui::font_widgets )
+			return;
 
 		if ( !main_window )
-			initialize ( );
+			initialize ( render );
 
 
 		main_window->handle ( );

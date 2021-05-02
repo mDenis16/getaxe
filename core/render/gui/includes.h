@@ -39,7 +39,7 @@ namespace ui {
 		void ragebot_menu ( object* main_window, object * sub_tab );
 		void settings_menu ( object * main_window, object * sub_tab );
 		void visuals_player_menu ( object * main_window, sub_tab * sub_tab, int player );
-		void visuals_local_menu ( object * main_window, sub_tab * sub_tab );
-
+		void visuals_weapons_menu ( object * main_window, sub_tab * sub_tab );
+		void projectiles_weapons_menu ( object * main_window, sub_tab * sub_tab );
 	}
 }

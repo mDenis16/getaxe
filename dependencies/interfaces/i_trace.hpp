@@ -210,15 +210,25 @@ struct ray_t {
 	VectorAligned m_delta; // direction + length of the ray
 	VectorAligned m_start_offset; // Add this to m_Start to get the actual ray start
 	VectorAligned m_extents; // Describes an axis aligned box extruded along a ray
-	const matrix3x4_t* m_world_axis_transform;
-	//const matrix3x4_t *m_pWorldAxisTransform;
+	const matrix3x4_t * m_world_axis_transform;
+	//const matrix_t *m_pWorldAxisTransform;
 	bool m_is_ray; // are the extents zero?
 	bool m_is_swept; // is delta != 0?
 
-	void initialize(const vec3_t& start, const vec3_t& end) {
+	ray_t ( ) : m_world_axis_transform ( NULL ) { }
+
+	ray_t ( vec3_t _start, vec3_t _end ) {
+		initialize ( _start, _end );
+	}
+
+	ray_t ( vec3_t _start, vec3_t _end, vec3_t _mins, vec3_t _maxs ) {
+		initialize ( _start, _end, _mins, _maxs );
+	}
+
+	void initialize ( const vec3_t & start, const vec3_t & end ) {
 		m_delta = end - start;
 
-		m_is_swept = (m_delta.length_sqr() != 0);
+		m_is_swept = ( m_delta.length_sqr ( ) != 0 );
 
 		m_extents.x = m_extents.y = m_extents.z = 0.0f;
 		m_is_ray = true;
@@ -228,19 +238,19 @@ struct ray_t {
 		m_start = start;
 	}
 
-	void initialize(vec3_t & vecStart, vec3_t & vecEnd, vec3_t min, vec3_t max) {
+	void initialize ( vec3_t & vecStart, vec3_t & vecEnd, vec3_t min, vec3_t max ) {
 		m_delta = vecEnd - vecStart;
 
-		m_is_swept = (m_delta.length_sqr() != 0);
+		m_is_swept = ( m_delta.length_sqr ( ) != 0 );
 
-		m_extents.x = (max.x - min.x);
-		m_extents.y = (max.y - min.y);
-		m_extents.z = (max.z - min.z);
+		m_extents.x = ( max.x - min.x );
+		m_extents.y = ( max.y - min.y );
+		m_extents.z = ( max.z - min.z );
 		m_is_ray = false;
 
 		m_start_offset.x = m_start_offset.y = m_start_offset.z = 0.0f;
 
-		m_start = vecStart + ((max + min) * 0.5f);
+		m_start = vecStart + ( ( max + min ) * 0.5f );
 	}
 
 private:
