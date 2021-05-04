@@ -66,4 +66,5 @@ namespace ui {
 #define ICON_QUESTION "z"
 #define ICON_INFO "A"
 #define ICON_SETTINGS "B"
-#define ICON_LOCAL "C"
+#define ICON_FIRE "C"
+#define ICON_LOCAL "D"

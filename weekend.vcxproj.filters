@@ -102,6 +102,7 @@
     <ClCompile Include="core\features\visuals\visual_handler.cpp" />
     <ClCompile Include="core\features\visuals\weapon\visual_weapon.cpp" />
     <ClCompile Include="core\features\visuals\projectile\visual_project.cpp" />
+    <ClCompile Include="core\features\visuals\grenade\visual_grenade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -233,6 +234,7 @@
     <ClInclude Include="core\features\visuals\player\visual_player.h" />
     <ClInclude Include="core\features\visuals\projectile\visual_projectile.h" />
     <ClInclude Include="core\features\visuals\weapon\visual_weapon.h" />
+    <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

@@ -21,7 +21,10 @@ namespace ui {
 		this->width_limit = 60;
 		
 		update ( );
-		new small_text_input ( this, *( float * ) &this->value, mins, maxs, ui::text_type::floats );
+
+		float val = (float)*( float*  ) this->value;
+
+		new small_text_input ( this, *( float * ) this->value, mins, maxs, ui::text_type::floats );
 
 		this->parrent->add_children ( this );
 	}
@@ -154,6 +157,12 @@ namespace ui {
 					temp_fill_percent = 0.f;
 				}
 
+				if ( ( temp_fill_percent / 100 ) * max_value < min_value ) {
+					temp_fill_percent = ( min_value * 100.f ) / max_value;
+				}
+
+					
+				
 				if ( std::fabs ( temp_fill_percent - old_fill ) > 30 ) {
 					this->target_fill = temp_fill_percent;
 					this->in_animation = true;
@@ -243,6 +252,12 @@ namespace ui {
 				this->animation_step = this->bb_min.x;
 
 		}
+	
+
+		float cur_val = ( float ) *( float * ) this->value;
+		float max_value = ( float ) *( float * ) &this->value_maxs;
+		this->target_fill = ( cur_val * 100.f ) / max_value;
+		this->fill_percent = this->target_fill;
 
 		for ( auto & child : this->children )
 			child->update ( );

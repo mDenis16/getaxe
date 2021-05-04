@@ -3,6 +3,7 @@
 #include "../visuals/player/visual_player.h"
 #include "../visuals/projectile/visual_projectile.h"
 #include "../visuals/weapon/visual_weapon.h"
+#include "../visuals/grenade/visual_grenade.h"
 #include "../../../dependencies/interfaces/i_client_entity_list.hpp"
 
 namespace visuals {
@@ -20,8 +21,8 @@ namespace visuals {
 		font_right
 	};
 
-
-
+	void rotate_circle ( std::vector<ImVec2> & points, ImVec2 center, float rotation );
+	void rotate_point ( ImVec2 & point, ImVec2 center, float rotation );
 	void primitive_string ( bool borderedl, ID3DXFont * font, float x, float y, ImColor _color, ImColor background, int orientation, const char * input, ... );
 	bool world_to_screen ( const vec3_t & origin, ImVec2 & screen );
 	void rotate_triangle ( std::array<ImVec2, 3> & points, float rotation );
@@ -107,14 +108,14 @@ namespace visuals {
 	namespace grenade_prediction {
 
 
-		void Simulate ( grenade_t * grenade, std::vector<vec3_t> & path, float elasticty, int type, vec3_t * vecSrc );
-		int Step ( grenade_t * grenade, vec3_t & vecSrc, vec3_t & vecThrow, float elasticity, int tick, float interval, int type );
-		int Step ( grenade_t * grenade, vec3_t & vecSrc, vec3_t & vecThrow, int tick, float interval, int type );
+		void Simulate ( entity_t * last_hit_player, grenade_t * grenade, std::vector<vec3_t> & path, float elasticty, int type, vec3_t * vecSrc );
+		int Step ( entity_t * last_hit_player, grenade_t * grenade, vec3_t & vecSrc, vec3_t & vecThrow, float elasticity, int tick, float interval, int type );
+	
 		bool CheckDetonate ( grenade_t * grenade, const vec3_t & vecThrow, const trace_t & tr, int tick, float interval, int type );
 		void TraceHull ( grenade_t * grenade, vec3_t & src, vec3_t & end, trace_t & tr );
 		void AddGravityMove ( grenade_t * grenade, vec3_t & move, vec3_t & vel, float frametime, bool onground );
 		void PushEntity ( grenade_t * grenade, vec3_t & src, const vec3_t & move, trace_t & tr );
-		void ResolveFlyCollisionCustom ( grenade_t * grenade, trace_t & tr, float elasticity, vec3_t & vecVelocity, float interval );
+		void ResolveFlyCollisionCustom ( entity_t * last_hit_player,  grenade_t * grenade, trace_t & tr, float elasticity, vec3_t & vecVelocity, float interval );
 
 		int PhysicsClipVelocity ( grenade_t * grenade, const vec3_t & in, const vec3_t & normal, vec3_t & out, float overbounce );
 

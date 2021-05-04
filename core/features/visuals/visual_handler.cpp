@@ -5,12 +5,35 @@ namespace visuals {
 
 	c_handler * handler = new c_handler ( );
 
+	std::mutex mtx;
+
 	void c_handler::on_entity_created ( void * ent ) {
 
 		entity_t * entity = reinterpret_cast< entity_t * > ( ent );
-
+		/*
+		case CBaseCSGrenadeProjectile:
+		{
+			if ( const auto model = prjectile->model ( ); model && strstr ( model->name, "flashbang" ) )
+				return "k";
+			else
+				return "l";
+			break;
+		}
+		case CDecoyProjectile:
+			return "o";
+			break;
+		case CMolotovProjectile:
+			return "n";
+			break;
+		case CSmokeGrenadeProjectile:
+			return "m";
+			break;
+		default:
+			return "?";
+			break;
+		*/
 		const auto is_grenade = [ ] ( const int id ) {
-			return  id == 114 || id == 157 || id == 48 || id == 9 || id == 100 || id == 156;
+			return  id == CBaseCSGrenadeProjectile || id == CDecoyProjectile || id == CMolotovProjectile || id == CSmokeGrenadeProjectile;
 		};
 
 		auto client_class = entity->client_class ( );
@@ -18,12 +41,14 @@ namespace visuals {
 		if ( !client_class )
 			return;
 
+		mtx.lock ( );
 
 		std::cout << "on_entity_created " << std::endl;
 
 		if ( client_class->class_id == CCSPlayer ) {
 
 			visual_player * data = new visual_player ( );
+			
 			data->index = entity->index ( );
 			data->entity = entity;
 			data->player = reinterpret_cast< player_t * >( entity );
@@ -31,16 +56,27 @@ namespace visuals {
 
 			//delete data;
 		}
+		else if ( client_class->class_id == CInferno ) {
+			visual_grenade * data = new visual_grenade ( );
+			data->index = entity->index ( );
+			data->entity = entity;
+			data->spawn_curtime = interfaces::globals->cur_time;
+			entity_list.push_back ( data );
+		}
 		else if ( is_grenade ( client_class->class_id ) ) {
 
 			visual_projectile * data = new visual_projectile ( );
 			data->index = entity->index ( );
 			data->entity = entity;
+			data->spawn_curtime = interfaces::globals->cur_time;
+			data->explode_time = interfaces::globals->cur_time + 1.6f;
+
 			entity_list.push_back ( data );
 
-			//delete data;
+		
 
 		}
+		mtx.unlock ( );
 	}
 	struct isValue {
 		int entity_index;
@@ -68,13 +104,24 @@ namespace visuals {
 			return data->index == entity_index;
 		} );
 
+		mtx.lock ( );
+
 		if ( it != entity_list.end ( ) ) {
 			const int list_index = std::distance ( entity_list.begin ( ), it );
 
-			delete entity_list.at ( list_index );
-			entity_list.erase ( it );
-			std::cout << "removed entity from list " << std::endl;
+			const auto it = std::find_if ( handler->entity_list.begin ( ), handler->entity_list.end ( ), [ & ] ( visual_data * data ) {
+				return data->index == entity_index;
+			} );
+
+			if ( it != handler->entity_list.end ( ) ) {
+
+				const int list_index = std::distance ( handler->entity_list.begin ( ), it );
+				
+				delete entity_list.at ( list_index );
+				entity_list.erase ( it );
+			}
 		}
+		mtx.unlock ( );
 
 	}
 
@@ -87,14 +134,45 @@ namespace visuals {
 	}
 
 	void c_handler::on_update ( ) {
-		for ( auto & entity : entity_list )
+
+		mtx.lock ( );
+		for ( auto & entity : entity_list ) {
+			if ( entity->mark_deletetion )
+				continue;
+
 			entity->on_update ( );
+		}
+		mtx.unlock ( );
+
 
 	}
 
 	void c_handler::on_render ( ) {
-		for ( auto & entity : entity_list )
+		mtx.lock ( );
+		for ( auto & entity : entity_list ) {
+			
+			if ( entity->mark_deletetion ) {
+
+				const auto it = std::find_if ( entity_list.begin ( ), entity_list.end ( ), [ & ] ( visual_data * data ) {
+					return data->index == entity->index;
+				} );
+
+				if ( it != entity_list.end ( ) ) {
+					const int list_index = std::distance ( entity_list.begin ( ), it );
+
+					delete entity_list.at ( list_index );
+					entity_list.erase ( it );
+					std::cout << "removed entity from list " << std::endl;
+					continue;
+				}
+		
+			}
+
+
 			entity->on_render ( );
+			
+		}
+		mtx.unlock ( );
 	}
 
 	void c_handler::local_player ( ) {

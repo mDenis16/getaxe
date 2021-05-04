@@ -37,6 +37,9 @@ namespace visuals {
 		bool ready = false;
 	
 		int index;
+		bool mark_deletetion = false;
+
+		bool already_predicted = false;
 
 		bool on_screen;
 		bool valid;
@@ -48,6 +51,8 @@ namespace visuals {
 		vec3_t origin, mins, maxs;
 
 		bool calculate_box ( );
+
+		void delete_entity ( );
 
 
 		void virtual on_render ( ) = 0;

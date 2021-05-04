@@ -12,24 +12,28 @@
 namespace ui {
 	namespace menu {
 
-		
-		void projectiles_weapons_menu ( object * main_window, sub_tab * sub_tab) {
+
+		void visuals_world_menu ( object * main_window, sub_tab * sub_tab ) {
 			auto visuals_window = new ui::child_window ( "", 100.f, 80.f, ImColor ( 255, 255, 255, 0 ), main_window, child_type::main_container, flags::no_background ); visuals_window->flex = flex_direction::automatic; visuals_window->padding = 15;
 			visuals_window->tab_assign = sub_tab;
 			sub_tab->child_assign = visuals_window;
 
 			float child_rounding = 15.f;
 
-			auto & cfg = c_config::get ( ).projectiles_visual;
+			auto & cfg = c_config::get ( ).weapons_visual;
 
-			auto main_tab = new ui::child_window ( "Projectiles Assist", 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
+			auto main_tab = new ui::child_window ( "Fog Controller", 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
 			{
 
 
 
 
-				auto name = new ui::checkbox ( "Name", main_tab, cfg.name, cfg.name_color );
-		
+				auto name = new ui::checkbox ( "Enable Flog", main_tab, cfg.name, cfg.name_color );
+				auto name_box_extender = new ui::element_extender ( name );
+				{
+
+
+				}
 
 				auto bounding_box = new ui::checkbox ( "Bounding Box", main_tab, cfg.bounding_box, cfg.bound_box_color, cfg.bound_box_keybind );
 				auto bounding_box_extender = new ui::element_extender ( bounding_box );
@@ -42,8 +46,8 @@ namespace ui {
 
 				}
 
-				new ui::checkbox ( "Grenade radius", main_tab, cfg.grenade_radius );
-				new ui::checkbox ( "Grenade indicator", main_tab, cfg.grenade_radius_warning );
+				//new ui::checkbox ( "Ammo", main_tab, cfg.ammo, cfg.ammo_color );
+
 			}
 
 
@@ -85,10 +89,9 @@ namespace ui {
 			auto third_tab = new ui::child_window ( "Misc", 45.f, 60.0, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
 			{
 
-				new ui::checkbox ( "Grenade warning", third_tab, cfg.grenade_warning, cfg.out_of_pov_color );
-				new ui::checkbox ( "Grenade path", third_tab, cfg.grenade_path, cfg.out_of_pov_color );
+				auto out_of_fov = new ui::checkbox ( "Vulnerable warning", third_tab, cfg.out_of_pov, cfg.out_of_pov_color );
 
-				
+
 				/*
 
 								new ui::checkbox ( "Visualize safepoints", third_tab, cfg.foot_steps, cfg.foot_steps_color );
@@ -98,6 +101,6 @@ namespace ui {
 
 
 		}
-	
+
 	}
 }

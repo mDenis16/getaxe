@@ -690,26 +690,7 @@ namespace visuals {
 
 	}
 
-	void rotate_circle ( std::vector<ImVec2> & points, ImVec2 center, float rotation ) {
-
-
-		for ( auto & point : points ) {
-			point.x -= center.x;	point.y -= center.y;
-
-			const auto tempX = point.x;
-			const auto tempY = point.y;
-
-			const auto theta = DEG2RAD ( rotation );
-			const auto c = cos ( theta );
-			const auto s = sin ( theta );
-
-			point.x = tempX * c - tempY * s;
-			point.y = tempX * s + tempY * c;
-
-			point.x += center.x; point.y += center.y;
-		}
-	}
-
+	
 	void visual_player::render_offscreen ( ) {
 		auto isOnScreen = [ ] ( vec3_t origin, ImVec2 & screen ) -> bool {
 			if ( !world_to_screen ( origin, screen ) )

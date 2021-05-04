@@ -175,6 +175,8 @@ namespace ui {
 
 			auto world_sub_tab = new ui::sub_tab ( "World", ICON_WORLD, font_icons, -0.5875f, 20.f, visuals_tab );
 
+			menu::visuals_world_menu ( main_window, world_sub_tab );
+
 		}
 
 

@@ -236,6 +236,13 @@ public:
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_bDidSmokeEffect", m_bDidSmokeEffect, bool );
 	NETVAR ( "DT_CSRagdoll", "m_hPlayer", m_hPlayer, void* );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", m_nSmokeEffectTickBegin, int );
+	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nExplodeEffectTickBegin", m_nExplodeEffectTickBegin, int );
+	
+	NETVAR (  "DT_Inferno", "m_fireXDelta", fireXDelta, int* );
+	NETVAR (  "DT_Inferno", "m_fireYDelta", fireYDelta, int * );
+	NETVAR (  "DT_Inferno", "m_fireZDelta", fireZDelta, int * );
+	NETVAR (  "DT_Inferno", "m_bFireIsBurning", fireIsBurning, bool* );
+	NETVAR (  "DT_Inferno", "m_fireCount", fireCount, int );
 
 	int get_sequence_act ( int sequence ) {
 		const auto model = this->model ( );

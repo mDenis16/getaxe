@@ -4,6 +4,23 @@
 #include "../../../dependencies/imgui/imgui_internal.h"
 #include "../../render/gui/gui.h"
 
+static const float SmokeGrenadeRadius_InfernoAffectingZ = 120.0f;
+// When interacting with fire on the same plane we don't want alpha depth-fighting
+// in the most common case, so leave a grace margin between the smoke particles
+// and the fire particles.
+static const float SmokeGrenadeRadius_InfernoAffectingXY_topedge = 100.0f;
+static const float SmokeGrenadeRadius_InfernoAffectingXY_equator = 150.0f;
+static const float SmokeGrenadeRadius_InfernoAffectingXY_bottomedge = 128.0f;
+
+// Fire burning things and smoke constants
+static const float InfernoFire_HalfWidth = 30.0f;
+static const float InfernoFire_FullHeight = 80.0f;
+
+#define INFERNO_MASK_TO_GROUND ((MASK_SOLID_BRUSHONLY) & (~CONTENTS_GRATE))
+#define INFERNO_MASK_LOS_CHECK ( INFERNO_MASK_TO_GROUND | CONTENTS_MONSTER )
+#define INFERNO_MASK_DAMAGE INFERNO_MASK_LOS_CHECK
+
+#define DAMAGE_YES  2
 
 namespace visuals {
 
@@ -17,7 +34,113 @@ namespace visuals {
 
 	}
 
-	void grenade_prediction::Simulate ( grenade_t* grenade, std::vector<vec3_t>& path,  float elasticty, int type, vec3_t * vecSrc ) {
+   void UTIL_TraceLine (  vec3_t & vecAbsStart,  vec3_t & vecAbsEnd, unsigned int mask,
+		 void * ignore, int collisionGroup, trace_t * ptr ) {
+		uint32_t filter [ 4 ] = { get_filter_simple_vtable ( ), uint32_t ( ignore ), 0, 0 };
+
+		ray_t t; t.initialize ( vecAbsStart, vecAbsEnd, vec3_t ( -1.f, -1.f, -1.f ), vec3_t ( 1.f, 1.f, 1.f ) );
+
+		interfaces::trace_ray->trace_ray ( t, MASK_SOLID, ( i_trace_filter * ) &filter, ptr );
+	}
+
+    entity_t* get_closest_entity ( entity_t* comparator, vec3_t position, int class_filter, int size ) {
+
+		entity_t * ent = nullptr;
+	
+		for ( auto & entity : visuals::handler->entity_list ) {
+			if ( entity->entity != comparator && entity->entity->client_class()->class_id == class_filter ) {
+				int dist = math::calc_distance ( position, entity->origin, false );
+				int dist2 = position.distance_to ( entity->origin );
+
+				if ( dist < size ) {
+					ent = entity->entity;
+					size = dist;
+				}
+			}
+		}
+
+		return ent;
+    }
+
+	bool BShouldExtinguishSmokeGrenadeBounce ( entity_t * entity, vec3_t & posDropSmoke )  {
+
+		/*experimental shit*/
+
+		vec3_t local_pop_smoke = posDropSmoke;
+
+		trace_t trSmokeTrace;
+		vec3_t p = local_pop_smoke - vec3_t ( 0, 0, 166 );
+		UTIL_TraceLine ( local_pop_smoke, p, ( MASK_PLAYERSOLID & ~CONTENTS_PLAYERCLIP ),
+			entity, 0, &trSmokeTrace );
+
+		if ( !trSmokeTrace.startSolid ) {
+			if ( trSmokeTrace.flFraction >= 1.0f )
+				return false;	// this smoke cannot drop enough to cause extinguish
+
+			if ( trSmokeTrace.flFraction > 0.001f )
+				local_pop_smoke = trSmokeTrace.end;
+		}
+
+		const float radius = 2.0f * InfernoFire_HalfWidth;
+
+		int		m_fireCount = *reinterpret_cast< int * >		( ( DWORD ) entity + 0x13A8		/*0x13A8*/ );
+		bool * m_bFireIsBurning = reinterpret_cast< bool * >	( ( DWORD ) entity + 0xE94 /*0xE94*/ );
+
+
+		for ( int i = 0; i < entity->fireCount(); i++ ) {
+			
+			if ( !m_bFireIsBurning [ i ] )
+				continue;
+
+
+			int * m_fireXDelta = reinterpret_cast< int * >		( ( DWORD ) entity + 0x9E4		/*0x9E4*/ );
+			int * m_fireYDelta = reinterpret_cast< int * >		( ( DWORD ) entity + 0xB74		/*0xB74*/ );
+			int * m_fireZDelta = reinterpret_cast< int * >		( ( DWORD ) entity + 0xD04		/*0xD04*/ );
+
+
+			vec3_t center = entity->origin() + vec3_t ( m_fireXDelta [ i ], m_fireYDelta [ i ], m_fireZDelta [ i ] );
+
+			if ( ( local_pop_smoke - center ).length() <  ( radius ) ) {
+				// doublecheck los if required
+				trace_t tr;
+				 vec3_t fireHeight ( 0, 0, InfernoFire_HalfWidth );
+				 vec3_t res = center + fireHeight;
+
+				UTIL_TraceLine ( res, local_pop_smoke, INFERNO_MASK_DAMAGE, entity, 0, &tr );
+				if ( tr.flFraction < 1.0f )
+					UTIL_TraceLine ( center, local_pop_smoke, INFERNO_MASK_DAMAGE, entity, 0, &tr );
+				if ( tr.flFraction == 1.0f ) {
+					/*if ( InfernoDebug.GetBool ( ) ) {
+						NDebugOverlay::Line ( fire->m_center, posDropSmoke, 255, 0, 255, true, 50.2f );
+					}*/
+					std::cout << "cica a mers " << std::endl;
+ 
+					return true;
+				}
+				else {
+				/*	if ( InfernoDebug.GetBool ( ) ) {
+						NDebugOverlay::Line ( fire->m_center, posDropSmoke, 255, 0, 0, true, 50.2f );
+					}*/
+				}
+			}
+		}
+
+		return false;
+	}
+
+	bool CSmokeGrenadeProjectile_OnBounced ( grenade_t * grenade, vec3_t bounch_pos ) {
+
+		entity_t * closest_inferno = get_closest_entity ( grenade, bounch_pos, class_ids::CInferno, 512 );
+		if ( !closest_inferno )
+			return false;
+
+		if ( BShouldExtinguishSmokeGrenadeBounce ( closest_inferno, bounch_pos ) ) {
+			return true;
+		}
+
+		return false;
+	}
+	void grenade_prediction::Simulate ( entity_t * last_hit_player, grenade_t* grenade, std::vector<vec3_t>& path,  float elasticty, int type, vec3_t * vecSrc ) {
 	
 		float interval = interfaces::globals->interval_per_tick;
 		
@@ -31,7 +154,7 @@ namespace visuals {
 			if ( !logtimer )
 				path.push_back ( *vecSrc );
 
-			int s = Step ( grenade, *vecSrc, vecThrow, elasticty, i, interval, type );
+			int s = Step ( last_hit_player, grenade, *vecSrc, vecThrow, elasticty, i, interval, type );
 			if ( ( s & 1 ) ) 
 				break;
 			if ( ( s & 2 ) || logtimer >= logstep )
@@ -45,7 +168,7 @@ namespace visuals {
 		
 	}
 
-	int grenade_prediction::Step ( grenade_t * grenade, vec3_t & vecSrc, vec3_t & vecThrow, float elasticity, int tick, float interval, int type ) {
+	int grenade_prediction::Step ( entity_t* last_hit_player, grenade_t * grenade, vec3_t & vecSrc, vec3_t & vecThrow, float elasticity, int tick, float interval, int type ) {
 
 		vec3_t move;
 		AddGravityMove ( grenade, move, vecThrow, interval, false );
@@ -56,16 +179,24 @@ namespace visuals {
 
 		int result = 0;
 
+	
+
 		if ( CheckDetonate ( grenade, vecThrow, tr, tick, interval, type ) )
 			result |= 1;
 
+		
+
 		if ( tr.flFraction != 1.0f ) {
 			result |= 2;
-			ResolveFlyCollisionCustom ( grenade, tr, elasticity, vecThrow, interval );
-			
+			ResolveFlyCollisionCustom ( last_hit_player, grenade, tr, elasticity, vecThrow, interval );
+			if ( type == CSmokeGrenadeProjectile && CSmokeGrenadeProjectile_OnBounced ( grenade, tr.end ) )
+				result |= 1; /* smoke extingushed by inferno */
 		}
+	
 
 		vecSrc = tr.end;
+
+	
 
 		return result;
 	}
@@ -79,18 +210,22 @@ namespace visuals {
 		ping += interfaces::engine->get_net_channel_info ( )->get_latency ( 1 );
 
 		switch ( type ) {
-		case weapon_smokegrenade:
-		case weapon_decoy:
+		case CSmokeGrenadeProjectile:
+		case CDecoyProjectile:
 			if ( sqrtf ( vecThrow.x * vecThrow.x + vecThrow.y * vecThrow.y ) < 0.1f ) {
 				int det_tick_mod = static_cast< int >( 0.2f / interval );
 				return !( tick % det_tick_mod );
 			}
 			return false;
-		case weapon_molotov:
-		case weapon_incgrenade:
-			if ( tr.flFraction != 1.0f && tr.plane.normal.z > 0.7f ) return true;
-		case weapon_flashbang:
-		case weapon_hegrenade:
+		case CMolotovProjectile:
+		case CIncendiaryGrenade:
+			if ( tr.entity && tr.entity->index ( ) == 0 && tr.flFraction != 1.0f && tr.plane.normal.z > 0.7f )
+				return true;
+			 else if ( static_cast< float >( tick ) * interval > 2.0f)
+				return true;
+			 return false;
+			//	return true;static_cast< float >( tick ) * interval > 2.0;
+		case CBaseCSGrenadeProjectile:
 			return static_cast< float >( tick ) * interval > 1.6f + ping;// && !( tick % static_cast< int >( 0.2f / interval ) );
 		default:
 			return false;
@@ -98,24 +233,9 @@ namespace visuals {
 	}
 
 	void grenade_prediction::TraceHull ( grenade_t * grenade, vec3_t & src, vec3_t & end, trace_t & tr ) {
-		
-		/*ray_t ray = { };
-		ray.initialize ( src, end, vec3_t { -2.0f, -2.0f, -2.0f }, vec3_t { 2.0f, 2.0f, 2.0f } );
-		trace_world_only filter;
-		interfaces::trace_ray->trace_ray ( ray, MASK_SOLID | CONTENTS_CURRENT_90, &filter, &tr );*/
-
-		//ray_t ray;
-		//ray.initialize ( src, end, vec3_t ( -2.0f, -2.0f, -2.0f ), vec3_t ( 2.0f, 2.0f, 2.0f ) );
-
-		//trace_world_only filter;
-		//filter.SetIgnoreClass("BaseCSGrenadeProjectile");
-		//filter.bShouldHitPlayers = false;
-
-		//interfaces::trace_ray->trace_ray ( ray, 0x200400B, &filter, &tr );
 
 		uint32_t filter [ 4 ] = { get_filter_simple_vtable ( ), uint32_t ( grenade ), 0, 0 };
 
-		//filter.SetPassEntity(ent);
 		ray_t t; t.initialize ( src, end, vec3_t( -1.f, -1.f, -1.f ), vec3_t ( 1.f, 1.f, 1.f ) );
 
 		interfaces::trace_ray->trace_ray ( t, MASK_SOLID, ( i_trace_filter * ) &filter, &tr );
@@ -151,7 +271,7 @@ namespace visuals {
 		TraceHull ( grenade, src, vecAbsEnd, tr );
 	}
 
-	void grenade_prediction::ResolveFlyCollisionCustom ( grenade_t * grenade, trace_t & tr, float elasticity, vec3_t & vecVelocity, float interval ) {
+	void grenade_prediction::ResolveFlyCollisionCustom ( entity_t* last_hit_player, grenade_t * grenade, trace_t & tr, float elasticity, vec3_t & vecVelocity, float interval ) {
 
 		/*std::cout << " ResolveFlyCollisionCustom " << std::endl;
 
@@ -234,16 +354,73 @@ namespace visuals {
 			vecVelocity = vecAbsVelocity;
 		}
 #endif*/
+
 		entity_t * pEntity = tr.entity;
 		bool IsWorld = tr.did_hit_world ( );
 		bool bIsProjectile = false;
 		bool bIsHostage = false;
 		
+	
+		bool breakthrough = false;
+
+		if ( pEntity ) {
+			int class_id = pEntity->client_class ( )->class_id;
+			if ( pEntity && class_id == CBreakableProp ) {
+				breakthrough = true;
+			}
+
+			if ( pEntity && class_id == CBreakableSurface ) {
+				breakthrough = true;
+			}
+
+			if ( pEntity && class_id == CPhysicsPropMultiplayer && pEntity->m_iHealth ( ) > 0 && pEntity->get_take_damage ( ) == DAMAGE_YES ) {
+				breakthrough = true;
+			}
+
+			// this one is tricky because BounceTouch hits breakable propers before we hit this function and the damage is already applied there (CBaseGrenade::BounceTouch( CBaseEntity *pOther ))
+			// by the time we hit this, the prop hasn't been removed yet, but it broke, is set to not take anymore damage and is marked for deletion - we have to cover this case here
+			if ( pEntity && class_id == CDynamicProp && pEntity->m_iHealth ( ) > 0 &&  pEntity->get_take_damage ( ) == DAMAGE_YES /*|| ( pEntity->get_take_damage() == DAMAGE_NO && pEntity->IsEFlagSet ( EFL_KILLME ) ) )*/ /*idk?? */ ) {
+				breakthrough = true;
+			}
+		}
+
+		if ( pEntity && breakthrough ) {
+			
+			if ( pEntity->m_iHealth() <= 0 ) {
+				// slow our flight a little bit
+			
+				vecVelocity *= 0.4;
+				return;
+			}
+		}
+
+		float flSurfaceElasticity = 1.0;  // Assume all surfaces have the same elasticity
+
+		//Don't bounce off of players with perfect elasticity
+		if ( pEntity ) {
+			int hit_classid = pEntity->client_class ( )->class_id;
+			std::cout << "hit classid " << hit_classid << std::endl;
+			if ( pEntity->client_class ( )->class_id == CCSPlayer ) {
+				flSurfaceElasticity = 0.3f;
+			}
+		}
+
+		if ( pEntity && pEntity->index() != 0 && last_hit_player == pEntity ) {
+			bool bIsHostage = false;
+			if ( pEntity->client_class ( )->class_id == CCSPlayer || bIsHostage || bIsProjectile ) {
+				return;
+			}
+		}
+
+		if ( pEntity ) {
+			last_hit_player = pEntity;
+		}
+
 
 		const float kSleepVelocity = 20.0f;
 		const float kSleepVelocitySquared = kSleepVelocity * kSleepVelocity;
 
-		float flSurfaceElasticity = 1.0;  // Assume all surfaces have the same elasticity
+		
 		float flGrenadeElasticity = 0.45f; // GetGrenadeElasticity()
 		float flTotalElasticity = flGrenadeElasticity * flSurfaceElasticity;
 		flTotalElasticity = std::clamp ( flTotalElasticity, 0.0f, 0.9f );

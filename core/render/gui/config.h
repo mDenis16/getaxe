@@ -245,8 +245,17 @@ public:
 	std::vector<int> flags_input;
 
 
+	bool bullet_impacts = false;
+	ImColor bullet_impacts_color = ImColor ( 255, 255, 255, 255 );
+	config_manager::key_bind_item bullet_impacts_keybind;
+
+	bool bullet_tracers = false;
+	ImColor bullet_tracers_color = ImColor ( 255, 255, 255, 255 );
+	config_manager::key_bind_item bullet_tracers_keybind;
 
 };
+
+
 
 class player_visual_local : public player_visual_base {
 public:
@@ -257,8 +266,31 @@ public:
 	config_manager::key_bind_item key_bind_thirdperson;
 
 
-	float thirdperson_distance = 0.f;
+	float thirdperson_distance = 100.f;
 	config_manager::key_bind_item key_bind_thirdperson_distance;
+
+	bool taser_range = false;
+	config_manager::key_bind_item taser_range_keybind;
+	ImColor taser_range_color;
+
+	bool knife_range = false;
+	config_manager::key_bind_item knife_range_keybind;
+	ImColor knife_range_color;
+
+	bool weapon_spread = false;
+	config_manager::key_bind_item weapon_spread_keybind;
+	ImColor weapon_spread_color;
+
+
+	bool weapon_recoil = false;
+	config_manager::key_bind_item weapon_recoil_keybind;
+	ImColor weapon_recoil_color;
+	
+	bool weapon_force_corsshair = false;
+
+	bool vulnerable_warning = false;
+	config_manager::key_bind_item vulnerable_warning_keybind;
+	ImColor vulnerable_warning_color;
 };
 
 class player_visual : public player_visual_base {
@@ -276,6 +308,8 @@ public:
 
 	chams_visual chams [ CHAMS_MODEL_MAX ];
 	bool ragdoll_chams = false;
+
+
 };
 
 class projectiles_visual {
@@ -290,6 +324,8 @@ public:
 	config_manager::key_bind_item bound_box_keybind;
 	bool dynamic_box = false;
 
+
+
 	int box_type = 0;
 	ImColor bound_box_color = ImColor ( 255, 0, 0, 255 );
 	float bound_box_thickness = 1.f;
@@ -297,7 +333,11 @@ public:
 	float bound_box_border_rounding = 0.f;
 
 
+	bool grenade_path = false;
+	bool grenade_warning = false;
 
+	bool grenade_radius = false;
+	bool grenade_radius_warning = false;
 
 	glow_visual glow;
 
@@ -348,6 +388,21 @@ public:
 	weapon_visual ( ) { };
 };
 
+
+struct world_visuals {
+
+	bool fog_controller = false;
+	ImColor fog_color = ImColor ( 255, 255, 255, 255 );
+
+	int fog_start = 0;
+
+	bool bloom_controller = false;
+	float bloom_scale = 0.f;
+	float world_exposure = 0.f;
+	float model_ambient = 0.f;
+
+};
+
 class c_config : public singleton< c_config > {
 public:
 	c_config ( ) {
@@ -371,7 +426,7 @@ public:
 	{
 	{ "Team", "f" },
 	{ "Enemy", "e" },
-	{ "Local", "C" }
+	{ "Local", "D" }
 	};
 	/*
 	

@@ -106,6 +106,7 @@
     <ClCompile Include="core\features\features.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
+    <ClCompile Include="core\features\visuals\grenade\visual_grenade.cpp" />
     <ClCompile Include="core\features\visuals\modulation\materials.cpp" />
     <ClCompile Include="core\features\visuals\modulation\modulation.cpp" />
     <ClCompile Include="core\features\visuals\modulation\player_modulation.cpp" />
@@ -208,6 +209,7 @@
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
     <ClInclude Include="core\features\setup\animations.h" />
+    <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
     <ClInclude Include="core\features\visuals\modulation\modulation.h" />
     <ClInclude Include="core\features\visuals\player\visual_player.h" />
     <ClInclude Include="core\features\visuals\projectile\visual_projectile.h" />

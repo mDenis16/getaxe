@@ -110,9 +110,6 @@ namespace ui {
 				}
 				else { /*local player chams*/
 
-
-					new ui::slider ( "elasticy", second_tab, cfg->elasticty, 0.f, 2.f, ui::slider_type::floates );
-
 					auto model_selector = new ui::combobox ( "Model selector", second_tab, std::vector<std::string>{"local", "desync", "fakelag", "arms", "weapon"}, & select_model [ player ] );
 					auto & l_cfg = config.local_visual;
 
@@ -135,28 +132,48 @@ namespace ui {
 				
 			}
 
-			auto third_tab = new ui::child_window ( "Misc", 45.f, 60.0, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
+			auto third_tab = new ui::child_window ( "Misc", 45.f, player < 2 ? 70.f : 50.0, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
 			{
-			
-			/*	auto out_of_fov = new ui::checkbox ( "Out of fov indicator", third_tab, cfg.out_of_pov, cfg.out_of_pov_color ); 
-				auto out_of_fov_extender = new ui::element_extender ( out_of_fov );
-				{
-					new ui::slider ( "Distance", out_of_fov_extender, cfg.out_of_pov_radius, 10.f, 140.f, slider_type::floates );
-					new ui::slider ( "Size", out_of_fov_extender, cfg.out_of_pov_base_size, 5.f, 35.f, slider_type::floates );
+				if ( player < 2 ) {
+					auto & s_cfg = config.player_visual [ player ];
+					auto out_of_fov = new ui::checkbox ( "Out of fov indicator", third_tab, s_cfg.out_of_pov, s_cfg.out_of_pov_color );
+					auto out_of_fov_extender = new ui::element_extender ( out_of_fov );
+					{
+						new ui::slider ( "Distance", out_of_fov_extender, s_cfg.out_of_pov_radius, 10.f, 140.f, slider_type::floates );
+						new ui::slider ( "Size", out_of_fov_extender, s_cfg.out_of_pov_base_size, 5.f, 35.f, slider_type::floates );
+					}
+
+					new ui::checkbox ( "Reveal on radar", third_tab, s_cfg.force_radar_reveal );
+					new ui::checkbox ( "Footsteps", third_tab, s_cfg.foot_steps, s_cfg.foot_steps_color );
+
+					new ui::checkbox ( "View barrel", third_tab, s_cfg.view_barrel, s_cfg.view_barrel_color );
+
+					new ui::checkbox ( "Bullet impact", third_tab, s_cfg.bullet_impacts, s_cfg.bullet_impacts_color, s_cfg.bullet_impacts_keybind );
+					new ui::checkbox ( "Bullet tracer", third_tab, s_cfg.bullet_tracers, s_cfg.bullet_tracers_color, s_cfg.bullet_tracers_keybind );
+				}
+				else {
+					auto & l_cfg = config.local_visual;
+
+					new ui::checkbox ( "Bullet impact", third_tab, l_cfg.bullet_impacts, l_cfg.bullet_impacts_color, l_cfg.bullet_impacts_keybind );
+					new ui::checkbox ( "Bullet tracer", third_tab, l_cfg.bullet_tracers, l_cfg.bullet_tracers_color, l_cfg.bullet_tracers_keybind );
+
+					new ui::checkbox ( "Taser range", third_tab, l_cfg.taser_range );
+					new ui::checkbox ( "Knife range", third_tab, l_cfg.knife_range );
+					new ui::checkbox ( "Weapon spread", third_tab, l_cfg.weapon_spread );
+					new ui::checkbox ( "Weapon recoil", third_tab, l_cfg.weapon_recoil );
+					new ui::checkbox ( "Force crosshair", third_tab, l_cfg.weapon_force_corsshair );
+					new ui::checkbox ( "Vulnerable warning", third_tab, l_cfg.vulnerable_warning, l_cfg.vulnerable_warning_color, l_cfg.vulnerable_warning_keybind );
 				}
 
-				new ui::checkbox ( "Reveal on radar", third_tab, cfg.force_radar_reveal );
-				new ui::checkbox ( "Footsteps", third_tab, cfg.foot_steps, cfg.foot_steps_color );
-				
-			  	new ui::checkbox ( "View barrel", third_tab, cfg.view_barrel, cfg.view_barrel_color );
-
-				/*
-				
-								new ui::checkbox ( "Visualize safepoints", third_tab, cfg.foot_steps, cfg.foot_steps_color );
-				new ui::checkbox ( "Visualize aimpoints ", third_tab, cfg.foot_steps, cfg.foot_steps_color );
-				*/
 			}
-
+			if ( player >= 2 ) {
+				auto & l_cfg = config.local_visual;
+				auto fourth_tab = new ui::child_window ( "View", 45.f, 45.0, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
+				{
+					new ui::checkbox ( "Third person", fourth_tab, l_cfg.thirdperson );
+					new ui::slider ( "Distance", fourth_tab, l_cfg.thirdperson_distance, 50.f, 200.f, ui::slider_type::floates );
+				}
+			}
 		}
 	}
 }
