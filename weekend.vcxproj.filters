@@ -103,6 +103,9 @@
     <ClCompile Include="core\features\visuals\weapon\visual_weapon.cpp" />
     <ClCompile Include="core\features\visuals\projectile\visual_project.cpp" />
     <ClCompile Include="core\features\visuals\grenade\visual_grenade.cpp" />
+    <ClCompile Include="core\render\gui\menu\visuals_world_menu.cpp" />
+    <ClCompile Include="core\features\events\event_handler.cpp" />
+    <ClCompile Include="core\hooks\engine\get_screen_aspect_ratio.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -235,6 +238,7 @@
     <ClInclude Include="core\features\visuals\projectile\visual_projectile.h" />
     <ClInclude Include="core\features\visuals\weapon\visual_weapon.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
+    <ClInclude Include="core\features\events\event_handler.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

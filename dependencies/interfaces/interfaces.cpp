@@ -16,7 +16,7 @@ iv_model_render* interfaces::model_render = nullptr;
 i_render_view* interfaces::render_view = nullptr;
 i_console* interfaces::console = nullptr;
 i_localize* interfaces::localize = nullptr;
-i_game_event_manager2* interfaces::event_manager = nullptr;
+i_game_event_manager* interfaces::event_manager = nullptr;
 i_inputsytem* interfaces::inputsystem = nullptr;
 iv_debug_overlay* interfaces::debug_overlay = nullptr;
 IDirect3DDevice9* interfaces::directx = nullptr;
@@ -62,7 +62,7 @@ bool interfaces::initialize() {
 
 	localize = get_interface<i_localize, interface_type::index>("localize.dll", "Localize_001");
 
-	event_manager = get_interface<i_game_event_manager2, interface_type::index>("engine.dll", "GAMEEVENTSMANAGER002");
+	event_manager = get_interface<i_game_event_manager, interface_type::index>("engine.dll", "GAMEEVENTSMANAGER002");
 
 	debug_overlay = get_interface<iv_debug_overlay, interface_type::index>("engine.dll", "VDebugOverlay004");
 

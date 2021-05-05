@@ -253,6 +253,16 @@ public:
 	ImColor bullet_tracers_color = ImColor ( 255, 255, 255, 255 );
 	config_manager::key_bind_item bullet_tracers_keybind;
 
+
+	bool taser_range = false;
+	ImColor taser_range_color = ImColor ( 255, 255, 255, 255 );
+	config_manager::key_bind_item taser_range_keybind;
+
+	bool knife_range = false;
+	ImColor knife_range_color = ImColor ( 255, 255, 255, 255 );
+	config_manager::key_bind_item knife_range_keybind;
+
+
 };
 
 
@@ -263,19 +273,21 @@ public:
 
 
 	bool thirdperson = false;
+	float thirdperson_distance = 80.f;
 	config_manager::key_bind_item key_bind_thirdperson;
 
 
-	float thirdperson_distance = 100.f;
-	config_manager::key_bind_item key_bind_thirdperson_distance;
 
-	bool taser_range = false;
-	config_manager::key_bind_item taser_range_keybind;
-	ImColor taser_range_color;
+	float view_model_distance = 25.f;
+	config_manager::key_bind_item view_model_distance_distance;
 
-	bool knife_range = false;
-	config_manager::key_bind_item knife_range_keybind;
-	ImColor knife_range_color;
+
+	float view_model_x_offset = 0.f;
+	float view_model_y_offset = 0.f;
+	float view_model_z_offset = 0.f;
+	float view_model_roll = 0.f;
+
+	float aspect_ratio = 0.f;
 
 	bool weapon_spread = false;
 	config_manager::key_bind_item weapon_spread_keybind;
@@ -291,6 +303,8 @@ public:
 	bool vulnerable_warning = false;
 	config_manager::key_bind_item vulnerable_warning_keybind;
 	ImColor vulnerable_warning_color;
+
+
 };
 
 class player_visual : public player_visual_base {

@@ -30,6 +30,8 @@ namespace hooks::callback {
 		}
 		
 		last_origin = setup->origin;
+		setup->fovViewmodel = config.local_visual.view_model_distance;
+
 
 		override_view_original ( interfaces::clientmode, ecx, setup );
 

@@ -136,12 +136,21 @@ namespace ui {
 
 	void element_extender::update ( ) {
 
-		if ( this->index > 0 && this->parrent->children.size() && this->parrent->children.at ( this->index - 1 )->type != keybind_element ) {
-			//this->parrent->children.at ( this->index - 1 )->update ( );
+		if ( this->parrent->type != slider_element && this->index > 0 && this->parrent->children.size() && this->parrent->children.at ( this->index - 1 )->type != keybind_element ) {
+			this->parrent->children.at ( this->index - 1 )->update ( );
 			this->icon_maxs.x = this->parrent->children.at(this->index - 1)->mins.x - 4;
 		}
 		else {
-			this->icon_maxs.x = this->parrent->maxs.x - 33;
+		
+			if ( this->parrent->type == slider_element ) {
+				auto parent = static_cast< ui::slider * >( this->parrent );
+				float mata = parent->bb_max.x + 30;
+
+				this->icon_maxs.x = parent->bb_min.x;
+			}
+			else {
+				this->icon_maxs.x = this->parrent->maxs.x - 33;
+			}
 		}
 
 		this->icon_mins.x = this->icon_maxs.x - 25;

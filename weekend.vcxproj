@@ -103,6 +103,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\features\events\event_handler.cpp" />
     <ClCompile Include="core\features\features.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="core\hooks\engine\cl_move.cpp" />
     <ClCompile Include="core\hooks\engine\crc_server_check.cpp" />
     <ClCompile Include="core\hooks\engine\fire_event.cpp" />
+    <ClCompile Include="core\hooks\engine\get_screen_aspect_ratio.cpp" />
     <ClCompile Include="core\hooks\engine\is_hltv.cpp" />
     <ClCompile Include="core\hooks\engine\list_leaves_in_box.cpp" />
     <ClCompile Include="core\hooks\engine\process_packet.cpp" />
@@ -183,6 +185,7 @@
     <ClCompile Include="core\render\gui\menu\ragebot_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\settings_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\visuals_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\visuals_world_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\weapons_visuals_menu.cpp" />
     <ClCompile Include="core\render\render.cpp" />
     <ClCompile Include="dependencies\imgui\imgui.cpp" />
@@ -207,6 +210,7 @@
     <ClCompile Include="source-sdk\math\view_matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\features\events\event_handler.h" />
     <ClInclude Include="core\features\features.hpp" />
     <ClInclude Include="core\features\setup\animations.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />

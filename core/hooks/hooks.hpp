@@ -37,6 +37,7 @@
 #define reset_original reinterpret_cast< long( __stdcall* )( IDirect3DDevice9*, void* ) >( hooks::list.at ( hooks::hook_index::reset )->original )
 #define do_procedural_foot_plant_original  reinterpret_cast< void( __thiscall* )( void *,  int , int , int , int  ) >( hooks::list.at ( hooks::hook_index::do_procedural_foot_plant )->original )
 #define calc_view__original  reinterpret_cast< void( __thiscall* )( void * , void * , vec3_t & , vec3_t & , float & , float & , float &  ) >( hooks::list.at ( hooks::hook_index::calc_view_original )->original )
+#define get_screen_aspect_original reinterpret_cast< float(__thiscall*)(void*, int, int) >( hooks::list.at ( hooks::hook_index::get_screen_aspect_ratio )->original )
 
 namespace hooks {
 
@@ -80,7 +81,8 @@ namespace hooks {
 		trace_ray,
 		file_system,
 		present,
-		reset
+		reset,
+		get_screen_aspect_ratio
 		/*no need to call original*/
 	};
 
@@ -101,6 +103,7 @@ namespace hooks {
 		extern void __fastcall accumulate_layers ( uintptr_t * player, uintptr_t edx, void * setup, vec3_t * pos, float time, uintptr_t * q );
 		extern void __fastcall check_for_sequence_change ( uintptr_t * ecx, uintptr_t * edx, uintptr_t * hdr, int cur_sequence, bool force_new_sequence, bool );
 		extern void __fastcall build_transformations ( void * ecx, void * edx, int a2, int a3, int a4, int a5, int a6, int a7 );
+
 		extern bool __fastcall should_skip_animation_frame ( void *, void * );
    		//extern void __fastcall modify_eye_position ( void * ecx, void * edx, vec3_t & input_eye_position );
 		extern void __fastcall calculate_view ( void * ecx, void * edx, vec3_t & eye_origin, vec3_t & eye_angles, float & z_near, float & z_far, float & fov );
@@ -123,6 +126,9 @@ namespace hooks {
 		extern void __fastcall trace_ray ( void * thisptr, void *, const ray_t & ray, unsigned int fMask, trace_filter * pTraceFilter, trace_t * pTrace );
 		extern int __fastcall file_system ( void *, void * );
 		extern void __fastcall run_command ( void * ecx, void * edx, player_t * player, c_usercmd * cmd, player_move_helper * move_helper );
+		extern float __fastcall get_screen_aspect_ratio ( void * ecx, void * edx, int width, int height );
+
+
 	}
 
 

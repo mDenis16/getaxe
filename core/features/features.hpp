@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "../../dependencies/utilities/csgo.hpp"
 
-#include "misc/events/events.hpp"
 #include "../helpers/helpers.h"
 #include "../../core/render/gui/config.h"
 #include <optional>
@@ -10,6 +9,7 @@
 #define local_pointer local_player::m_data.pointer
 #define localdata local_player::m_data
 
+#include "../features/events/event_handler.h"
 #include "../features/setup/animations.h"
 #include "../features/visuals/modulation/modulation.h"
 #include "../features/visuals/visuals.h"

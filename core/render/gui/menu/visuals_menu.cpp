@@ -150,15 +150,16 @@ namespace ui {
 
 					new ui::checkbox ( "Bullet impact", third_tab, s_cfg.bullet_impacts, s_cfg.bullet_impacts_color, s_cfg.bullet_impacts_keybind );
 					new ui::checkbox ( "Bullet tracer", third_tab, s_cfg.bullet_tracers, s_cfg.bullet_tracers_color, s_cfg.bullet_tracers_keybind );
+					new ui::checkbox ( "Knife range", third_tab, s_cfg.knife_range, s_cfg.knife_range_color, s_cfg.knife_range_keybind );
+					new ui::checkbox ( "Taser range", third_tab, s_cfg.taser_range, s_cfg.taser_range_color, s_cfg.taser_range_keybind	 );
 				}
 				else {
 					auto & l_cfg = config.local_visual;
 
 					new ui::checkbox ( "Bullet impact", third_tab, l_cfg.bullet_impacts, l_cfg.bullet_impacts_color, l_cfg.bullet_impacts_keybind );
 					new ui::checkbox ( "Bullet tracer", third_tab, l_cfg.bullet_tracers, l_cfg.bullet_tracers_color, l_cfg.bullet_tracers_keybind );
-
-					new ui::checkbox ( "Taser range", third_tab, l_cfg.taser_range );
-					new ui::checkbox ( "Knife range", third_tab, l_cfg.knife_range );
+					new ui::checkbox ( "Knife range", third_tab, l_cfg.knife_range, l_cfg.knife_range_color, l_cfg.knife_range_keybind );
+					new ui::checkbox ( "Taser range", third_tab, l_cfg.taser_range, l_cfg.taser_range_color, l_cfg.taser_range_keybind );
 					new ui::checkbox ( "Weapon spread", third_tab, l_cfg.weapon_spread );
 					new ui::checkbox ( "Weapon recoil", third_tab, l_cfg.weapon_recoil );
 					new ui::checkbox ( "Force crosshair", third_tab, l_cfg.weapon_force_corsshair );
@@ -170,8 +171,18 @@ namespace ui {
 				auto & l_cfg = config.local_visual;
 				auto fourth_tab = new ui::child_window ( "View", 45.f, 45.0, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
 				{
-					new ui::checkbox ( "Third person", fourth_tab, l_cfg.thirdperson );
+				    new ui::checkbox ( "Third person", fourth_tab, l_cfg.thirdperson );
 					new ui::slider ( "Distance", fourth_tab, l_cfg.thirdperson_distance, 50.f, 200.f, ui::slider_type::floates );
+					auto view_model = new ui::slider ( "Viewmodel", fourth_tab, l_cfg.view_model_distance, -50.f, 50.f, ui::slider_type::floates );
+					auto view_model_extender = new ui::element_extender ( view_model );
+					{
+						new ui::slider ( "X offset", view_model_extender, l_cfg.view_model_x_offset, -20.f, 20.f, ui::slider_type::floates );
+						new ui::slider ( "Y offset", view_model_extender, l_cfg.view_model_y_offset, -20.f, 20.f, ui::slider_type::floates );
+						new ui::slider ( "Z offset", view_model_extender, l_cfg.view_model_z_offset, -20.f, 20.f, ui::slider_type::floates );
+
+						//new ui::slider ( "Roll", view_model_extender, l_cfg.view_model_roll, -20.f, 20.f, ui::slider_type::floates );
+					}
+					new ui::slider ( "Aspect ratio", fourth_tab, l_cfg.thirdperson_distance, 0.f, 2.f, ui::slider_type::floates );
 				}
 			}
 		}

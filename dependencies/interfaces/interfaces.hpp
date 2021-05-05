@@ -95,7 +95,7 @@ namespace interfaces {
 	extern iv_debug_overlay* debug_overlay;
 	extern i_console* console;
 	extern i_localize* localize;
-	extern i_game_event_manager2* event_manager;
+	extern i_game_event_manager* event_manager;
 	extern i_inputsytem* inputsystem;
 	extern IDirect3DDevice9* directx;
 	extern i_engine_trace* trace_ray;

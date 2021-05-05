@@ -23,6 +23,9 @@ unsigned long WINAPI initialize(void* instance) {
 	try { 
 		interfaces::initialize();
 		visuals::handler->init ( );
+		event_handler->setup ( );
+
+
 		hooks::initialize();
 		hooks::create_hooks ( );
 		std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
@@ -55,6 +58,11 @@ unsigned long WINAPI release() {
 
 	hooks::release();
 	visuals::handler->remove ( );
+	event_handler->remove ( );
+
+	delete visuals::handler;
+	delete event_handler;
+
 	console::release();
 
 	return TRUE;

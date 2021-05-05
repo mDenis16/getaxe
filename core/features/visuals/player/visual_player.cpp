@@ -401,7 +401,6 @@ namespace visuals {
 		else
 			cfg = &config.player_visual [ type ];
 
-
 		dormant = player->dormant ( );
 		enemy = player->is_enemy ( );
 		health = player->health ( );
@@ -439,7 +438,7 @@ namespace visuals {
 
 
 				if ( !bone )
-					return;
+					continue;
 
 				if ( bone && ( bone->flags & BONE_USED_BY_HITBOX ) && ( bone->parent != -1 ) ) {
 					bones.at ( i ).child = player->get_bone_position ( i );

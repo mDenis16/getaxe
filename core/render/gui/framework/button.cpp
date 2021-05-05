@@ -32,9 +32,7 @@ namespace ui {
 
 		this->handle ( );
 
-		this->renderer->PushClipRect ( this->mins, this->maxs, false );
-
-
+		this->renderer->PushClipRect ( this->mins, this->maxs, true );
 		this->renderer->AddCircleFilled ( this->animation_position, this->animation_step, ImColor ( 25, 125, 123, this->animated_alpha ) );
 		this->renderer->PopClipRect ( );
 

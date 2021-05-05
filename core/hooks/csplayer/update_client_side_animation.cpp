@@ -13,6 +13,7 @@ namespace hooks::callback {
 		if ( player->dormant ( ) )
 			return update_client_side_animation_original ( player );
 
+
 		if ( player != local_pointer ) {
 				update_client_side_animation_original ( player );
 		}

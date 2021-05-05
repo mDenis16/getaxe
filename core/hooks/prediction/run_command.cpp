@@ -11,6 +11,6 @@ namespace hooks::callback {
 		if ( !cmd )
 			return run_command_original ( ecx, 0, player, cmd, move_helper );
 
-
+		run_command_original ( ecx, 0, player, cmd, move_helper );
 	}
 }

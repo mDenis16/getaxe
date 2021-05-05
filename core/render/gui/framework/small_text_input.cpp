@@ -8,7 +8,10 @@
 
 
 namespace ui {
-	
+	float InvLerp2 ( float a, float b, float v ) {
+		return ( v - a ) / ( b - a );
+	}
+
 	void small_text_input::draw ( ) {
 
 		this->handle ( );
@@ -27,18 +30,13 @@ namespace ui {
 
 		ImVec2 text_pos = ImVec2 ( );
 
-		auto text_size = ImGui::CalcTextSize ( this->text_val.c_str ( ) );
+		auto text_size = ImGui::CalcTextSize ( this->text_val.c_str ( ), 11.5f, ui::font_widgets );
 
-		auto center = ( this->maxs.x + this->mins.x ) / 2.f;
-		text_pos.x = center;
-		if ( this->text_val.length ( ) == 2 )
-			text_pos.x -= 4.9f;
-		else if ( this->text_val.length ( ) == 3 )
-			text_pos.x -= 7.8f;
-		else if ( this->text_val.length ( ) == 4 )
-			text_pos.x -= 12.6f;
-		text_pos.y = middle.y;
-
+		text_pos.x = ( this->maxs.x + this->mins.x ) / 2.f;
+		text_pos.y = ( this->maxs.y + this->mins.y ) / 2.f;
+		
+		text_pos.x -= text_size.x / 2.f;
+		text_pos.y -= text_size.y / 2.f;
 
 		this->renderer->AddText ( ui::font_widgets, 11.5f, text_pos, ImColor ( 255, 255, 255, 225 ), this->text_val.c_str ( ) );
 	}
@@ -86,12 +84,10 @@ namespace ui {
 					auto parent = static_cast< slider * >( this->parrent );
 					try {
 						auto parsed = ::atof ( this->text_val.c_str ( ) );
-						*( float * ) &parent->value = parsed;
+					//	*( float * ) parent->value = ( float) parsed;
 					
-						parent->in_animation = true;
-						parent->target_fill = ( *( float * ) &parent->value * 100 ) / *( float * ) &parent->value_maxs;
-
-
+						
+						//std::memmove ( parent->old_value, parent->value, sizeof ( parent->value ) );
 					}
 					catch ( int e ) {
 
@@ -118,7 +114,7 @@ namespace ui {
 			
 			std::stringstream stream;
 			if (s < 10.0f )
-			stream << std::fixed << std::setprecision ( 2 ) << s;
+			stream << std::fixed << std::setprecision ( 1 ) << s;
 			else
 				stream << std::fixed << std::setprecision ( 0 ) << s;
 			this->text_val = stream.str ( );

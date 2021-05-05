@@ -104,7 +104,7 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual ( interfaces::file_system, 128 ), &callback::file_system );
 		CREATE_HOOK ( get_virtual ( d3d_device, 42 ), &callback::present_hook );
 		CREATE_HOOK ( get_virtual ( d3d_device, 16 ), &reset_hook );
-
+		CREATE_HOOK ( get_virtual ( interfaces::engine, 101 ), &callback::get_screen_aspect_ratio );
 
 
 		wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( csgo::window, GWL_WNDPROC, ( LONG ) callback::wnd_proc );

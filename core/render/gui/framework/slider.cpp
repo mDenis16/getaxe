@@ -5,6 +5,10 @@
 #include "../includes.h"
 
 namespace ui {
+	float InvLerp ( float a, float b, float v ) {
+		return ( v - a ) / ( b - a );
+	}
+
 	slider::slider ( std::string text, object * parent, float & _value, float mins, float maxs, slider_type _type ) {
 
 
@@ -105,21 +109,22 @@ namespace ui {
 
 		if ( this->in_animation ) {
 
-			if ( this->fill_percent > this->target_fill )
+			if ( this->fill_percent >= this->target_fill )
 				this->fill_percent -= ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 8.f;
-			else if ( this->fill_percent < this->target_fill ) {
+			else if ( this->fill_percent <= this->target_fill ) 
 				this->fill_percent += ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 8.f;
 
-			}
-			if ( std::fabs( this->fill_percent - this->target_fill) <= 1.f ) {
+		
+			if ( std::fabs ( this->fill_percent - this->target_fill ) <= 2.f ) {
 				this->fill_percent = this->target_fill;
 				this->in_animation = false;
 				if ( this->updated_last_time )
 					this->updated_last_time = false;
 			}
 			return;
-
 		}
+
+		
 
 
 			handle_mouse_input ( );
@@ -148,6 +153,7 @@ namespace ui {
 				temp_fill_percent = ( temp_fill_percent * 100.f / 100 ) * 100;
 
 
+
 				if ( temp_fill_percent > 100.f ) {
 					temp_fill_percent = 100.f;
 				}
@@ -157,9 +163,9 @@ namespace ui {
 					temp_fill_percent = 0.f;
 				}
 
-				if ( ( temp_fill_percent / 100 ) * max_value < min_value ) {
+				/*if ( ( temp_fill_percent / 100 ) * max_value < min_value ) {
 					temp_fill_percent = ( min_value * 100.f ) / max_value;
-				}
+				}*/
 
 					
 				
@@ -171,7 +177,18 @@ namespace ui {
 					this->fill_percent = temp_fill_percent;
 					this->target_fill = temp_fill_percent;
 				}
-				*( float * ) this->value = ( temp_fill_percent / 100 ) * max_value;
+
+				float flt = this->fill_percent;
+
+				/*
+						this->target_fill = InvLerp(min_value, max_value, cur_val);
+		this->fill_percent = this->target_fill = std::lerp(0.f, 100.f, this->target_fill);
+				*/
+				float t = std::lerp ( min_value, max_value, temp_fill_percent / 100.f );
+
+				*( float * ) this->value = t;
+
+				std::memcpy ( this->old_value, this->value, sizeof ( value ) );
 				if ( this->key_bind_controller ) {
 					if ( !this->key_bind_controller->old_value )
 					  this->key_bind_controller->old_value = malloc ( sizeof ( this->value ) );
@@ -194,10 +211,23 @@ namespace ui {
 				std::memcpy ( this->old_value, this->value, sizeof ( this->value ) );
 				float cur_val = ( float ) *( float * ) this->value;
 				float max_value = ( float ) *( float * )&this->value_maxs;
-				this->target_fill = ( cur_val * 100.f ) / max_value;
+				float ratio_fill = target_fill / 100.f;
+				float max_valuee = ( float ) *( float * ) &this->value_maxs;
+				float min_value = ( float ) *( float * ) &this->value_maxs;
+
+
+
+				this->target_fill = InvLerp ( ratio_fill, ( cur_val * 100.f ) / min_value, ( cur_val * 100.f ) / max_valuee );
 				float tfl = this->target_fill;
 
+				/*
+					this->target_fill = ( cur_val * 100.f ) / max_value;
 
+		float ratio_fill = target_fill / 100.f;
+
+		 this->target_fill = InvLerp ( ratio_fill, ( cur_val * 100.f ) / min_value, ( cur_val * 100.f ) / max_value );
+		
+				*/
 			}
 
 			else if ( ui::focused_item == this->_id ) {
@@ -205,6 +235,7 @@ namespace ui {
 			}
 		
 	}
+
 	void slider::update ( ) {
 		bool is_parent_panel = this->parrent->type == panel_element || this->parrent->type == panel_cotainer_element;
 		
@@ -256,8 +287,19 @@ namespace ui {
 
 		float cur_val = ( float ) *( float * ) this->value;
 		float max_value = ( float ) *( float * ) &this->value_maxs;
-		this->target_fill = ( cur_val * 100.f ) / max_value;
-		this->fill_percent = this->target_fill;
+		float min_value = ( float ) *( float * ) &this->value_mins;
+		
+		//this->target_fill = ( cur_val * 100.f ) / max_value;
+
+		//float ratio_fill = target_fill / 100.f;
+
+		// this->target_fill = InvLerp ( ratio_fill, ( cur_val * 100.f ) / min_value, ( cur_val * 100.f ) / max_value );
+		
+		//this->fill_percent = this->target_fill;
+
+
+		this->target_fill = InvLerp(min_value, max_value, cur_val);
+		this->fill_percent = this->target_fill = std::lerp(0.f, 100.f, this->target_fill);
 
 		for ( auto & child : this->children )
 			child->update ( );

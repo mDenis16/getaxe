@@ -435,14 +435,14 @@ namespace ui {
 		//	this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 255, 0, 255 ) );
 
 
-		this->renderer->PushClipRect ( this->mins, this->maxs, false );
+		this->renderer->PushClipRect ( this->mins, this->maxs, true );
 		for ( auto & child : this->children ) {
 			//if ( child->maxs.y < this->maxs.y && child->mins.y > this->mins.y )
 			child->draw ( );
 
 
 		}
-		this->renderer->PopClipRect ( );
+
 
 
 
@@ -459,6 +459,7 @@ namespace ui {
 		}
 
 		this->renderer->AddRectFilled ( this->thumb_mins, this->thumb_maxs, ImColor ( 34, 46, 80, 255 ), 3.f );
+		this->renderer->PopClipRect ( );
 	}
 	void config_box::handle_mouse_input ( ) {
 
