@@ -159,7 +159,17 @@ enum chams_material {
 	CHAMS_MAX
 };
 
-
+enum removals {
+	REMOVALS_SCOPE,
+	REMOVALS_ZOOM,
+	REMOVALS_SMOKE,
+	REMOVALS_FLASH,
+	REMOVALS_RECOIL,
+	REMOVALS_LANDING_BOB,
+	REMOVALS_POSTPROCESSING,
+	REMOVALS_FOGS,
+	REMOVALS_MAX
+};
 
 struct chams_visual {
 	ImColor color = ImColor( 255, 255, 255, 255);
@@ -305,6 +315,9 @@ public:
 	ImColor vulnerable_warning_color;
 
 
+	config_manager::key_bind_item removals_keybind;
+	std::vector<int> removals_input;
+
 };
 
 class player_visual : public player_visual_base {
@@ -423,6 +436,8 @@ public:
 		for ( size_t i = 0; i < 2; i++ ) {
 			player_visual [ i ].flags_input.resize ( FLAGS_MAX );
 		}
+		
+		local_visual.removals_input.resize ( REMOVALS_MAX );
 		local_visual.flags_input.resize ( FLAGS_MAX );
 	}
 
@@ -430,11 +445,19 @@ public:
 	player_visual_local local_visual;
 	weapon_visual weapons_visual;
 	projectiles_visual projectiles_visual;
-
+	/*
+	REMOVALS_SCOPE,
+	REMOVALS_ZOOM,
+	REMOVALS_SMOKE,
+	REMOVALS_FLASH,
+	REMOVALS_RECOIL,
+	REMOVALS_LANDING_BOB,
+	REMOVALS_POSTPROCESSING,
+	REMOVALS_FOGS*/
 
 
 	std::vector<std::string> flags_list = { "Money", "Armor", "Kit",  "Scoped", "Flashed", "Fakeduck", "Bomb", "Break LC", "Taser", "Hit", "Exploit", "Ping", "Hostage", "Defusing", "Reload", "Dormant", "Distance" };
-
+	std::vector<std::string> removals_list = {"Scope", "Zoom", "Smoke", "Flash", "Recoil", "Landing bob", "Post processing", "Fogs"};
 
 	std::vector<std::pair<std::string, std::string> >  player_types =
 	{

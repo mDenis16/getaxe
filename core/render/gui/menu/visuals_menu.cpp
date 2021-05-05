@@ -182,7 +182,8 @@ namespace ui {
 
 						//new ui::slider ( "Roll", view_model_extender, l_cfg.view_model_roll, -20.f, 20.f, ui::slider_type::floates );
 					}
-					new ui::slider ( "Aspect ratio", fourth_tab, l_cfg.thirdperson_distance, 0.f, 2.f, ui::slider_type::floates );
+					new ui::slider ( "Aspect ratio", fourth_tab, l_cfg.aspect_ratio, 0.f, 2.f, ui::slider_type::floates );
+					new ui::multibox ( "Removals input", fourth_tab, config.removals_list, cfg->flags_input );
 				}
 			}
 		}
