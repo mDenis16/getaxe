@@ -12,21 +12,22 @@ namespace hooks::callback {
 
 
 		
-		//misc::thirdperson::think ( );
+		visuals::thirdperson ( );
 
-		/*if ( config.visuals_world_removals [ 0 ] && local_player::m_data.pointer && local_player::m_data.pointer->is_alive ( ) ) {
+
+		if ( config.local_visual.removals_input [ REMOVALS_RECOIL ] && local_player::m_data.pointer && local_player::m_data.pointer->is_alive ( ) ) {
 			vec3_t viewPunch = local_player::m_data.pointer->punch_angle ( );
 			vec3_t aimPunch = local_player::m_data.pointer->aim_punch_angle ( );
 
 			setup->angles [ 0 ] -= ( viewPunch [ 0 ] + ( aimPunch [ 0 ] * 2 * 0.4499999f ) );
 			setup->angles [ 1 ] -= ( viewPunch [ 1 ] + ( aimPunch [ 1 ] * 2 * 0.4499999f ) );
 			setup->angles [ 2 ] -= ( viewPunch [ 2 ] + ( aimPunch [ 2 ] * 2 * 0.4499999f ) );
-		}*/
+		}
 		static vec3_t last_origin = vec3_t ( );
 		static int tick = 0;
 
 		if ( local_pointer && local_pointer->is_alive ( ) && interfaces::input->m_camera_in_third_person ) {
-			setup->origin.z = local_pointer->abs_origin ( ).z + 64.f;
+		//	setup->origin.z = local_pointer->abs_origin ( ).z + 64.f;
 		
 		}
 		if ( local_pointer && local_pointer->is_alive ( ) ) {

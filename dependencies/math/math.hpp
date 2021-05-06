@@ -79,10 +79,19 @@ namespace math {
 	}
 
 	int time_to_ticks ( float time );
+	void quaternion_slerp_no_align ( const quaternion & p, const quaternion & q, float t, quaternion & qt );
+	void quaterinion_angles ( const quaternion & q, vec3_t & angles );
+	void interpolate_angles ( const vec3_t & start, const vec3_t & end, vec3_t & output, float frac );
 	float ticks_to_time ( int tick );
 	vec3_t get_matrix_position ( const matrix3x4_t & src );
 	int ticks_to_stop ( vec3_t velocity );
 	float clamp_yaw ( float yaw );
+
+	void quaternion_align ( const quaternion & p, const quaternion & q, quaternion & qt );
+
+	void angle_quaterinion ( const vec3_t & angles, quaternion & outQuat );
+
+	void quaternion_slerp ( const quaternion & p, const quaternion & q, float t, quaternion & qt );
 
 
 	void vector_rotate ( const vec3_t & in1, const vec3_t & in2, vec3_t & out );
@@ -103,7 +112,7 @@ namespace math {
 
 	void vector_vectors ( const vec3_t & forward, vec3_t & right, vec3_t & up );
 	void matrix_set_column ( const vec3_t & in, int column, matrix3x4_t & out );
-	
+
 	void angle_matrix ( const vec3_t & angles, const vec3_t & position, matrix3x4_t & matrix_out );
 
 	void matrix_copy ( const matrix3x4_t & source, matrix3x4_t & target );
@@ -121,12 +130,6 @@ namespace math {
 	float get_fov ( vec3_t viewangle, vec3_t aim_angle );
 	float get_estimate_server_time ( c_usercmd * cmd );
 
-#undef min
-#undef max
-	template < typename t >
-	__forceinline void clamp ( t & n, const t & lower, const t & upper ) {
-		n = std::max ( lower, std::min ( n, upper ) );
-	}
 
 	void vector_substract ( const vec3_t & a, const vec3_t & b, vec3_t & c );
 	void smooth_angle ( vec3_t src, vec3_t & dst, float factor );
@@ -147,7 +150,7 @@ namespace math {
 
 	float fast_vec_normalize ( vec3_t & vec );
 
-	 void fast_sqrt ( float * __restrict p_out, float * __restrict p_in );
+	void fast_sqrt ( float * __restrict p_out, float * __restrict p_in );
 
 	void angle_vectors ( vec3_t &, vec3_t *, vec3_t *, vec3_t * );
 	vec3_t vector_add ( const vec3_t a, const vec3_t b );

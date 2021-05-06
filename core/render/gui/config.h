@@ -317,7 +317,9 @@ public:
 
 	config_manager::key_bind_item removals_keybind;
 	std::vector<int> removals_input;
-
+	
+	bool interpolate_angles = false;
+	float interpolation_amount = 0.f;
 };
 
 class player_visual : public player_visual_base {

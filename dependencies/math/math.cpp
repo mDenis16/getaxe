@@ -1,5 +1,4 @@
 #include "../utilities/csgo.hpp"
-#
 #include "../../core/features/features.hpp"
 
 #define sin math::fast_sin
@@ -24,6 +23,206 @@ float math::clamp_yaw ( float yaw ) {
 
 	return angles;
 }
+void math::quaternion_align ( const quaternion & p, const quaternion & q, quaternion & qt ) {
+
+	// FIXME: can this be done with a quat dot product? hai mars ca tot as ae 
+
+	int i;
+	// decide if one of the quaternions is backwards
+	float a = 0;
+	float b = 0;
+	for ( i = 0; i < 4; i++ ) {
+		a += ( p [ i ] - q [ i ] ) * ( p [ i ] - q [ i ] );
+		b += ( p [ i ] + q [ i ] ) * ( p [ i ] + q [ i ] );
+	}
+	if ( a > b ) {
+		for ( i = 0; i < 4; i++ ) {
+			qt [ i ] = -q [ i ];
+		}
+	}
+	else if ( &qt != &q ) {
+		for ( i = 0; i < 4; i++ ) {
+			qt [ i ] = q [ i ];
+		}
+	}
+}
+
+/*de la cretinii de la valve*/
+void math::angle_quaterinion ( const vec3_t & angles, quaternion & outQuat ) {
+	float sr, sp, sy, cr, cp, cy;
+
+	sin_cos ( DEG2RAD ( angles [ 1 ] ) * 0.5f, &sy, &cy );
+	sin_cos ( DEG2RAD ( angles [ 0 ] ) * 0.5f, &sp, &cp );
+	sin_cos ( DEG2RAD ( angles [ 2 ] ) * 0.5f, &sr, &cr );
+
+	// NJS: for some reason VC6 wasn't recognizing the common subexpressions:
+	float srXcp = sr * cp, crXsp = cr * sp;
+	outQuat [ 0 ] = srXcp * cy - crXsp * sy; // X
+	outQuat [ 1 ] = crXsp * cy + srXcp * sy; // Y
+
+	float crXcp = cr * cp, srXsp = sr * sp;
+	outQuat [ 2 ] = crXcp * sy - srXsp * cy; // Z
+	outQuat [ 3 ] = crXcp * cy + srXsp * sy; // W (real component)
+}
+
+void math::quaternion_slerp ( const quaternion & p, const quaternion & q, float t, quaternion & qt ) {
+	quaternion q2;
+	// 0.0 returns p, 1.0 return q.
+
+	// decide if one of the quaternions is backwards
+	quaternion_align ( p, q, q2 );
+
+	quaternion_slerp_no_align ( p, q2, t, qt );
+}
+
+
+void math::quaternion_slerp_no_align ( const quaternion & p, const quaternion & q, float t, quaternion & qt ) {
+
+	float omega, cosom, sinom, sclp, sclq;
+	int i;
+
+	// 0.0 returns p, 1.0 return q.
+
+	cosom = p [ 0 ] * q [ 0 ] + p [ 1 ] * q [ 1 ] + p [ 2 ] * q [ 2 ] + p [ 3 ] * q [ 3 ];
+
+	if ( ( 1.0f + cosom ) > 0.000001f ) {
+		if ( ( 1.0f - cosom ) > 0.000001f ) {
+			omega = acos ( cosom );
+			sinom = sin ( omega );
+			sclp = sin ( ( 1.0f - t ) * omega ) / sinom;
+			sclq = sin ( t * omega ) / sinom;
+		}
+		else {
+			// TODO: add short circuit for cosom == 1.0f?
+			sclp = 1.0f - t;
+			sclq = t;
+		}
+		for ( i = 0; i < 4; i++ ) {
+			qt [ i ] = sclp * p [ i ] + sclq * q [ i ];
+		}
+	}
+	else {
+		Assert ( &qt != &q );
+
+		qt [ 0 ] = -q [ 1 ];
+		qt [ 1 ] = q [ 0 ];
+		qt [ 2 ] = -q [ 3 ];
+		qt [ 3 ] = q [ 2 ];
+		sclp = sin ( ( 1.0f - t ) * ( 0.5f * M_PI ) );
+		sclq = sin ( t * ( 0.5f * M_PI ) );
+		for ( i = 0; i < 3; i++ ) {
+			qt [ i ] = sclp * p [ i ] + sclq * qt [ i ];
+		}
+	}
+
+}
+void QuaternionMatrix ( const quaternion & q, matrix3x4_t & matrix ) {
+
+	matrix [ 0 ][ 0 ] = 1.0 - 2.0 * q [ 1 ] * q [ 1 ] - 2.0 * q [ 2 ] * q [ 2 ];
+	matrix [ 1 ][ 0 ] = 2.0 * q [ 0 ] * q [ 1 ] + 2.0 * q [ 3 ] * q [ 2 ];
+	matrix [ 2 ][ 0 ] = 2.0 * q [ 0 ] * q [ 2 ] - 2.0 * q [ 3 ] * q [ 1 ];
+
+	matrix [ 0 ][ 1 ] = 2.0f * q [ 0 ] * q [ 1 ] - 2.0f * q [ 3 ] * q [ 2 ];
+	matrix [ 1 ][ 1 ] = 1.0f - 2.0f * q [ 0 ] * q [ 0 ] - 2.0f * q [ 2 ] * q [ 2 ];
+	matrix [ 2 ][ 1 ] = 2.0f * q [ 1 ] * q [ 2 ] + 2.0f * q [ 3 ] * q [ 0 ];
+
+	matrix [ 0 ][ 2 ] = 2.0f * q [ 0 ] * q [ 2 ] + 2.0f * q [ 3 ] * q [ 1 ];
+	matrix [ 1 ][ 2 ] = 2.0f * q [ 1 ] * q [ 2 ] - 2.0f * q [ 3 ] * q [ 0 ];
+	matrix [ 2 ][ 2 ] = 1.0f - 2.0f * q [ 0 ] * q [ 0 ] - 2.0f * q [ 1 ] * q [ 1 ];
+
+	matrix [ 0 ][ 3 ] = 0.0f;
+	matrix [ 1 ][ 3 ] = 0.0f;
+	matrix [ 2 ][ 3 ] = 0.0f;
+
+
+}
+void MatrixAngles ( const matrix3x4_t & matrix, vec3_t & angles ) {
+
+	float forward [ 3 ];
+	float left [ 3 ];
+	float up [ 3 ];
+
+	//
+	// Extract the basis vectors from the matrix. Since we only need the Z
+	// component of the up vector, we don't get X and Y.
+	//
+	forward [ 0 ] = matrix [ 0 ][ 0 ];
+	forward [ 1 ] = matrix [ 1 ][ 0 ];
+	forward [ 2 ] = matrix [ 2 ][ 0 ];
+	left [ 0 ] = matrix [ 0 ][ 1 ];
+	left [ 1 ] = matrix [ 1 ][ 1 ];
+	left [ 2 ] = matrix [ 2 ][ 1 ];
+	up [ 2 ] = matrix [ 2 ][ 2 ];
+
+	float xyDist = sqrtf ( forward [ 0 ] * forward [ 0 ] + forward [ 1 ] * forward [ 1 ] );
+
+	// enough here to get angles?
+	if ( xyDist > 0.001f ) {
+		// (yaw)	y = ATAN( forward[1], forward[0] );		-- in our space, forward is the X axis
+		angles [ 1 ] = RAD2DEG ( atan2f ( forward [ 1 ], forward [ 0 ] ) );
+
+		// (pitch)	x = ATAN( -forward[2], sqrt(forward[0]*forward[0]+forward[1]*forward[1]) );
+		angles [ 0 ] = RAD2DEG ( atan2f ( -forward [ 2 ], xyDist ) );
+
+		// (roll)	z = ATAN( left[2], up[2] );
+		angles [ 2 ] = RAD2DEG ( atan2f ( left [ 2 ], up [ 2 ] ) );
+	}
+	else	// forward is mostly Z, gimbal lock-
+	{
+		// (yaw)	y = ATAN( -left[0], left[1] );			-- forward is mostly z, so use right for yaw
+		angles [ 1 ] = RAD2DEG ( atan2f ( -left [ 0 ], left [ 1 ] ) );
+
+		// (pitch)	x = ATAN( -forward[2], sqrt(forward[0]*forward[0]+forward[1]*forward[1]) );
+		angles [ 0 ] = RAD2DEG ( atan2f ( -forward [ 2 ], xyDist ) );
+
+		// Assume no roll in this case as one degree of freedom has been lost (i.e. yaw == roll)
+		angles [ 2 ] = 0;
+	}
+
+}
+void math::quaterinion_angles ( const quaternion & q, vec3_t & angles ) {
+
+
+
+
+	//#if 1
+		// FIXME: doing it this way calculates too much data, needs to do an optimized version...
+	matrix3x4_t matrix;
+	QuaternionMatrix ( q, matrix );
+	MatrixAngles ( matrix, angles );
+	/*#else
+		float m11, m12, m13, m23, m33;
+		m11 = ( 2.0f * q[3] * q[3] ) + ( 2.0f * q[0] * q[0] ) - 1.0f;
+		m12 = ( 2.0f * q[0] * q[1] ) + ( 2.0f * q[3] * q[2] );
+		m13 = ( 2.0f * q[0] * q[2] ) - ( 2.0f * q[3] * q[1] );
+		m23 = ( 2.0f * q[1] * q[2] ) + ( 2.0f * q[3] * q[0] );
+		m33 = ( 2.0f * q[3] * q[3] ) + ( 2.0f * q[2] * q[2] ) - 1.0f;
+		// FIXME: this code has a singularity near PITCH +-90
+		angles [ YAW ] = RAD2DEG ( atan2 ( m12, m11 ) );
+		angles [ PITCH ] = RAD2DEG ( asin ( -m13 ) );
+		angles [ ROLL ] = RAD2DEG ( atan2 ( m23, m33 ) );
+	#endif*/
+
+	Assert ( angles.IsValid ( ) );
+}
+
+void math::interpolate_angles ( const vec3_t & start, const vec3_t & end, vec3_t & output, float frac ) {
+	quaternion src, dest;
+
+	// Convert to quaternions
+	angle_quaterinion ( start, src );
+	angle_quaterinion ( end, dest );
+
+	quaternion result;
+
+	// Slerp
+	quaternion_slerp ( src, dest, frac, result );
+
+	// Convert to euler
+	quaterinion_angles ( result, output );
+}
+
+
 float math::ticks_to_time ( int ticks ) {
 	return static_cast< float >( ticks * interfaces::globals->interval_per_tick );
 }
@@ -36,7 +235,7 @@ int math::ticks_to_stop ( vec3_t velocity ) {
 	const float acceleration = 5.5f;
 	const float max_accelspeed = acceleration * max_speed * interfaces::globals->interval_per_tick;
 
-	return static_cast<int>(velocity.length ( ) / max_accelspeed);
+	return static_cast< int >( velocity.length ( ) / max_accelspeed );
 }
 void math::set_matrix_position ( vec3_t pos, matrix3x4_t & matrix ) {
 	for ( size_t i { }; i < 3; ++i ) {
@@ -99,9 +298,9 @@ void math::angle_matrix ( const vec3_t angles, matrix3x4_t & matrix ) {
 
 
 void  math::matrix_set_column ( const vec3_t & in, int column, matrix3x4_t & out ) {
-	out [ 0 ][ column ] = in.x;
-	out [ 1 ][ column ] = in.y;
-	out [ 2 ][ column ] = in.z;
+	out [ 0 ][ column ] = in [ 0 ];
+	out [ 1 ][ column ] = in [ 1 ];
+	out [ 2 ][ column ] = in [ 2 ];
 }
 
 void math::angle_matrix ( const vec3_t & angles, const vec3_t & position, matrix3x4_t & matrix_out ) {
@@ -178,33 +377,33 @@ void  math::vector_rotate ( const vec3_t & in1, const vec3_t & in2, vec3_t & out
 }
 vec3_t math::lerp ( const vec3_t & a, const vec3_t & b, const float t ) {
 
-	return vec3_t ( std::lerp ( a.x, b.x, t ), std::lerp ( a.y, b.y, t ), std::lerp ( a.z, b.z, t ) );
+	return vec3_t ( std::lerp ( a [ 0 ], b [ 0 ], t ), std::lerp ( a [ 1 ], b [ 1 ], t ), std::lerp ( a [ 2 ], b [ 2 ], t ) );
 }
 
 void math::clamp ( vec3_t & angles ) {
-	while ( angles.x > 89.0f )
-		angles.x -= 180.f;
+	while ( angles [ 0 ] > 89.0f )
+		angles [ 0 ] -= 180.f;
 
-	while ( angles.x < -89.0f )
-		angles.x += 180.f;
+	while ( angles [ 0 ] < -89.0f )
+		angles [ 0 ] += 180.f;
 
-	while ( angles.y > 180.f )
-		angles.y -= 360.f;
+	while ( angles [ 1 ] > 180.f )
+		angles [ 1 ] -= 360.f;
 
-	while ( angles.y < -180.f )
-		angles.y += 360.f;
+	while ( angles [ 1 ] < -180.f )
+		angles [ 1 ] += 360.f;
 
-	if ( angles.x > 89.0f )
-		angles.x = 89.0f;
-	else if ( angles.x < -89.0f )
-		angles.x = -89.0f;
+	if ( angles [ 0 ] > 89.0f )
+		angles [ 0 ] = 89.0f;
+	else if ( angles [ 0 ] < -89.0f )
+		angles [ 0 ] = -89.0f;
 
-	if ( angles.y > 180.0f )
-		angles.y = 180.0f;
-	else if ( angles.y < -180.0f )
-		angles.y = -180.0f;
+	if ( angles [ 1 ] > 180.0f )
+		angles [ 1 ] = 180.0f;
+	else if ( angles [ 1 ] < -180.0f )
+		angles [ 1 ] = -180.0f;
 
-	angles.z = 0.0f;
+	angles [ 2 ] = 0.0f;
 }
 void math::random_seed ( int seed ) {
 	static auto random_seed = reinterpret_cast< void( * )( int ) >( GetProcAddress ( GetModuleHandleA ( "vstdlib.dll" ), "RandomSeed" ) );
@@ -269,9 +468,9 @@ void math::vector_vectors ( const vec3_t & forward, vec3_t & right, vec3_t & up 
 }
 
 void math::matrix_get_column ( const matrix3x4_t & in, int column, vec3_t & out ) {
-	out.x = in [ 0 ][ column ];
-	out.y = in [ 1 ][ column ];
-	out.z = in [ 2 ][ column ];
+	out [ 0 ] = in [ 0 ][ column ];
+	out [ 1 ] = in [ 1 ][ column ];
+	out [ 2 ] = in [ 2 ][ column ];
 }
 
 void math::vector_matrix ( const vec3_t & forward, matrix3x4_t & matrix ) {
@@ -280,7 +479,7 @@ void math::vector_matrix ( const vec3_t & forward, matrix3x4_t & matrix ) {
 	math::vector_vectors ( forward, right, up );
 
 	matrix_set_column ( forward, 0, matrix );
-	matrix_set_column ( vec3_t ( -right.x, -right.y, right.z ), 1, matrix );
+	matrix_set_column ( vec3_t ( -right [ 0 ], -right [ 1 ], right [ 2 ] ), 1, matrix );
 	matrix_set_column ( up, 2, matrix );
 }
 
@@ -297,22 +496,22 @@ void math::smooth_angles ( vec3_t view_angles, vec3_t aim_angles, vec3_t & out_a
 	smoothing_x = smoothing_x / 10.f;
 
 	auto normalize = [ & ] ( ) {
-		while ( out_angles.x > 89.0f )
-			out_angles.x -= 180.f;
+		while ( out_angles [ 0 ] > 89.0f )
+			out_angles [ 0 ] -= 180.f;
 
-		while ( out_angles.x < -89.0f )
-			out_angles.x += 180.f;
+		while ( out_angles [ 0 ] < -89.0f )
+			out_angles [ 0 ] += 180.f;
 
-		while ( out_angles.y > 180.f )
-			out_angles.y -= 360.f;
+		while ( out_angles [ 1 ] > 180.f )
+			out_angles [ 1 ] -= 360.f;
 
-		while ( out_angles.y < -180.f )
-			out_angles.y += 360.f;
+		while ( out_angles [ 1 ] < -180.f )
+			out_angles [ 1 ] += 360.f;
 	};
 	normalize ( );
 
-	out_angles.x = out_angles.x / smoothing_x + view_angles.x;
-	out_angles.y = out_angles.y / smoothing_y + view_angles.y;
+	out_angles [ 0 ] = out_angles [ 0 ] / smoothing_x + view_angles [ 0 ];
+	out_angles [ 1 ] = out_angles [ 1 ] / smoothing_y + view_angles [ 1 ];
 
 	normalize ( );
 }
@@ -327,7 +526,7 @@ float math::get_fov ( const vec3_t & va, const vec3_t & eyepos, const vec3_t & a
 float math::get_fov ( vec3_t viewangle, vec3_t aim_angle ) {
 	vec3_t delta = aim_angle - viewangle;
 	clamp ( delta );
-	return sqrtf ( powf ( delta.x, 2.0f ) + powf ( delta.y, 2.0f ) );
+	return sqrtf ( powf ( delta [ 0 ], 2.0f ) + powf ( delta [ 1 ], 2.0f ) );
 }
 float math::get_estimate_server_time ( c_usercmd * cmd ) {
 	const auto v1 = interfaces::engine->get_net_channel_info ( );
@@ -340,9 +539,9 @@ float math::get_estimate_server_time ( c_usercmd * cmd ) {
 
 
 void math::vector_substract ( const vec3_t & a, const vec3_t & b, vec3_t & c ) {
-	c.x = a.x - b.x;
-	c.y = a.y - b.y;
-	c.z = a.z - b.z;
+	c [ 0 ] = a [ 0 ] - b [ 0 ];
+	c [ 1 ] = a [ 1 ] - b [ 1 ];
+	c [ 2 ] = a [ 2 ] - b [ 2 ];
 }
 
 void math::smooth_angle ( vec3_t src, vec3_t & dst, float factor ) {
@@ -352,17 +551,17 @@ void math::smooth_angle ( vec3_t src, vec3_t & dst, float factor ) {
 	vec3_t diff = dst - src;
 
 	auto normalize = [ & ] ( ) {
-		while ( diff.x > 89.0f )
-			diff.x -= 180.f;
+		while ( diff [ 0 ] > 89.0f )
+			diff [ 0 ] -= 180.f;
 
-		while ( diff.x < -89.0f )
-			diff.x += 180.f;
+		while ( diff [ 0 ] < -89.0f )
+			diff [ 0 ] += 180.f;
 
-		while ( diff.y > 180.f )
-			diff.y -= 360.f;
+		while ( diff [ 1 ] > 180.f )
+			diff [ 1 ] -= 360.f;
 
-		while ( diff.y < -180.f )
-			diff.y += 360.f;
+		while ( diff [ 1 ] < -180.f )
+			diff [ 1 ] += 360.f;
 	};
 	normalize ( );
 	auto calced = diff / std::powf ( factor, 0.8f );
@@ -370,9 +569,9 @@ void math::smooth_angle ( vec3_t src, vec3_t & dst, float factor ) {
 }
 
 float math::calc_distance ( const vec3_t src, const vec3_t dst, bool _2d = false ) {
-	
 
-	return sqrtf ( powf ( ( src.y - dst.y ), 2 ) + powf ( ( src.x - dst.x ), 2 ) + ( _2d ? 1.0f : powf ( ( src.z - dst.z ), 2 ) ) );
+
+	return sqrtf ( powf ( ( src [ 1 ] - dst [ 1 ] ), 2 ) + powf ( ( src [ 0 ] - dst [ 0 ] ), 2 ) + ( _2d ? 1.0f : powf ( ( src [ 2 ] - dst [ 2 ] ), 2 ) ) );
 }
 /*optimize out math functions with precomputed values*/
 void math::sin_cos ( float r, float * s, float * c ) {
@@ -414,11 +613,11 @@ float math::distance_to_ray ( const  vec3_t & pos, const vec3_t & ray_start, con
 	return range;
 }
 vec3_t math::angle_vector ( vec3_t angle ) {
-	auto sy = sin ( angle.y / 180.f * static_cast< float >( M_PI ) );
-	auto cy = cos ( angle.y / 180.f * static_cast< float >( M_PI ) );
+	auto sy = sin ( angle [ 1 ] / 180.f * static_cast< float >( M_PI ) );
+	auto cy = cos ( angle [ 1 ] / 180.f * static_cast< float >( M_PI ) );
 
-	auto sp = sin ( angle.x / 180.f * static_cast< float >( M_PI ) );
-	auto cp = cos ( angle.x / 180.f * static_cast< float >( M_PI ) );
+	auto sp = sin ( angle [ 0 ] / 180.f * static_cast< float >( M_PI ) );
+	auto cp = cos ( angle [ 0 ] / 180.f * static_cast< float >( M_PI ) );
 
 	return vec3_t ( cp * cy, cp * sy, -sp );
 }
@@ -427,74 +626,74 @@ vec3_t math::angle_vector ( vec3_t angle ) {
 {
 	float flPitch, flYaw;
 
-	if ( vecForward .x == 0.f && vecForward .y == 0.f )
+	if ( vecForward [0] == 0.f && vecForward [1] == 0.f )
 	{
-		flPitch = ( vecForward .z > 0.f )?270.f:90.f;
+		flPitch = ( vecForward [2] > 0.f )?270.f:90.f;
 		flYaw = 0.f;
 	}
 	else
 	{
-		flPitch = std::atan2f( -vecForward .z, vecForward.Length2D( ) ) * 180.f / M_PI;
+		flPitch = std::atan2f( -vecForward [2], vecForward.Length2D( ) ) * 180.f / M_PI;
 
 		if ( flPitch < 0.f )
 			flPitch += 180.f;
 
-		flYaw = std::atan2f( vecForward .y, vecForward .x ) * 180.f / M_PI;
+		flYaw = std::atan2f( vecForward [1], vecForward [0] ) * 180.f / M_PI;
 
 		if ( flYaw < 0.f )
 			flYaw += 180.f;
 	}
 
-	angView .x = flPitch;
-	angView .y = flYaw;
-	angView .z = 0.f;
+	angView [0] = flPitch;
+	angView [1] = flYaw;
+	angView [2] = 0.f;
 }*/
 void math::vector_angles ( vec3_t & forward, vec3_t & angles ) {
-	if ( forward.y == 0.0f && forward.x == 0.0f ) {
-		angles.x = ( forward.z > 0.0f ) ? 270.0f : 90.0f;
-		angles.y = 0.0f;
+	if ( forward [ 1 ] == 0.0f && forward [ 0 ] == 0.0f ) {
+		angles [ 0 ] = ( forward [ 2 ] > 0.0f ) ? 270.0f : 90.0f;
+		angles [ 1 ] = 0.0f;
 	}
 	else {
-		angles.x = atan2 ( -forward.z, vec2_t ( forward ).length ( ) ) * -180 / static_cast< float >( M_PI );
-		angles.y = atan2 ( forward.y, forward.x ) * 180 / static_cast< float >( M_PI );
+		angles [ 0 ] = atan2 ( -forward [ 2 ], vec2_t ( forward ).length ( ) ) * -180 / static_cast< float >( M_PI );
+		angles [ 1 ] = atan2 ( forward [ 1 ], forward [ 0 ] ) * 180 / static_cast< float >( M_PI );
 
-		if ( angles.y > 90 )
-			angles.y -= 180;
-		else if ( angles.y < 90 )
-			angles.y += 180;
-		else if ( angles.y == 90 )
-			angles.y = 0;
+		if ( angles [ 1 ] > 90 )
+			angles [ 1 ] -= 180;
+		else if ( angles [ 1 ] < 90 )
+			angles [ 1 ] += 180;
+		else if ( angles [ 1 ] == 90 )
+			angles [ 1 ] = 0;
 	}
 
-	angles.z = 0.0f;
+	angles [ 2 ] = 0.0f;
 }
 void math::VectorAnglesAwall ( const vec3_t & vecForward, vec3_t & angView ) {
 	float flPitch, flYaw;
 
-	if ( vecForward.x == 0.f && vecForward.y == 0.f ) {
-		flPitch = ( vecForward.z > 0.f ) ? 270.f : 90.f;
+	if ( vecForward [ 0 ] == 0.f && vecForward [ 1 ] == 0.f ) {
+		flPitch = ( vecForward [ 2 ] > 0.f ) ? 270.f : 90.f;
 		flYaw = 0.f;
 	}
 	else {
-		flPitch = std::atan2f ( -vecForward.z, vecForward.Length2D ( ) ) * 57.2957795131f;
+		flPitch = std::atan2f ( -vecForward [ 2 ], vecForward.Length2D ( ) ) * 57.2957795131f;
 
 		if ( flPitch < 0.f )
 			flPitch += 360.f;
 
-		flYaw = std::atan2f ( vecForward.y, vecForward.x ) * 57.2957795131f;
+		flYaw = std::atan2f ( vecForward [ 1 ], vecForward [ 0 ] ) * 57.2957795131f;
 
 		if ( flYaw < 0.f )
 			flYaw += 360.f;
 	}
 
-	angView.x = flPitch;
-	angView.y = flYaw;
-	angView.z = 0.f;
+	angView [ 0 ] = flPitch;
+	angView [ 1 ] = flYaw;
+	angView [ 2 ] = 0.f;
 }
 void math::transform_vector ( vec3_t & a, matrix3x4_t & b, vec3_t & out ) {
-	out.x = a.dot ( b.m_flMatVal [ 0 ] ) + b.m_flMatVal[ 0 ][ 3 ];
-	out.y = a.dot ( b.m_flMatVal[ 1 ] ) + b.m_flMatVal[ 1 ][ 3 ];
-	out.z = a.dot ( b.m_flMatVal[ 2 ] ) + b.m_flMatVal[ 2 ][ 3 ];
+	out [ 0 ] = a.dot ( b.m_flMatVal [ 0 ] ) + b.m_flMatVal [ 0 ][ 3 ];
+	out [ 1 ] = a.dot ( b.m_flMatVal [ 1 ] ) + b.m_flMatVal [ 1 ][ 3 ];
+	out [ 2 ] = a.dot ( b.m_flMatVal [ 2 ] ) + b.m_flMatVal [ 2 ][ 3 ];
 }
 
 float math::segment_to_segment ( const vec3_t s1, const vec3_t s2, const vec3_t k1, const vec3_t k2 ) {
@@ -584,12 +783,12 @@ float math::fast_vec_normalize ( vec3_t & vec ) {
 	const auto sqrlen = vec.length_sqr ( ) + 1.0e-10f;
 	float invlen;
 	fast_rsqrt ( sqrlen, &invlen );
-	vec.x *= invlen;
-	vec.y *= invlen;
-	vec.z *= invlen;
+	vec [ 0 ] *= invlen;
+	vec [ 1 ] *= invlen;
+	vec [ 2 ] *= invlen;
 	return sqrlen * invlen;
 }
- void math::fast_sqrt ( float * __restrict p_out, float * __restrict p_in ) {
+void math::fast_sqrt ( float * __restrict p_out, float * __restrict p_in ) {
 	_mm_store_ss ( p_out, _mm_sqrt_ss ( _mm_load_ss ( p_in ) ) );
 	// compiles to movss, sqrtss, movss
 }
@@ -598,9 +797,9 @@ float math::fast_vec_normalize ( vec3_t & vec ) {
 void math::angle_vectors ( vec3_t & angles, vec3_t * forward, vec3_t * right, vec3_t * up ) {
 	float sp, sy, sr, cp, cy, cr;
 
-	sin_cos ( DEG2RAD ( angles.x ), &sp, &cp );
-	sin_cos ( DEG2RAD ( angles.y ), &sy, &cy );
-	sin_cos ( DEG2RAD ( angles.z ), &sr, &cr );
+	sin_cos ( DEG2RAD ( angles [ 0 ] ), &sp, &cp );
+	sin_cos ( DEG2RAD ( angles [ 1 ] ), &sy, &cy );
+	sin_cos ( DEG2RAD ( angles [ 2 ] ), &sr, &cr );
 
 	if ( forward ) {
 		forward->x = cp * cy;
@@ -624,40 +823,40 @@ void math::angle_vectors ( vec3_t & angles, vec3_t * forward, vec3_t * right, ve
 void math::angle_vectors ( vec3_t & angles, vec3_t & forward ) {
 	float sp, sy, cp, cy;
 
-	sin_cos ( DEG2RAD ( angles.y ), &sy, &cy );
-	sin_cos ( DEG2RAD ( angles.x ), &sp, &cp );
+	sin_cos ( DEG2RAD ( angles [ 1 ] ), &sy, &cy );
+	sin_cos ( DEG2RAD ( angles [ 0 ] ), &sp, &cp );
 
-	forward.x = cp * cy;
-	forward.y = cp * sy;
-	forward.z = -sp;
+	forward [ 0 ] = cp * cy;
+	forward [ 1 ] = cp * sy;
+	forward [ 2 ] = -sp;
 }
 void math::vector_ma ( const vec3_t & start, float scale, const vec3_t & direction, vec3_t & dest ) {
-	dest.x = start.x + direction.x * scale;
-	dest.y = start.y + direction.y * scale;
-	dest.z = start.z + direction.z * scale;
+	dest [ 0 ] = start [ 0 ] + direction [ 0 ] * scale;
+	dest [ 1 ] = start [ 1 ] + direction [ 1 ] * scale;
+	dest [ 2 ] = start [ 2 ] + direction [ 2 ] * scale;
 }
 vec3_t math::vector_add ( const vec3_t a, const vec3_t  b ) {
-	return vec3_t ( a.x + b.x,
-		a.y + b.y,
-		a.z + b.z );
+	return vec3_t ( a [ 0 ] + b [ 0 ],
+		a [ 1 ] + b [ 1 ],
+		a [ 2 ] + b [ 2 ] );
 }
 
 vec3_t math::vector_subtract ( vec3_t & a, vec3_t & b ) {
-	return vec3_t ( a.x - b.x,
-		a.y - b.y,
-		a.z - b.z );
+	return vec3_t ( a [ 0 ] - b [ 0 ],
+		a [ 1 ] - b [ 1 ],
+		a [ 2 ] - b [ 2 ] );
 }
 
 vec3_t math::vector_multiply ( vec3_t & a, vec3_t & b ) {
-	return vec3_t ( a.x * b.x,
-		a.y * b.y,
-		a.z * b.z );
+	return vec3_t ( a [ 0 ] * b [ 0 ],
+		a [ 1 ] * b [ 1 ],
+		a [ 2 ] * b [ 2 ] );
 }
 
 vec3_t math::vector_divide ( vec3_t & a, vec3_t & b ) {
-	return vec3_t ( a.x / b.x,
-		a.y / b.y,
-		a.z / b.z );
+	return vec3_t ( a [ 0 ] / b [ 0 ],
+		a [ 1 ] / b [ 1 ],
+		a [ 2 ] / b [ 2 ] );
 }
 
 bool math::screen_transform ( const vec3_t & point, vec3_t & screen ) {
@@ -665,16 +864,16 @@ bool math::screen_transform ( const vec3_t & point, vec3_t & screen ) {
 	printf ( "pmatrix %i width, height %i %i \n", pmatrix, csgo::screen_width, csgo::screen_height );
 	auto & matrix = *( view_matrix3x4_t * ) pmatrix;
 
-	float w = matrix [ 3 ][ 0 ] * point.x + matrix [ 3 ][ 1 ] * point.y + matrix [ 3 ][ 2 ] * point.z + matrix [ 3 ][ 3 ];
-	screen.x = matrix [ 0 ][ 0 ] * point.x + matrix [ 0 ][ 1 ] * point.y + matrix [ 0 ][ 2 ] * point.z + matrix [ 0 ][ 3 ];
-	screen.y = matrix [ 1 ][ 0 ] * point.x + matrix [ 1 ][ 1 ] * point.y + matrix [ 1 ][ 2 ] * point.z + matrix [ 1 ][ 3 ];
-	screen.z = 0.0f;
+	float w = matrix [ 3 ][ 0 ] * point [ 0 ] + matrix [ 3 ][ 1 ] * point [ 1 ] + matrix [ 3 ][ 2 ] * point [ 2 ] + matrix [ 3 ][ 3 ];
+	screen [ 0 ] = matrix [ 0 ][ 0 ] * point [ 0 ] + matrix [ 0 ][ 1 ] * point [ 1 ] + matrix [ 0 ][ 2 ] * point [ 2 ] + matrix [ 0 ][ 3 ];
+	screen [ 1 ] = matrix [ 1 ][ 0 ] * point [ 0 ] + matrix [ 1 ][ 1 ] * point [ 1 ] + matrix [ 1 ][ 2 ] * point [ 2 ] + matrix [ 1 ][ 3 ];
+	screen [ 2 ] = 0.0f;
 
 	int inverse_width = static_cast< int >( ( w < 0.001f ) ? -1.0f / w :
 		1.0f / w );
 
-	screen.x *= inverse_width;
-	screen.y *= inverse_width;
+	screen [ 0 ] *= inverse_width;
+	screen [ 1 ] *= inverse_width;
 	return ( w < 0.001f );
 }
 
@@ -685,7 +884,7 @@ void math::normalize_num ( vec3_t & vIn, vec3_t & vOut ) {
 		return;
 	}
 	flLen = 1 / flLen;
-	vOut.init ( vIn.x * flLen, vIn.y * flLen, vIn.z * flLen );
+	vOut.init ( vIn [ 0 ] * flLen, vIn [ 1 ] * flLen, vIn [ 2 ] * flLen );
 }
 float math::fl_angle_mod ( float fl_angle ) {
 	return( ( 360.0f / 65536.0f ) * ( ( int32_t ) ( fl_angle * ( 65536.0f / 360.0f ) ) & 65535 ) );
@@ -759,9 +958,9 @@ float math::normalize_yaw ( float f ) {
 				out [ 1 ] = DotProducts ( in1, in2 [ 1 ] ) + in2 [ 1 ][ 3 ];
 				out [ 2 ] = DotProducts ( in1, in2 [ 2 ] ) + in2 [ 2 ][ 3 ];
 			};
-			VectorTransform ( &in1.x, in2, &out.x );
+			VectorTransform ( &in1[0], in2, &out[0] );
 		};*/
 vec3_t math::vector_transform ( const vec3_t & in1, const matrix3x4_t & in2 ) {
-	auto out = vec3_t ( in1.dot_product( vec3_t ( in2 [ 0 ][ 0 ], in2 [ 0 ][ 1 ], in2 [ 0 ][ 2 ] ) ) + in2 [ 0 ][ 3 ], in1.dot_product ( vec3_t ( in2 [ 1 ][ 0 ], in2 [ 1 ][ 1 ], in2 [ 1 ][ 2 ] ) ) + in2 [ 1 ][ 3 ], in1.dot_product ( vec3_t ( in2 [ 2 ][ 0 ], in2 [ 2 ][ 1 ], in2 [ 2 ][ 2 ] ) ) + in2 [ 2 ][ 3 ] );
+	auto out = vec3_t ( in1.dot_product ( vec3_t ( in2 [ 0 ][ 0 ], in2 [ 0 ][ 1 ], in2 [ 0 ][ 2 ] ) ) + in2 [ 0 ][ 3 ], in1.dot_product ( vec3_t ( in2 [ 1 ][ 0 ], in2 [ 1 ][ 1 ], in2 [ 1 ][ 2 ] ) ) + in2 [ 1 ][ 3 ], in1.dot_product ( vec3_t ( in2 [ 2 ][ 0 ], in2 [ 2 ][ 1 ], in2 [ 2 ][ 2 ] ) ) + in2 [ 2 ][ 3 ] );
 	return out;
 }

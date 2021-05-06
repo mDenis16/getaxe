@@ -371,8 +371,8 @@ namespace animations {
 
 		if ( !animstate ) return;
 		
-		//if ( local_pointer->flags() & fl_onground)
-		  // animstate->m_time_in_air = 0;
+		if ( local_pointer->flags() & fl_onground)
+		   animstate->m_time_in_air = 0;
 
 
 

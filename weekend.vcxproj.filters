@@ -111,6 +111,7 @@
     <ClCompile Include="core\features\visuals\removals\removals.cpp" />
     <ClCompile Include="core\features\movement\autostrafer.cpp" />
     <ClCompile Include="core\render\gui\menu\movement_menu.cpp" />
+    <ClCompile Include="core\features\visuals\LOCAL\thirdperson.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />

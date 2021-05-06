@@ -16,6 +16,9 @@ namespace visuals {
 		void remove_smoke ( );
 	}
 
+	void thirdperson ( );
+
+
 
 
 	enum font_align {

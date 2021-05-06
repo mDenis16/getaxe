@@ -51,7 +51,7 @@ namespace visuals {
 
 			int VertLine = ( int ) ( box_data.w * 0.33f );
 			int HorzLine = ( int ) ( box_data.h * 0.33f );
-			int squareLine = std::min ( VertLine, HorzLine );
+			int squareLine = min ( VertLine, HorzLine );
 
 			float x = box_data.x;
 			float y = box_data.y;

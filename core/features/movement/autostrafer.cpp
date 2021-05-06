@@ -89,8 +89,8 @@
 		m_ideal2 = ( m_speed > 0.f ) ? RAD2DEG ( std::asin ( 30.f / m_speed ) ) : 90.f;
 
 		// some additional sanity.
-		math::clamp ( m_ideal, 0.f, 90.f );
-		math::clamp ( m_ideal2, 0.f, 90.f );
+		m_ideal = std::clamp ( m_ideal, 0.f, 90.f );
+		m_ideal2 = std::clamp ( m_ideal2, 0.f, 90.f );
 
 		// save entity bounds ( used much in circle-strafer ).
 		m_mins = local_pointer->mins ( );
@@ -177,7 +177,7 @@
 
 		// do allign strafer.
 		if ( config.misc.movement.a_strafe  ) {
-			float angle = std::max ( m_ideal2, 4.f );
+			float angle = max ( m_ideal2, 4.f );
 
 			if ( angle > m_ideal2 && !( m_strafe_index % 5 ) )
 				angle = m_ideal2;
@@ -281,13 +281,13 @@
 		strafe = m_ideal * 2.f;
 
 		// clamp ideal strafe circle value to min and max step.
-		math::clamp ( strafe, min, max );
+		strafe = std::clamp ( strafe, min, max );
 
 		// calculate time.
 		time = 320.f / m_speed;
 
 		// clamp time.
-		math::clamp ( time, 0.35f, 1.f );
+		time = std::clamp ( time, 0.35f, 1.f );
 
 		// init step.
 		step = strafe;

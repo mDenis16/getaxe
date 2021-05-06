@@ -171,7 +171,14 @@ namespace ui {
 				auto & l_cfg = config.local_visual;
 				auto fourth_tab = new ui::child_window ( "View", 45.f, 45.0, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
 				{
-				    new ui::checkbox ( "Third person", fourth_tab, l_cfg.thirdperson );
+					auto thirdperson_checkbox = new ui::checkbox ( "Third person", fourth_tab, l_cfg.thirdperson );
+					{
+						auto thirdperson_extender = new ui::element_extender ( thirdperson_checkbox );
+						{
+							new ui::checkbox ( "Interpolate angles", thirdperson_extender, l_cfg.interpolate_angles );
+							new ui::slider ( "Amount", thirdperson_extender, l_cfg.interpolation_amount, 1.f, 20.f, ui::slider_type::floates );
+						}
+					}
 					new ui::slider ( "Distance", fourth_tab, l_cfg.thirdperson_distance, 50.f, 200.f, ui::slider_type::floates );
 					auto view_model = new ui::slider ( "Viewmodel", fourth_tab, l_cfg.view_model_distance, -50.f, 50.f, ui::slider_type::floates );
 					auto view_model_extender = new ui::element_extender ( view_model );
