@@ -11,7 +11,10 @@ namespace visuals {
 	
 
 
-
+	namespace removals {
+		void remove_flash ( );
+		void remove_smoke ( );
+	}
 
 
 

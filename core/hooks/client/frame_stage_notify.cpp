@@ -14,6 +14,8 @@ namespace hooks::callback {
 		local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 
 		if ( stage == FRAME_START ) {
+			visuals::removals::remove_flash ( );
+			visuals::removals::remove_smoke ( );
 			visuals::handler->intialization ( );
 		}
 

@@ -192,15 +192,15 @@ namespace visuals {
 
 			render->AddCircle ( base_pos, radius, ImColor ( 255, 255, 255, (int)(( alpha / 255.f) * 100.f )), 30, 2.f );
 
-			auto text_size = ImGui::CalcTextSize ( "B", radius, ui::font_icons );
+			auto text_size = ImGui::CalcTextSize ( "C", radius, ui::font_icons );
 
 			auto original_pos = base_pos;
 			base_pos.x -= text_size.x / 2.f;
 			base_pos.y -= text_size.y / 4.f;
 
-			render->AddText ( ui::font_icons, radius, base_pos, ImColor ( 255, 255, 255, ( int)(alpha) ), "B" );
+			render->AddText ( ui::font_icons, radius, base_pos, ImColor ( 255, 255, 255, ( int)(alpha) ), "C" );
 
-			text_size = ImGui::CalcTextSize ( "6 hp", 0.4f * radius, ui::font_widgets );
+			text_size = ImGui::CalcTextSize ( "2 m", 0.4f * radius, ui::font_widgets );
 
 			original_pos.x -= text_size.x / 2.f;
 			original_pos.y -= text_size.y * 2.f - 0.4f * radius / 2.f;
@@ -313,13 +313,13 @@ namespace visuals {
 
 
 
-			auto text_size = ImGui::CalcTextSize ( "B", cfg->out_of_pov_base_size, ui::font_icons );
+			auto text_size = ImGui::CalcTextSize ( "c", cfg->out_of_pov_base_size, ui::font_icons );
 
 			auto original_pos = base_pos;
 			base_pos.x -= text_size.x / 2.f;
 			base_pos.y -= text_size.y / 2.f;
 
-			render->AddText ( ui::font_icons, cfg->out_of_pov_base_size, base_pos, ImColor ( 255, 255, 255, ( int ) ( alpha ) ), "B" );
+			render->AddText ( ui::font_icons, cfg->out_of_pov_base_size, base_pos, ImColor ( 255, 255, 255, ( int ) ( alpha ) ), "C" );
 
 			base_pos = ( ImVec2 ( base_pos.x, base_pos.y - cfg->out_of_pov_base_size * 2.f + 0.4f ) );
 	

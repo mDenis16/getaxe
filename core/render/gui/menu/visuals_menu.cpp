@@ -176,14 +176,14 @@ namespace ui {
 					auto view_model = new ui::slider ( "Viewmodel", fourth_tab, l_cfg.view_model_distance, -50.f, 50.f, ui::slider_type::floates );
 					auto view_model_extender = new ui::element_extender ( view_model );
 					{
+
 						new ui::slider ( "X offset", view_model_extender, l_cfg.view_model_x_offset, -20.f, 20.f, ui::slider_type::floates );
 						new ui::slider ( "Y offset", view_model_extender, l_cfg.view_model_y_offset, -20.f, 20.f, ui::slider_type::floates );
 						new ui::slider ( "Z offset", view_model_extender, l_cfg.view_model_z_offset, -20.f, 20.f, ui::slider_type::floates );
 
-						//new ui::slider ( "Roll", view_model_extender, l_cfg.view_model_roll, -20.f, 20.f, ui::slider_type::floates );
 					}
 					new ui::slider ( "Aspect ratio", fourth_tab, l_cfg.aspect_ratio, 0.f, 2.f, ui::slider_type::floates );
-					new ui::multibox ( "Removals input", fourth_tab, config.removals_list, cfg->flags_input );
+					new ui::multibox ( "Removals input", fourth_tab, config.removals_list, l_cfg.removals_input );
 				}
 			}
 		}

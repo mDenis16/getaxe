@@ -42,5 +42,6 @@ namespace ui {
 		void visuals_weapons_menu ( object * main_window, sub_tab * sub_tab );
 		void projectiles_weapons_menu ( object * main_window, sub_tab * sub_tab );
 		void visuals_world_menu ( object * main_window, sub_tab * sub_tab );
+		void movement_menu ( object * main_window, sub_tab * sub_tab );
 	}
 }

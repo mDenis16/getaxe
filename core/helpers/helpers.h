@@ -21,6 +21,7 @@ namespace local_player {
 	struct data {
 		bool in_game = false;
 		bool break_lby = false;
+		bool pressing_move = false;
 		vec3_t last_lby_angle = vec3_t ( );
 		vec3_t orig_viewangle = vec3_t ( );
 		vec3_t eye_position = vec3_t ( );
@@ -29,6 +30,7 @@ namespace local_player {
 		matrix3x4a_t left_matrix [ 128 ];
 		matrix3x4a_t right_matrix [ 128 ];
 
+		vec3_t strafe_angles = vec3_t ( );
 
 		bool init_local_anim = false;
 		anim_state real_state;
@@ -51,39 +53,8 @@ namespace local_player {
 		std::deque <command> commands;
 		std::deque <correction_data> data;
 
-		bool double_tap_fire = false;
-		bool double_tap_aim = false;
-		bool double_tap_aim_check = false;
-
-
-		bool freestanding_on_key = false;
-		int freestand_on_key_last_tick = 0;
-
-		bool force_safe_point_on_key = false;
-		int force_safe_point_on_key_tick = 0;
-
-		bool force_min_dmg_on_key = false;
-		int force_min_dmg_on_key_tick = 0;
-		int m_tick = 0;
-		bool force_low_delta_on_key = false;
-		int force_low_delta_on_key_tick = 0;
-
-
-		bool force_extra_low_delta_on_key = false;
-		int force_extra_low_delta_on_key_tick = 0;
-
-
-		bool force_invert_resolver_on_key = false;
-		int force_invert_resolver_on_key_tick = 0;
-
-
-		bool force_invert_doubletap_on_key = false;
-		int force_invert_doubletap_on_key_tick = 0;
-
-		bool extended_backtrack_on_key = false;
-		int extended_backtrack_on_key_tick = 0;
-
-
+		
+	
 		int force_choke = 0;
 		bool fired_shot = false;
 		bool force_send_packet = false;

@@ -105,8 +105,8 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual ( d3d_device, 42 ), &callback::present_hook );
 		CREATE_HOOK ( get_virtual ( d3d_device, 16 ), &reset_hook );
 		CREATE_HOOK ( get_virtual ( interfaces::engine, 101 ), &callback::get_screen_aspect_ratio );
-
-
+		CREATE_HOOK ( nullptr /*utilities::pattern_scan ( "client.dll", "55 8B EC A1 ? ? ? ? 83 EC 10 56 8B F1 B9" )*/, &callback::calc_view_model_bob );
+		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 17 ), &callback::draw_fog );
 		wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( csgo::window, GWL_WNDPROC, ( LONG ) callback::wnd_proc );
 	}
 

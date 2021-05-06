@@ -38,18 +38,19 @@ namespace hooks::callback {
 			break;
 		}
 
+		static uint32_t hud_zoom_panel = 0;
+
+		if ( !hud_zoom_panel )
+			if ( !strcmp ( crypt_str ( "HudZoom" ), interfaces::panel->get_panel_name ( panel ) ) )
+				hud_zoom_panel = panel;
+
+		if ( hud_zoom_panel == panel && config.local_visual.removals_input [ REMOVALS_SCOPE ] )
+			return;
+
 
 		static unsigned int panelID = 0, panelHudID = 0;
 
-		/*if ( !panelHudID )
-			if ( config.visuals_world_removals [ 4 ] && fnv::hash ( "HudZoom" ) == panel_to_draw ) {
-				panelHudID = panel;
-			}
-
-		if ( panelHudID == panel && local_player::m_data.pointer && local_player::m_data.pointer->is_alive ( ) ) {
-			if ( local_player::m_data.pointer->is_scoped ( ) )
-				return;
-		}*/
+	
 
 		paint_traverse_original ( interfaces::panel, panel, force_repaint, allow_force );
 	}

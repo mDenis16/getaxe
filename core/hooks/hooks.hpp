@@ -38,6 +38,7 @@
 #define do_procedural_foot_plant_original  reinterpret_cast< void( __thiscall* )( void *,  int , int , int , int  ) >( hooks::list.at ( hooks::hook_index::do_procedural_foot_plant )->original )
 #define calc_view__original  reinterpret_cast< void( __thiscall* )( void * , void * , vec3_t & , vec3_t & , float & , float & , float &  ) >( hooks::list.at ( hooks::hook_index::calc_view_original )->original )
 #define get_screen_aspect_original reinterpret_cast< float(__thiscall*)(void*, int, int) >( hooks::list.at ( hooks::hook_index::get_screen_aspect_ratio )->original )
+#define calc_view_model_bob_original reinterpret_cast< void(__thiscall*)( player_t * , void* , vec3_t &  ) >( hooks::list.at ( hooks::hook_index::calc_view_model_bob )->original )
 
 namespace hooks {
 
@@ -82,7 +83,8 @@ namespace hooks {
 		file_system,
 		present,
 		reset,
-		get_screen_aspect_ratio
+		get_screen_aspect_ratio,
+		calc_view_model_bob
 		/*no need to call original*/
 	};
 
@@ -127,8 +129,8 @@ namespace hooks {
 		extern int __fastcall file_system ( void *, void * );
 		extern void __fastcall run_command ( void * ecx, void * edx, player_t * player, c_usercmd * cmd, player_move_helper * move_helper );
 		extern float __fastcall get_screen_aspect_ratio ( void * ecx, void * edx, int width, int height );
-
-
+		extern void __fastcall calc_view_model_bob ( player_t * player, void * edx, vec3_t & position );
+		extern bool __fastcall draw_fog ( void * ecx, void * edx );
 	}
 
 

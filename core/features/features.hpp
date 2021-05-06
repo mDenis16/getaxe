@@ -13,7 +13,9 @@
 #include "../features/setup/animations.h"
 #include "../features/visuals/modulation/modulation.h"
 #include "../features/visuals/visuals.h"
+#include "../features/movement/autostrafer.h"
 #include "../render/d3dfont.h"
+
 
 
 namespace event_manager {

@@ -82,7 +82,7 @@ namespace visuals {
 
 			int VertLine = ( int ) ( box_data.w * 0.33f );
 			int HorzLine = ( int ) ( box_data.h * 0.33f );
-			int squareLine = min ( VertLine, HorzLine );
+			int squareLine = std::min ( VertLine, HorzLine );
 
 			float x = box_data.x;
 			float y = box_data.y;
@@ -304,6 +304,7 @@ namespace visuals {
 
 
 		if ( projectile->client_class()->class_id == CSmokeGrenadeProjectile && projectile->m_nSmokeEffectTickBegin ( ) > 0 || ( projectile->client_class ( )->class_id == CBaseCSGrenadeProjectile && projectile->m_nExplodeEffectTickBegin ( ) > 0 )) {
+			this->entity->m_bDidSmokeEffect ( ) = false;
 			this->delete_entity( );
 		}
 

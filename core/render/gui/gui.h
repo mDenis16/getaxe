@@ -68,3 +68,4 @@ namespace ui {
 #define ICON_SETTINGS "B"
 #define ICON_FIRE "C"
 #define ICON_LOCAL "D"
+#define ICON_MOVEMENT "E"

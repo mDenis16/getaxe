@@ -430,6 +430,42 @@ struct world_visuals {
 
 };
 
+struct c_movement {
+	bool bhop = false;
+	config_manager::key_bind_item bhop_keybind;
+
+	bool auto_strafe = false;
+	config_manager::key_bind_item auto_strafe_keybind;
+
+	bool wasd_strafe = false;
+	config_manager::key_bind_item wasd_strafe_keybind;
+
+	bool a_strafe = false;
+	config_manager::key_bind_item a_strafe_keybind;
+
+	bool circle_strafe = false;
+	config_manager::key_bind_item circle_keybind;
+
+	bool z_strafe = false;
+	config_manager::key_bind_item z_keybind;
+
+
+	float z_strafe_frequency = 1.f;
+	float z_strafer_distance = 1.f;
+
+	bool slow_walk = false;
+	config_manager::key_bind_item slow_walk_keybind;
+
+
+	bool air_duck = false;
+
+};
+
+struct c_misc {
+	c_movement movement;
+
+};
+
 class c_config : public singleton< c_config > {
 public:
 	c_config ( ) {
@@ -445,16 +481,7 @@ public:
 	player_visual_local local_visual;
 	weapon_visual weapons_visual;
 	projectiles_visual projectiles_visual;
-	/*
-	REMOVALS_SCOPE,
-	REMOVALS_ZOOM,
-	REMOVALS_SMOKE,
-	REMOVALS_FLASH,
-	REMOVALS_RECOIL,
-	REMOVALS_LANDING_BOB,
-	REMOVALS_POSTPROCESSING,
-	REMOVALS_FOGS*/
-
+	c_misc misc;
 
 	std::vector<std::string> flags_list = { "Money", "Armor", "Kit",  "Scoped", "Flashed", "Fakeduck", "Bomb", "Break LC", "Taser", "Hit", "Exploit", "Ping", "Hostage", "Defusing", "Reload", "Dormant", "Distance" };
 	std::vector<std::string> removals_list = {"Scope", "Zoom", "Smoke", "Flash", "Recoil", "Landing bob", "Post processing", "Fogs"};
@@ -465,26 +492,7 @@ public:
 	{ "Enemy", "e" },
 	{ "Local", "D" }
 	};
-	/*
-	
-		FLAGS_MONEY,
-	FLAGS_ARMOR,
-	FLAGS_KIT,
-	FLAGS_SCOPED,
-	FLAGS_FLASHED,
-	FLAGS_FAKEDUCKING,
-	FLAGS_C4,
-	FLAGS_LC,
-	FLAGS_TASER,
-	FLAGS_HIT,
-	FLAGS_EXPLOIT,
-	FLAGS_PING,
-	FLAGS_HOSTAGE,
-	FLAGS_DEFUSING,
-	FLAGS_RELOAD,
-	FLAGS_DORMANT,
-	FLAGS_DISTANCE,
-	FLAGS_MAX*/
+
 };
 
 

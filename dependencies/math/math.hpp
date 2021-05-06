@@ -121,6 +121,12 @@ namespace math {
 	float get_fov ( vec3_t viewangle, vec3_t aim_angle );
 	float get_estimate_server_time ( c_usercmd * cmd );
 
+#undef min
+#undef max
+	template < typename t >
+	__forceinline void clamp ( t & n, const t & lower, const t & upper ) {
+		n = std::max ( lower, std::min ( n, upper ) );
+	}
 
 	void vector_substract ( const vec3_t & a, const vec3_t & b, vec3_t & c );
 	void smooth_angle ( vec3_t src, vec3_t & dst, float factor );

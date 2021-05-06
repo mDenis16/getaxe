@@ -106,6 +106,7 @@
     <ClCompile Include="core\features\events\event_handler.cpp" />
     <ClCompile Include="core\features\features.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
+    <ClCompile Include="core\features\movement\autostrafer.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
     <ClCompile Include="core\features\visuals\grenade\visual_grenade.cpp" />
     <ClCompile Include="core\features\visuals\modulation\materials.cpp" />
@@ -114,6 +115,7 @@
     <ClCompile Include="core\features\visuals\player\visual_player.cpp" />
     <ClCompile Include="core\features\visuals\projectile\visual_project.cpp" />
     <ClCompile Include="core\features\visuals\projectile_prediction.cpp" />
+    <ClCompile Include="core\features\visuals\removals\removals.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\features\visuals\visual_handler.cpp" />
     <ClCompile Include="core\features\visuals\weapon\visual_weapon.cpp" />
@@ -125,10 +127,12 @@
     <ClCompile Include="core\hooks\cbaseanimation\do_procedural_foot_plant.cpp" />
     <ClCompile Include="core\hooks\cbaseanimation\should_skip_animation_frame.cpp" />
     <ClCompile Include="core\hooks\clientmode\create_move.cpp" />
+    <ClCompile Include="core\hooks\clientmode\draw_fog.cpp" />
     <ClCompile Include="core\hooks\clientmode\override_view.cpp" />
     <ClCompile Include="core\hooks\clientmode\post_screen_space_fx.cpp" />
     <ClCompile Include="core\hooks\clientstate\packet_end.cpp" />
     <ClCompile Include="core\hooks\clientstate\packet_start.cpp" />
+    <ClCompile Include="core\hooks\client\calc_view_model_bob.cpp" />
     <ClCompile Include="core\hooks\client\check_for_sequence_change.cpp" />
     <ClCompile Include="core\hooks\client\frame_stage_notify.cpp" />
     <ClCompile Include="core\hooks\client\write_user_cmd.cpp" />
@@ -181,6 +185,7 @@
     <ClCompile Include="core\render\gui\framework\window.cpp" />
     <ClCompile Include="core\render\gui\gui.cpp" />
     <ClCompile Include="core\render\gui\initialize.cpp" />
+    <ClCompile Include="core\render\gui\menu\movement_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\projectiles_visuals_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\ragebot_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\settings_menu.cpp" />
@@ -212,6 +217,7 @@
   <ItemGroup>
     <ClInclude Include="core\features\events\event_handler.h" />
     <ClInclude Include="core\features\features.hpp" />
+    <ClInclude Include="core\features\movement\autostrafer.h" />
     <ClInclude Include="core\features\setup\animations.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
     <ClInclude Include="core\features\visuals\modulation\modulation.h" />

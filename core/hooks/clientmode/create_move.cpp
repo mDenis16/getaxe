@@ -31,7 +31,8 @@ namespace hooks::callback {
 
 
 		local_player::begin_tick ( cmd );
-		
+
+
 
 
 		local_player::end_tick ( cmd );
