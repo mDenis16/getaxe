@@ -69,7 +69,8 @@ namespace ui {
 		button_element,
 		panel_element,
 		panel_cotainer_element,
-		element_extender_element
+		element_extender_element,
+		bezier_editor_element
 
 	};
 
@@ -107,10 +108,10 @@ namespace ui {
 		int index = 0;
 		float padding = 0.f;
 		int children_index = 0;
-		int height = 0;
+		int height = 70;
 		
-		bool should_reanimate = false;
-		bool should_reset = false;
+		bool should_reanimate = true;
+		bool should_reset = true;
 		bool hovering = false;
 		bool in_animation = false;
 
@@ -134,6 +135,14 @@ namespace ui {
 
 		void set_parent (  object *  _parrent ) {
 			this->parrent = _parrent;
+		}
+
+		void empty_children ( ) {
+			for ( auto & child : children ) {
+				delete child;
+			}
+			children_index = 0;
+			children.clear ( );
 		}
 
 

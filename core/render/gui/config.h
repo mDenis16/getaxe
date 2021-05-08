@@ -319,7 +319,7 @@ public:
 	std::vector<int> removals_input;
 	
 	bool interpolate_angles = false;
-	float interpolation_amount = 0.f;
+	float interpolation_amount = 1.f;
 };
 
 class player_visual : public player_visual_base {
@@ -463,6 +463,30 @@ struct c_movement {
 
 };
 
+struct weapon_settings {
+
+	float minimum_fov = 8.f;
+	config_manager::key_bind_item minimum_fov_keybind;
+
+	float maximum_fov = 30.f;
+	config_manager::key_bind_item maximum_fov_keybind;
+
+	float target_delay = 30.f;
+	config_manager::key_bind_item target_delay_keybind;
+
+	bool enabled = false;
+	config_manager::key_bind_item enable_keybind;
+
+	int hitbox = 0;
+	config_manager::key_bind_item hitbox_keybind;
+
+	std::vector<int> hitscan;
+
+	config_manager::key_bind_item hitscan_keybind;
+	ImVec4 bezier_curve;
+
+	
+};
 struct c_misc {
 	c_movement movement;
 
@@ -474,19 +498,36 @@ public:
 		for ( size_t i = 0; i < 2; i++ ) {
 			player_visual [ i ].flags_input.resize ( FLAGS_MAX );
 		}
-		
+		weapon_groups [ 0 ].enabled = true;
+		for ( auto & weap : weapon_groups ) {
+			weap.hitscan.resize ( 5 );
+		}
+		for ( auto & weap : weapon_type ) {
+			weap.hitscan.resize ( 5 );
+		}
 		local_visual.removals_input.resize ( REMOVALS_MAX );
 		local_visual.flags_input.resize ( FLAGS_MAX );
 	}
+	~c_config ( ) {
+		
+	}
+	int active_category;
+	int active_weapon;
 
 	player_visual player_visual [ 2 ];
+	weapon_settings weapon_groups [ 5 ];
+	weapon_settings weapon_type [ 30 ];
 	player_visual_local local_visual;
 	weapon_visual weapons_visual;
 	projectiles_visual projectiles_visual;
 	c_misc misc;
+	
+
 
 	std::vector<std::string> flags_list = { "Money", "Armor", "Kit",  "Scoped", "Flashed", "Fakeduck", "Bomb", "Break LC", "Taser", "Hit", "Exploit", "Ping", "Hostage", "Defusing", "Reload", "Dormant", "Distance" };
 	std::vector<std::string> removals_list = {"Scope", "Zoom", "Smoke", "Flash", "Recoil", "Landing bob", "Post processing", "Fogs"};
+
+	std::vector<std::string> weapon_categories = { "Pistol", "Rifle", "Sniper", "Heavy", "Smg" };
 
 	std::vector<std::pair<std::string, std::string> >  player_types =
 	{
@@ -494,6 +535,8 @@ public:
 	{ "Enemy", "e" },
 	{ "Local", "D" }
 	};
+
+	int weapon_mode = 0;
 
 };
 

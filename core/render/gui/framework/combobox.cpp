@@ -407,8 +407,29 @@ namespace ui {
 			}
 		}
 		else {
-			
-		
+			bool is_parent_panel = this->parrent->type == panel_element || this->parrent->type == panel_cotainer_element;
+			if ( is_parent_panel ) {
+
+				/*if ( this->parrent->parrent && this->parrent->parrent->children.size() > 0 ) {
+					auto previous_element = this->parrent->parrent->children.at ( this->parrent->index  - 1);
+
+					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, previous_element->maxs.y + 8 );
+				}
+				else {
+					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 8);
+				}*/
+				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y );
+				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 22.9f );
+
+
+
+				this->bb_min = ImVec2 ( this->maxs.x - this->bb_width, this->mins.y + 3 );
+				this->bb_max = ImVec2 ( this->maxs.x, this->maxs.y );
+
+				this->original_bb_max_y = this->bb_max.y;
+			}
+			else {
+
 				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40 );
 				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 22.9f );
 
@@ -418,7 +439,7 @@ namespace ui {
 
 				this->original_bb_max_y = this->bb_max.y;
 			}
-		
+		}
 
 
 		for ( auto & children : this->children )

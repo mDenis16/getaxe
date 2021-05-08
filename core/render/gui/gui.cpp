@@ -70,7 +70,7 @@ enum item_definition_indexes {
 
 std::map<int, std::string> weapon_names =
 {
-	{ weapon_global, "Global" },
+{ weapon_global, "Global" },
 { weapon_deagle, "Deagle" },
 { weapon_elite, "Dual Berretas" },
 { weapon_fiveseven, "Five Seven" },
@@ -147,14 +147,14 @@ namespace ui {
 
 		auto aimbot_tab = new ui::tab ( "Aimbot", top_side, 13 );
 		{
-			auto ragebot_sub_tab = new ui::sub_tab ( "Rage", ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
+			//auto ragebot_sub_tab = new ui::sub_tab ( "Rage", ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
 
-			menu::ragebot_menu ( main_window, ragebot_sub_tab );
+		
 
 
-			auto antiaim_sub_tab = new ui::sub_tab ( "Anti-aim", ICON_ANTIAIM, font_icons, 0.f, 20.f, aimbot_tab );
+			//auto antiaim_sub_tab = new ui::sub_tab ( "Anti-aim", ICON_ANTIAIM, font_icons, 0.f, 20.f, aimbot_tab );
 			auto legitbot_sub_tab = new ui::sub_tab ( "Legitbot", ICON_LEGITBOT, font_icons, 0.f, 20.f, aimbot_tab );
-
+			menu::legitbot::init ( main_window, legitbot_sub_tab, weapons );
 			//auto combobox_weapon = new ui::combobox ( "", aimbot_tab, weapons, weapon_id );
 		}
 
@@ -164,18 +164,18 @@ namespace ui {
 		
 			for ( size_t i = 0; i < 3; i++ ) {
 				auto player_sub_tab = new ui::sub_tab ( config.player_types.at(i).first, config.player_types.at ( i ).second, font_icons, -0.5875f, 20.f, visuals_tab );
-				menu::visuals_player_menu ( main_window, player_sub_tab, i );
+				//menu::visuals_player_menu ( main_window, player_sub_tab, i );
 			}
 
 			auto weapons_sub_tab = new ui::sub_tab ( "Weapons", "W", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
-			menu::visuals_weapons_menu ( main_window, weapons_sub_tab );
+		//	menu::visuals_weapons_menu ( main_window, weapons_sub_tab );
 
 			auto projectiles_sub_tab = new ui::sub_tab ( "Projectiles", "o", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
-			menu::projectiles_weapons_menu ( main_window, projectiles_sub_tab );
+		//	menu::projectiles_weapons_menu ( main_window, projectiles_sub_tab );
 
 			auto world_sub_tab = new ui::sub_tab ( "World", ICON_WORLD, font_icons, -0.5875f, 20.f, visuals_tab );
 
-			menu::visuals_world_menu ( main_window, world_sub_tab );
+		//	menu::visuals_world_menu ( main_window, world_sub_tab );
 
 		}
 
@@ -184,13 +184,13 @@ namespace ui {
 		auto misc_tab = new ui::tab ( "Miscellaneus", top_side, 13 );
 		{
 			auto movement_sub_tab = new ui::sub_tab ( "Movement", ICON_MOVEMENT, font_icons, 0.f, 20.f, misc_tab );
-			menu::movement_menu ( main_window, movement_sub_tab );
+		//	menu::movement_menu ( main_window, movement_sub_tab );
 
 		}
 		auto settings_tab = new ui::tab ( "Settings", top_side, 13 );
 		{
 			auto configs_sub_tab = new ui::sub_tab ( "Configs", ICON_SETTINGS, font_icons, 0.f, 20.f, settings_tab );
-			menu::settings_menu ( main_window, configs_sub_tab );
+		//   	menu::settings_menu ( main_window, configs_sub_tab );
 		}
 
 	}
@@ -226,14 +226,25 @@ namespace ui {
 		if ( !ui::font_widgets )
 			return;
 
+		static int last_type = 0;
+		if ( config.active_weapon != last_type ) {
+			menu::legitbot::init_values ( &config.weapon_type [ config.active_weapon ] );
+			last_type = config.active_weapon;
+		}
+
 		if ( !main_window )
 			initialize ( render );
+
+
+
 
 
 		main_window->handle ( );
 		main_window->draw ( );
 
 
+
+		
 
 		//printf ( "ssss \n" );
 	}

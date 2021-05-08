@@ -28,7 +28,7 @@
 #include "framework/panel.h"
 #include "framework/panel_container.h"
 #include "framework/element_extender.h"
-
+#include "framework/bezier_editor.h"
 
 #include "config.h"
 
@@ -43,5 +43,11 @@ namespace ui {
 		void projectiles_weapons_menu ( object * main_window, sub_tab * sub_tab );
 		void visuals_world_menu ( object * main_window, sub_tab * sub_tab );
 		void movement_menu ( object * main_window, sub_tab * sub_tab );
+
+		namespace legitbot {
+			void on_weapon_change ( int weapon, int category );
+			void init ( object * main_window, sub_tab * sub_tab, std::vector<std::string> weapons );
+			void init_values ( weapon_settings * cfg );
+		}
 	}
 }
