@@ -7,6 +7,7 @@ namespace ui {
 		tab_container,
 		main_container
 	};
+
 	class child_window : public object {
 
 
@@ -16,6 +17,21 @@ namespace ui {
 		object * tab_assign;
 		std::string title;
 		bool float_bottom = false;
+		float percent_width = 0.f;
+		float percent_height = 0.f;
+
+		float thumb_length;
+		float thumb_progress = 0.f;
+		ImVec2 thumb_path_mins, thumb_path_maxs;
+
+		ImVec2 thumb_mins, thumb_maxs;
+		
+		bool modifying_thumb = false;
+
+		float scroll_progress = 0.f;
+		float target_scroll_progress = 0.f;
+
+
 		child_type type_child = normal;
 		float rounding = 0.f;
 		child_window ( std::string title_font, int width, int height, ImColor color, object * parent ) {
@@ -29,15 +45,16 @@ namespace ui {
 			this->bg_color = color;
 			parent->add_children ( this );
 		}
-		child_window ( std::string title_font, float percent_width, float percent_height, ImColor color, object * parent, child_type _type ) {
+		child_window ( std::string title_font, float _percent_width, float _percent_height, ImColor color, object * parent, child_type _type ) {
 		
 
 
 			this->title = title_font;
 
 
-			this->width = ( percent_width / 100.f ) * parent->width;
-			this->height = ( percent_height / 100.f ) * parent->height;
+			this->percent_width = _percent_width;
+			this->percent_height = _percent_height;
+		
 			this->renderer = parent->renderer;
 			this->parrent = parent;
 			this->type_child = _type;
@@ -56,15 +73,15 @@ namespace ui {
 			parent->add_children ( this );
 			update ( );
 		}
-		child_window ( std::string title_font, float percent_width, float percent_height, ImColor color, object * parent, child_type _type, int _flags ) {
+		child_window ( std::string title_font, float _percent_width, float _percent_height, ImColor color, object * parent, child_type _type, int _flags ) {
 		
 			this->flags = _flags;
 
 			this->title = title_font;
 
+			this->percent_width = _percent_width;
+			this->percent_height = _percent_height;
 
-			this->width = ( percent_width / 100.f ) * parent->width;
-			this->height = ( percent_height / 100.f ) * parent->height;
 			this->renderer = parent->renderer;
 			this->parrent = parent;
 			this->type_child = _type;
@@ -77,20 +94,20 @@ namespace ui {
 				this->mins.x = parent->children.back ( )->maxs.x;
 
 			}
-			this->maxs = ImVec2 ( this->mins.x + this->width, this->mins.y + this->height );
-
+		
 			update ( );
 			parent->add_children ( this );
 			update ( );
 		}
-		child_window ( std::string title_font, float percent_width, float percent_height, ImColor color, object * parent, float_side __float, float _rounding = 0.f, float _padding = 0.f ) {
+		child_window ( std::string title_font, float _percent_width, float _percent_height, ImColor color, object * parent, float_side __float, float _rounding = 0.f, float _padding = 0.f ) {
 		
 			this->title = title_font;
 			this->padding = _padding;
 			this->rounding = _rounding;
+			this->percent_width = _percent_width;
+			this->percent_height = _percent_height;
 
-			this->width = ( percent_width / 100.f ) * parent->width;
-			this->height = ( percent_height / 100.f ) * parent->height;
+
 			this->renderer = parent->renderer;
 			this->parrent = parent;
 			this->type = child_window_element;
@@ -98,10 +115,15 @@ namespace ui {
 			this->bg_color = color;
 			this->float_bottom = true;
 
-			this->maxs = ImVec2 ( this->mins.x + this->width, this->mins.y + this->height );
+
 			update ( );
 			parent->add_children ( this );
+		
 		}
+
+		void draw_scrollbar ( );
+
+		void handle_scrollbar ( );
 
 		void draw ( ) override;
 		void handle ( ) override;

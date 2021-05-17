@@ -4,12 +4,13 @@
 namespace ui {
 	void panel::draw ( ) {
 	
-		//this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 255, 255, 150 ) );
+		
 
 
 		for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
 			this->children.at ( i )->draw ( );
 
+		//this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), 0, 15, 5.f );
 	}
 	void panel::handle ( ) {
 		
@@ -23,19 +24,54 @@ namespace ui {
 
 	}
 	void panel::update ( ) {
-	
-		this->padding = this->parrent->padding;
+		if ( this->flags & flags::fullscreen ) {
 
-		this->mins = this->parrent->mins;
-	
-		this->maxs.x = this->parrent->maxs.x;
+			this->padding = 0;
+			this->maxs = this->parrent->maxs;
+			this->mins = this->parrent->mins;
 
-		for ( auto & child : this->children )
-			child->update ( );
+			this->height = this->maxs.y - this->mins.y;
+			this->width = this->maxs.x - this->mins.x;
+		
 
-		if ( !this->children.empty ( ) )
-			this->maxs.y = this->children.back ( )->maxs.y;
-		else
-			this->maxs.y = this->mins.y;
+			for ( auto & child : this->children )
+				child->update ( );
+
+
+		
+		}
+		else {
+			this->padding = this->parrent->padding;
+
+			this->mins = this->parrent->mins;
+
+			this->maxs.x = this->parrent->maxs.x;
+
+
+
+
+
+			for ( auto & child : this->children )
+				child->update ( );
+
+
+			if ( !this->children.empty ( ) )
+				this->maxs.y = this->children.back ( )->maxs.y;
+			else
+				this->maxs.y = this->mins.y;
+
+			this->width = this->maxs.x - this->mins.x;
+			this->height = this->maxs.y - this->mins.y;
+
+			if ( this->flags & flags::fullscreen ) {
+
+				this->padding = 0;
+				this->maxs = this->parrent->maxs;
+				this->mins = this->parrent->mins;
+
+			}
+			this->width = this->maxs.x - this->mins.x;
+			this->height = this->maxs.y - this->mins.y;
+		}
 	}
 }

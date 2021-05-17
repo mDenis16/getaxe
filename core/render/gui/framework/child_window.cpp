@@ -2,267 +2,136 @@
 
 namespace ui {
 
-    ImVec2 operator-( ImVec2 p1, ImVec2 p2 ) { return ImVec2 ( p1.x - p2.x, p1.y - p2.y ); }
-	ImVec2 operator+( ImVec2 p1, ImVec2 p2 ) { return ImVec2 ( p1.x + p2.x, p1.y + p2.y ); }
-	ImVec2 operator*( ImVec2 p1, int value ) { return ImVec2 ( p1.x * value, p1.y * value ); }
-    ImVec4 operator+( float val, ImVec4 p2 ) { return ImVec4 ( val + p2.x, val + p2.y, val + p2.z, val + p2.w ); }
-    ImVec4 operator*( float val, ImVec4 p2 ) { return ImVec4 ( val * p2.x, val * p2.y, val * p2.z, val * p2.w ); }
-    ImVec4 operator*( ImVec4 p2, float val ) { return ImVec4 ( val * p2.x, val * p2.y, val * p2.z, val * p2.w ); }
-    ImVec4 operator/( ImVec4 p1, ImVec4 p2 ) { return ImVec4 ( p1.x / p2.x, p1.y / p2.y, p1.z / p2.z, p1.w / p2.w ); }
-    ImVec4 operator*( ImVec4 p1, ImVec4 p2 ) { return ImVec4 ( p1.x * p2.x, p1.y * p2.y, p1.z * p2.z, p1.w * p2.w ); }
-    ImVec4 operator-( ImVec4 p1, ImVec4 p2 ) { return ImVec4 ( p1.x - p2.x, p1.y - p2.y, p1.z - p2.z, p1.w - p2.w ); }
-    //*shadow math*/
-    ImVec4 boxGaussianIntegral ( ImVec4 x ) {
-        ImVec4 s = ImVec4 ( x.x > 0 ? 1.0f : -1.0f, x.y > 0 ? 1.0f : -1.0f, x.z > 0 ? 1.0f : -1.0f, x.w > 0 ? 1.0f : -1.0f );
-        ImVec4 a = ImVec4 ( fabsf ( x.x ), fabsf ( x.y ), fabsf ( x.z ), fabsf ( x.w ) );
-        ImVec4 res = 1.0f + ( 0.278393f + ( 0.230389f + 0.078108f * ( a * a ) ) * a ) * a;
-        ImVec4 resSquared = res * res;
-        return s - s / ( resSquared * resSquared );
-    }
+   
 
-    ImVec4 boxLinearInterpolation ( ImVec4 x ) {
-        const float maxClamp = 1.0f;
-        const float minClamp = -1.0f;
-        return ImVec4 ( x.x > maxClamp ? maxClamp : x.x < minClamp ? minClamp : x.x,
-            x.y > maxClamp ? maxClamp : x.y < minClamp ? minClamp : x.y,
-            x.z > maxClamp ? maxClamp : x.z < minClamp ? minClamp : x.z,
-            x.w > maxClamp ? maxClamp : x.w < minClamp ? minClamp : x.w );
-    }
+	void child_window::draw_scrollbar ( ) {
+		if (  this->flags & flags::scrollbar ) {
 
-    float boxShadow ( ImVec2 lower, ImVec2 upper, ImVec2 point, float sigma, bool linearInterpolation ) {
-        ImVec2 pointLower = point - lower;
-        ImVec2 pointUpper = point - upper;
-        ImVec4 query = ImVec4 ( pointLower.x, pointLower.y, pointUpper.x, pointUpper.y );
-        ImVec4 pointToSample = query * ( sqrtf ( 0.5f ) / sigma );
-        ImVec4 integral = linearInterpolation ? 0.5f + 0.5f * boxLinearInterpolation ( pointToSample ) : 0.5f + 0.5f * boxGaussianIntegral ( pointToSample );
-        return ( integral.z - integral.x ) * ( integral.w - integral.y );
-    }
-    /**/
-   /* void  addtempshadow ( ImDrawList * drawList, RectangleShadowSettings & settings ) {
-        settings.rectSize = ImVec2 ( settings.maxs.x - settings.mins.x, settings.maxs.y - settings.mins.y );
+			this->renderer->AddRectFilledMultiColor ( ImVec2(this->mins.x, this->mins.y), ImVec2(this->maxs.x, this->mins.y + 25.f ), ImColor(0,0,0,25), ImColor(0,0,0, 25), ImColor(0,0,0, 15), ImColor(0,0,0,15));
 
-        const int    samplesSpan = settings.samplesPerCornerSide * settings.spacingBetweenSamples;
-        const int    halfWidth = static_cast< int >( settings.rectSize.x / 2 );
-        const int    numSamplesInHalfWidth = ( halfWidth / settings.spacingBetweenSamples ) == 0 ? 1 : halfWidth / settings.spacingBetweenSamples;
-        const int    numSamplesWidth = samplesSpan > halfWidth ? numSamplesInHalfWidth : settings.samplesPerCornerSide;
-        const int    halfHeight = static_cast< int >( settings.rectSize.y / 2 );
-        const int    numSamplesInHalfHeight = ( halfHeight / settings.spacingBetweenSamples ) == 0 ? 1 : halfHeight / settings.spacingBetweenSamples;
-        const int    numSamplesHeight = samplesSpan > halfHeight ? numSamplesInHalfHeight : settings.samplesPerCornerSide;
-        const int    numVerticesInARing = numSamplesWidth * 4 + numSamplesHeight * 4 + 4;
-        const ImVec2 whiteTexelUV = ImGui::GetIO ( ).Fonts->TexUvWhitePixel;
-        const ImVec2 origin = settings.mins;
-        const ImVec2 rectangleTopLeft = origin;
-        const ImVec2 rectangleBottomRight = rectangleTopLeft + settings.rectSize;
-        const ImVec2 rectangleTopRight = rectangleTopLeft + ImVec2 ( settings.rectSize.x, 0 );
-        const ImVec2 rectangleBottomLeft = rectangleTopLeft + ImVec2 ( 0, settings.rectSize.y );
-
-        ImColor shadowColor = settings.shadowColor;
-        settings.totalVertices = numVerticesInARing * settings.rings;
-        settings.totalIndices = 6 * ( numVerticesInARing ) * ( settings.rings - 1 );
-
-        drawList->PrimReserve ( settings.totalIndices, settings.totalVertices );
-        const ImDrawVert * shadowVertices = drawList->_VtxWritePtr;
-        ImDrawVert * vertexPointer = drawList->_VtxWritePtr;
-
-        for ( int r = 0; r < settings.rings; ++r ) {
-            const float  adaptiveScale = ( r / 2.5f ) + 1;
-            const ImVec2 ringOffset = ImVec2 ( adaptiveScale * r * settings.spacingBetweenRings, adaptiveScale * r * settings.spacingBetweenRings );
-            for ( int j = 0; j < 4; ++j ) {
-                ImVec2      corner;
-                ImVec2      direction [ 2 ];
-                const float spacingBetweenSamplesOnARing = static_cast< float >( settings.spacingBetweenSamples );
-                switch ( j ) {
-                case 0:
-                    corner = rectangleTopLeft + ImVec2 ( -ringOffset.x, -ringOffset.y );
-                    direction [ 0 ] = ImVec2 ( 1, 0 ) * spacingBetweenSamplesOnARing;
-                    direction [ 1 ] = ImVec2 ( 0, 1 ) * spacingBetweenSamplesOnARing;
-                    for ( int i = 0; i < numSamplesWidth; ++i ) {
-                        const ImVec2 point = corner + direction [ 0 ] * ( numSamplesWidth - i );
-                        shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, point - settings.shadowOffset, settings.sigma, settings.linear );
-                        vertexPointer->pos = point;
-                        vertexPointer->uv = whiteTexelUV;
-                        vertexPointer->col = shadowColor;
-                        vertexPointer++;
-                    }
-
-                    shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, corner - settings.shadowOffset, settings.sigma, settings.linear );
-                    vertexPointer->pos = corner;
-                    vertexPointer->uv = whiteTexelUV;
-                    vertexPointer->col = shadowColor;
-                    vertexPointer++;
-
-                    for ( int i = 0; i < numSamplesHeight; ++i ) {
-                        const ImVec2 point = corner + direction [ 1 ] * ( i + 1 );
-                        shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, point - settings.shadowOffset, settings.sigma, settings.linear );
-                        vertexPointer->pos = point;
-                        vertexPointer->uv = whiteTexelUV;
-                        vertexPointer->col = shadowColor;
-                        vertexPointer++;
-                    }
-                    break;
-                case 1:
-                    corner = rectangleBottomLeft + ImVec2 ( -ringOffset.x, +ringOffset.y );
-                    direction [ 0 ] = ImVec2 ( 1, 0 ) * spacingBetweenSamplesOnARing;
-                    direction [ 1 ] = ImVec2 ( 0, -1 ) * spacingBetweenSamplesOnARing;
-                    for ( int i = 0; i < numSamplesHeight; ++i ) {
-                        const ImVec2 point = corner + direction [ 1 ] * ( numSamplesHeight - i );
-                        shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, point - settings.shadowOffset, settings.sigma, settings.linear );
-                        vertexPointer->pos = point;
-                        vertexPointer->uv = whiteTexelUV;
-                        vertexPointer->col = shadowColor;
-                        vertexPointer++;
-                    }
-
-                    shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, corner - settings.shadowOffset, settings.sigma, settings.linear );
-                    vertexPointer->pos = corner;
-                    vertexPointer->uv = whiteTexelUV;
-                    vertexPointer->col = shadowColor;
-                    vertexPointer++;
-
-                    for ( int i = 0; i < numSamplesWidth; ++i ) {
-                        const ImVec2 point = corner + direction [ 0 ] * ( i + 1 );
-                        shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, point - settings.shadowOffset, settings.sigma, settings.linear );
-                        vertexPointer->pos = point;
-                        vertexPointer->uv = whiteTexelUV;
-                        vertexPointer->col = shadowColor;
-                        vertexPointer++;
-                    }
-                    break;
-                case 2:
-                    corner = rectangleBottomRight + ImVec2 ( +ringOffset.x, +ringOffset.y );
-                    direction [ 0 ] = ImVec2 ( -1, 0 ) * spacingBetweenSamplesOnARing;
-                    direction [ 1 ] = ImVec2 ( 0, -1 ) * spacingBetweenSamplesOnARing;
-                    for ( int i = 0; i < numSamplesWidth; ++i ) {
-                        const ImVec2 point = corner + direction [ 0 ] * ( numSamplesWidth - i );
-                        shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, point - settings.shadowOffset, settings.sigma, settings.linear );
-                        vertexPointer->pos = point;
-                        vertexPointer->uv = whiteTexelUV;
-                        vertexPointer->col = shadowColor;
-                        vertexPointer++;
-                    }
-
-                    shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, corner - settings.shadowOffset, settings.sigma, settings.linear );
-                    vertexPointer->pos = corner;
-                    vertexPointer->uv = whiteTexelUV;
-                    vertexPointer->col = shadowColor;
-                    vertexPointer++;
-
-                    for ( int i = 0; i < numSamplesHeight; ++i ) {
-                        const ImVec2 point = corner + direction [ 1 ] * ( i + 1 );
-                        shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, point - settings.shadowOffset, settings.sigma, settings.linear );
-                        vertexPointer->pos = point;
-                        vertexPointer->uv = whiteTexelUV;
-                        vertexPointer->col = shadowColor;
-                        vertexPointer++;
-                    }
-                    break;
-                case 3:
-                    corner = rectangleTopRight + ImVec2 ( +ringOffset.x, -ringOffset.y );
-                    direction [ 0 ] = ImVec2 ( -1, 0 ) * spacingBetweenSamplesOnARing;
-                    direction [ 1 ] = ImVec2 ( 0, 1 ) * spacingBetweenSamplesOnARing;
-                    for ( int i = 0; i < numSamplesHeight; ++i ) {
-                        const ImVec2 point = corner + direction [ 1 ] * ( numSamplesHeight - i );
-                        shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, point - settings.shadowOffset, settings.sigma, settings.linear );
-                        vertexPointer->pos = point;
-                        vertexPointer->uv = whiteTexelUV;
-                        vertexPointer->col = shadowColor;
-                        vertexPointer++;
-                    }
-
-                    shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, corner - settings.shadowOffset, settings.sigma, settings.linear );
-                    vertexPointer->pos = corner;
-                    vertexPointer->uv = whiteTexelUV;
-                    vertexPointer->col = shadowColor;
-                    vertexPointer++;
-
-                    for ( int i = 0; i < numSamplesWidth; ++i ) {
-                        const ImVec2 point = corner + direction [ 0 ] * ( i + 1 );
-                        shadowColor.Value.w = boxShadow ( rectangleTopLeft, rectangleBottomRight, point - settings.shadowOffset, settings.sigma, settings.linear );
-                        vertexPointer->pos = point;
-                        vertexPointer->uv = whiteTexelUV;
-                        vertexPointer->col = shadowColor;
-                        vertexPointer++;
-                    }
-                    break;
-                }
-            }
-        }
-
-        ImDrawIdx idx = ( ImDrawIdx ) drawList->_VtxCurrentIdx;
-
-        for ( int r = 0; r < settings.rings - 1; ++r ) {
-            const ImDrawIdx startOfRingIndex = idx;
-            for ( int i = 0; i < numVerticesInARing - 1; ++i ) {
-                drawList->_IdxWritePtr [ 0 ] = idx + 0;
-                drawList->_IdxWritePtr [ 1 ] = idx + 1;
-                drawList->_IdxWritePtr [ 2 ] = idx + numVerticesInARing;
-                drawList->_IdxWritePtr [ 3 ] = idx + 1;
-                drawList->_IdxWritePtr [ 4 ] = idx + numVerticesInARing + 1;
-                drawList->_IdxWritePtr [ 5 ] = idx + numVerticesInARing;
-
-                idx += 1;
-                drawList->_IdxWritePtr += 6;
-            }
-
-            drawList->_IdxWritePtr [ 0 ] = idx + 0;
-            drawList->_IdxWritePtr [ 1 ] = startOfRingIndex + 0;
-            drawList->_IdxWritePtr [ 2 ] = startOfRingIndex + numVerticesInARing;
-            drawList->_IdxWritePtr [ 3 ] = idx + 0;
-            drawList->_IdxWritePtr [ 4 ] = startOfRingIndex + numVerticesInARing;
-            drawList->_IdxWritePtr [ 5 ] = idx + numVerticesInARing;
-
-            drawList->_IdxWritePtr += 6;
-            idx += 1;
-        }
-        drawList->_VtxCurrentIdx += settings.totalVertices;
-
-        if ( settings.enableDebugVisualization ) {
-            const ImColor lineColor ( 0, 0, 255, 50 );
-            for ( int r = 0; r < settings.rings - 1; ++r ) {
-                const ImDrawIdx startOfRingIndex = r * numVerticesInARing;
-
-                ImVec2 a;
-                ImVec2 b;
-                for ( int i = 0; i < numVerticesInARing - 1; ++i ) {
-                    a = shadowVertices [ startOfRingIndex + i + 1 ].pos;
-                    b = shadowVertices [ startOfRingIndex + i + numVerticesInARing ].pos;
-                    drawList->AddLine ( a, b, lineColor );
-                    a = shadowVertices [ startOfRingIndex + i + 0 ].pos;
-                    b = shadowVertices [ startOfRingIndex + i + numVerticesInARing ].pos;
-                    drawList->AddLine ( a, b, lineColor );
-                    a = shadowVertices [ startOfRingIndex + i + numVerticesInARing + 1 ].pos;
-                    b = shadowVertices [ startOfRingIndex + i + numVerticesInARing ].pos;
-                    drawList->AddLine ( a, b, lineColor );
-                }
-
-                a = shadowVertices [ startOfRingIndex + numVerticesInARing - 1 ].pos;
-                b = shadowVertices [ startOfRingIndex + numVerticesInARing ].pos;
-                drawList->AddLine ( a, b, lineColor );
-                a = shadowVertices [ startOfRingIndex + numVerticesInARing + numVerticesInARing - 1 ].pos;
-                b = shadowVertices [ startOfRingIndex + numVerticesInARing ].pos;
-                drawList->AddLine ( a, b, lineColor );
-            }
-
-            for ( int i = 0; i < settings.totalVertices; ++i ) {
-                const ImVec2 bmin = shadowVertices [ i ].pos - ImVec2 ( 2, 2 );
-                const ImVec2 bmax = shadowVertices [ i ].pos + ImVec2 ( 2, 2 );
-                drawList->AddRectFilled ( bmin, bmax, ImColor ( 255, 0, 0, 50 ) );
-            }
-        }
-    }*/
-
-	void child_window::draw ( ) {
+			this->renderer->PushClipRect ( this->thumb_path_mins, this->thumb_path_maxs );
+			this->renderer->AddRectFilled ( this->thumb_path_mins, this->thumb_path_maxs, ImColor ( 255, 0, 0, 125 ) );
+			this->renderer->AddRectFilled ( this->thumb_mins, this->thumb_maxs, ImColor ( 0, 255, 255, 255 ) );
+			this->renderer->PopClipRect ( );
 
 	
-		//this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), this->rounding );
+
+			this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->maxs.x + 14, this->mins.y + 14 ), ImColor ( 255, 255, 255, 225 ), std::to_string ( this->thumb_progress ).c_str ( ) );
+		}
+	}
+	
+	void child_window::handle_scrollbar ( ) {
+		if ( this->flags & flags::scrollbar  && this->children.size() > 10) {
+
+			float windowSize = this->maxs.y - this->mins.y;
+
+			float contentSize = ( this->children.back ( )->maxs.y - this->children.front ( )->mins.y );
+			float trackSize = windowSize / 3; //80 unknown units
+
+			float windowContentRatio = windowSize / contentSize;
+			float gripSize = trackSize * windowContentRatio;
+
+
+			
+			this->thumb_length = gripSize;
+			
+			this->thumb_path_mins = ImVec2( this->maxs.x - 5, this->mins.y);
+			this->thumb_path_maxs = ImVec2 ( this->maxs.x, this->maxs.y );
+
+		
+	
+
+			float s = ( contentSize / windowSize );
+			float location = windowSize / 0.5f;
+
+			float pos = ( this->maxs.y - this->mins.y ) * this->thumb_progress;
+
+
+			this->thumb_mins = ImVec2 ( this->maxs.x - 5,  this->mins.y - (this->thumb_length / 2.f) + pos) ;
+			this->thumb_maxs = ImVec2 ( this->maxs.x, this->thumb_mins.y + this->thumb_length  );
+
+			auto mouse_pos = ui::get_cursor ( );
+
+			bool hovering_thumb = ( mouse_pos.x > this->thumb_path_mins.x && mouse_pos.y > this->thumb_path_mins.y && mouse_pos.x < this->thumb_path_maxs.x && mouse_pos.y < this->thumb_path_maxs.y );
+
+
+			if ( ui::key_pressed ( VK_LBUTTON )  && hovering_thumb ) {
+				this->modifying_thumb = true;
+			}
+			else if ( this->modifying_thumb && ui::key_released ( VK_LBUTTON ) ) {
+				this->modifying_thumb = false;
+			}
+
+			if ( ImGui::GetIO ( ).MouseWheel < 0.0f ) {
+				float old = this->thumb_progress;
+				this->thumb_progress += 0.1f;
+
+				this->thumb_progress = std::lerp ( old, this->thumb_progress, ImGui::GetIO ( ).DeltaTime * 5.5f  );
+
+				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, 1.f );
+
+
+				float line_size = ( this->children.front ( )->maxs.y - this->children.front ( )->mins.y ) + 55.f;
+
+				float old_scroll_progress = this->scroll_progress;
+				this->scroll_progress = line_size * ( this->thumb_progress * this->thumb_length );
+				//this->scroll_progress = std::lerp ( old, this->scroll_progress, ImGui::GetIO ( ).DeltaTime * 10.f );
+
+				for ( auto & child : this->children )
+					child->update ( );
+
+			}
+			else if ( ImGui::GetIO ( ).MouseWheel > 0.0f){
+				float old = this->thumb_progress;
+				this->thumb_progress -= 0.1f;
+				
+				this->thumb_progress = std::lerp ( old, this->thumb_progress, ImGui::GetIO ( ).DeltaTime * 5.5f );
+
+				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, 1.f );
+
+
+				float line_size = ( this->children.front ( )->maxs.y - this->children.front ( )->mins.y ) + 55.f;
+
+				this->scroll_progress = line_size * ( this->thumb_progress * this->thumb_length );
+
+				for ( auto & child : this->children )
+					child->update ( );
+			}
+
+			if ( this->modifying_thumb ) {
+
+				float dist = mouse_pos.y - this->mins.y;
+				dist /= ( this->maxs.y - this->mins.y );
+				
+				this->thumb_progress = dist;
+				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, 1.f );
+
+				float line_size = ( this->children.front ( )->maxs.y - this->children.front ( )->mins.y ) + 55.f;
+
+				this->scroll_progress = line_size * ( this->thumb_progress * this->thumb_length );
+				
+				for ( auto & child : this->children )
+					child->update ( );
+			}
+
+
+		}
+		draw_scrollbar ( );
+
+	}
+
+	void child_window::draw ( ) {
+       
+
 		if ( this->type_child == child_type::main_container ) {
-			//	&& !static_cast< sub_tab * >( this->tab_assign )->selected && static_cast< tab * >( this->parrent )->selected )
+			
 			if ( !static_cast< tab * >( this->tab_assign->parrent )->selected )
 				return;
 
 			if ( !static_cast< sub_tab * >( this->tab_assign )->selected )
 				return;
 		}
+
 		if ( this->type_child == child_type::tab_container ) {
 			this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 0, 0, 0, 25 ), this->rounding, ImDrawCornerFlags_::ImDrawCornerFlags_Top );
 			this->renderer->AddRectFilled ( this->mins, this->maxs, this->bg_color, this->rounding, ImDrawCornerFlags_::ImDrawCornerFlags_Top );
@@ -276,16 +145,28 @@ namespace ui {
                 this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 0, 0, 0, 25 ), this->rounding );
                 this->renderer->AddRectFilled ( this->mins, this->maxs, SECONDARY_COLOR, this->rounding );
             }
-            //addtempshadow ( this->renderer, dsamp );
+          
 		}
 		
 
         this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 14, this->mins.y + 14 ), ImColor ( 0, 0, 0, 225 ), this->title.c_str ( ) );
         this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 13, this->mins.y + 13 ), ImColor ( 255, 255, 255, 225 ), this->title.c_str ( ) );
 
-		for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
+
+		if ( flags & flags::hide_overflow ) {
+			// this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 255 ), this->rounding );
+			this->renderer->PushClipRect ( this->mins, this->maxs, false );
+			//  this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255,255, 255 ), this->rounding );
+		}
+
+        for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
 			this->children.at ( i )->draw ( );
 
+		if ( flags & flags::hide_overflow ) {
+			this->renderer->PopClipRect ( );
+
+		}
+		handle_scrollbar ( );
 	}
 	void child_window::handle ( ) {
 
@@ -307,10 +188,30 @@ namespace ui {
 
 		this->should_reanimate = false;
 
+		this->width = ( percent_width / 100.f ) * this->parrent->width;
+		this->height = ( percent_height / 100.f ) * this->parrent->height;
 
+       if ( this->parrent->type == panel_element ) {
+       
+
+
+            this->mins = this->parrent->mins;
+            this->maxs = this->parrent->maxs;
+
+		
+
+           // handle_tab_children ( );
+
+            for ( auto & child : this->children )
+                child->update ( );
+
+            return;
+       
+        }
 		if ( this->type_child == child_type::tab_container ) {
 
 			handle_tab_children ( );
+
 			for ( auto & child : this->children )
 				child->update ( );
 
@@ -321,7 +222,10 @@ namespace ui {
 			this->mins.y += 90;
 			this->maxs = this->parrent->maxs;
 
-			for ( auto & child : this->children )
+			this->width = ( percent_width / 100.f ) * ( this->maxs.x - this->mins.x );
+			this->height = ( percent_height / 100.f ) * ( this->maxs.y - this->mins.y );
+
+ 			for ( auto & child : this->children )
 				child->update ( );
 			return;
 		}
@@ -333,7 +237,13 @@ namespace ui {
 
 				this->maxs = ImVec2 ( this->mins.x + this->width, this->mins.y + this->height );
 
-			}
+            }
+            else if ( _float == float_side::top ) {
+                this->mins.x = this->parrent->mins.x;
+                this->mins.y = this->parrent->mins.y;
+
+                this->maxs = ImVec2 ( this->mins.x + this->width, this->mins.y + this->height );
+            }
 		}
 		else {
 			if ( this->parrent->flex == flex_direction::automatic ) {
@@ -416,6 +326,8 @@ namespace ui {
 				this->maxs = ImVec2 ( this->mins.x + this->width, this->mins.y + this->height );
 			}
 		}
+
+		
 		for ( auto & child : this->children )
 			child->update ( );
 

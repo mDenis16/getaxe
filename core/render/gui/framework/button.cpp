@@ -28,6 +28,26 @@ namespace ui {
 
 
 	}
+	button::button ( std::string text, object * parent, float percent_width, float percent_height, std::function<void ( )> func ) {
+	
+
+
+
+		this->text = text;
+
+		this->call_back = func;
+
+		this->parrent = parent;
+		this->renderer = this->parrent->renderer;
+		this->type = button_element;
+
+		this->width = ( percent_width / 100.f ) * parent->width;
+		this->height = ( percent_height / 100.f ) * parent->height;
+
+
+		this->parrent->add_children ( this );
+		update ( );
+	}
 	void button::draw ( ) {
 
 		this->handle ( );
@@ -106,6 +126,15 @@ namespace ui {
 
 
 		if ( this->parrent->type == object_type::child_window_element ) {
+			if ( static_cast< child_window * >( this->parrent )->flags & flags::vertical_align_center ) {
+				if ( this->parrent->children.size ( ) <= 1 ) {
+					this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->parrent->mins.y + this->height ) ) / 2.f;
+				}
+				else {
+					this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->children.back ( )->maxs.y ) ) / 2.f;
+				}
+			}
+
 			if ( static_cast< child_window * >( this->parrent )->flags & flags::align_center ) {
 				this->mins.x = this->parrent->mins.x + 40;
 				this->maxs.x = this->parrent->maxs.x - 40;
@@ -116,7 +145,7 @@ namespace ui {
 				}
 				else {
 
-					this->mins.y = this->parrent->mins.y;
+				//	this->mins.y = this->parrent->mins.y;
 					this->maxs.y = this->mins.y + 30;
 				}
 			}
@@ -131,7 +160,7 @@ namespace ui {
 				}
 				else {
 
-					this->mins.y = this->parrent->mins.y;
+					//this->mins.y = this->parrent->mins.y;
 					this->maxs.y = this->mins.y + height;
 				}
 			}
@@ -147,7 +176,7 @@ namespace ui {
 				}
 				else {
 
-					this->mins.y = this->parrent->mins.y;
+					//this->mins.y = this->parrent->mins.y;
 					this->maxs.y = this->mins.y + height;
 				}
 			}

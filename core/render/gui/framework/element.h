@@ -94,7 +94,10 @@ namespace ui {
 		vertical_align_center = 1 << 4,
 		align_left = 1 << 5,
 		align_right = 1 << 6,
-		no_background = 1 << 7
+		no_background = 1 << 7,
+		hide_overflow = 1 << 8,
+		fullscreen = 1 << 9,
+		scrollbar = 1 << 10
 	};
 	
 	class object {

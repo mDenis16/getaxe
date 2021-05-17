@@ -119,7 +119,7 @@ namespace ui {
 		};
 
 		enum { SMOOTHNESS = 64 }; // curve smoothness: the higher number of segments, the smoother curve
-		enum { CURVE_WIDTH = 4 }; // main curved line width
+		enum { CURVE_WIDTH = 2 }; // main curved line width
 		enum { LINE_WIDTH = 1 }; // handlers: small lines width
 		enum { GRAB_RADIUS = 6 }; // handlers: circle radius
 		enum { GRAB_BORDER = 2 }; // handlers: circle border width

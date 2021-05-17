@@ -18,7 +18,7 @@ namespace ui {
 
 	bool key_released ( const int key );
 
-
+	extern MSG msg;
 	extern ImFont * font_title;
 	extern ImFont * font_widgets;
 	extern ImFont * font_tab;
@@ -28,6 +28,8 @@ namespace ui {
 	extern ImFont * weapon_font;
 	extern ImFont * weapon_icons;
 	extern ImFont * test;
+	extern void * window_device;
+
 	extern int focused_item;
 	extern long last_time_clicked_element;
 	extern bool key_state [ 256 ];

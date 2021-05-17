@@ -66,6 +66,7 @@ enum item_definition_indexes {
 
 #include "includes.h"
 #include <map>
+#include <d3dx9.h>
 
 
 std::map<int, std::string> weapon_names =
@@ -111,6 +112,9 @@ namespace ui {
 	bool key_state [ 256 ];
 	bool prev_key_state [ 256 ];
 	void * window_pointer_cheat = nullptr;
+	MSG msg;
+
+	void * window_device = nullptr;
 
 	std::vector< key_bind_component *> key_bind_list;
 	ui::window * main_window = nullptr;
@@ -147,14 +151,15 @@ namespace ui {
 
 		auto aimbot_tab = new ui::tab ( "Aimbot", top_side, 13 );
 		{
-			//auto ragebot_sub_tab = new ui::sub_tab ( "Rage", ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
+			auto ragebot_sub_tab = new ui::sub_tab ( "Rage", ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
 
-		
+			menu::inventory_changer_menu ( main_window, ragebot_sub_tab );
 
 
-			//auto antiaim_sub_tab = new ui::sub_tab ( "Anti-aim", ICON_ANTIAIM, font_icons, 0.f, 20.f, aimbot_tab );
+
+			auto antiaim_sub_tab = new ui::sub_tab ( "Anti-aim", ICON_ANTIAIM, font_icons, 0.f, 20.f, aimbot_tab );
 			auto legitbot_sub_tab = new ui::sub_tab ( "Legitbot", ICON_LEGITBOT, font_icons, 0.f, 20.f, aimbot_tab );
-			menu::legitbot::init ( main_window, legitbot_sub_tab, weapons );
+			//menu::legitbot::init ( main_window, legitbot_sub_tab, weapons );
 			//auto combobox_weapon = new ui::combobox ( "", aimbot_tab, weapons, weapon_id );
 		}
 
@@ -164,14 +169,14 @@ namespace ui {
 		
 			for ( size_t i = 0; i < 3; i++ ) {
 				auto player_sub_tab = new ui::sub_tab ( config.player_types.at(i).first, config.player_types.at ( i ).second, font_icons, -0.5875f, 20.f, visuals_tab );
-				//menu::visuals_player_menu ( main_window, player_sub_tab, i );
+				menu::visuals_player_menu ( main_window, player_sub_tab, i );
 			}
 
 			auto weapons_sub_tab = new ui::sub_tab ( "Weapons", "W", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
-		//	menu::visuals_weapons_menu ( main_window, weapons_sub_tab );
+			//menu::visuals_weapons_menu ( main_window, weapons_sub_tab );
 
 			auto projectiles_sub_tab = new ui::sub_tab ( "Projectiles", "o", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
-		//	menu::projectiles_weapons_menu ( main_window, projectiles_sub_tab );
+			//menu::projectiles_weapons_menu ( main_window, projectiles_sub_tab );
 
 			auto world_sub_tab = new ui::sub_tab ( "World", ICON_WORLD, font_icons, -0.5875f, 20.f, visuals_tab );
 
@@ -184,13 +189,13 @@ namespace ui {
 		auto misc_tab = new ui::tab ( "Miscellaneus", top_side, 13 );
 		{
 			auto movement_sub_tab = new ui::sub_tab ( "Movement", ICON_MOVEMENT, font_icons, 0.f, 20.f, misc_tab );
-		//	menu::movement_menu ( main_window, movement_sub_tab );
+			//menu::movement_menu ( main_window, movement_sub_tab );
 
 		}
 		auto settings_tab = new ui::tab ( "Settings", top_side, 13 );
 		{
 			auto configs_sub_tab = new ui::sub_tab ( "Configs", ICON_SETTINGS, font_icons, 0.f, 20.f, settings_tab );
-		//   	menu::settings_menu ( main_window, configs_sub_tab );
+		  // 	menu::settings_menu ( main_window, configs_sub_tab );
 		}
 
 	}
@@ -231,6 +236,7 @@ namespace ui {
 			menu::legitbot::init_values ( &config.weapon_type [ config.active_weapon ] );
 			last_type = config.active_weapon;
 		}
+
 
 		if ( !main_window )
 			initialize ( render );

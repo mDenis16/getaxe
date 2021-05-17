@@ -117,7 +117,7 @@ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		if ( ui::focused_item == this->_id ) {
 
 			if ( this->input_type == text_type::string || this->input_type == text_type::password ) {
-				if ( std::labs ( this->last_key_press - ImGui::GetTime ( ) ) > 150 ) {
+				if ( std::labs ( this->last_key_press - ImGui::GetTime ( ) ) < 150 ) {
 					if ( pulse ) {
 						input_underline_alpha += ( ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 5.f );
 						if ( input_underline_alpha >= 100 )
@@ -222,23 +222,19 @@ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			*this->text_val = stream.str ( );
 		}
 		else if ( this->parrent->type == object_type::child_window_element ) {
-			if ( static_cast< child_window * >( this->parrent )->flags & flags::align_center ) {
-				this->mins.x = this->parrent->mins.x + 40;
-				this->maxs.x = this->parrent->maxs.x - 40;
-				if ( this->index > 0 ) {
-					const auto & back = this->parrent->children.at ( this->index - 1 );
-					this->mins.y = back->maxs.y + 10 + this->offset_y;
-					this->maxs.y = this->mins.y + 30;
+
+			if ( static_cast< child_window * >( this->parrent )->flags & flags::vertical_align_center ) {
+				if ( this->parrent->children.size ( ) <= 1 ) {
+					this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->parrent->mins.y + this->height ) ) / 2.f;
 				}
 				else {
-
-					this->mins.y = this->parrent->mins.y + this->offset_y;
-					this->maxs.y = this->mins.y + 30;
+					this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->children.back()->maxs.y ) ) / 2.f;
 				}
 			}
-			else if ( static_cast< child_window * >( this->parrent )->flags & flags::align_left ) {
+
+			if ( static_cast< child_window * >( this->parrent )->flags & flags::align_left ) {
 				this->mins.x = this->parrent->mins.x;
-				this->maxs.x = this->parrent->maxs.x - 40;
+				this->maxs.x = this->mins.x + this->width;
 				if ( this->index > 0 ) {
 					const auto & back = this->parrent->children.at ( this->index - 1 );
 					this->mins.y = back->maxs.y + 10 + this->offset_y;
@@ -246,11 +242,14 @@ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 				}
 				else {
 
-					this->mins.y = this->parrent->mins.y + this->offset_y;
-					this->maxs.y = this->mins.y + 30;
-				}
-			}
-		}
 
+					this->maxs.y = this->mins.y + this->height;
+				}
+
+			}
+
+
+
+		}
 	}
 }

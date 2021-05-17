@@ -112,7 +112,7 @@ namespace ui {
 			auto left_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 24, 255, 0 ), bottom_side, child_type::normal, flags::align_left | flags::vertical_align_center | flags::position_absolute );
 			{
 
-				new ui::text_input ( left_bottom_side, "Config name", config_name, text_type::string, 0.f );
+				new ui::text_input ( left_bottom_side, "Config name", config_name, text_type::string, 50.f, 20.f);
 				new ui::button ( "Create config", left_bottom_side, create_config );
 
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -161,6 +161,7 @@
     <ClCompile Include="core\hooks\traceray\trace_ray.cpp" />
     <ClCompile Include="core\render\d3dfont.cpp" />
     <ClCompile Include="core\render\gui\config.cpp" />
+    <ClCompile Include="core\render\gui\framework\bezier_editor.cpp" />
     <ClCompile Include="core\render\gui\framework\bind_manager.cpp" />
     <ClCompile Include="core\render\gui\framework\button.cpp" />
     <ClCompile Include="core\render\gui\framework\checkbox.cpp" />
@@ -172,6 +173,8 @@
     <ClCompile Include="core\render\gui\framework\config_item.cpp" />
     <ClCompile Include="core\render\gui\framework\element.cpp" />
     <ClCompile Include="core\render\gui\framework\element_extender.cpp" />
+    <ClCompile Include="core\render\gui\framework\inventory_changer.cpp" />
+    <ClCompile Include="core\render\gui\framework\inventory_item.cpp" />
     <ClCompile Include="core\render\gui\framework\keybind.cpp" />
     <ClCompile Include="core\render\gui\framework\key_selector.cpp" />
     <ClCompile Include="core\render\gui\framework\multibox.cpp" />
@@ -186,6 +189,8 @@
     <ClCompile Include="core\render\gui\framework\window.cpp" />
     <ClCompile Include="core\render\gui\gui.cpp" />
     <ClCompile Include="core\render\gui\initialize.cpp" />
+    <ClCompile Include="core\render\gui\menu\inventory_changer_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\legitbot_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\movement_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\projectiles_visuals_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\ragebot_menu.cpp" />
@@ -235,6 +240,7 @@
     <ClInclude Include="core\hooks\hooks.hpp" />
     <ClInclude Include="core\render\d3dfont.h" />
     <ClInclude Include="core\render\gui\config.h" />
+    <ClInclude Include="core\render\gui\framework\bezier_editor.h" />
     <ClInclude Include="core\render\gui\framework\button.h" />
     <ClInclude Include="core\render\gui\framework\checkbox.h" />
     <ClInclude Include="core\render\gui\framework\child_window.h" />
@@ -245,6 +251,8 @@
     <ClInclude Include="core\render\gui\framework\config_item.h" />
     <ClInclude Include="core\render\gui\framework\element.h" />
     <ClInclude Include="core\render\gui\framework\element_extender.h" />
+    <ClInclude Include="core\render\gui\framework\inventory_changer.h" />
+    <ClInclude Include="core\render\gui\framework\inventory_item.h" />
     <ClInclude Include="core\render\gui\framework\keybind.h" />
     <ClInclude Include="core\render\gui\framework\key_selector.h" />
     <ClInclude Include="core\render\gui\framework\multibox.h" />

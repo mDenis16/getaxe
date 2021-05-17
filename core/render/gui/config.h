@@ -477,6 +477,30 @@ struct weapon_settings {
 	bool enabled = false;
 	config_manager::key_bind_item enable_keybind;
 
+
+	bool through_smoke = false;
+	config_manager::key_bind_item through_smoke_keybind;
+
+	bool through_walls = false;
+	config_manager::key_bind_item through_walls_keybind;
+
+	float through_walls_dmg = 10.f;
+	config_manager::key_bind_item through_walls_dmg_keybind;
+
+	bool target_teammates = false;
+	config_manager::key_bind_item target_teammates_keybind;
+
+
+	bool lagcompensation = false;
+	config_manager::key_bind_item lagcompensation_keybind;
+
+	float lag_compensation_time = 200.f;
+	config_manager::key_bind_item lag_compensation_time_keybind;
+
+	bool shoot_at_lagcomp = false;
+	config_manager::key_bind_item shoot_at_lagcomp_keybind;
+
+
 	int hitbox = 0;
 	config_manager::key_bind_item hitbox_keybind;
 

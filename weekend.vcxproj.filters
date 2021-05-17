@@ -112,6 +112,11 @@
     <ClCompile Include="core\features\movement\autostrafer.cpp" />
     <ClCompile Include="core\render\gui\menu\movement_menu.cpp" />
     <ClCompile Include="core\features\visuals\LOCAL\thirdperson.cpp" />
+    <ClCompile Include="core\render\gui\menu\legitbot_menu.cpp" />
+    <ClCompile Include="core\render\gui\framework\bezier_editor.cpp" />
+    <ClCompile Include="core\render\gui\framework\inventory_changer.cpp" />
+    <ClCompile Include="core\render\gui\framework\inventory_item.cpp" />
+    <ClCompile Include="core\render\gui\menu\inventory_changer_menu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -246,6 +251,9 @@
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
     <ClInclude Include="core\features\events\event_handler.h" />
     <ClInclude Include="core\features\movement\autostrafer.h" />
+    <ClInclude Include="core\render\gui\framework\bezier_editor.h" />
+    <ClInclude Include="core\render\gui\framework\inventory_changer.h" />
+    <ClInclude Include="core\render\gui\framework\inventory_item.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

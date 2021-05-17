@@ -3405,7 +3405,7 @@ ImDrawData* ImGui::GetDrawData()
 
 double ImGui::GetTime()
 {
-    return GImGui->Time;
+    return GImGui != nullptr ? GImGui->Time : -1.0;
 }
 
 int ImGui::GetFrameCount()

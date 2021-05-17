@@ -4,6 +4,9 @@
 
 #include "../../../dependencies/imgui/imgui.h"
 #include "../../../dependencies/imgui/imgui_internal.h"
+#include "../../../dependencies/utilities/vpk_parser.h"
+
+#include "config.h"
 
 #include "gui.h"
 
@@ -29,8 +32,10 @@
 #include "framework/panel_container.h"
 #include "framework/element_extender.h"
 #include "framework/bezier_editor.h"
+#include "framework/inventory_changer.h"
+#include "framework/inventory_item.h"
 
-#include "config.h"
+
 
 
 
@@ -49,5 +54,6 @@ namespace ui {
 			void init ( object * main_window, sub_tab * sub_tab, std::vector<std::string> weapons );
 			void init_values ( weapon_settings * cfg );
 		}
+		void inventory_changer_menu ( object * main_window, sub_tab * sub_tab );
 	}
 }

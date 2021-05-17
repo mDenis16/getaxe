@@ -123,6 +123,8 @@ namespace ui {
 			std::ifstream in ( file_in_folder );
 
 			nlohmann::json j; in >> j;
+
+
 			try {
 				new config_item ( this, j [ "name" ], j [ "hash" ] );
 			}

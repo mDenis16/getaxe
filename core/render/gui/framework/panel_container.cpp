@@ -7,10 +7,12 @@ namespace ui {
 
 		this->handle ( );
 
-	
+	//	this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 255 ), 0, 15, 16.f );
+
 		if ( *this->selected_index < this->children.size() ) 
 			this->children.at ( *this->selected_index )->draw ( );
-		
+
+	
 		
 	}
 
@@ -55,27 +57,53 @@ namespace ui {
 
 	}
 	void panel_container::update ( ) {
+		if ( this->flags & flags::fullscreen ) {
 
-		this->padding = this->parrent->padding;
-
-		if ( this->index > 0 ) {
-			auto & old = this->parrent->children.at ( this->index - 1 );
-
-			this->mins.x = this->parrent->mins.x;
-			this->mins.y = old->maxs.y + 8.f;
-		}
-		else {
+			this->padding = 0;
+			this->maxs = this->parrent->maxs;
 			this->mins = this->parrent->mins;
 
+			this->width = this->maxs.x - this->mins.x;
+			this->height = this->maxs.y - this->mins.y;
+
+			for ( auto & child : this->children )
+				child->update ( );
+
+
+
 		}
-		this->maxs.x = this->parrent->maxs.x;
+		else {
+			this->padding = this->parrent->padding;
 
-		for ( auto & child : this->children )
-			child->update ( );
+			if ( this->index > 0 ) {
+				auto & old = this->parrent->children.at ( this->index - 1 );
 
-		if ( !this->children.empty ( ) ) {
-			if ( *this->selected_index < this->children.size ( ) )
-				this->maxs.y = this->children.at ( *this->selected_index )->maxs.y;
+				this->mins.x = this->parrent->mins.x;
+				this->mins.y = old->maxs.y + 8.f;
+			}
+			else {
+				this->mins = this->parrent->mins;
+
+			}
+			this->maxs.x = this->parrent->maxs.x;
+
+
+
+			this->width = this->maxs.x - this->mins.x;
+			this->height = this->maxs.y - this->mins.y;
+
+			for ( auto & child : this->children )
+				child->update ( );
+
+
+			if ( !this->children.empty ( ) ) {
+				if ( *this->selected_index < this->children.size ( ) )
+					this->maxs.y = this->children.at ( *this->selected_index )->maxs.y;
+			}
+
+
+			this->width = this->maxs.x - this->mins.x;
+			this->height = this->maxs.y - this->mins.y;
 		}
 	}
 }

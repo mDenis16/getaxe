@@ -13,7 +13,7 @@
 namespace ui {
 	namespace menu {
 
-	
+	//
 		namespace legitbot {
 			child_window * main_tab = nullptr;
 			child_window * filters_tab = nullptr;
@@ -33,9 +33,15 @@ namespace ui {
 
 				}
 
+				filters_tab->empty_children ( );
 				//filters tab
 				{
-
+					new ui::checkbox ( "Through Smoke", filters_tab, cfg->through_smoke, &cfg->through_smoke_keybind );
+					new ui::checkbox ( "Through Walls", filters_tab, cfg->through_walls, &cfg->through_walls_dmg_keybind );
+					new ui::slider ( "Min dmg", filters_tab, cfg->through_walls_dmg, 0.f, 100.f, ui::slider_type::floates, &cfg->through_walls_dmg_keybind );
+					new ui::checkbox ( "Target teammates", filters_tab, cfg->target_teammates, &cfg->target_teammates_keybind );
+					new ui::checkbox ( "Lag compensation", filters_tab, cfg->lagcompensation, &cfg->lagcompensation_keybind );
+					new ui::slider ( "Time", filters_tab, cfg->lag_compensation_time, 0.f, 200.f, ui::slider_type::floates, &cfg->lag_compensation_time_keybind );
 				}
 				//
 

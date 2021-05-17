@@ -6,8 +6,6 @@ namespace ui {
 
 		
 
-		
-
 	public:
 		void draw ( ) override;
 		void handle ( ) override;
