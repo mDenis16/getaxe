@@ -17,11 +17,18 @@ namespace ui {
 		object * tab_assign;
 		std::string title;
 		bool float_bottom = false;
+
+		std::string search_child;
+
+		int last_search_size = 0;
+
+		float maximumContentSize = 0.f;
 		float percent_width = 0.f;
 		float percent_height = 0.f;
 
 		float thumb_length;
 		float thumb_progress = 0.f;
+		float max_thumb_progress = 0.f;
 		ImVec2 thumb_path_mins, thumb_path_maxs;
 
 		ImVec2 thumb_mins, thumb_maxs;

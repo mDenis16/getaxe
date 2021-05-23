@@ -84,9 +84,7 @@ namespace ui {
 
 		handle_mouse_input ( );
 
-		if ( this->in_animation ) {
-			this->hovering = false;
-		}
+		
 
 		if ( this->hovering && key_released ( VK_LBUTTON ) ) {
 			
@@ -131,7 +129,7 @@ namespace ui {
 					this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->parrent->mins.y + this->height ) ) / 2.f;
 				}
 				else {
-					this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->children.back ( )->maxs.y ) ) / 2.f;
+					this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->parrent->children.back ( )->maxs.y ) ) / 2.f;
 				}
 			}
 

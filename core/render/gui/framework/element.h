@@ -87,7 +87,7 @@ namespace ui {
 		bottom
 	};
 	enum flags {
-		position_absolute  = 1 << 0,
+		position_absolute = 1 << 0,
 		position_relative = 1 << 1,
 		align_center = 1 << 2,
 		align_normal = 1 << 3,
@@ -97,7 +97,10 @@ namespace ui {
 		no_background = 1 << 7,
 		hide_overflow = 1 << 8,
 		fullscreen = 1 << 9,
-		scrollbar = 1 << 10
+		scrollbar = 1 << 10,
+		render_forward = 1 << 11,
+		text_input_as_element = 1 << 12,
+		big_inventory_item = 1 << 13
 	};
 	
 	class object {
@@ -141,7 +144,7 @@ namespace ui {
 		}
 
 		void empty_children ( ) {
-			for ( auto & child : children ) {
+			for ( auto  child : children ) {
 				delete child;
 			}
 			children_index = 0;
@@ -155,7 +158,7 @@ namespace ui {
 			last_element_id++;
 			child->_id = last_element_id;
 
-			children.push_back ( child );
+			children.emplace_back ( child );
 		
 			this->children_index++;
 

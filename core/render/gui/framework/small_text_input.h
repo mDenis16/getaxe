@@ -40,7 +40,17 @@ namespace ui {
 			update ( );
 			this->parrent->add_children ( this );
 		}
+		small_text_input ( object * parent, int & _value, int mins, int maxs, text_type _type ) {
 
+			this->parrent = parent;
+			this->renderer = this->parrent->renderer;
+			this->type = object_type::small_text_input_element;
+			this->input_type = _type;
+
+
+			update ( );
+			this->parrent->add_children ( this );
+		}
 
 		void draw ( ) override;
 		void handle ( ) override;

@@ -5,6 +5,9 @@
 namespace hooks::callback {
 	void __stdcall frame_stage_notify ( client_frame_stage_t stage ) {
 
+		if (stage == FRAME_START )
+			ui::handle_image_data ( );
+
 		if ( !interfaces::engine->is_in_game ( ) )
 			return reinterpret_cast< void ( __stdcall * )( client_frame_stage_t ) >( list.at ( hook_index::frame_stage_notify )->original )( stage );
 
@@ -42,6 +45,7 @@ namespace hooks::callback {
 
 		if ( stage == client_frame_stage_t::FRAME_RENDER_START ) {
 			visuals::handler->on_update ( );
+		
 		}
 
 

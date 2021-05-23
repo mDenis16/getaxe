@@ -2904,6 +2904,7 @@ namespace overlay {
 
 			ImGuiIO & io = ImGui::GetIO ( );
 			
+			ui::window_device = device;
 
 			ui::font_title = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\MaisonNeue-Medium.ttf", 30.f );
 			ui::font_widgets = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\MaisonNeue-Medium.ttf", 24.f );

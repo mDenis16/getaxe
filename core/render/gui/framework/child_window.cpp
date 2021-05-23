@@ -25,6 +25,8 @@ namespace ui {
 
 			float windowSize = this->maxs.y - this->mins.y;
 
+			float maxLimitSize =  this->children.size ( ) * ( this->children.back ( )->maxs.y - this->children.front ( )->mins.y ) + 55.f;
+
 			float contentSize = ( this->children.back ( )->maxs.y - this->children.front ( )->mins.y );
 			float trackSize = windowSize / 3; //80 unknown units
 
@@ -32,11 +34,12 @@ namespace ui {
 			float gripSize = trackSize * windowContentRatio;
 
 
+			float percentage = windowSize / contentSize;
+			this->thumb_length = windowSize * percentage;
+
 			
-			this->thumb_length = gripSize;
-			
-			this->thumb_path_mins = ImVec2( this->maxs.x - 5, this->mins.y);
-			this->thumb_path_maxs = ImVec2 ( this->maxs.x, this->maxs.y );
+			this->thumb_path_mins = ImVec2( this->maxs.x - 5, this->mins.y - this->thumb_length / 2.f);
+			this->thumb_path_maxs = ImVec2 ( this->maxs.x, this->maxs.y  + this->thumb_length  / 2.f);
 
 		
 	
@@ -44,10 +47,10 @@ namespace ui {
 			float s = ( contentSize / windowSize );
 			float location = windowSize / 0.5f;
 
-			float pos = ( this->maxs.y - this->mins.y ) * this->thumb_progress;
-
-
-			this->thumb_mins = ImVec2 ( this->maxs.x - 5,  this->mins.y - (this->thumb_length / 2.f) + pos) ;
+			float pos = ( this->maxs.y - this->mins.y ) * this->thumb_progress ;
+			//m_rctThumb.Size.Height = m_rctShaft.Height * m_flThumbPerc;
+			//   thumb.Location.Y += m_rctBounds.Size.Width + m_rctThumb.Location.Y;
+			this->thumb_mins = ImVec2 ( this->maxs.x - 5,  this->mins.y  + pos) ;
 			this->thumb_maxs = ImVec2 ( this->maxs.x, this->thumb_mins.y + this->thumb_length  );
 
 			auto mouse_pos = ui::get_cursor ( );
@@ -68,15 +71,17 @@ namespace ui {
 
 				this->thumb_progress = std::lerp ( old, this->thumb_progress, ImGui::GetIO ( ).DeltaTime * 5.5f  );
 
-				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, 1.f );
+				this->max_thumb_progress = 1.f - this->thumb_length / ( this->maxs.y - this->mins.y );
+				if ( this->max_thumb_progress < 0.f )
+					return; /*dont handle unmodifiable scrollbar*/
+				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, this->max_thumb_progress );
 
 
-				float line_size = ( this->children.front ( )->maxs.y - this->children.front ( )->mins.y ) + 55.f;
+				float line_size = ( this->children.front ( )->maxs.y - this->children.front ( )->mins.y );
 
-				float old_scroll_progress = this->scroll_progress;
-				this->scroll_progress = line_size * ( this->thumb_progress * this->thumb_length );
-				//this->scroll_progress = std::lerp ( old, this->scroll_progress, ImGui::GetIO ( ).DeltaTime * 10.f );
+				this->scroll_progress = maximumContentSize * this->thumb_progress;
 
+			
 				for ( auto & child : this->children )
 					child->update ( );
 
@@ -84,34 +89,47 @@ namespace ui {
 			else if ( ImGui::GetIO ( ).MouseWheel > 0.0f){
 				float old = this->thumb_progress;
 				this->thumb_progress -= 0.1f;
-				
+
 				this->thumb_progress = std::lerp ( old, this->thumb_progress, ImGui::GetIO ( ).DeltaTime * 5.5f );
 
-				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, 1.f );
+				this->max_thumb_progress = 1.f - this->thumb_length / ( this->maxs.y - this->mins.y );
+				if ( this->max_thumb_progress < 0.f )
+					return; /*dont handle unmodifiable scrollbar*/
+				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, this->max_thumb_progress );
 
 
-				float line_size = ( this->children.front ( )->maxs.y - this->children.front ( )->mins.y ) + 55.f;
+				float line_size = ( this->children.front ( )->maxs.y - this->children.front ( )->mins.y );
 
-				this->scroll_progress = line_size * ( this->thumb_progress * this->thumb_length );
+				this->scroll_progress = maximumContentSize * this->thumb_progress;
+
 
 				for ( auto & child : this->children )
 					child->update ( );
+
 			}
 
 			if ( this->modifying_thumb ) {
 
-				float dist = mouse_pos.y - this->mins.y;
+				float dist = mouse_pos.y - (this->thumb_length ) / 2.f - this->mins.y;
 				dist /= ( this->maxs.y - this->mins.y );
 				
+				float old = this->thumb_progress;
+				this->max_thumb_progress = 1.f - this->thumb_length / ( this->maxs.y - this->mins.y );
+				if ( this->max_thumb_progress < 0.f )
+					return; /*dont handle unmodifiable scrollbar*/
+
 				this->thumb_progress = dist;
-				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, 1.f );
+				this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, this->max_thumb_progress );
 
-				float line_size = ( this->children.front ( )->maxs.y - this->children.front ( )->mins.y ) + 55.f;
+			
 
-				this->scroll_progress = line_size * ( this->thumb_progress * this->thumb_length );
+				this->scroll_progress = maximumContentSize * this->thumb_progress;
 				
 				for ( auto & child : this->children )
 					child->update ( );
+			}
+			else {
+				maximumContentSize = ( this->children.back ( )->maxs.y - this->children.front ( )->mins.y ) + 85.f;
 			}
 
 
@@ -145,7 +163,7 @@ namespace ui {
                 this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 0, 0, 0, 25 ), this->rounding );
                 this->renderer->AddRectFilled ( this->mins, this->maxs, SECONDARY_COLOR, this->rounding );
             }
-          
+			this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), this->rounding );
 		}
 		
 
@@ -158,10 +176,14 @@ namespace ui {
 			this->renderer->PushClipRect ( this->mins, this->maxs, false );
 			//  this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255,255, 255 ), this->rounding );
 		}
-
-        for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
-			this->children.at ( i )->draw ( );
-
+		if ( flags & flags::render_forward ) {
+			for ( auto & child : children )
+				child->draw ( );
+		}
+		else {
+			for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
+				this->children.at ( i )->draw ( );
+		}
 		if ( flags & flags::hide_overflow ) {
 			this->renderer->PopClipRect ( );
 

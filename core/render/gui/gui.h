@@ -18,7 +18,7 @@ namespace ui {
 
 	bool key_released ( const int key );
 
-	extern MSG msg;
+
 	extern ImFont * font_title;
 	extern ImFont * font_widgets;
 	extern ImFont * font_tab;

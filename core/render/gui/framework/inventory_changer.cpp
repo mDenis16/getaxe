@@ -16,111 +16,121 @@
 #include <thread>
 #include <d3dx9.h>
 #include <mutex>
+#include <atomic>
 
 
-	
 namespace ui {
 
 	void image_queue::remove ( int index ) {
-		images_data.erase ( images_data.begin ( ) + index );
-		delete this;
-
+		//images_data.erase ( images_data.begin ( ) + index );
+		//delete this;
 	}
-	ui::child_window * items_center = nullptr;
 
-	std::vector<image_queue *> images_data;
+	ui::child_window * items_weapons_active = nullptr;
+	ui::child_window * items_weapons_paints = nullptr;
+	ui::child_window * items_weapons_list = nullptr;
+	ui::child_window * item_painkit_settings = nullptr;
 
-	std::vector<int> weapon_ids = { 1,	 2,	 3,	 4,	 7,	 8,	 9,	 10,	 11,	 13,	 14,	16,	 17,	 19,	20,	 23,24,	 25,	26,	27,	28,	 29,	30,	31,	32,	 33,	34,	35,	36,	37,	 38,	 39,	40,	 41,	 42,	 43,	 44,	 45,	46,	 47,	 48,	49,	 57,	59,60,	61,	 63,	64,	 68,	 69,	70,	72,	 74,	75,	76,	78,	 80,	81,	 82,	 83,	84,	 85,	 500,	 503,	 505,	506,	 507,	 508,	 509,	 512,	514,	515,	 516,	517,	 518,	519,	 520,	 521,     522,	 523,	 525,	 4725,	 5027,	 5028,	 5029,     5030,	 5031,	 5032,	 5033,	 5034,	 5035 };
+	std::queue<ui::image_queue *> images_data;
 
-	std::vector<std::string> weapon_names = {
-   "weapon_deagle" ,	"weapon_elite" ,	"weapon_fiveseven" ,	"weapon_glock" ,	"weapon_ak47" ,	"weapon_aug" ,	"weapon_awp" ,	"weapon_famas" ,	"weapon_g3sg1" ,	"weapon_galilar" ,	"weapon_m249" ,	"weapon_m4a1" ,	"weapon_mac10" ,	"weapon_p90" ,	"weapon_zone_repulsor" ,	"weapon_mp5sd" ,	"weapon_ump45" ,	"weapon_xm1014" ,	"weapon_bizon" ,	"weapon_mag7" ,	"weapon_negev" ,	"weapon_sawedoff" ,	"weapon_tec9" ,	"weapon_taser" ,	"weapon_hkp2000" ,	"weapon_mp7" ,	"weapon_mp9" ,	"weapon_nova" ,	"weapon_p250" ,	"weapon_shield" ,	"weapon_scar20" ,	"weapon_sg556" ,	"weapon_ssg08" ,	"weapon_knifegg" ,	"weapon_knife" ,	"weapon_flashbang" ,	"weapon_hegrenade" ,	"weapon_smokegrenade" ,	"weapon_molotov" ,	"weapon_decoy" ,	"weapon_incgrenade" ,	"weapon_c4" ,	"weapon_healthshot" ,	"weapon_knife_t" ,	"weapon_m4a1_silencer" ,	"weapon_usp_silencer" ,	"weapon_cz75a" ,	"weapon_revolver" ,	"weapon_tagrenade" ,	"weapon_fists" ,	"weapon_breachcharge" ,	"weapon_tablet" ,	"weapon_melee" ,	"weapon_axe" ,	"weapon_hammer" ,	"weapon_spanner" ,	"weapon_knife_ghost" ,	"weapon_firebomb" ,	"weapon_diversion" ,	"weapon_frag_grenade" ,	"weapon_snowball" ,	"weapon_bumpmine" ,	"weapon_bayonet" ,	"weapon_knife_css" ,	"weapon_knife_flip" ,	"weapon_knife_gut" ,	"weapon_knife_karambit" ,	"weapon_knife_m9_bayonet" ,	"weapon_knife_tactical" ,	"weapon_knife_falchion" ,	"weapon_knife_survival_bowie" ,	"weapon_knife_butterfly" ,	"weapon_knife_push" ,	"weapon_knife_cord" ,	"weapon_knife_canis" ,	"weapon_knife_ursus" ,	"weapon_knife_gypsy_jackknife" ,	"weapon_knife_outdoor" ,	"weapon_knife_stiletto" ,	"weapon_knife_widowmaker" ,	"weapon_knife_skeleton" ,	"studded_brokenfang_gloves" ,	"studded_bloodhound_gloves" ,	"t_gloves" ,	"ct_gloves" ,	"sporty_gloves" ,	"slick_gloves" ,	"leather_handwraps" ,	"motorcycle_gloves" ,	"specialist_gloves" ,	"studded_hydra_gloves" };
-
-	std::vector<std::string> display_names = {
-	   "Deagle" ,	"Elite" ,	"Fiveseven" ,	"Glock" ,	"Ak47" ,	"Aug" ,	"Awp" ,	"Famas" ,	"G3sg1" ,	"Galilar" ,	"M249" ,	"M4a1" ,	"Mac10" ,	"P90" ,	"Zone Repulsor" ,	"Mp5sd" ,	"Ump45" ,	"Xm1014" ,	"Bizon" ,	"Mag7" ,	"Negev" ,	"Sawedoff" ,	"Tec9" ,	"Taser" ,	"Hkp2000" ,	"Mp7" ,	"Mp9" ,	"Nova" ,	"P250" ,	"Shield" ,	"Scar20" ,	"Sg556" ,	"Ssg08" ,	"Knifegg" ,	"Knife" ,	"Flashbang" ,	"Hegrenade" ,	"Smokegrenade" ,	"Molotov" ,	"Decoy" ,	"Incgrenade" ,	"C4" ,	"Healthshot" ,	"Knife T" ,	"M4a1 Silencer" ,	"Usp Silencer" ,	"Cz75a" ,	"Revolver" ,	"Tagrenade" ,	"Fists" ,	"Breachcharge" ,	"Tablet" ,	"Melee" ,	"Axe" ,	"Hammer" ,	"Spanner" ,	"Knife Ghost" ,	"Firebomb" ,	"Diversion" ,	"Frag Grenade" ,	"Snowball" ,	"Bumpmine" ,	"Bayonet" ,	"Knife Css" ,	"Knife Flip" ,	"Knife Gut" ,	"Knife Karambit" ,	"Knife M9 Bayonet" ,	"Knife Tactical" ,	"Knife Falchion" ,	"Knife Survival Bowie" ,	"Knife Butterfly" ,	"Knife Push" ,	"Knife Cord" ,	"Knife Canis" ,	"Knife Ursus" ,	"Knife Gypsy Jackknife" ,	"Knife Outdoor" ,	"Knife Stiletto" ,	"Knife Widowmaker" ,	"Knife Skeleton" ,	"Studded Brokenfang Gloves" ,	"Studded Bloodhound Gloves" ,	"T Gloves" ,	"Ct Gloves" ,	"Sporty Gloves" ,	"Slick Gloves" ,	"Leather Handwraps" ,	"Motorcycle Gloves" ,	"Specialist Gloves" ,	"Studded Hydra Gloves" };
 
 	std::mutex mutex_image_data;
-	void ui::handle_image_data ( ) {
-		//images_data.reserve ( 100 );
+	std::atomic<bool> done ( false );
+	void samp ( ) {
 
+
+	}
+	void ui::handle_image_data ( ) {
 
 
 		static auto start_time = 0.f;
 
 
 		int i = 0;
-
-		while ( true ) {
-			if ( PeekMessage ( &ui::msg, NULL, 0U, 0U, PM_REMOVE ) ) {
-				TranslateMessage ( &ui::msg );
-				DispatchMessage ( &ui::msg );
-				continue;
-			}
-
+#ifdef PREVIEW_D3D
+		while ( !done.load ( ) ) {
+#endif
+			
 			static float last_gpu_scan = 0.f;
 
 
-			if ( ui::window_device && mutex_image_data.try_lock ( ) ) {
-				//if ( ImGui::GetTime ( ) != -1.0 && ( ImGui::GetTime ( ) - start_time ) > 8.f ) {
-					if ( images_data.size ( ) > 0 ) {
-						if ( ImGui::GetTime ( ) != -1.0 && ( ImGui::GetTime ( ) - last_gpu_scan ) > 0.1f ) {
-							last_gpu_scan = ImGui::GetTime ( );
-
-							if ( i >= images_data.size ( ) )
-								i = 0;
-
-							//for ( size_t i = 0; i < images_data.size ( ); i++ ) {
-
-							auto & img = images_data.at ( i );
-
-							if ( !img->done ) {
-
-								std::optional<c_vpk_entry> entry = static_cast< c_vpk_archive * >( img->archive )->get_file ( img->location );
-
-								if ( entry ) {
-									std::optional<std::vector<uint8_t>> png_data = entry.value ( ).get_data ( );
-									if ( png_data.has_value ( ) )
-										D3DXCreateTextureFromFileInMemory ( reinterpret_cast< IDirect3DDevice9 * >( ui::window_device ), ( char * ) png_data.value ( ).data ( ), png_data.value ( ).size ( ), img->image_buffer );
+			if ( ImGui::GetTime ( ) != -1.0 && ui::window_device ) {
 
 
-								}
+				if ( !images_data.empty ( ) ) {
+					if ( ( ImGui::GetTime ( ) - last_gpu_scan ) > 0.05f ) {
 
-								img->done = true;
+
+						mutex_image_data.lock ( );
+						auto & img = images_data.front ( );
+
+						std::optional<c_vpk_entry> entry = static_cast< c_vpk_archive * >( img->archive )->get_file ( img->location );
+
+						if ( entry ) {
+
+							std::optional<std::vector<uint8_t>> png_data = entry.value ( ).get_data ( );
+							if ( png_data.has_value ( ) ) {
+								//D3DXCreateTextureFromFileInMemory ( reinterpret_cast< IDirect3DDevice9 * >( ui::window_device ), ( char * ) png_data.value ( ).data ( ), png_data.value /( ).size ( ), img->image_buffer );
+
+								//
+
+								D3DXCreateTextureFromFileInMemoryEx ( reinterpret_cast< IDirect3DDevice9 * >( ui::window_device ), ( char * ) png_data.value ( ).data ( ), png_data.value ( ).size ( ),
+									200, 200, D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_DEFAULT, D3DX_DEFAULT, D3DX_DEFAULT, D3DUSAGE_DYNAMIC, NULL, NULL, img->image_buffer );
+
 							}
-							//}
-							i++;
 						}
+
+						images_data.pop ( );
+
+						mutex_image_data.unlock ( );
+
+
+						last_gpu_scan = ImGui::GetTime ( );
 					}
 
 
-			//	}
-				mutex_image_data.unlock ( );
+
+				}
+
+
+
 			}
+#ifdef PREVIEW_D3D
 		}
+#endif
 	}
 
 	void inventory_changer::on_start ( ) {
-		std::ifstream in ( "E:\\repos\\mDenis16\\getaxe-menu-framework\\Release\\skins.json" );
+		std::ifstream in ( "E:\\repos\\mDenis16\\getaxe-menu-framework\\Release\\skins.json" ); /*this needs to be streamed from main network*/
+		std::ifstream weapons_stream ( "E:\\SteamLibrary\\steamapps\\common\\Counter-Strike Global Offensive\\csgo\\scripts\\items\\csgo_weaponid_dumper-master\\Debug\\weapons.json" );
 
 		archive = new c_vpk_archive ( );
-		static_cast<c_vpk_archive*>(archive)->load ( "E:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/csgo/pak01_dir.vpk" );
+		static_cast< c_vpk_archive * >( archive )->load ( "E:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/csgo/pak01_dir.vpk" );
 
+		nlohmann::json json_weapons;
+		weapons_stream >> json_weapons;
 
 		nlohmann::json json;
 		in >> json;
 
 		nlohmann::json paintkit_display_names = json [ "paintkit_names" ];
 		nlohmann::json paintkit_ids = json [ "paintkit_ids" ];
+		//static int filtered_ids = { }
+		int k = 0;
+		for ( auto it = json_weapons [ "data" ].begin ( ); it != json_weapons [ "data" ].end ( ); ++it, k++ ) {
+			auto j = *it;
 
-		for ( size_t i = 0; i < weapon_ids.size(); i++ ) {
-			auto  weap = new weapon ( weapon_ids.at(i) );
+			auto  weap = new weapon ( j [ "id" ].get<int> ( ) );
 
 
-			auto str = std::to_string ( weapon_ids.at ( i ) );
+			auto str = std::to_string ( j [ "id" ].get<int> ( ) );
 
 			nlohmann::json paintkit_names = json [ "weapon_skins" ][ str ][ "paintkit_names" ];
 			nlohmann::json paintkit_rarities = json [ "weapon_skins" ][ str ][ "paintkit_rarities" ];
-			weap->weapon_name = weapon_names.at ( i );
-			weap->display_name = display_names.at ( i );
+			weap->weapon_name = j [ "weapon_name" ].get<std::string> ( );
+			weap->display_name = j [ "display_name" ].get<std::string> ( );
+			weap->index_in_list = k;
+			weap->item_definition_index = j [ "id" ].get<int> ( );
 
 			for ( size_t i = 0; i < paintkit_names.size ( ); i++ ) {
 				auto  paint = new paintkit ( );
@@ -136,17 +146,109 @@ namespace ui {
 
 			this->weapons.emplace_back ( weap );
 
-		}
-		
-		
 
+		}
 
 	}
-	void inventory_changer::asdad ( ) {
 
-		for ( auto & weap : weapons ) {
-			new inventory_item ( items_center, weap, this->archive );
+	void inventory_changer::change_page ( int page, int weapon ) {
+		this->stage = page;
 
+		switch ( this->stage ) {
+		case 1:
+		{
+			items_weapons_paints->empty_children ( );
+
+
+			if ( items_weapons_list && items_weapons_list->children.size ( ) == 0 ) {
+				for ( auto & weap : weapons )
+					new inventory_item ( items_weapons_list, weap, this->archive, std::bind ( &inventory_changer::change_page, this, 2, weap->index_in_list ) );
+			}
+
+
+		}break;
+		case 2:
+		{
+			items_weapons_paints->empty_children ( );
+			items_weapons_paints->thumb_progress = 0.f;
+			items_weapons_paints->scroll_progress = 0.f;
+			auto weap = this->weapons.at ( weapon );
+
+			for ( auto & paintkit : weapons.at ( weapon )->paintkits )
+				new inventory_item ( items_weapons_paints, paintkit, this->archive, std::bind ( &inventory_changer::painkit_modify, this, paintkit ) );
+
+		}
+
+		break;
+		default:
+			break;
+		}
+	}
+
+	template<class T, class U>
+	bool contains ( const std::vector<T> & container, const U & v ) {
+		auto it = std::lower_bound (
+			container.begin ( ),
+			container.end ( ),
+			v,
+			[ ] ( const T & l, const U & r ) { return l < r; } );
+		return it != container.end ( ) && *it == v;
+	}
+	void  inventory_changer::painkit_modify ( paintkit * pkit ) {
+		stage = 3;
+
+		item_painkit_settings->empty_children ( );
+
+
+		float child_rounding = 0.f;
+		auto preview = new ui::child_window ( "1 ", 45.f, 50.0, ImColor ( 23, 24, 27, 255 ), item_painkit_settings, float_side::none, child_rounding, 15.f );
+		{
+			auto itm = new inventory_item ( preview, pkit, this->archive, std::bind ( &inventory_changer::change_page, this, 2, 0 ) );
+			itm->flags |= ui::flags::big_inventory_item;
+		}
+
+		auto settings = new ui::child_window ( "2", 45.f, 50.0, ImColor ( 23, 24, 27, 255 ), item_painkit_settings, float_side::none, child_rounding, 15.f );
+		{
+			static float wear = 0.f;
+			static float seed = 0;
+			static float startrack = 0;
+
+
+			new ui::slider ( "Wear", settings, wear, 1.f, 25.f, ui::slider_type::floates );
+			new ui::slider ( "Seed", settings, seed, 1, 10, ui::slider_type::floates );
+			auto inp = new ui::text_input ( settings, "Default", this->search_text, text_type::string, 70.f, 50.f );
+			inp->title = "StatTrack";
+			inp->flags |= ui::flags::text_input_as_element;
+
+			auto inp2 = new ui::text_input ( settings, "Name", this->search_text, text_type::string, 70.f, 50.f );
+			inp2->title = "Name";
+			inp2->flags |= ui::flags::text_input_as_element;
+		}
+
+		auto buttons = new ui::child_window ( "3", 45.f, 40.0, ImColor ( 255, 255, 255, 255 ), item_painkit_settings, float_side::none, child_rounding, 15.f ); buttons->flex = flex_direction::block;
+		//buttons->flags |= vertical_align_center; buttons->flags |= align_center;
+		{
+			auto free_side = new ui::child_window ( "", 100.f, 60.0f, ImColor ( 255, 255, 255, 255 ), buttons, child_type::normal, flags::align_center | flags::vertical_align_center | flags::position_absolute );
+			{
+
+			}
+			auto bottom_side = new ui::child_window ( "", 100.f, 30.0f, ImColor ( 255, 255, 255, 255 ), buttons, child_type::normal, flags::align_center | flags::vertical_align_center | flags::position_absolute );
+			{
+				bottom_side->flex = flex_direction::automatic;
+				bottom_side->padding = 0.f;
+
+
+				auto left_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 24, 255, 255 ), bottom_side, child_type::normal, flags::align_left | flags::vertical_align_center | flags::position_absolute );
+				{
+					new ui::button ( "Back", left_bottom_side, 80.f, 40.f, std::bind ( &inventory_changer::change_page, this, 1, -1 ) );
+				}
+
+				auto right_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 255, 255, 255 ), bottom_side, child_type::normal, flags::align_right | flags::vertical_align_center | flags::position_absolute );
+				{
+
+					new ui::button ( "Save", right_bottom_side, 80.f, 40.f, std::bind ( &inventory_changer::change_page, this, 1, -1 ) );
+				}
+			}
 		}
 
 	}
@@ -167,12 +269,39 @@ namespace ui {
 
 		auto panel_container = new ui::panel_container ( this, stage ); panel_container->flags = flags::fullscreen;
 		{
+
+			auto active_weapons_list_panel = new ui::panel ( panel_container ); active_weapons_list_panel->flags = flags::fullscreen;
+			active_weapons_list_panel->flex = flex_direction::automatic;
+			{
+				auto window = new ui::child_window ( "", 100.f, 100.f, ImColor ( 255, 255, 255, 0 ), active_weapons_list_panel, child_type::normal, flags::no_background ); window->flex = flex_direction::block; window->padding = 0;
+
+				auto top_header = new ui::child_window ( "Weapons skins list", 100.f, 10.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f );
+				top_header->flex = flex_direction::automatic;
+				top_header->padding = 0.f;
+
+
+				auto left_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 24, 255, 255 ), top_header, child_type::normal, flags::align_left | flags::vertical_align_center | flags::position_absolute );
+				{
+					//new ui::text_input ( left_bottom_side, "Search weapon", this->search_text, text_type::string, 70.f, 50.f );
+				}
+
+				auto right_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 255, 255, 255 ), top_header, child_type::normal, flags::align_right | flags::vertical_align_center | flags::position_absolute );
+				{
+
+					new ui::button ( "New weapon", right_bottom_side, 40.f, 50.f, std::bind ( &inventory_changer::change_page, this, 1, -1 ) );
+				}
+
+				items_weapons_active = new ui::child_window ( "Items", 100.f, 90.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f ); items_weapons_active->flags |= flags::hide_overflow;
+				items_weapons_active->flags |= flags::scrollbar;
+
+			}
+
 			auto weapons_panel = new ui::panel ( panel_container ); weapons_panel->flags = flags::fullscreen;
 			weapons_panel->flex = flex_direction::automatic;
 			{
 				auto window = new ui::child_window ( "", 100.f, 100.f, ImColor ( 255, 255, 255, 0 ), weapons_panel, child_type::normal, flags::no_background ); window->flex = flex_direction::block; window->padding = 0;
 
-				auto top_header = new ui::child_window ( "Header", 100.f, 10.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f ); 
+				auto top_header = new ui::child_window ( "Weapons csgo list", 100.f, 10.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f );
 				top_header->flex = flex_direction::automatic;
 				top_header->padding = 0.f;
 
@@ -181,42 +310,83 @@ namespace ui {
 				{
 					new ui::text_input ( left_bottom_side, "Search weapon", this->search_text, text_type::string, 70.f, 50.f );
 				}
-			
+
 				auto right_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 255, 255, 255 ), top_header, child_type::normal, flags::align_right | flags::vertical_align_center | flags::position_absolute );
 				{
-					
-					new ui::button ( "New skin", right_bottom_side, 40.f, 50.f, std::bind ( &inventory_changer::asdad, this ) );
+
+					new ui::button ( "Back", right_bottom_side, 40.f, 50.f, std::bind ( &inventory_changer::change_page, this, 0, -1 ) );
 				}
 
-				items_center = new ui::child_window ( "Items", 100.f, 90.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f ); items_center->flags |= flags::hide_overflow;
-				items_center->flags |= flags::scrollbar;
+				items_weapons_list = new ui::child_window ( "Items", 100.f, 90.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f ); items_weapons_list->flags |= flags::hide_overflow;
+				items_weapons_list->flags |= flags::scrollbar; items_weapons_list->flags |= flags::render_forward;
 
-			 
-				
 			}
+
+
+			auto paint_kits_panel = new ui::panel ( panel_container ); paint_kits_panel->flags = flags::fullscreen;
+			paint_kits_panel->flex = flex_direction::automatic;
+			{
+				auto window = new ui::child_window ( "", 100.f, 100.f, ImColor ( 255, 255, 255, 0 ), paint_kits_panel, child_type::normal, flags::no_background ); paint_kits_panel->flex = flex_direction::block; window->padding = 0;
+
+				auto top_header = new ui::child_window ( "Paintkits list", 100.f, 10.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f );
+				top_header->flex = flex_direction::automatic;
+				top_header->padding = 0.f;
+
+
+				auto left_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 24, 255, 255 ), top_header, child_type::normal, flags::align_left | flags::vertical_align_center | flags::position_absolute );
+				{
+					new ui::text_input ( left_bottom_side, "Search skin", this->search_text, text_type::string, 70.f, 50.f );
+				}
+
+				auto right_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 255, 255, 255 ), top_header, child_type::normal, flags::align_right | flags::vertical_align_center | flags::position_absolute );
+				{
+
+					new ui::button ( "Back", right_bottom_side, 40.f, 50.f, std::bind ( &inventory_changer::change_page, this, 1, -1 ) );
+				}
+
+				items_weapons_paints = new ui::child_window ( "Items", 100.f, 90.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f ); items_weapons_paints->flags |= flags::hide_overflow;
+				items_weapons_paints->flags |= flags::scrollbar;
+				items_weapons_paints->flags |= flags::render_forward;
+
+
+			}
+
+			auto panit_kit_preview_panel = new ui::panel ( panel_container ); panit_kit_preview_panel->flags = flags::fullscreen;
+			panit_kit_preview_panel->flex = flex_direction::automatic;
+			{
+				
+
+				item_painkit_settings = new ui::child_window ( "", 100.f, 100.f, ImColor ( 255, 255, 255, 0 ), panit_kit_preview_panel, child_type::normal ); item_painkit_settings->flex = flex_direction::automatic; item_painkit_settings->padding = 15;
+
+
+			}
+
+
+		
 		}
 	}
-			/*	auto left_bottom_side = new ui::child_window ( "", 50.f, 100.0f, ImColor ( 255, 24, 255, 255 ), top_side, child_type::normal, flags::align_left | flags::vertical_align_center | flags::position_absolute );
-				{
 
-					new ui::text_input ( left_bottom_side, "Search weapon", this->search_text, text_type::string, 70.f, 50.f );
+	/*	auto left_bottom_side = new ui::child_window ( "", 50.f, 100.0f, ImColor ( 255, 24, 255, 255 ), top_side, child_type::normal, flags::align_left | flags::vertical_align_center | flags::position_absolute );
+		{
+
+			new ui::text_input ( left_bottom_side, "Search weapon", this->search_text, text_type::string, 70.f, 50.f );
 
 
 
-				}
+		}
 
-				auto right_bottom_side = new ui::child_window ( "", 50.f, 100.0f, ImColor ( 255, 255, 255, 255 ), top_side, child_type::normal, flags::align_right | flags::vertical_align_center | flags::position_absolute );
-				{
-					new ui::button ( "New skin", right_bottom_side, 40.f, 50.f, refresh_ext );
-				}
-	*/
-	//	auto center_side = new child_window ( "sadds", 100.f, 50.f, ImColor ( 255, 255, 255, 0 ), weapons_panel, float_side::none, 0.f, 0.f );
-		//center_side->flags |= flags::hide_overflow;
+		auto right_bottom_side = new ui::child_window ( "", 50.f, 100.0f, ImColor ( 255, 255, 255, 255 ), top_side, child_type::normal, flags::align_right | flags::vertical_align_center | flags::position_absolute );
+		{
+			new ui::button ( "New skin", right_bottom_side, 40.f, 50.f, refresh_ext );
+		}
+*/
+//	auto center_side = new child_window ( "sadds", 100.f, 50.f, ImColor ( 255, 255, 255, 0 ), weapons_panel, float_side::none, 0.f, 0.f );
+	//center_side->flags |= flags::hide_overflow;
 
-		//for(auto& weap : weapons )
-			//new inventory_item ( center_side, weap );
+	//for(auto& weap : weapons )
+		//new inventory_item ( center_side, weap );
 
-	
+
 
 	void inventory_changer::parse_data ( ) {
 		std::ifstream in ( "skins.json" );
@@ -226,25 +396,119 @@ namespace ui {
 
 	}
 
+	void copy_inv_item ( inventory_item * A, inventory_item * B ) {
+
+
+
+
+	}
+	bool contains ( const std::string & word, const std::string & sentence ) {
+		if ( word == "" || sentence == "" )
+			return true;
+
+		return sentence.find ( word ) != std::string::npos;
+	}
+
+	std::string to_lower ( std::string str ) {
+		std::transform ( str.begin ( ), str.end ( ), str.begin ( ), ( int( * )( int ) )std::tolower );
+
+		return str;
+	}
+	bool search ( char * pat, char * txt ) {
+		int M = strlen ( pat );
+		int N = strlen ( txt );
+
+		/* A loop to slide pat[] one by one */
+		for ( int i = 0; i <= N - M; i++ ) {
+			int j;
+
+			/* For current index i, check for pattern match */
+			for ( j = 0; j < M; j++ )
+				if ( txt [ i + j ] != pat [ j ] )
+					break;
+
+			if ( j == M ) // if pat[0...M-1] = txt[i, i+1, ...i+M-1]
+				return true;
+		}
+
+		return false;
+	}
 	void inventory_changer::draw ( ) {
 		handle ( );
 
 		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ) );
 
-	
+
 
 		this->handle ( );
 
-		
-	
-		for ( auto & child : children ) {
+
+
+
+
+
+
+		if ( this->search_text.size ( ) != last_search_size ) {
+
+
+			if ( this->search_text.size ( ) == 0 && last_search_size != 0 ) {
+				items_weapons_list->empty_children ( );
+
+				items_weapons_list->children.reserve ( 60 );
+
+				for ( auto & child : this->original_children ) {
+					auto wpn = new ui::inventory_item ( static_cast< ui::inventory_item * >( child ) );
+					items_weapons_list->add_children ( wpn );
+
+					update ( );
+
+				}
+				last_search_size = 0;
+			}
+			else {
+
+
+				if ( this->search_text.size ( ) > 0 && last_search_size == 0 ) {
+
+
+					for ( auto & c : this->original_children )
+						delete c;
+
+					this->original_children.clear ( );
+
+					this->original_children.reserve ( 60 );
+
+					for ( auto & child : items_weapons_list->children ) {
+						this->original_children.push_back ( new ui::inventory_item ( static_cast< ui::inventory_item * >( child ) ) );
+
+					}
+
+				}
+				else if ( !this->search_text.empty ( ) ) {
+					items_weapons_list->empty_children ( );
+
+					items_weapons_list->children.reserve ( 60 );
+
+					for ( auto & child : this->original_children ) {
+						auto itm = static_cast< inventory_item * >( child );
+
+						if ( search ( this->search_text.data ( ), itm->weap->display_name.data ( ) ) ) {
+							auto wpn = new ui::inventory_item ( static_cast< ui::inventory_item * >( child ) );
+							items_weapons_list->add_children ( wpn );
+
+							update ( );
+						}
+					}
+				}
+			}
+
+			last_search_size = this->search_text.size ( );
+		}
+
+		for ( auto & child : this->children ) {
 			child->draw ( );
 
 		}
-
-
-
-
 	}
 	void inventory_changer::handle_mouse_input ( ) {
 		if ( ui::focused_item != -1 )
@@ -268,8 +532,7 @@ namespace ui {
 
 	void inventory_changer::update ( ) {
 
-
-
+		static int last_child_size = 0;
 
 		this->mins.x = this->parrent->mins.x + 30;
 		this->maxs.x = this->parrent->maxs.x - 30;
@@ -286,18 +549,18 @@ namespace ui {
 		}
 
 	}
-	
+
 	weapon::weapon ( int item_definition_index ) {
-		
+
 
 	}
 
 	void paintkit::generate_image_path ( ) {
 
 		auto skin_name = game_name;
-		
 
-		if ( strcmp ( weapon_name.c_str(), crypt_str ( "unknown" ) ) && strcmp ( weapon_name.c_str(), crypt_str ( "knife" ) ) && strcmp ( weapon_name.c_str(), crypt_str ( "gloves" ) ) ) //-V526
+
+		if ( strcmp ( weapon_name.c_str ( ), crypt_str ( "unknown" ) ) && strcmp ( weapon_name.c_str ( ), crypt_str ( "knife" ) ) && strcmp ( weapon_name.c_str ( ), crypt_str ( "gloves" ) ) ) //-V526
 		{
 			if ( skin_name.empty ( ) || skin_name == crypt_str ( "default" ) )
 				image_path = crypt_str ( "resource/flash/econ/weapons/base_weapons/" ) + std::string ( weapon_name ) + crypt_str ( ".png" );

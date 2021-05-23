@@ -109,6 +109,7 @@ enum entity_flags {
 	fl_transragdoll = ( 1 << 29 ),
 	fl_unblockable_by_player = ( 1 << 30 )
 };
+
 enum item_definition_indexes {
 	weapon_deagle = 1,
 	weapon_elite = 2,

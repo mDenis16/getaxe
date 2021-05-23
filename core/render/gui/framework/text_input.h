@@ -6,7 +6,8 @@ namespace ui {
 		string,
 		floats,
 		hash,
-		password
+		password,
+		type_int
 	};
 	class text_input : public object {
 
@@ -18,6 +19,7 @@ namespace ui {
 		void * value;
 		std::string * text_val;
 		std::string place_holder = "none";
+		std::string title = "Input";
 		void * old_value;
 		float offset_y = 0.f;
 

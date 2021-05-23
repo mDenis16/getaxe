@@ -6,10 +6,15 @@
 #include <queue>
 #include <d3d9.h>
 #include <mutex>
+#include <atomic>
+
 
 namespace ui {
 	void handle_image_data ( );
+
 	extern std::mutex mutex_image_data;
+	extern std::atomic<bool> done;
+
 
 	class image_queue {
 	public:
@@ -28,14 +33,21 @@ namespace ui {
 		void * archive;
 
 		bool done = false;
+		bool failed = false;
 
 	};
 
-	extern std::vector<image_queue*> images_data;
+
+	extern std::queue<ui::image_queue*> images_data;
 
 	class paintkit {
 	public:
+		paintkit ( ) {
+
+		}
+		~paintkit( ){ }
 		int id = -1;
+		int weapon_id = -1;
 		std::string game_name;
 		std::string display_name;
 		int rarity;
@@ -59,6 +71,7 @@ namespace ui {
 			paintkits.clear ( );
 		}
 		int item_definition_index = -1;
+		int index_in_list = -1;
 		
         std::string weapon_name;
 		std::string display_name;
@@ -82,15 +95,20 @@ namespace ui {
 
 			weapons.clear ( );
 		}
-		void asdad ( );
+		void change_page ( int page, int weapon = 0 );
+		void painkit_modify ( paintkit * pkit );
 
 		void * archive;
 
 		std::string text;
 		std::string search_text;
+		int last_search_size = 0;
 		int stage = 0;
 
 		std::vector< weapon* > weapons;
+
+		std::vector<object *> original_children;
+
 
 		int animated_alpha = 255;
 		ImVec2 animation_position;

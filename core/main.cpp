@@ -52,6 +52,9 @@ unsigned long WINAPI initialize(void* instance) {
 	std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
 
 	FreeLibraryAndExitThread(static_cast<HMODULE>(instance), 0);
+
+	ui::done = true;
+
 }
 
 unsigned long WINAPI release() {
@@ -67,6 +70,7 @@ unsigned long WINAPI release() {
 
 	return TRUE;
 }
+
 
 std::int32_t WINAPI DllMain(const HMODULE instance [[maybe_unused]], const unsigned long reason, const void* reserved [[maybe_unused]] ) {
 	DisableThreadLibraryCalls(instance);

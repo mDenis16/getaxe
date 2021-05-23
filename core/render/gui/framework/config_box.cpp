@@ -327,7 +327,7 @@ namespace ui {
 		allJson [ crypt_str ( "author" ) ] = "unknown";
 
 
-		for ( auto it : cfg_manager->items ) {
+		for ( auto& it : cfg_manager->items ) {
 			json j;
 
 			j [ crypt_str ( "name" ) ] = it->name;

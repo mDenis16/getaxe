@@ -45,13 +45,13 @@ namespace ui {
 
 		if ( this->dragging ) {
 
-			if ( last_mouse_pos.x == 0 || last_mouse_pos.y == 0 )
-				last_mouse_pos = mouse_pos;
+			//if ( last_mouse_pos.x == 0 || last_mouse_pos.y == 0 )
+			//	last_mouse_pos = mouse_pos;
 
-			mouse_pos.x = std::lerp ( last_mouse_pos.x, mouse_pos.x, ImGui::GetIO().DeltaTime * 15.f );
-			mouse_pos.y = std::lerp ( last_mouse_pos.y, mouse_pos.y, ImGui::GetIO ( ).DeltaTime * 15.f );
+		//	mouse_pos.x = std::lerp ( last_mouse_pos.x, mouse_pos.x, ImGui::GetIO().DeltaTime * 15.f );
+		//	mouse_pos.y = std::lerp ( last_mouse_pos.y, mouse_pos.y, ImGui::GetIO ( ).DeltaTime * 15.f );
 
-			last_mouse_pos = mouse_pos;
+		//	last_mouse_pos = mouse_pos;
 
 			this->mins.x = mouse_pos.x - delta_x;
 			this->mins.y = mouse_pos.y - delta_y;
