@@ -117,6 +117,10 @@
     <ClCompile Include="core\render\gui\framework\inventory_changer.cpp" />
     <ClCompile Include="core\render\gui\framework\inventory_item.cpp" />
     <ClCompile Include="core\render\gui\menu\inventory_changer_menu.cpp" />
+    <ClCompile Include="core\features\inventory_changer\CEconItem.cpp" />
+    <ClCompile Include="core\features\inventory_changer\CPlayerInventory.cpp" />
+    <ClCompile Include="core\features\inventory_changer\CSharedData.cpp" />
+    <ClCompile Include="core\features\inventory_changer\CSInventoryManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -254,6 +258,10 @@
     <ClInclude Include="core\render\gui\framework\bezier_editor.h" />
     <ClInclude Include="core\render\gui\framework\inventory_changer.h" />
     <ClInclude Include="core\render\gui\framework\inventory_item.h" />
+    <ClInclude Include="core\features\inventory_changer\CEconItem.h" />
+    <ClInclude Include="core\features\inventory_changer\CPlayerInventory.h" />
+    <ClInclude Include="core\features\inventory_changer\CSharedObject.h" />
+    <ClInclude Include="core\features\inventory_changer\CSInventoryManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

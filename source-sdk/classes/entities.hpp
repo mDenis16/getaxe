@@ -401,6 +401,38 @@ public:
 	NETVAR ( "DT_ScriptCreatedItem", "m_iItemIDLow", item_id_low, int );
 };
 
+class IRefCounted {
+private:
+	volatile long refCount;
+
+public:
+	virtual void destructor ( char bDelete ) = 0;
+	virtual bool OnFinalRelease ( ) = 0;
+
+	void unreference ( ) {
+		if ( InterlockedDecrement ( &refCount ) == 0 && OnFinalRelease ( ) ) {
+			destructor ( 1 );
+		}
+	}
+};
+
+class C_EconItemView {
+private:
+	using str_32 = char [ 32 ];
+public:
+	NETVAR2 ( int32_t, m_bInitialized, "DT_BaseAttributableItem", "m_bInitialized" );
+	NETVAR2 ( int32_t, m_iItemDefinitionIndex, "DT_BaseAttributableItem", "m_iItemDefinitionIndex" );
+	NETVAR2 ( int32_t, m_iEntityLevel, "DT_BaseAttributableItem", "m_iEntityLevel" );
+	NETVAR2 ( int32_t, m_iAccountID, "DT_BaseAttributableItem", "m_iAccountID" );
+	NETVAR2 ( int32_t, m_iItemIDLow, "DT_BaseAttributableItem", "m_iItemIDLow" );
+	NETVAR2 ( int32_t, m_iItemIDHigh, "DT_BaseAttributableItem", "m_iItemIDHigh" );
+	NETVAR2 ( int32_t, m_iEntityQuality, "DT_BaseAttributableItem", "m_iEntityQuality" );
+	NETVAR2 ( str_32, m_iCustomName, "DT_BaseAttributableItem", "m_szCustomName" );
+
+	c_utl_vector<IRefCounted *> & m_CustomMaterials ( );
+	c_utl_vector<IRefCounted *> & m_VisualsDataProcessors ( );
+};
+
 class base_view_model_t : public entity_t {
 public:
 	NETVAR ( "DT_BaseViewModel", "m_nModelIndex", model_index, int );

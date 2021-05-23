@@ -48,6 +48,17 @@ template <typename T> T get_vfunc( void* v_table, const int i_index ) { return (
 
 #define  Assert( _exp )										((void)0)
 
+
+// table, prop, func_name, type
+#define NETVAR2(type, func_name, table, prop ) \
+	type& func_name( ) { \
+      static uintptr_t offset = 0; \
+      if(!offset) \
+      { offset = netvar_manager::get_net_var(fnv::hash( table ), fnv::hash( prop ) ); } \
+	  \
+      return *reinterpret_cast< type* >( uintptr_t( this ) + offset ); \
+    }
+
 #define NETVAR(table, prop, func_name, type) \
 	type& func_name( ) { \
       static uintptr_t offset = 0; \

@@ -9,6 +9,11 @@
 #define local_pointer local_player::m_data.pointer
 #define localdata local_player::m_data
 
+
+#include "../features/inventory_changer/CEconItem.h"
+#include "../features/inventory_changer/CSharedObject.h"
+#include "../features/inventory_changer/CPlayerInventory.h"
+#include "../features/inventory_changer/CSInventoryManager.h"
 #include "../features/events/event_handler.h"
 #include "../features/setup/animations.h"
 #include "../features/visuals/modulation/modulation.h"

@@ -1,14 +1,19 @@
 #include <iostream>
+#ifdef PREVIEW_D3D
 #include "../includes.h"
-
+//
 #include "../../../../dependencies/utilities/base64.h"
 #include "../../../../dependencies/utilities/crypt_str.h"
+#endif
+
 #include <shlobj.h>
 #include <iostream>
 #include <fstream>
 #include  <iomanip>
+#ifdef PREVIEW_D3D
 #include "../../../../dependencies/utilities/json.hpp"
 #include "../config.h"
+#endif
 #include <sstream>
 #include <random>
 #include <string>
@@ -17,6 +22,14 @@
 #include <d3dx9.h>
 #include <mutex>
 #include <atomic>
+
+#ifdef PREVIEW_D3D
+
+#else
+#include "../../../features/features.hpp"
+#include "../gui.h"
+#include "../../../../dependencies/utilities/vpk_parser.h"
+#endif
 
 
 namespace ui {
@@ -137,6 +150,7 @@ namespace ui {
 				paint->game_name = paintkit_names [ i ].get<std::string> ( );
 				paint->rarity = paintkit_rarities [ i ].get<int> ( );
 				paint->weapon_name = weap->weapon_name;
+				paint->weapon_id = weap->item_definition_index;
 				paint->display_name = paintkit_display_names [ paint->game_name ].get<std::string> ( );
 				paint->id = paintkit_ids [ paint->game_name ].get<int> ( );
 				paint->generate_image_path ( );
@@ -151,6 +165,48 @@ namespace ui {
 
 	}
 
+	void inventory_changer::add_item_to_inventory ( weapon * weap, paintkit * pkit ) {
+#ifdef PREVIEW_D3D
+
+		std::string samp = "shit called";
+		int i = 0;
+
+
+#else
+		static auto g_CSInventoryManager = *reinterpret_cast< CSInventoryManager ** >( utilities::pattern_scan ( "client.dll", "B9 ?? ?? ?? ?? 8D 44 24 10 89 54 24 14" ) + 0x1 );
+
+		static auto local_inventory_offset = *reinterpret_cast< uintptr_t * >( utilities::pattern_scan ( "client.dll", "8B 8F ? ? ? ? 0F B7 C0 50" ) + 0x2 );
+
+		//auto LocalInventory = g_CSInventoryManager->GetLocalPlayerInventory ( );
+
+		static int itm_id = 500;
+		itm_id++;
+
+		auto Item = g_CSInventoryManager->CreateEconItem ( );
+
+		auto LocalInventory =  *reinterpret_cast< CPlayerInventory ** >( g_CSInventoryManager + local_inventory_offset );
+
+
+		*Item->GetAccountID ( ) = LocalInventory->GetSteamID ( );
+		*Item->GetDefIndex ( ) = pkit->weapon_id;
+		*Item->GetItemID ( ) = itm_id;
+		*Item->GetInventory ( ) = 1;
+		*Item->GetFlags ( ) = 0;
+		*Item->GetOriginalID ( ) = 0;
+		//Item->AddSticker ( 0, 4, 0, 1, 1 );
+		Item->SetStatTrak ( 150 );
+		Item->SetPaintKit ( pkit->id );
+		Item->SetPaintSeed ( 0 );
+		Item->SetPaintWear ( 0 );
+		Item->SetOrigin ( 8 );
+		Item->SetRarity ( ITEM_RARITY_MYTHICAL );
+		Item->SetLevel ( 1 );
+		Item->SetInUse ( false );
+
+		LocalInventory->AddEconItem ( Item, 1, 0, 1 );
+#endif
+	}
+	
 	void inventory_changer::change_page ( int page, int weapon ) {
 		this->stage = page;
 
@@ -246,7 +302,7 @@ namespace ui {
 				auto right_bottom_side = new ui::child_window ( "", 45.f, 100.0f, ImColor ( 255, 255, 255, 255 ), bottom_side, child_type::normal, flags::align_right | flags::vertical_align_center | flags::position_absolute );
 				{
 
-					new ui::button ( "Save", right_bottom_side, 80.f, 40.f, std::bind ( &inventory_changer::change_page, this, 1, -1 ) );
+					new ui::button ( "Save", right_bottom_side, 80.f, 40.f, std::bind ( &inventory_changer::add_item_to_inventory, this, nullptr, pkit ) );
 				}
 			}
 		}

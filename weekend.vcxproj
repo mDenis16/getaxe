@@ -105,6 +105,10 @@
   <ItemGroup>
     <ClCompile Include="core\features\events\event_handler.cpp" />
     <ClCompile Include="core\features\features.cpp" />
+    <ClCompile Include="core\features\inventory_changer\CEconItem.cpp" />
+    <ClCompile Include="core\features\inventory_changer\CPlayerInventory.cpp" />
+    <ClCompile Include="core\features\inventory_changer\CSharedData.cpp" />
+    <ClCompile Include="core\features\inventory_changer\CSInventoryManager.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\movement\autostrafer.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
@@ -223,6 +227,10 @@
   <ItemGroup>
     <ClInclude Include="core\features\events\event_handler.h" />
     <ClInclude Include="core\features\features.hpp" />
+    <ClInclude Include="core\features\inventory_changer\CEconItem.h" />
+    <ClInclude Include="core\features\inventory_changer\CPlayerInventory.h" />
+    <ClInclude Include="core\features\inventory_changer\CSharedObject.h" />
+    <ClInclude Include="core\features\inventory_changer\CSInventoryManager.h" />
     <ClInclude Include="core\features\movement\autostrafer.h" />
     <ClInclude Include="core\features\setup\animations.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
