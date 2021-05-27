@@ -121,6 +121,7 @@
     <ClCompile Include="core\features\inventory_changer\CPlayerInventory.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSharedData.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSInventoryManager.cpp" />
+    <ClCompile Include="core\features\legitbot\legitbot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -262,6 +263,7 @@
     <ClInclude Include="core\features\inventory_changer\CPlayerInventory.h" />
     <ClInclude Include="core\features\inventory_changer\CSharedObject.h" />
     <ClInclude Include="core\features\inventory_changer\CSInventoryManager.h" />
+    <ClInclude Include="core\features\legitbot\legitbot.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

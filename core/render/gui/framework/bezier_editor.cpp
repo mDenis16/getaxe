@@ -54,8 +54,9 @@ namespace ui {
 
 	}
 
-	bezier_editor::bezier_editor ( object * parent, ImVec4 & bezier ) {
+	bezier_editor::bezier_editor ( object * parent, float* bezier ) {
 
+		this->value = bezier;
 
 		this->text = text;
 		this->parrent = parent;

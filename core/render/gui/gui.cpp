@@ -153,13 +153,15 @@ namespace ui {
 		{
 			auto ragebot_sub_tab = new ui::sub_tab ( "Rage", ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
 
-			menu::inventory_changer_menu ( main_window, ragebot_sub_tab );
+			//menu::inventory_changer_menu ( main_window, ragebot_sub_tab );
 
 
 
 			auto antiaim_sub_tab = new ui::sub_tab ( "Anti-aim", ICON_ANTIAIM, font_icons, 0.f, 20.f, aimbot_tab );
 			auto legitbot_sub_tab = new ui::sub_tab ( "Legitbot", ICON_LEGITBOT, font_icons, 0.f, 20.f, aimbot_tab );
-			//menu::legitbot::init ( main_window, legitbot_sub_tab, weapons );
+
+			menu::legitbot::init ( main_window, legitbot_sub_tab, weapons );
+
 			//auto combobox_weapon = new ui::combobox ( "", aimbot_tab, weapons, weapon_id );
 		}
 

@@ -7,7 +7,7 @@ namespace hooks::callback {
 	void _fastcall standard_blending_rules ( player_t * player, uint32_t, c_studio_hdr * hdr, vec3_t * pos, quaternion_t * q, const float time, int mask ) {
 
 
-		if ( !player )
+		//if ( !player )
 			return standard_blending_rules_original ( player, hdr, pos, q, time, mask );
 
 		

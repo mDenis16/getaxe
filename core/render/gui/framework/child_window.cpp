@@ -280,7 +280,7 @@ namespace ui {
 				
 					this->maxs = ImVec2 ( this->mins.x + this->width, this->mins.y + this->height );
 
-					if ( this->maxs.y > this->parrent->maxs.y - 5 && this->tab_assign == nullptr ) {
+					if ( this->maxs.y > this->parrent->maxs.y - 5 && !this->tab_assign ) {
 
 						/*	auto spacing_left = ( this->parrent->width - ( this->width * 2.f + _parrent->padding ) ) / 2.f;
 							this->mins.y = this->parrent->mins.x + spacing_left;

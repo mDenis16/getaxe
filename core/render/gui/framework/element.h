@@ -128,12 +128,12 @@ namespace ui {
 		long hover_start = 0;
 		float hsv_val = 0.f;
 		float last_open = 0.f;
-		ImVec2 mins, maxs;
-		ImVec2 old_mins, old_maxs;
+		ImVec2 mins = ImVec2(0,0), maxs = ImVec2(0,0);
+		ImVec2 old_mins = ImVec2(0,0), old_maxs = ImVec2(0,0);
 		int _id = -1;
 		double animation_step = 1.0;
 		flex_direction flex = flex_direction::line;
-		float_side _float = float_side::none;
+		float_side _float = none;
 		ImDrawList * renderer = nullptr;
 		object_type type;
 
@@ -144,7 +144,7 @@ namespace ui {
 		}
 
 		void empty_children ( ) {
-			for ( auto  child : children ) {
+			for ( auto& child : children ) {
 				delete child;
 			}
 			children_index = 0;

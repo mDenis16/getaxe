@@ -2,14 +2,10 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>E:\repos\getaxe\output\cheat.dll</FullPath>
+      <FullPath>E:\repos\getaxe\output\debug\cheat.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
-  <ContentFiles>
-    <ContentFile>
-      <FullPath>E:\repos\getaxe\dependencies\interfaces\i_player_movement.hpp</FullPath>
-    </ContentFile>
-  </ContentFiles>
+  <ContentFiles />
   <SatelliteDlls />
   <NonRecipeFileRefs />
 </Project>

@@ -19,6 +19,7 @@ namespace ui {
 			child_window * filters_tab = nullptr;
 			child_window * weapons_tab = nullptr;
 			child_window * bezier_tab = nullptr;
+			child_window * aim_settings = nullptr;
 
 			void init_values ( weapon_settings * cfg ) {
 				//general tab
@@ -46,11 +47,22 @@ namespace ui {
 				//
 
 
+				bezier_tab->empty_children ( );
 				//bezier tab
 
 				{
 					new ui::bezier_editor ( bezier_tab, cfg->bezier_curve );
 
+				}
+
+
+				aim_settings->empty_children ( );
+				//aim settings
+				{
+					new ui::slider ( "Shoot delay", aim_settings, cfg->shoot_delay, 0.f, 100.f, ui::slider_type::floates, &cfg->shoot_delay_keybind );
+					new ui::slider ( "Aim speed", aim_settings, cfg->aim_speed, 0.f, 2.f, ui::slider_type::floates, &cfg->aim_speed_keybind );
+					new ui::slider ( "Recoil X", aim_settings, cfg->recoil_control_x, 0.f, 100.f, ui::slider_type::floates, &cfg->recoil_control_x_keybind );
+					new ui::slider ( "Recoil Y", aim_settings, cfg->recoil_control_y, 0.f, 100.f, ui::slider_type::floates, &cfg->recoil_control_y_keybind );
 				}
 			}
 			void on_weapon_change ( int weapon, int category ) {
@@ -67,7 +79,7 @@ namespace ui {
 				
 				 filters_tab = new ui::child_window ( "Filters", 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
 
-				 weapons_tab = new ui::child_window ( "Weapon", 45.f, 20.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
+				 weapons_tab = new ui::child_window ( "Weapon", 45.f, 25.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
 				 {
 					 new ui::combobox ( "Config mode", weapons_tab, std::vector<std::string>{"Category", "Weapon"}, & config.weapon_mode );
 
@@ -84,9 +96,14 @@ namespace ui {
 					 }
 
 				 }
+
+
 				 bezier_tab = new ui::child_window ( "Curve settings", 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
-			
+				
+				 aim_settings = new ui::child_window ( "Aim settings", 45.f, 35.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
+				
 				 init_values ( config.weapon_mode > 0 ? &config.weapon_type [ config.active_weapon ] : &config.weapon_groups [ config.active_category ] );
+
 
 			}
 			

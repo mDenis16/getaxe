@@ -17,9 +17,25 @@ vec3_t::vec3_t( float fx, float fy, float fz ) {
 bool vec3_t::operator==( const vec3_t& src ) const {
 	return ( src.x == x ) && ( src.y == y ) && ( src.z == z );
 }
-
+void shitsin_cos ( float r, float * s, float * c ) {
+	*s = sin ( r );
+	*c = cos ( r );
+}
 vec3_t::~vec3_t( void ) {
 };
+ void vec3_t::Rotate2D ( const float & f ) {
+	float _x, _y;
+
+	float s, c;
+
+	shitsin_cos ( DEG2RAD ( f ), &s, &c );
+
+	_x = x;
+	_y = y;
+
+	x = ( _x * c ) - ( _y * s );
+	y = ( _x * s ) + ( _y * c );
+}
 
 void vec3_t::init( float ix, float iy, float iz ) {
 	x = ix; y = iy; z = iz;

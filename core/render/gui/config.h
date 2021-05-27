@@ -465,6 +465,12 @@ struct c_movement {
 
 struct weapon_settings {
 
+	float shoot_delay = 0.f;
+	config_manager::key_bind_item  shoot_delay_keybind;
+
+	float aim_speed = 0.f;
+	config_manager::key_bind_item aim_speed_keybind;
+
 	float minimum_fov = 8.f;
 	config_manager::key_bind_item minimum_fov_keybind;
 
@@ -474,8 +480,17 @@ struct weapon_settings {
 	float target_delay = 30.f;
 	config_manager::key_bind_item target_delay_keybind;
 
+	float recoil_control_x = 50.f;
+	config_manager::key_bind_item recoil_control_x_keybind;
+	
+	float recoil_control_y = 50.f;
+	config_manager::key_bind_item recoil_control_y_keybind;
+
 	bool enabled = false;
 	config_manager::key_bind_item enable_keybind;
+
+	bool closest_bone = false;
+	config_manager::key_bind_item closest_bone_keybind;
 
 
 	bool through_smoke = false;
@@ -507,7 +522,10 @@ struct weapon_settings {
 	std::vector<int> hitscan;
 
 	config_manager::key_bind_item hitscan_keybind;
-	ImVec4 bezier_curve;
+	float s[4] = { 0.f, 1.f, 1.f, 0.f };
+
+	float * bezier_curve = s;
+
 
 	
 };

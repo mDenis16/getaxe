@@ -139,6 +139,7 @@ public:
 	float dot_product( const vec3_t& vec ) const {
 		return ( x * vec.x + y * vec.y + z * vec.z );
 	}
+	void Rotate2D ( const float & f );
 	void crossproduct( vec3_t v1, vec3_t v2, vec3_t cross_p ) const {
 		cross_p.x = ( v1.y * v2.z ) - ( v1.z * v2.y ); //i
 		cross_p.y = -( ( v1.x * v2.z ) - ( v1.z * v2.x ) ); //j

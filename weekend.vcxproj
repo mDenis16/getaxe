@@ -109,6 +109,7 @@
     <ClCompile Include="core\features\inventory_changer\CPlayerInventory.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSharedData.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSInventoryManager.cpp" />
+    <ClCompile Include="core\features\legitbot\legitbot.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\movement\autostrafer.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="core\features\inventory_changer\CPlayerInventory.h" />
     <ClInclude Include="core\features\inventory_changer\CSharedObject.h" />
     <ClInclude Include="core\features\inventory_changer\CSInventoryManager.h" />
+    <ClInclude Include="core\features\legitbot\legitbot.h" />
     <ClInclude Include="core\features\movement\autostrafer.h" />
     <ClInclude Include="core\features\setup\animations.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />

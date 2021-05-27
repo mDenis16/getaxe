@@ -8,12 +8,12 @@ namespace ui {
 	public:
 
 		std::string text;
-		float value [ 4 ] = { 0.f, 1.f, 1.f, 1.f };
+		float * value;
 
 		int animated_alpha = 255;
 		ImVec2 animation_position;
-		bezier_editor (  object * parent, ImVec4& bezier );
-	
+		
+		bezier_editor ( object * parent, float * bezier );
 		void draw ( ) override;
 		void handle ( ) override;
 		bool mouse_in_radius ( float radius, ImVec2 pos );

@@ -148,6 +148,12 @@ namespace visuals {
 	}
 
 	void c_handler::on_render ( ) {
+
+		
+		if ( visuals::render && legitbot )
+			legitbot->draw_debug ( visuals::render );
+
+
 		mtx.lock ( );
 		for ( auto & entity : entity_list ) {
 			

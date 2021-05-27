@@ -22,6 +22,10 @@
 #include "../render/d3dfont.h"
 
 
+//features
+#include "../features/legitbot/legitbot.h"
+
+
 
 namespace event_manager {
 	void round_prestart ( i_game_event * );

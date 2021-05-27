@@ -11,7 +11,7 @@ namespace ui {
 
 		element_extender ( object * parent );
 
-		bool  open;
+		bool  open = false;
 
 		float width = 185;
 		float height = 130;
