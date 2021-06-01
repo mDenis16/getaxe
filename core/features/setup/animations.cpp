@@ -179,6 +179,7 @@ namespace animations {
 
 	void update_fake_animation ( ) {
 
+		return;
 
 		static int tickcount = 0;
 
@@ -280,6 +281,8 @@ namespace animations {
 	/*local player*/
 	void update_local_update_start ( client_frame_stage_t stage ) {
 
+		return;
+
 		if ( stage != FRAME_RENDER_START )
 			return;
 
@@ -349,6 +352,7 @@ namespace animations {
 	}
 	void update_animations_update_end ( client_frame_stage_t stage ) {
 
+		return;
 		if ( stage != FRAME_RENDER_START )
 			return;
 

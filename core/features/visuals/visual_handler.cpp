@@ -50,6 +50,7 @@ namespace visuals {
 			visual_player * data = new visual_player ( );
 			
 			data->index = entity->index ( );
+			data->class_id = entity->client_class ( )->class_id;
 			data->entity = entity;
 			data->player = reinterpret_cast< player_t * >( entity );
 			entity_list.push_back ( data );
@@ -59,6 +60,7 @@ namespace visuals {
 		else if ( client_class->class_id == CInferno ) {
 			visual_grenade * data = new visual_grenade ( );
 			data->index = entity->index ( );
+			data->class_id = entity->client_class ( )->class_id;
 			data->entity = entity;
 			data->spawn_curtime = interfaces::globals->cur_time;
 			entity_list.push_back ( data );
@@ -67,6 +69,7 @@ namespace visuals {
 
 			visual_projectile * data = new visual_projectile ( );
 			data->index = entity->index ( );
+			data->class_id = entity->client_class ( )->class_id;
 			data->entity = entity;
 			data->spawn_curtime = interfaces::globals->cur_time;
 			data->explode_time = interfaces::globals->cur_time + 1.6f;
@@ -76,6 +79,7 @@ namespace visuals {
 		
 
 		}
+	
 		mtx.unlock ( );
 	}
 	struct isValue {
@@ -99,6 +103,9 @@ namespace visuals {
 
 		if ( entity_index < 0 )
 			return;
+
+		if ( legitbot && legitbot->active_target && legitbot->active_target == ent )
+			legitbot->reset_target ( );
 
 		const auto it = std::find_if ( entity_list.begin ( ), entity_list.end ( ), [ & ] ( visual_data * data ) {
 			return data->index == entity_index;
@@ -147,6 +154,7 @@ namespace visuals {
 
 	}
 
+	
 	void c_handler::on_render ( ) {
 
 		

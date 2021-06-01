@@ -48,14 +48,14 @@
     <LibraryPath>"F:\includes\boost_1_73_0\stage\lib";$(LibraryPath)</LibraryPath>
     <OutDir>.\output\debug\</OutDir>
     <IntDir>.\intermediates\</IntDir>
-    <TargetName>cheat</TargetName>
+    <TargetName>weekend</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>.\output\</OutDir>
+    <OutDir>E:\repos\getaxe\output\debug\</OutDir>
     <IntDir>.\intermediates\</IntDir>
     <LibraryPath>F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>F:\includes\nlohmann;F:\includes\cef-master\include;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\ultralight\include;F:\includes\clip-master;F:\includes\freetype\include</IncludePath>
-    <TargetName>cheat</TargetName>
+    <TargetName>weekend</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -103,13 +103,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\features\autowall\autowall.cpp" />
+    <ClCompile Include="core\features\engine_prediction\engine_end.cpp" />
+    <ClCompile Include="core\features\engine_prediction\engine_start.cpp" />
     <ClCompile Include="core\features\events\event_handler.cpp" />
     <ClCompile Include="core\features\features.cpp" />
     <ClCompile Include="core\features\inventory_changer\CEconItem.cpp" />
     <ClCompile Include="core\features\inventory_changer\CPlayerInventory.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSharedData.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSInventoryManager.cpp" />
+    <ClCompile Include="core\features\legitbot\lagcomp.cpp" />
     <ClCompile Include="core\features\legitbot\legitbot.cpp" />
+    <ClCompile Include="core\features\legitbot\recoil_control.cpp" />
+    <ClCompile Include="core\features\legitbot\target_selection.cpp" />
+    <ClCompile Include="core\features\legitbot\weapon_grup_identifier.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\movement\autostrafer.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
@@ -226,6 +233,8 @@
     <ClCompile Include="source-sdk\math\view_matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\features\autowall\autowall.h" />
+    <ClInclude Include="core\features\engine_prediction\engine_prediction.h" />
     <ClInclude Include="core\features\events\event_handler.h" />
     <ClInclude Include="core\features\features.hpp" />
     <ClInclude Include="core\features\inventory_changer\CEconItem.h" />

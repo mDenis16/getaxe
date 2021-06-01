@@ -471,6 +471,9 @@ struct weapon_settings {
 	float aim_speed = 0.f;
 	config_manager::key_bind_item aim_speed_keybind;
 
+	float bezier_speed = 0.f;
+	config_manager::key_bind_item bezier_speed_keybind;
+
 	float minimum_fov = 8.f;
 	config_manager::key_bind_item minimum_fov_keybind;
 
@@ -488,6 +491,9 @@ struct weapon_settings {
 
 	bool enabled = false;
 	config_manager::key_bind_item enable_keybind;
+
+	bool lock_target = false;
+	config_manager::key_bind_item lock_target_keybind;
 
 	bool closest_bone = false;
 	config_manager::key_bind_item closest_bone_keybind;
@@ -540,7 +546,7 @@ public:
 		for ( size_t i = 0; i < 2; i++ ) {
 			player_visual [ i ].flags_input.resize ( FLAGS_MAX );
 		}
-		weapon_groups [ 0 ].enabled = true;
+		
 		for ( auto & weap : weapon_groups ) {
 			weap.hitscan.resize ( 5 );
 		}
@@ -557,7 +563,7 @@ public:
 	int active_weapon;
 
 	player_visual player_visual [ 2 ];
-	weapon_settings weapon_groups [ 5 ];
+	weapon_settings weapon_groups [ 6 ];
 	weapon_settings weapon_type [ 30 ];
 	player_visual_local local_visual;
 	weapon_visual weapons_visual;
@@ -569,7 +575,7 @@ public:
 	std::vector<std::string> flags_list = { "Money", "Armor", "Kit",  "Scoped", "Flashed", "Fakeduck", "Bomb", "Break LC", "Taser", "Hit", "Exploit", "Ping", "Hostage", "Defusing", "Reload", "Dormant", "Distance" };
 	std::vector<std::string> removals_list = {"Scope", "Zoom", "Smoke", "Flash", "Recoil", "Landing bob", "Post processing", "Fogs"};
 
-	std::vector<std::string> weapon_categories = { "Pistol", "Rifle", "Sniper", "Heavy", "Smg" };
+	std::vector<std::string> weapon_categories = { "Pistol", "Heavy Pistol", "Smg", "Rifle", "Heavy rifle" };
 
 	std::vector<std::pair<std::string, std::string> >  player_types =
 	{

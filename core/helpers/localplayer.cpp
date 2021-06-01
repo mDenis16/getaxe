@@ -78,6 +78,7 @@ namespace local_player {
 	void begin_tick ( c_usercmd * cmd ) {
 		csgo::cmd = cmd;
 		detect_game ( );
+	
 		const auto get_random_seed = [ & ] ( ) {
 			using o_fn = unsigned long ( __cdecl * )( std::uintptr_t );
 			static auto offset = utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 70 6A 58" );
@@ -97,9 +98,12 @@ namespace local_player {
 		m_data.alive = m_data.pointer->health ( ) > 0;
 
 
-		if ( m_data.alive ) {
+		if ( m_data.alive && m_data.in_game ) {
 			auto original_tickbase = local_pointer->get_tick_base ( );
 			cmd->randomseed = get_random_seed ( );
+
+		//	engine_prediction->start ( local_pointer, cmd );
+
 			/*if ( shifting::_shift.shift_ticks ) {
 				if ( shifting::_shift.shift_ticks == config.ragebot_double_tap_ticks )
 					localdata.fixed_tickbase = local_pointer->get_tick_base ( ) - shifting::_shift.shift_ticks;
@@ -147,6 +151,10 @@ namespace local_player {
 	}
 
 	void end_tick ( c_usercmd * cmd ) {
+
+		if ( localdata.alive ) {
+			//engine_prediction->end ( );
+		}
 
 		fix_movement ( cmd, localdata.strafe_angles );
 

@@ -122,6 +122,13 @@
     <ClCompile Include="core\features\inventory_changer\CSharedData.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSInventoryManager.cpp" />
     <ClCompile Include="core\features\legitbot\legitbot.cpp" />
+    <ClCompile Include="core\features\autowall\autowall.cpp" />
+    <ClCompile Include="core\features\legitbot\target_selection.cpp" />
+    <ClCompile Include="core\features\legitbot\lagcomp.cpp" />
+    <ClCompile Include="core\features\legitbot\recoil_control.cpp" />
+    <ClCompile Include="core\features\legitbot\weapon_grup_identifier.cpp" />
+    <ClCompile Include="core\features\engine_prediction\engine_start.cpp" />
+    <ClCompile Include="core\features\engine_prediction\engine_end.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -264,6 +271,8 @@
     <ClInclude Include="core\features\inventory_changer\CSharedObject.h" />
     <ClInclude Include="core\features\inventory_changer\CSInventoryManager.h" />
     <ClInclude Include="core\features\legitbot\legitbot.h" />
+    <ClInclude Include="core\features\autowall\autowall.h" />
+    <ClInclude Include="core\features\engine_prediction\engine_prediction.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

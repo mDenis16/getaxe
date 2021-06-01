@@ -106,6 +106,13 @@ vec3_t vec3_t::normalizedvec( ) const {
 	return res;
 }
 void vec3_t::angle_normalize( ) {
+
+	if ( std::isinf ( y ) ) {
+		throw std::runtime_error ( "Error: vec3_t::angle_normalize, Message: y is inf" );
+	}
+	if ( std::isinf ( x ) ) {
+		throw std::runtime_error ( "Error: vec3_t::angle_normalize, Message: y is inf" );
+	}
 	if ( x > 89.0f )
 		x = 89.0f;
 

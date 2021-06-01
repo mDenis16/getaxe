@@ -9,6 +9,8 @@
 #define local_pointer local_player::m_data.pointer
 #define localdata local_player::m_data
 
+#include "../features/engine_prediction/engine_prediction.h"
+#include "../features/autowall/autowall.h"
 
 #include "../features/inventory_changer/CEconItem.h"
 #include "../features/inventory_changer/CSharedObject.h"
@@ -25,7 +27,15 @@
 //features
 #include "../features/legitbot/legitbot.h"
 
+class feature {
+	void release ( );
+};
 
+namespace features {
+	void initialize ( );
+	void release ( );
+
+}
 
 namespace event_manager {
 	void round_prestart ( i_game_event * );

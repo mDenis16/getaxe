@@ -128,7 +128,7 @@ namespace visuals {
 	}
 
 
-	class c_handler : public i_client_entity_listener {
+	class c_handler :  public i_client_entity_listener {
 	public:
 		void on_entity_created ( void * ent ) override;
 		void on_entity_deleted ( void * ent ) override;
@@ -137,13 +137,14 @@ namespace visuals {
 		void remove ( );
 
 		void on_update ( );
-
+	
 		void on_render ( );
 
 		void local_player ( );
 		void intialization ( );
 
 		std::vector<visual_data *> entity_list;
+		std::vector<entity_t *> grenade_list;
 
 		//std::array< container_t, 64 > m_track;
 	};

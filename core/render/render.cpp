@@ -2850,7 +2850,7 @@ namespace overlay {
 		D3DVIEWPORT9 d3d_viewport;
 		device->GetViewport ( &d3d_viewport );
 
-		device->CreateStateBlock ( D3DSBT_ALL, &state_block );
+		device->CreateStateBlock ( D3DSBT_PIXELSTATE, &state_block );
 		state_block->Capture ( );
 
 		device->SetVertexShader ( nullptr );

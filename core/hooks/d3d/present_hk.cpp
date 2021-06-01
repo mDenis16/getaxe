@@ -15,6 +15,7 @@ namespace hooks::callback {
 		if ( firstAddress != reinterpret_cast< uintptr_t >(_ReturnAddress ( )) )
 		return present_original ( device );
 
+	
 		overlay::initialize ( device );
 
 
@@ -24,6 +25,7 @@ namespace hooks::callback {
 		ImGui::NewFrame ( );
 
 		//visuals::on_render ( );
+
 		visuals::render = ImGui::GetBackgroundDrawList ( );
 		visuals::handler->on_render ( );
 		overlay::present ( device, visuals::render );
@@ -31,7 +33,7 @@ namespace hooks::callback {
 		ImGui::Render ( );
 		ImGui_ImplDX9_RenderDrawData ( ImGui::GetDrawData ( ) );
 
-
+	
 		return present_original ( device );
 	}
 }

@@ -119,6 +119,7 @@ namespace math {
 
 	void matrix_multiply ( matrix3x4_t & in1, const matrix3x4_t & in2 );
 	float dot_product ( const float * v1, const float * v2 );
+	float dot_product ( vec3_t & v1, vec3_t & v2 );
 	void vector_rotate ( const float * in1, const matrix3x4_t & in2, float * out );
 	void vector_rotate ( const vec3_t & in1, const matrix3x4_t & in2, vec3_t & out );
 	void matrix_get_column ( const matrix3x4_t & in, int column, vec3_t & out );
@@ -127,8 +128,11 @@ namespace math {
 	void vector_matrix ( const vec3_t & forward, matrix3x4_t & matrix );
 	void smooth_angles ( vec3_t view_angles, vec3_t aim_angles, vec3_t & out_angles, float smoothing_x, float smoothing_y );
 	float get_fov ( const vec3_t & va, const vec3_t & eyepos, const vec3_t & aimpos );
-	float get_fov ( vec3_t viewangle, vec3_t aim_angle );
+	float get_fov ( vec3_t viewangle, vec3_t aim_angle, float distance );
+
 	float get_estimate_server_time ( c_usercmd * cmd );
+
+	vec3_t bezier ( float t, vec3_t & a, vec3_t & b, vec3_t & c, vec3_t & d );
 
 
 	void vector_substract ( const vec3_t & a, const vec3_t & b, vec3_t & c );
@@ -166,6 +170,7 @@ namespace math {
 	float angle_diff ( float destAngle, float srcAngle );
 	float fl_approach_angle ( float fl_target, float fl_value, float fl_speed );
 	float normalize_yaw ( float f );
+	float normalize_degree ( float f );
 	vec3_t vector_transform ( const vec3_t & in1, const matrix3x4_t & in2 );
 	bool world_to_screen ( const vec3_t & origin, vec3_t & screen );
 

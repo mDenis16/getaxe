@@ -10,19 +10,6 @@ engine_prediction::Variables_t engine_prediction::m_stored_variables;
 vec3_t engine_prediction::unpredicted_eye;
 vec3_t engine_prediction::unpredicted_velocity;
 
-void engine_prediction::run_think () {
-
-	int thinktick = local_pointer->m_nNextThinkTick ( );
-
-	if ( thinktick <= 0 || thinktick > local_pointer->get_tick_base() )
-		return;
-
-	static auto unknown_fn = reinterpret_cast< void ( __thiscall * )( int ) >( utilities::pattern_scan ( "client.dll", "55 8B EC 56 57 8B F9 8B B7 ? ? ? ? 8B" ) );
-	unknown_fn ( -1 );
-
-	local_pointer->think ( );
-
-}
 
 
 void engine_prediction::initialize ( player_t * player, c_usercmd * cmd ) {

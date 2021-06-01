@@ -360,6 +360,9 @@ void math::matrix_multiply ( matrix3x4_t & in1, const matrix3x4_t & in2 ) {
 float math::dot_product ( const float * v1, const float * v2 ) {
 	return v1 [ 0 ] * v2 [ 0 ] + v1 [ 1 ] * v2 [ 1 ] + v1 [ 2 ] * v2 [ 2 ];
 }
+float math::dot_product ( vec3_t& v1, vec3_t & v2 ) {
+	return v1 [ 0 ] * v2 [ 0 ] + v1 [ 1 ] * v2 [ 1 ] + v1 [ 2 ] * v2 [ 2 ];
+}
 void math::vector_rotate ( const float * in1, const matrix3x4_t & in2, float * out ) {
 	out [ 0 ] = math::dot_product ( in1, in2 [ 0 ] );
 	out [ 1 ] = math::dot_product ( in1, in2 [ 1 ] );
@@ -523,10 +526,11 @@ float math::get_fov ( const vec3_t & va, const vec3_t & eyepos, const vec3_t & a
 
 	return RAD2DEG ( acos ( delta.dot ( forward ) ) );
 }
-float math::get_fov ( vec3_t viewangle, vec3_t aim_angle ) {
-	vec3_t delta = aim_angle - viewangle;
-	clamp ( delta );
-	return sqrtf ( powf ( delta [ 0 ], 2.0f ) + powf ( delta [ 1 ], 2.0f ) );
+float math::get_fov ( vec3_t viewangle, vec3_t aim_angle, float distance) {
+	auto pitch = sin ( DEG2RAD ( viewangle.x - aim_angle.x ) ) * distance;
+	auto yaw = sin ( DEG2RAD ( viewangle.y - aim_angle.y ) ) * distance;
+
+	return sqrt ( powf ( pitch, 2.0 ) + powf ( yaw, 2.0 ) );
 }
 float math::get_estimate_server_time ( c_usercmd * cmd ) {
 	const auto v1 = interfaces::engine->get_net_channel_info ( );
@@ -537,6 +541,28 @@ float math::get_estimate_server_time ( c_usercmd * cmd ) {
 	return v3 + v4 + math::ticks_to_time ( 1 ) + math::ticks_to_time ( cmd->tick_count );
 }
 
+vec3_t math::bezier ( float t, vec3_t & a, vec3_t & b, vec3_t & c, vec3_t & d ) {
+	vec3_t dst;
+
+	dst.x =
+		a.x * ( 1.f - t ) * ( 1.f - t ) * ( 1.f - t ) +
+		b.x * 3.f * t * ( 1.f - t ) * ( 1.f - t ) +
+		c.x * 3.f * t * t * ( 1.f - t ) +
+		d.x * t * t * t;
+	dst.y =
+		a.y * ( 1.f - t ) * ( 1.f - t ) * ( 1.f - t ) +
+		b.y * 3.f * t * ( 1.f - t ) * ( 1.f - t ) +
+		c.y * 3.f * t * t * ( 1 - t ) +
+		d.y * t * t * t;
+	dst.z =
+		a.z * ( 1.f - t ) * ( 1.f - t ) * ( 1.f - t ) +
+		b.z * 3.f * t * ( 1.f - t ) * ( 1 - t ) +
+		c.z * 3.f * t * t * ( 1.f - t ) +
+		d.z * t * t * t;
+
+	return dst;
+
+}
 
 void math::vector_substract ( const vec3_t & a, const vec3_t & b, vec3_t & c ) {
 	c [ 0 ] = a [ 0 ] - b [ 0 ];
@@ -949,7 +975,23 @@ float math::normalize_yaw ( float f ) {
 	while ( f > 180.0f ) f -= 360.0f;
 
 	return f;
-}/*	auto VectorTransform_Wrapper = [ ] ( const vec3_t & in1, const matrix3x4_t & in2, vec3_t & out ) {
+}
+float math::normalize_degree ( float f ) {
+	if ( std::isnan ( f ) || std::isinf ( f ) )
+		f = 0;
+
+	if ( f > 9999999 )
+		f = 0;
+
+	if ( f < -9999999 )
+		f = 0;
+
+	while ( f < 0.f ) f += 360.f;
+	while ( f > 360.0f ) f -= 360.f;
+
+	return f;
+}
+/*	auto VectorTransform_Wrapper = [ ] ( const vec3_t & in1, const matrix3x4_t & in2, vec3_t & out ) {
 			auto VectorTransform = [ ] ( const float * in1, const matrix3x4_t & in2, float * out ) {
 				auto DotProducts = [ ] ( const float * v1, const float * v2 ) {
 					return v1 [ 0 ] * v2 [ 0 ] + v1 [ 1 ] * v2 [ 1 ] + v1 [ 2 ] * v2 [ 2 ];

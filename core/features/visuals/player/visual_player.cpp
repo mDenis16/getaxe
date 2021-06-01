@@ -344,8 +344,13 @@ namespace visuals {
 		if ( !cfg )
 			return;
 
+		if ( dormant && !cfg->dormant )
+			return;
 
-		if ( on_screen ) {
+
+		if ( health > 1.f && on_screen ) {
+
+
 
 			animate ( );
 
@@ -374,7 +379,7 @@ namespace visuals {
 			//if ( in_animation )
 			  //render->PopClipRect ( );
 
-			visibility_check ( );
+		//	visibility_check ( );
 
 		}
 

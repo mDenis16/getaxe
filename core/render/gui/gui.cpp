@@ -175,14 +175,14 @@ namespace ui {
 			}
 
 			auto weapons_sub_tab = new ui::sub_tab ( "Weapons", "W", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
-			//menu::visuals_weapons_menu ( main_window, weapons_sub_tab );
+			menu::visuals_weapons_menu ( main_window, weapons_sub_tab );
 
 			auto projectiles_sub_tab = new ui::sub_tab ( "Projectiles", "o", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
-			//menu::projectiles_weapons_menu ( main_window, projectiles_sub_tab );
+			menu::projectiles_weapons_menu ( main_window, projectiles_sub_tab );
 
 			auto world_sub_tab = new ui::sub_tab ( "World", ICON_WORLD, font_icons, -0.5875f, 20.f, visuals_tab );
 
-		//	menu::visuals_world_menu ( main_window, world_sub_tab );
+			menu::visuals_world_menu ( main_window, world_sub_tab );
 
 		}
 
@@ -191,13 +191,13 @@ namespace ui {
 		auto misc_tab = new ui::tab ( "Miscellaneus", top_side, 13 );
 		{
 			auto movement_sub_tab = new ui::sub_tab ( "Movement", ICON_MOVEMENT, font_icons, 0.f, 20.f, misc_tab );
-			//menu::movement_menu ( main_window, movement_sub_tab );
+			menu::movement_menu ( main_window, movement_sub_tab );
 
 		}
 		auto settings_tab = new ui::tab ( "Settings", top_side, 13 );
 		{
 			auto configs_sub_tab = new ui::sub_tab ( "Configs", ICON_SETTINGS, font_icons, 0.f, 20.f, settings_tab );
-		  // 	menu::settings_menu ( main_window, configs_sub_tab );
+		   	menu::settings_menu ( main_window, configs_sub_tab );
 		}
 
 	}

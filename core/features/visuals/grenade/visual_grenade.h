@@ -13,6 +13,7 @@ namespace visuals {
 		std::vector<vec3_t> fire_points;
 		std::vector<ImVec2> points_w2s;
 		std::vector<ImVec2> offscreen_points;
+		std::vector<vec3_t> circle_points;
 
 		int owner_type = 0;
 		float initial_distance = 0.f;
@@ -24,7 +25,10 @@ namespace visuals {
 		float explode_time = 0.f;
 		int current_indx = 0;
 		float path_ratio = 0.f;
+		float lastRadius = 0.f;
 		float radius = 27.f;
+		float base_radius = 300.f;
+
 		bool pulse = false;
 		float pulse_value = 1.f;
 
@@ -37,6 +41,10 @@ namespace visuals {
 		void render_indicator ( );
 
 		void render_offscreen ( );
+
+		bool is_intersected ( );
+
+		void render_smoke ( );
 
 		void render_inferno ( );
 

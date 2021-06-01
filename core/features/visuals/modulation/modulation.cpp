@@ -12,11 +12,13 @@ namespace modulation {
 			if ( ent ) {
 				bool is_ragdoll = ent->client_class ( )->class_id != CCSPlayer;
 				auto ent_corrected = is_ragdoll ? ( player_t * ) interfaces::entity_list->get_client_entity_handle ( ( uintptr_t ) ent->m_hPlayer ( ) ) : ent;
+				
+				if ( ent_corrected != nullptr ) {
+					if ( is_ragdoll && !config.player_visual [ ent_corrected->is_teammate ( ) ? 0 : 1 ].ragdoll_chams )
+						return;/*crash here*/
 
-				if ( is_ragdoll && !config.player_visual [ ent_corrected->is_teammate ( ) ? 0 : 1 ].ragdoll_chams )
-					return;
-
-				run_player ( ecx, edx, ctx, state, info, custom_bone_to_world, skip_return, ent_corrected );
+					run_player ( ecx, edx, ctx, state, info, custom_bone_to_world, skip_return, ent_corrected );
+				}
 			}
 		}
 		else if ( local_pointer && local_pointer->is_alive ( ) && !interfaces::input->m_camera_in_third_person ) {

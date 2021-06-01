@@ -22,6 +22,7 @@ namespace ui {
 			child_window * aim_settings = nullptr;
 
 			void init_values ( weapon_settings * cfg ) {
+				if ( !main_tab )return;
 				//general tab
 				main_tab->empty_children ( );
 				{
@@ -29,6 +30,7 @@ namespace ui {
 					new ui::slider ( "Fov Min", main_tab, cfg->minimum_fov, 0.f, 180.f, ui::slider_type::floates, &cfg->minimum_fov_keybind );
 					new ui::slider ( "Fov Max", main_tab, cfg->maximum_fov, 0.f, 180.f, ui::slider_type::floates, &cfg->maximum_fov_keybind );
 					new ui::slider ( "Target delay", main_tab, cfg->target_delay, 0.f, 180.f, ui::slider_type::floates, &cfg->target_delay_keybind );
+					new ui::checkbox ( "Lock target", main_tab, cfg->lock_target, &cfg->lock_target_keybind );
 					new ui::combobox ( "Hitbox target", main_tab, std::vector<std::string>{"Head", "Body", "Pelvis"}, cfg->hitbox, cfg->hitbox_keybind );
 					new ui::multibox ( "Hitscan list", main_tab, std::vector<std::string>{"Head", "Body", "Pelvis", "Feets"}, cfg->hitscan, cfg->hitscan_keybind );
 
@@ -60,7 +62,8 @@ namespace ui {
 				//aim settings
 				{
 					new ui::slider ( "Shoot delay", aim_settings, cfg->shoot_delay, 0.f, 100.f, ui::slider_type::floates, &cfg->shoot_delay_keybind );
-					new ui::slider ( "Aim speed", aim_settings, cfg->aim_speed, 0.f, 2.f, ui::slider_type::floates, &cfg->aim_speed_keybind );
+					new ui::slider ( "Aim speed", aim_settings, cfg->aim_speed, 1.f, 100.f, ui::slider_type::floates, &cfg->aim_speed_keybind );
+			
 					new ui::slider ( "Recoil X", aim_settings, cfg->recoil_control_x, 0.f, 100.f, ui::slider_type::floates, &cfg->recoil_control_x_keybind );
 					new ui::slider ( "Recoil Y", aim_settings, cfg->recoil_control_y, 0.f, 100.f, ui::slider_type::floates, &cfg->recoil_control_y_keybind );
 				}

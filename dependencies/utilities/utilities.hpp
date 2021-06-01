@@ -10,6 +10,8 @@ namespace utilities {
 		int dwAddress = pVTable [ index ];
 		return ( FuncType ) ( dwAddress );
 	}
+	template <typename T>
+	constexpr auto relativeToAbsolute ( uintptr_t address ) noexcept;
 	template < typename T > static T get_virtual_function( void* base, const std::uint16_t index ) {
 		return ( *reinterpret_cast< T** >( base ) ) [ index ];
 	}
@@ -18,6 +20,7 @@ namespace utilities {
 	}
 	std::uint8_t* pattern_scan( const char* module_name, const char* signature ) noexcept;
 	std::string unicode_to_ascii( const std::wstring& unicode );
+	std::uintptr_t code_style_pattern ( const char * moduleName, std::string_view pattern, bool reportNotFound = true ) noexcept;
 
 	void* grab_interface( const char* module_name, const char* interf, bool bruteforce );
 

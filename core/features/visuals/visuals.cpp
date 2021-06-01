@@ -202,11 +202,11 @@ namespace visuals {
 		}
 	}
 
-	bool visual_data::calculate_box ( ) {
+	bool visual_data::calculate_box (  ) {
 		matrix3x4_t & tran_frame = entity->coord_frame ( );
 
-		const vec3_t min = entity->mins ( );
-		const vec3_t max = entity->maxs ( );
+		const vec3_t & min = mins;
+		const vec3_t & max = maxs;
 
 		ImVec2 screen_boxes [ 8 ];
 

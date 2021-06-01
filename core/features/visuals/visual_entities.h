@@ -36,6 +36,7 @@ namespace visuals {
 		entity_t * entity;
 		bool ready = false;
 	
+		int class_id = -1;
 		int index;
 		bool mark_deletetion = false;
 

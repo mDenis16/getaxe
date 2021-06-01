@@ -1,321 +1,237 @@
 ﻿#include "../features.hpp"
+#include <deque>
 
     c_legitbot * legitbot = new c_legitbot ( );
-
-	bool c_legitbot::can_see_player_pos ( player_t * player ) {
-		trace_t tr;
-		ray_t ray;
-		trace_filter filter;
-		filter.skip = local_player::m_data.pointer;
-
-		auto start = local_player::m_data.pointer->get_eye_pos ( );
-		auto dir = ( player->get_eye_pos() - start ).normalized ( );
-
-		ray.initialize ( start, player->get_eye_pos ( ) );
-		interfaces::trace_ray->trace_ray ( ray, MASK_SHOT | CONTENTS_GRATE, &filter, &tr );
-
-		return tr.entity == player || tr.flFraction > 0.97f;
-	}
-
-
-	player_t * c_legitbot::get_closest_target ( ) {
-		player_t * closest = nullptr; float min_fov = settings->minimum_fov;
-		ray_t ray;
-		trace_t trace;
-		trace_filter filter;
-
-		vec3_t viewangle = vec3_t ( ); interfaces::engine->get_view_angles ( viewangle );
-		for ( int i = 1; i < interfaces::globals->max_clients; i++ ) {
-			auto entity = static_cast< player_t * >( interfaces::entity_list->get_client_entity ( i ) );
-
-			if ( !entity )
-				continue;
-			if ( entity == local_player::m_data.pointer )
-				continue;
-
-			if ( entity->health ( ) <= 0 )
-				continue;
-
-			if ( !entity->is_enemy ( ) )
-				continue;
-		
-			if ( !can_see_player_pos(entity) )
-				continue;
-
-			auto angle = math::calc_angle ( local_player::m_data.pointer->get_eye_pos ( ), entity->get_eye_pos ( ) );
-			auto fov = math::get_fov ( viewangle, angle );
-			if ( fov < min_fov ) {
-				min_fov = fov;
-				closest = entity;
-			}
+	double easeInOutExpo ( double t ) {
+		if ( t < 0.5 ) {
+			return ( pow ( 2, 16 * t ) - 1 ) / 510;
 		}
-		return closest;
-	}
-
-	void c_legitbot::target_check ( ) {
-
-
-		// check if target is still valid 
-
-		if ( valid_target ) {
-			if ( active_target && !active_target->is_alive ( ) ) {
-				running_curve = false;
-				dt_progress = 0.f;
-				last_target_tick = interfaces::globals->tick_count;
-				current_target_shots_fired = 0;
-				last_shots_fired = 0;
-				valid_target = false;
-				active_target = nullptr;
-			}
+		else {
+			return 1 - 0.5 * pow ( 2, -16 * ( t - 0.5 ) );
 		}
+	}
+	vec3_t CerpAngle ( vec3_t & From, vec3_t & To, float StepX, float StepY ) {
+		vec3_t n;
 
+		float CubicStepX = ( 1.f - std::cos ( StepX * M_PI ) ) / 2.f;
+		float CubicStepY = ( 1.f - cos ( StepY * M_PI ) ) / 2.f;
+		vec3_t Delta = ( To - From );
+		Delta.angle_normalize ( );
+		n.x = ( From.x + CubicStepX * Delta.x );
+		n.y = ( From.y + CubicStepY * Delta.y );
+		n.angle_normalize ( );
+
+		return n;
 
 	}
-
-	
-	void c_legitbot::find_target ( ) {
-	
-		if ( !valid_target ) {
- 
-			if ( ( interfaces::globals->tick_count - last_target_tick ) > settings->target_delay ) {
-				active_target = get_closest_target ( );
-				valid_target = true;
-
-				
-			}
-
-		}
-		if ( !active_target )
-			valid_target = false;
-
+	double easeOutBounce ( double t ) {
+		return 1 - pow ( 2, -6 * t ) * abs ( cos ( t * M_PI * 3.5 ) );
 	}
 
-	vec3_t bezier ( float t, vec3_t & a, vec3_t & b, vec3_t & c, vec3_t & d ) {
-		vec3_t dst;
-
-		dst.x =
-			a.x * ( 1.f - t ) * ( 1.f - t ) * ( 1.f - t ) +
-			b.x * 3.f * t * ( 1.f - t ) * ( 1.f - t ) +
-			c.x * 3.f * t * t * ( 1.f - t ) +
-			d.x * t * t * t;
-		dst.y =
-			a.y * ( 1.f - t ) * ( 1.f - t ) * ( 1.f - t ) +
-			b.y * 3.f * t * ( 1.f - t ) * ( 1.f - t ) +
-			c.y * 3.f * t * t * ( 1 - t ) +
-			d.y * t * t * t;
-		dst.z =
-			a.z * ( 1.f - t ) * ( 1.f - t ) * ( 1.f - t ) +
-			b.z * 3.f * t * ( 1.f - t ) * ( 1 - t ) +
-			c.z * 3.f * t * t * ( 1.f - t ) +
-			d.z * t * t * t;
-
-		return dst;
-
-	}
-	void c_legitbot::control_rcs ( vec3_t & position ) {
-		float recoil_value_x = ( 2.0f / 100.f ) * settings->recoil_control_x;
-		float recoil_value_y = ( 2.0f / 100.f ) * settings->recoil_control_y;
-
-		vec3_t current_punch = local_player::m_data.pointer->aim_punch_angle ( );
-		position.x -= current_punch.x * recoil_value_x;
-		position.y -= current_punch.y * recoil_value_y;
-		position.angle_normalize ( );
-		position.angle_clamp ( );
-	}
 	void c_legitbot::aim_at ( vec3_t & position ) {
-		aim_angles = math::calc_angle ( local_pointer->eye_pos ( ), position );
+		static vec3_t old_angles = vec3_t ( );
+
+		
+		aim_angles = math::calc_angle ( localdata.eye_position, position );
+	
+
 		aim_angles.angle_normalize ( );
 		aim_angles.angle_clamp ( );
+		vec3_t hitbox_angle = math::calc_angle ( localdata.eye_position, hitbox );
+		hitbox_angle.angle_normalize ( );
+		hitbox_angle.angle_clamp ( );
+
+		//CerpAngle ( current_cmd->viewangles, hitbox_angle, dt_progress, dt_progress );
+
 		control_rcs ( aim_angles );
-	//	if ( dt_progress < 1.f ) {
-			//current_cmd->viewangles = aim_angles;
-
-			
-
-	//	}
-	//	else {
-		
-
-			vec3_t delta;
-			delta.x = current_cmd->viewangles.x - aim_angles.x;
-			delta.y = current_cmd->viewangles.y - aim_angles.y;
-			delta.angle_normalize ( );
-			delta.angle_clamp ( );
-			auto smooth_x = settings->aim_speed * 10.f;
-			auto smooth_y = settings->aim_speed * 10.f;
-			
-			
-
-			current_cmd->viewangles.x = current_cmd->viewangles.x - delta.x / ( 5.f * smooth_x );
-			current_cmd->viewangles.y = current_cmd->viewangles.y - delta.y / ( 5.f * smooth_y );
-			
-		
-
-			current_cmd->viewangles.angle_normalize ( );
-			current_cmd->viewangles.angle_clamp ( );
-	//	}
-		interfaces::engine->set_view_angles ( current_cmd->viewangles );
-
-	}
-
-	void c_legitbot::compute_hitscan ( ) {
-
 	
-		return;
-
-		hitscan.clear ( );
-		hitscan.reserve ( 5 );
 
 		
+		vec3_t delta;
+		delta.x = current_cmd->viewangles.x - aim_angles.x;
+		delta.y = current_cmd->viewangles.y - aim_angles.y;
+		delta.angle_normalize ( );
+	
+
+		float delta_percent_X = delta.x / 100.f;
+		float dleta_percent_Y = delta.y / 100.f;
 
 
-		hitscan.push_back ( target_hitbox );
 
-		if ( settings->hitscan.at ( 0 ) == 1 ) {
-			hitscan.push_back ( ( int ) hitboxes::hitbox_head );
+		float speed = active_target->velocity ( ).Length2D ( );
+	
+	
+		if ( dt_progress >= 1.f ) {
+			current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( (settings->aim_speed / 4.4f ) - speed * .1f, 1.f, 100.f );
+			current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( ( settings->aim_speed / 4.4f ) - speed * .1f, 1.f, 100.f );
 		}
-
-		if ( settings->hitscan.at ( 1 ) == 1 ) {
-			hitscan.push_back ( ( int ) hitboxes::hitbox_upper_chest );
-			hitscan.push_back ( ( int ) hitboxes::hitbox_chest );
+		else {
+			current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( settings->aim_speed - speed * .1f, 1.f, 100.f );
+			current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( settings->aim_speed - speed * .1f, 1.f, 100.f );
 
 		}
-
-		if ( settings->hitscan.at ( 0 ) == 2 ) {
-			hitscan.push_back ( ( int ) hitboxes::hitbox_pelvis );
-		}
-
-
-		for ( size_t i = hitscan.size ( ) - 1; i >= 0; i-- ) {
-			if ( hitscan.at ( i ) == settings->hitbox ) {
-				hitscan.erase ( hitscan.begin ( ) + i );
-				break;
-			}
-		}
-	}
-	void c_legitbot::calc_target_hitbox ( ) {
-
-		switch ( settings->hitbox ) {
-		case 0:
-			target_hitbox = hitbox_head;
-			break;
-		case 1:
-			target_hitbox = hitbox_body;
-			break;
-		case 2:
-			target_hitbox = hitbox_pelvis;
-			break;
-		default:
-			target_hitbox = hitbox_head;
-			break;
-		}
-
-		
-	}
-	int c_legitbot::best_hitbox ( ) {
-
-		if ( settings->closest_bone ) {
-
-			int best_hitbox = 0;
-
-
-			float closest = INT_MIN;
-			vec3_t va;
-
-			for ( auto & bone : hitscan ) {
-				float fov = math::get_fov ( va, local_eye, active_target->get_hitbox_position ( bone ) );
-
-				if ( fov < closest ) {
-					closest = fov;
-					best_hitbox = bone;
-				}
-			}
-
-			return best_hitbox;
-		}
-
-		calc_target_hitbox ( );
-		compute_hitscan ( );
-
-		if ( hitscan.size ( ) == 0 )
-			return target_hitbox;
-
+	
 		
 		
+		
+		current_cmd->viewangles.angle_normalize ( );
+		current_cmd->viewangles.angle_clamp ( );
 
-		if ( current_target_shots_fired <= 0) 
-			return settings->hitbox;
-
-		if ( current_target_shots_fired > hitscan.size ( ) - 1 )
-			current_target_shots_fired = 0;
-
-
-		return target_hitbox;
-	//	return hitscan [ current_target_shots_fired % (hitscan.size ( ) - 1) ];
-
+		interfaces::engine->set_view_angles ( current_cmd->viewangles );
+		old_angles = current_cmd->viewangles;
 
 	}
+	double easeInExpo ( double t ) {
+		return ( pow ( 2, 8 * t ) - 1 ) / 255;
+	}
 
+	float easeOutElastic ( float x ) {
+		const float c4 = ( 2.f * M_PI ) / 3.f;
+
+		return x == 0
+			? 0
+			: x == 1
+			? 1
+			: std::pow ( 2, -10 * x ) * sin ( ( x * 10 - 0.75 ) * c4 ) + 1;
+	}
+	double easeInOutElastic ( double t ) {
+		double t2;
+		if ( t < 0.45 ) {
+			t2 = t * t;
+			return 8 * t2 * t2 * sin ( t * M_PI * 9 );
+		}
+		else if ( t < 0.55 ) {
+			return 0.5 + 0.75 * sin ( t * M_PI * 4 );
+		}
+		else {
+			t2 = ( t - 1 ) * ( t - 1 );
+			return 1 - 8 * t2 * t2 * sin ( t * M_PI * 9 );
+		}
+	}
+	double easeOutQuad ( double t ) {
+		return t * ( 2 - t );
+	}
 	void c_legitbot::run ( c_usercmd * cmd ) {
 
+		
+
+		if ( !localdata.alive || !localdata.active_weapon || localdata.active_weapon->is_non_aim ( ) ) {
+			return;
+		}
+
+		weapon_change ( );
+
+		settings = &config.weapon_groups [ config.active_category ];
 		current_cmd = cmd;
-		settings = &config.weapon_groups [ 0 ];
+
+		if ( !settings->enabled )
+			return;
 
 
-		target_check ( );
+		is_singleshot = config.active_category == 0 || config.active_category == 1 || config.active_category == 4;
+		
+		if ( !is_singleshot ) {
+			in_aiming = current_cmd->buttons & in_attack;
+		}
+		else {
+			if ( current_cmd->buttons & in_attack && !did_attack_before ) {
+				in_aiming = true;
+				aim_start_tick = interfaces::globals->tick_count;
+			}
+		}
+		avoid_bezier = cmd->mousedx != 0 || cmd->mousedy != 0;
 
-		if ( cmd->buttons & in_attack ) {
 
-			
+		first_aim = !did_attack_before && current_cmd->buttons & in_attack;
+	
+
+
+		if ( in_aiming ) {
 
 			find_target ( );
 
-			if ( valid_target && active_target ) {
-				hitbox = active_target->get_hitbox_position ( best_hitbox() );
+			if ( valid_target && active_target && settings->aim_speed > 1.f ) {
 
-				if ( !hitbox.is_zero ( ) ) {
-					auto aim_pos = calculate_trail ( );
+				static auto predict_origin = [ ] ( vec3_t origin, vec3_t velocity, int ticks ) {
+					return origin + ( velocity * ( interfaces::globals->interval_per_tick * static_cast< float >( ticks ) ) );
+				};
 
-					aim_at ( aim_pos );
+				int predict_ticks = dt_progress <= 0.3f ? 5 : 2;
+
+
+
+				hitbox = predict_origin ( active_target->get_hitbox_position ( hitbox_head ), active_target->velocity ( ), predict_ticks );
+
+				vec3_t pos = calculate_trail ( );
+
+				if ( !pos.is_zero ( ) ) {
+
+					aim_at ( pos );
 				}
 
-				if ( last_shots_fired != local_pointer->shots_fired ( ) ) {
-
-					current_target_shots_fired++;
-
-					last_shots_fired = local_pointer->shots_fired ( );
-				}
 			}
-
-		
-
+			else {
+				dt_progress = 0.f;
+				target_index = -1;
+				if (is_singleshot )
+				   in_aiming = false;
+			}
 		}
 		else {
-			running_curve = false;
+			if ( active_target || valid_target ) {
+				reset_target ( );
+				
+			}
 			dt_progress = 0.f;
-			last_target_tick = 0;
-			current_target_shots_fired = 0;
-			last_shots_fired = 0;
-			valid_target = false;
-			active_target = nullptr;
+			target_index = -1;
+			last_target_index = -1;
+			in_aiming = false;
+		
 		}
+		//std::cout << "target index " << target_index << std::endl;
 
-		did_attack_before =  current_cmd->buttons & in_attack;
-
-		if ( valid_target && active_target && current_cmd->buttons & in_attack && dt_progress < settings->shoot_delay / 100.f )
+		did_attack_before = current_cmd->buttons & in_attack;
+	
+		if ( is_singleshot && in_aiming && cmd->buttons & in_attack && (interfaces::globals->tick_count - aim_start_tick) < 10 )
 			current_cmd->buttons &= ~in_attack;
 
-		//if ( cmd->buttons & in_attack ) 
-		//  cmd->buttons &= ~in_attack;
+		if ( in_aiming ) {
+			if ( is_singleshot && !( cmd->buttons & in_attack ) ) {
+				ray_t ray;
+				trace_t trace;
+				trace_filter filter;
+				vec3_t forward_dir = math::angle_vector ( cmd->viewangles );
+
+				vec3_t forward = localdata.eye_position + ( forward_dir * 8192.f );
+				filter.skip = local_player::m_data.pointer;
+				ray.initialize ( local_player::m_data.eye_position, forward );
+
+				interfaces::trace_ray->trace_ray ( ray, MASK_SHOT | CONTENTS_GRATE, &filter, &trace );
+				if ( trace.entity == active_target && local_pointer->can_shoot_time(interfaces::globals->cur_time) )
+					cmd->buttons |= in_attack;
+			}
+			 
+			if ( current_cmd->buttons & in_attack && !is_singleshot ) {
+				if ( dt_progress <= ( settings->shoot_delay * 0.01f ) ) {
+					current_cmd->buttons &= ~in_attack; //delay shot
+					std::cout << " delay shoot " << std::endl;
+				}
+			}
+			
+		}
+		std::cout << "dt_progress " << dt_progress << std::endl;
+
+		//std::cout << "shot this tick"  << (did_attack_before  ? "true" : "false") << std::endl;
 	}
-
 	vec3_t c_legitbot::calculate_trail ( ) {
+
+	
+
+
+
+		vec3_t view_angles = current_cmd->viewangles;
+
 		
-
-		vec3_t view_angles;
-
-
-		interfaces::engine->get_view_angles ( view_angles );
 
 
 		vec3_t head_start = local_pointer->eye_pos ( );
@@ -331,23 +247,33 @@
 
 		vec3_t forward = head_start + ( forward_dirrection * distance_to_hitbox );
 
+		
 
-		if ( current_cmd->buttons & in_attack && !did_attack_before ) 			{
-			did_attack_before = true;
-			running_curve = true;
+		if ( first_aim || avoid_bezier ) {
 			start_position = forward;
+			//std::cout << " grabbed start_position " <<  std::endl;
+			first_aim = false;
 		}
 
-		
-		
-		
+
+		if ( !start_position.is_zero ( ) ) {
+
+			 /*lock timer when user moving mouse*/
+			if ( settings->aim_speed > 0.f && current_cmd->command_number ) {
+				dt_progress += interfaces::globals->interval_per_tick * ( settings->aim_speed * 0.1f );
+				
+			}
+		//	else
+				//std::cout << "avoiding bezier " << std::endl;
+			
+			dt_progress = std::clamp ( dt_progress, 0.f, 1.f );
 			ImVec2 start2d, end2d;
 
 
-			float a1 = settings->bezier_curve [ 0 ];
-			float a2 = settings->bezier_curve [ 1 ];
-			float a3 = settings->bezier_curve [ 2 ];
-			float a4 = settings->bezier_curve [ 3 ];
+			float& a1 = settings->bezier_curve [ 0 ];
+			float& a2 = settings->bezier_curve [ 1 ];
+			float& a3 = settings->bezier_curve [ 2 ];
+			float& a4 = settings->bezier_curve [ 3 ];
 
 
 			vec3_t a = start_position;
@@ -366,58 +292,61 @@
 			c.z = std::lerp ( forward_hitbox.z, start_position.z, a4 );
 
 
-	
+			//std::cout << "dt_progress " << dt_progress << std::endl;
+			//easeInExpo (dt_progress)
 
-			vec3_t p = bezier ( dt_progress, a, b, c, d );
+			vec3_t p = math::bezier ( is_singleshot ? easeInExpo ( dt_progress ) : easeOutQuad(dt_progress), a, b, c, d );
 
-			if ( !current_cmd->command_number )
-			   dt_progress += interfaces::globals->interval_per_tick * settings->aim_speed * 2.f;
+		 
 
-
-
-
-			if ( dt_progress > 1.f ) {
-				dt_progress = 1.f;
-			}
-			
-		
 
 			return p;
-	}
-	void c_legitbot::draw_debug ( ImDrawList* render ) {
-	
-		if ( local_pointer && local_pointer->is_alive ( ) ) {
-			vec3_t view_angles, forward;
-			vec3_t local = local_pointer->eye_pos ( );
-
-			interfaces::engine->get_view_angles ( view_angles );
-			view_angles.angle_normalize ( ); view_angles.angle_clamp ( );
-
-			math::angle_vectors ( view_angles, forward );
-
-			auto hitbox_ang = math::calc_angle ( local, hitbox );
-			hitbox_ang.angle_normalize ( ); hitbox_ang.angle_normalize ( );
-
-			vec3_t hitbox_forward;
-			math::angle_vectors ( hitbox_ang, hitbox_forward );
-
-			float dist = hitbox.distance_to ( local );
-
-			vec3_t start = local + ( forward * 8192.f );
-
-			vec3_t end  = local + ( hitbox_forward * 8192.f );
-
-
-			ImVec2 from, to;
-
-			if ( visuals::world_to_screen ( start, from ) && visuals::world_to_screen ( end, to ) ) {
-
-				render->AddLine ( from, to, ImColor ( 255, 0, 0, 255 ), 3.f );
-
-			}
 		}
+		return vec3_t ( 0, 0, 0 );
+	}
 
-		if ( valid_target && !hitbox.is_zero ( )  && local_pointer  && local_pointer->is_alive()) {
+	void c_legitbot::delay_shoot ( ) {
+		if ( valid_target && active_target  && !is_singleshot) {
+			
+		}
+	}
+	
+	
+	void c_legitbot::draw_debug ( ImDrawList * render ) {
+
+		
+			if ( local_pointer && local_pointer->is_alive ( ) ) {
+				vec3_t view_angles, forward;
+				vec3_t local = local_pointer->eye_pos ( );
+
+				interfaces::engine->get_view_angles ( view_angles );
+				view_angles.angle_normalize ( ); view_angles.angle_clamp ( );
+
+				math::angle_vectors ( view_angles, forward );
+
+				auto hitbox_ang = math::calc_angle ( local, hitbox );
+				hitbox_ang.angle_normalize ( ); hitbox_ang.angle_normalize ( );
+
+				vec3_t hitbox_forward;
+				math::angle_vectors ( hitbox_ang, hitbox_forward );
+
+				float dist = hitbox.distance_to ( local );
+
+				vec3_t start = local + ( forward * 8192.f );
+
+				vec3_t end = local + ( hitbox_forward * 8192.f );
+
+
+				ImVec2 from, to;
+
+				if ( visuals::world_to_screen ( start, from ) && visuals::world_to_screen ( end, to ) ) {
+
+					render->AddLine ( from, to, ImColor ( 255, 0, 0, 255 ), 3.f );
+
+				}
+			}
+
+		if ( valid_target && !hitbox.is_zero ( ) && local_pointer && local_pointer->is_alive ( ) ) {
 
 			vec3_t view_angles, forward;
 			vec3_t local = local_pointer->eye_pos ( );
@@ -426,40 +355,40 @@
 
 			math::angle_vectors ( view_angles, forward );
 
-			vec3_t start = local + ( forward * (local.distance_to(hitbox)) );
+			vec3_t start = local + ( forward * ( local.distance_to ( hitbox ) ) );
 
 			ImVec2 start2d, end2d;
-			
-			auto point_value = ( hitbox - start ) / static_cast< float >(  10 );
-			
-			 std::vector<vec3_t> points;
-			 points.reserve ( 10 );
-			 std::vector<ImVec2> points2s;
-			 points2s.reserve ( 10 );
+
+			auto point_value = ( hitbox - start ) / static_cast< float >( 10 );
+
+			std::vector<vec3_t> points;
+			points.reserve ( 10 );
+			std::vector<ImVec2> points2s;
+			points2s.reserve ( 10 );
 
 			ImVec2 pp;
-			
-			float a1 = settings->bezier_curve[0];
+
+			float a1 = settings->bezier_curve [ 0 ];
 			float a2 = settings->bezier_curve [ 1 ];
 			float a3 = settings->bezier_curve [ 2 ];
 			float a4 = settings->bezier_curve [ 3 ];
 
 
 			points.push_back ( start );
-            points.push_back ( hitbox );
+			points.push_back ( hitbox );
 
 			vec3_t a = start;
 			vec3_t d = hitbox;
 
 			vec3_t b, c;
- 
-			b.x = std::lerp ( start.x, hitbox.x,  a2 );
-			b.y = std::lerp ( start.y, hitbox.y,  1.f - a1 );
+
+			b.x = std::lerp ( start.x, hitbox.x, a2 );
+			b.y = std::lerp ( start.y, hitbox.y, 1.f - a1 );
 			b.z = std::lerp ( hitbox.z, start.z, a2 );
 
 
 
-			c.x = std::lerp ( hitbox.x, start.x,  a2 );
+			c.x = std::lerp ( hitbox.x, start.x, a2 );
 			c.y = std::lerp ( hitbox.y, start.y, a3 );
 			c.z = std::lerp ( hitbox.z, start.z, a4 );
 
@@ -467,22 +396,22 @@
 
 			points.push_back ( c );
 			points.push_back ( b );
-			
+
 			float ddt = 1.0f / 20;
 
 			for ( float dt = 0; dt < 1; dt += ddt ) {
-				vec3_t p = bezier ( dt, a, b, c, d );
+				vec3_t p = math::bezier ( dt, a, b, c, d );
 				points.push_back ( p );
 			}
 
-			auto& tran_frame = active_target->coord_frame ( );
+			auto & tran_frame = active_target->coord_frame ( );
 
 			for ( auto & p : points ) {
-				
-				if ( visuals::world_to_screen (p, pp ) )
+
+				if ( visuals::world_to_screen ( p, pp ) )
 					points2s.push_back ( pp );
 			}
-		//	}
+			//	}
 			int i = 1;
 
 			for ( auto & p : points2s ) {
