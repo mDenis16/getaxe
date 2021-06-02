@@ -5,7 +5,11 @@
       <FullPath>E:\repos\getaxe\output\debug\weekend.dll</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
-  <ContentFiles />
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>E:\repos\getaxe\dependencies\interfaces\i_player_movement.hpp</FullPath>
+    </ContentFile>
+  </ContentFiles>
   <SatelliteDlls />
   <NonRecipeFileRefs />
 </Project>

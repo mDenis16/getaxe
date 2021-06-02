@@ -492,6 +492,9 @@ struct weapon_settings {
 	bool enabled = false;
 	config_manager::key_bind_item enable_keybind;
 
+	bool lock_path = false;
+	config_manager::key_bind_item lock_path_keybind;
+
 	bool lock_target = false;
 	config_manager::key_bind_item lock_target_keybind;
 

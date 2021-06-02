@@ -163,7 +163,7 @@ namespace ui {
                 this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 0, 0, 0, 25 ), this->rounding );
                 this->renderer->AddRectFilled ( this->mins, this->maxs, SECONDARY_COLOR, this->rounding );
             }
-			this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), this->rounding );
+		//this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), this->rounding );
 		}
 		
 

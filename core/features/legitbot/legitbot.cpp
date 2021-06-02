@@ -61,9 +61,9 @@
 		float speed = active_target->velocity ( ).Length2D ( );
 	
 	
-		if ( dt_progress >= 1.f ) {
-			current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( (settings->aim_speed / 4.4f ) - speed * .1f, 1.f, 100.f );
-			current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( ( settings->aim_speed / 4.4f ) - speed * .1f, 1.f, 100.f );
+		if ( !is_singleshot && dt_progress >= 1.f ) {
+			current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( avoid_bezier ? settings->aim_speed /4.f : ( settings->aim_speed * speed * 0.01f  ), 1.f, 100.f );
+			current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( avoid_bezier ? settings->aim_speed / 4.f : ( settings->aim_speed * speed * 0.01f ), 1.f, 100.f );
 		}
 		else {
 			current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( settings->aim_speed - speed * .1f, 1.f, 100.f );
@@ -162,6 +162,11 @@
 
 				hitbox = predict_origin ( active_target->get_hitbox_position ( hitbox_head ), active_target->velocity ( ), predict_ticks );
 
+				if ( !local_pointer->can_see_player_pos ( active_target, localdata.eye_position, hitbox ) ) {
+					reset_target ( );
+					return;
+				}
+
 				vec3_t pos = calculate_trail ( );
 
 				if ( !pos.is_zero ( ) ) {
@@ -211,7 +216,7 @@
 					cmd->buttons |= in_attack;
 			}
 			 
-			if ( current_cmd->buttons & in_attack && !is_singleshot ) {
+			if ( settings->shoot_delay > 0.f && current_cmd->buttons & in_attack && !is_singleshot ) {
 				if ( dt_progress <= ( settings->shoot_delay * 0.01f ) ) {
 					current_cmd->buttons &= ~in_attack; //delay shot
 					std::cout << " delay shoot " << std::endl;
@@ -220,7 +225,7 @@
 			
 		}
 		std::cout << "dt_progress " << dt_progress << std::endl;
-
+		changed_target = false;
 		//std::cout << "shot this tick"  << (did_attack_before  ? "true" : "false") << std::endl;
 	}
 	vec3_t c_legitbot::calculate_trail ( ) {
@@ -232,7 +237,9 @@
 		vec3_t view_angles = current_cmd->viewangles;
 
 		
-
+		vec3_t current_punch = local_player::m_data.pointer->aim_punch_angle ( );
+		view_angles.x += current_punch.x * 2.0;
+		view_angles.y += current_punch.y * 2.0;
 
 		vec3_t head_start = local_pointer->eye_pos ( );
 
@@ -249,7 +256,7 @@
 
 		
 
-		if ( first_aim || avoid_bezier ) {
+		if ( first_aim || (!settings->lock_path && avoid_bezier) || changed_target ) {
 			start_position = forward;
 			//std::cout << " grabbed start_position " <<  std::endl;
 			first_aim = false;

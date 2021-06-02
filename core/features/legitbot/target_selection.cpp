@@ -29,13 +29,13 @@ int c_legitbot::best_target ( bool no_fov ) {
 
 		vec3_t entity_eye = entity->eye_pos ( );
 
-		if ( !entity->can_see_player_pos(local_pointer, localdata.eye_position, entity_eye) )
+		if ( !local_pointer->can_see_player_pos(entity, localdata.eye_position, entity_eye) )
 			continue;
 
 
 
 		auto angle = math::calc_angle ( localdata.eye_position, entity_eye ); angle.angle_normalize ( ); angle.angle_clamp ( );
-		auto fov = math::get_fov ( viewangle, angle, localdata.eye_position.distance_to ( entity_eye ) );
+		auto fov = math::get_fov ( viewangle, localdata.eye_position, entity_eye );
 		if ( fov < min_fov ) {
 			min_fov = fov;
 			closest = entity->index();
@@ -69,7 +69,8 @@ void c_legitbot::find_target ( ) {
 	}
 
 	if ( target_index != -1 && last_target_index != -1 && target_index != last_target_index ) {
-		dt_progress = 0.5f;
+		dt_progress = 0.f;
+		changed_target = true;
 		std::cout << "changed target " << std::endl;
 	}
 

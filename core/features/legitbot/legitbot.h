@@ -26,6 +26,8 @@ public:
 	vec3_t local_eye;
 	bool first_aim = false;
 	bool avoid_bezier = false;
+	bool changed_target = false;
+
 	int avoid_count = 0;
 	int target_index = -1;
 	int last_target_index = -1;

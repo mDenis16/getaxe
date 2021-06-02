@@ -83,21 +83,34 @@ namespace ui {
 	}
 	void combo_item::update ( ) {
 		
-		auto parent = static_cast< combobox * >( this->parrent );
 		
 		if ( this->index > 0 ) {
-			auto back = parent->children.at ( this->index - 1 );
-			this->mins = ImVec2 ( parent->bb_min.x, back->maxs.y  );
-			this->maxs = ImVec2 ( parent->bb_max.x, this->mins.y + 18 );
+			auto back = this->parrent->children.at ( this->index - 1 );
+			if ( this->parrent->type == combobox_element ) {
+				this->mins = ImVec2 ( static_cast< ui::combobox * >( this->parrent )->bb_min.x, back->maxs.y );
+				this->maxs = ImVec2 ( static_cast< ui::combobox * >( this->parrent )->bb_max.x, this->mins.y + 18 );
+			}
+			else {
+				this->mins = ImVec2 ( static_cast< ui::multibox * >( this->parrent )->bb_min.x, back->maxs.y );
+				this->maxs = ImVec2 ( static_cast< ui::multibox * >( this->parrent )->bb_max.x, this->mins.y + 18 );
+			}
 		}
 		else {
+			this->mins = this->parrent->mins;
 
-			if (this->parrent->type == combobox_element )
-			  this->mins = ImVec2 ( parent->bb_min.x, parent->bb_min.y - parent->scroll_progress );
-			else if (this->parrent->type == multibox_element )
-				this->mins = ImVec2 ( parent->bb_min.x, parent->bb_min.y - parent->scroll_progress );
+			if ( this->parrent->type == combobox_element ) {
+				this->mins = static_cast< ui::combobox * >( this->parrent )->bb_min;
+				this->mins.y = this->parrent->mins.y - static_cast< ui::combobox * >( this->parrent )->scroll_progress;
+				this->maxs = ImVec2 ( static_cast< ui::combobox * >( this->parrent )->bb_max.x, this->mins.y + 18 );
+			}
+			else if ( this->parrent->type == multibox_element ) {
+				this->mins = static_cast< ui::multibox * >( this->parrent )->bb_min;
+				this->mins.y = this->parrent->mins.y - static_cast< ui::multibox * >( this->parrent )->scroll_progress;
+				this->maxs = ImVec2 ( static_cast< ui::multibox * >( this->parrent )->bb_max.x, this->mins.y + 18 );
 
-			this->maxs = ImVec2 ( parent->bb_max.x, this->mins.y + 18 );
+			
+			}
+			
 		}
  
 		

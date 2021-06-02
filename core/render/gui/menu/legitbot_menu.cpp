@@ -32,7 +32,7 @@ namespace ui {
 					new ui::slider ( "Target delay", main_tab, cfg->target_delay, 0.f, 180.f, ui::slider_type::floates, &cfg->target_delay_keybind );
 					new ui::checkbox ( "Lock target", main_tab, cfg->lock_target, &cfg->lock_target_keybind );
 					new ui::combobox ( "Hitbox target", main_tab, std::vector<std::string>{"Head", "Body", "Pelvis"}, cfg->hitbox, cfg->hitbox_keybind );
-					new ui::multibox ( "Hitscan list", main_tab, std::vector<std::string>{"Head", "Body", "Pelvis", "Feets"}, cfg->hitscan, cfg->hitscan_keybind );
+					new ui::multibox ( "Hitscan list", main_tab, std::vector<std::string>{"Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets"}, cfg->hitscan, cfg->hitscan_keybind );
 
 				}
 
@@ -40,11 +40,11 @@ namespace ui {
 				//filters tab
 				{
 					new ui::checkbox ( "Through Smoke", filters_tab, cfg->through_smoke, &cfg->through_smoke_keybind );
-					new ui::checkbox ( "Through Walls", filters_tab, cfg->through_walls, &cfg->through_walls_dmg_keybind );
-					new ui::slider ( "Min dmg", filters_tab, cfg->through_walls_dmg, 0.f, 100.f, ui::slider_type::floates, &cfg->through_walls_dmg_keybind );
+					
 					new ui::checkbox ( "Target teammates", filters_tab, cfg->target_teammates, &cfg->target_teammates_keybind );
 					new ui::checkbox ( "Lag compensation", filters_tab, cfg->lagcompensation, &cfg->lagcompensation_keybind );
 					new ui::slider ( "Time", filters_tab, cfg->lag_compensation_time, 0.f, 200.f, ui::slider_type::floates, &cfg->lag_compensation_time_keybind );
+					new ui::checkbox ( "Lock bezier path", filters_tab, cfg->lock_path, &cfg->lock_path_keybind );
 				}
 				//
 
@@ -54,7 +54,7 @@ namespace ui {
 
 				{
 					new ui::bezier_editor ( bezier_tab, cfg->bezier_curve );
-
+					
 				}
 
 
@@ -80,7 +80,7 @@ namespace ui {
 
 				 main_tab = new ui::child_window ( "General", 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
 				
-				 filters_tab = new ui::child_window ( "Filters", 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
+				 filters_tab = new ui::child_window ( "Options", 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
 
 				 weapons_tab = new ui::child_window ( "Weapon", 45.f, 25.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
 				 {

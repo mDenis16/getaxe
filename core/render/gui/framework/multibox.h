@@ -4,23 +4,34 @@ namespace ui {
 	class multibox : public object {
 
 	public:
-
+		float maximumContentSize = 0.f;
 		std::string title;
 		config_manager::key_bind_item * key_bind_controller = nullptr;
 		ImVec2 bb_min;
 		bool key_bind_open = false;
 		ImVec2 bb_max;
 		bool hovering_element = false;
-		float scroll_progress = 0.f;
-		float max_scroll_progress = 0.f;
+	
 		float original_bb_max_y;
 		ImVec2 temp_min;
 		std::string preview;
 		std::string preview_animated;
 		ImVec2 temp_max;
-		ImVec2 thumb_min;
+		
 		ImVec2 preview_min;
-		ImVec2 thumb_max;
+	
+		float thumb_length = 0.f;
+		float thumb_progress = 0.f;
+		float max_thumb_progress = 0.f;
+		ImVec2 thumb_path_mins = ImVec2 ( 0, 0 ), thumb_path_maxs = ImVec2 ( 0, 0 );
+
+		ImVec2 thumb_mins = ImVec2 ( 0, 0 ), thumb_maxs = ImVec2 ( 0, 0 );
+
+		bool modifying_thumb = false;
+
+		float scroll_progress = 0.f;
+		float target_scroll_progress = 0.f;
+
 		bool animating_preview = false;
 		float thumb_percent = 0.f;
 		float last_access_frame = 999.f;
@@ -77,8 +88,9 @@ namespace ui {
 				preview = preview.substr ( 0, 13 ) + "...";
 
 		
+			preview_animated = "test";
 
-			for ( size_t i = 0; i < this->items.size ( ); i++ ) {
+				/*for ( size_t i = 0; i < this->items.size ( ); i++ ) {
 			
 				if (  this->value_array->at(i) > 0 ) {
 
@@ -94,7 +106,7 @@ namespace ui {
 
 					preview_animated += this->items.at ( i );
 				}
-			}
+			}*/
 			if ( preview.length ( ) > 13 )
 				preview = preview.substr ( 0, 13 ) + "...";
 
@@ -103,6 +115,8 @@ namespace ui {
 				preview_animated = "click to open";
 			}
 		}
+		void handle_scroll ( );
+		void draw_scrollbar ( );
 		multibox ( std::string text, object * parent, std::vector<std::string> _items, void * _value_array, float _bb_width = 0.f );
 		multibox ( std::string text, object * parent, std::vector<std::string> _items, std::vector<int> & _value_array, float _bb_width = 0.f );
 		multibox ( std::string text, object * parent, std::vector<std::string> _items, std::vector<int> & _value_array, config_manager::key_bind_item & key_bind_item, float _bb_width = 0.f );

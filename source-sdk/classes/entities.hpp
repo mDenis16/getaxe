@@ -1015,7 +1015,7 @@ public:
 		return info;
 	}
 
-	bool can_see_player_pos ( player_t * from_entity, const vec3_t & start,  const vec3_t & end ) {
+	bool can_see_player_pos ( player_t * ent, const vec3_t & start,  const vec3_t & end ) {
 		trace_t tr;
 		ray_t ray;
 		trace_filter filter;
@@ -1026,7 +1026,7 @@ public:
 		ray.initialize ( start, end );
 		interfaces::trace_ray->trace_ray ( ray, MASK_SHOT | CONTENTS_GRATE, &filter, &tr );
 
-		return tr.entity == from_entity || tr.flFraction > 0.97f;
+		return tr.entity == ent || tr.flFraction > 0.97f;
 	}
 
 	void * get_renderable ( void ) {
