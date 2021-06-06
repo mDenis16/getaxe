@@ -146,29 +146,15 @@ ImColor ( 255, 255, 255, 25 ) );
 				ImVec2 ( this->maxs.x, this->mins.y + i ),
 				ImColor ( 255, 255, 255, 25 ) );
 
-		float P [ 4 ];
-
-	//	memcpy ( P, presets [ 3 ].points, sizeof ( float ) * 4 );
-		ImVec2 Q [ 4 ] = { { 0, 0 }, { this->value [ 0 ], this->value [ 1 ] }, { this->value [ 2 ], this->value [ 3 ] }, { 1, 1 } };
-		ImVec2 results [ SMOOTHNESS + 1 ];
-		ImGui::bezier_table<SMOOTHNESS> ( Q, results );
-
-		 
-	     	ImColor color = ImColor ( 255, 255, 255, 255 );
-
-			for ( int i = 0; i < SMOOTHNESS; ++i ) {
-				ImVec2 p = { results [ i + 0 ].x, 1 - results [ i + 0 ].y };
-				ImVec2 q = { results [ i + 1 ].x, 1 - results [ i + 1 ].y };
-				ImVec2 r ( p.x * ( maxs.x - mins.x ) + mins.x, p.y * ( maxs.y - mins.y ) + mins.y );
-				ImVec2 s ( q.x * ( maxs.x - mins.x ) + mins.x, q.y * ( maxs.y - mins.y ) + mins.y );
-				renderer->AddLine ( r, s, color, CURVE_WIDTH );
-			}
 		
-	
+			
+		if ( this->children.size ( ) >= 2 ) {
+				renderer->AddBezierCurve ( ImVec2(this->maxs.x, this->mins.y), ui::calculate_center( this->children.at ( 1 )->mins, this->children.at ( 1 )->maxs), ui::calculate_center ( this->children.at ( 0 )->mins, this->children.at ( 0 )->maxs ), ImVec2(this->mins.x, this->maxs.y), ImColor ( 255, 255, 255, 125 ), 2.f, 30 );
+		}
 		
-			for ( auto & child : children ) {
-				child->draw ( );
-			}
+		for ( auto & child : children ) {
+			child->draw ( );
+		}
 
 	
 

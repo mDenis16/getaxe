@@ -75,13 +75,15 @@ namespace ui {
 		auto filled = this->fill_percent * ( ( this->bb_max.x - this->bb_min.x ) ) / 100.f;
 		this->renderer->AddRectFilled (this->bb_min, ImVec2( this->bb_min.x + filled, this->bb_max.y), ImColor(25, 125, 123, 255), 12.f );
 
+
 		ImVec2 middle = ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f, ( this->maxs.y + this->mins.y ) / 2.f );
 
 		middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
 
 
 		this->renderer->AddCircleFilled ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 255, 255, 255, 255 ) );
-		
+		this->renderer->AddShadowCircle ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 0, 0, 0, 125 ), 5.f, ImVec2(0,0) );
+
 		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ),  this->title.c_str() );
 
 		for ( auto & child : this->children )
@@ -96,7 +98,7 @@ namespace ui {
 
 		auto mouse_pos = ui::get_cursor ( );
 
-		this->hovering = ( mouse_pos.x > this->bb_min.x && mouse_pos.y > this->bb_min.y && mouse_pos.x < this->bb_max.x && mouse_pos.y < this->bb_max.y );
+		this->hovering = this->can_focus ( ) && ( mouse_pos.x > this->bb_min.x && mouse_pos.y > this->bb_min.y && mouse_pos.x < this->bb_max.x && mouse_pos.y < this->bb_max.y );
 	}
 	void slider::handle ( ) {
 
@@ -105,19 +107,19 @@ namespace ui {
 			std::memcpy ( this->old_value, this->value, sizeof ( this->value ) );
 		}
 
-
-
+		
 		if ( this->in_animation ) {
 
 			if ( this->fill_percent >= this->target_fill )
-				this->fill_percent -= ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 8.f;
+				this->fill_percent -= ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 4.f;
 			else if ( this->fill_percent <= this->target_fill ) 
-				this->fill_percent += ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 8.f;
+				this->fill_percent += ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 4.f;
 
 		
 			if ( std::fabs ( this->fill_percent - this->target_fill ) <= 2.f ) {
 				this->fill_percent = this->target_fill;
 				this->in_animation = false;
+				finished_animation = true;
 				if ( this->updated_last_time )
 					this->updated_last_time = false;
 			}
@@ -130,19 +132,22 @@ namespace ui {
 			handle_mouse_input ( );
 			if ( this->in_animation ) {
 				this->hovering = false;
-			}
-			this->hold_down = ( GetAsyncKeyState ( VK_LBUTTON ) & 0x8000 );
-			if ( !this->was_hovering && this->hovering && this->hold_down ) {
-				this->was_hovering = true;
 
-				if ( !this->hover_start )
-					this->hover_start = ImGui::GetTime ( );
 			}
-			if ( !this->hold_down ) {
-				this->was_hovering = false;
+			
+			if (!this->modifying && this->hovering && key_pressed(VK_LBUTTON)) {
+				this->modifying = true;
+				this->focus_it ( );
+				this->hover_start = ImGui::GetTime ( );
+			}else if ( this->modifying && key_released ( VK_LBUTTON ) ) {
+				this->modifying = false;
+				this->out_of_focus ( );
 			}
-			if ( this->was_hovering && this->hold_down ) {
-				ui::focused_item = this->_id;
+
+			
+			
+			if ( this->modifying ) {
+				
 				auto mouse_pos = ui::get_cursor ( );
 				float max_value = *( float * ) &this->value_maxs;
 				float min_value = *( float * ) &this->value_mins;
@@ -152,16 +157,9 @@ namespace ui {
 				temp_fill_percent /= ( this->bb_max.x - this->bb_min.x );
 				temp_fill_percent = ( temp_fill_percent * 100.f / 100 ) * 100;
 
+				temp_fill_percent = std::clamp ( temp_fill_percent, 0.f, 100.f );
 
 
-				if ( temp_fill_percent > 100.f ) {
-					temp_fill_percent = 100.f;
-				}
-
-
-				if ( temp_fill_percent < 0.f ) {
-					temp_fill_percent = 0.f;
-				}
 
 				/*if ( ( temp_fill_percent / 100 ) * max_value < min_value ) {
 					temp_fill_percent = ( min_value * 100.f ) / max_value;
@@ -169,15 +167,24 @@ namespace ui {
 
 					
 				
-				if ( std::fabs ( temp_fill_percent - old_fill ) > 30 ) {
+				if (std::fabs(ImGui::GetTime() - this->hover_start) < 0.1f && std::fabs ( temp_fill_percent - old_fill ) > 35 ) {
 					this->target_fill = temp_fill_percent;
 					this->in_animation = true;
-				}
+					//this->modifying = false;
+				//	this->out_of_focus ( );
+				}  
 				else {
-					this->fill_percent = temp_fill_percent;
-					this->target_fill = temp_fill_percent;
+					if ( !key_down(VK_LBUTTON)) {
+						
+						this->modifying = false;
+			            this->out_of_focus ( );
+					}
+					else
+					    this->fill_percent = this->target_fill = temp_fill_percent;
 				}
 
+				if ( finished_animation )
+					finished_animation = false;
 				float flt = this->fill_percent;
 
 				/*
@@ -201,38 +208,36 @@ namespace ui {
 		
 
 			}
-			else if ( this->old_value && (float)*( float * ) this->value != ( float ) *( float * ) this->old_value ) {
+			else if ( this->old_value && ( float ) *( float * ) this->value != ( float ) *( float * ) this->old_value ) {
 
-
-				this->updated_last_time = true;
 
 				this->in_animation = true;
 
 				std::memcpy ( this->old_value, this->value, sizeof ( this->value ) );
+
 				float cur_val = ( float ) *( float * ) this->value;
-				float max_value = ( float ) *( float * )&this->value_maxs;
+				float max_value = ( float ) *( float * ) &this->value_maxs;
 				float ratio_fill = target_fill / 100.f;
-				float max_valuee = ( float ) *( float * ) &this->value_maxs;
-				float min_value = ( float ) *( float * ) &this->value_maxs;
+				float min_value = ( float ) *( float * ) &this->value_mins;
+				float old_fill = this->fill_percent;
+
+				float temp_fill = std::lerp ( 0.f, 100.f, InvLerp ( min_value, max_value, cur_val ) );
+
+				if ( std::fabs ( temp_fill - old_fill ) > 30 ) {
+					this->target_fill = temp_fill;
+					this->in_animation = true;
+				}
+				else {
+					this->fill_percent = this->target_fill = temp_fill;
+
+				}
 
 
 
-				this->target_fill = InvLerp ( ratio_fill, ( cur_val * 100.f ) / min_value, ( cur_val * 100.f ) / max_valuee );
-				float tfl = this->target_fill;
+			}
 
-				/*
-					this->target_fill = ( cur_val * 100.f ) / max_value;
 
-		float ratio_fill = target_fill / 100.f;
-
-		 this->target_fill = InvLerp ( ratio_fill, ( cur_val * 100.f ) / min_value, ( cur_val * 100.f ) / max_value );
 		
-				*/
-			}
-
-			else if ( ui::focused_item == this->_id ) {
-				out_of_focus ( );
-			}
 		
 	}
 

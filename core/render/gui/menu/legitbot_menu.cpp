@@ -32,8 +32,7 @@ namespace ui {
 					new ui::slider ( "Target delay", main_tab, cfg->target_delay, 0.f, 180.f, ui::slider_type::floates, &cfg->target_delay_keybind );
 					new ui::checkbox ( "Lock target", main_tab, cfg->lock_target, &cfg->lock_target_keybind );
 					new ui::combobox ( "Hitbox target", main_tab, std::vector<std::string>{"Head", "Body", "Pelvis"}, cfg->hitbox, cfg->hitbox_keybind );
-					new ui::multibox ( "Hitscan list", main_tab, std::vector<std::string>{"Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets", "Head", "Body", "Pelvis", "Feets"}, cfg->hitscan, cfg->hitscan_keybind );
-
+					
 				}
 
 				filters_tab->empty_children ( );
@@ -85,7 +84,6 @@ namespace ui {
 				 weapons_tab = new ui::child_window ( "Weapon", 45.f, 25.f, ImColor ( 23, 24, 27, 255 ), legitbot_window, float_side::none, child_rounding, 15.f );
 				 {
 					 new ui::combobox ( "Config mode", weapons_tab, std::vector<std::string>{"Category", "Weapon"}, & config.weapon_mode );
-
 					 auto panel_container = new ui::panel_container ( weapons_tab, config.weapon_mode );
 					 {
 						 auto category_panel = new ui::panel ( panel_container );

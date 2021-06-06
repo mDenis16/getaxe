@@ -155,17 +155,27 @@ namespace ui {
 			this->renderer->AddRectFilled ( this->mins, this->maxs, this->bg_color, this->rounding, ImDrawCornerFlags_::ImDrawCornerFlags_Top );
 			this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 0, 0, 0, 25 ) );
 
+			
+
+
 			if ( !this->children.empty ( ) )
 				this->renderer->AddRectFilled ( ImVec2 ( this->mins.x, this->children.front ( )->maxs.y ), this->maxs, ImColor ( 50, 50, 50, 255 ) );
 		}
 		else {
             if ( !( this->flags & flags::no_background ) ) {
+
+				this->renderer->AddShadowRect ( ImVec2 ( this->mins.x + 20, this->mins.y + 20 ), ImVec2 ( this->maxs.x - 20, this->maxs.y - 20 ), ImColor ( 255, 255, 255, 255 ), 55.f, ImVec2 ( 0, 0 ), ImDrawShadowFlags_CutOutShapeBackground, 50.f, ImDrawCornerFlags_::ImDrawCornerFlags_All );
+
                 this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 0, 0, 0, 25 ), this->rounding );
+				
+
                 this->renderer->AddRectFilled ( this->mins, this->maxs, SECONDARY_COLOR, this->rounding );
+
+
             }
-		//this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), this->rounding );
+		//
 		}
-		
+	//	this->renderer->AddShadowRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 255 ), 15.f, ImVec2 ( 0, 0 ), ImDrawShadowFlags_CutOutShapeBackground, this->rounding, ImDrawCornerFlags_::ImDrawCornerFlags_All );
 
         this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 14, this->mins.y + 14 ), ImColor ( 0, 0, 0, 225 ), this->title.c_str ( ) );
         this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 13, this->mins.y + 13 ), ImColor ( 255, 255, 255, 225 ), this->title.c_str ( ) );

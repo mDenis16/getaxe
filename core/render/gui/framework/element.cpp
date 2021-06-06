@@ -10,7 +10,9 @@ namespace ui {
 	
 
 	}
-
+	void object::focus_it ( ) {
+		ui::focused_item = this->_id;
+	}
 	void object::out_of_focus ( ) {
 		
 		if ( this->parrent->type == element_extender_element )

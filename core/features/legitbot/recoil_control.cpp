@@ -7,6 +7,5 @@ void c_legitbot::control_rcs ( vec3_t & position ) {
 	vec3_t current_punch = local_player::m_data.pointer->aim_punch_angle ( );
 	position.x -= current_punch.x * recoil_value_x;
 	position.y -= current_punch.y * recoil_value_y;
-	position.angle_normalize ( );
-	position.angle_clamp ( );
+	
 }

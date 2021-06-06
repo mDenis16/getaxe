@@ -41,64 +41,65 @@ namespace ui {
 		this->renderer->AddText ( ui::font_widgets, 11.5f, text_pos, ImColor ( 255, 255, 255, 225 ), this->text_val.c_str ( ) );
 	}
 	void small_text_input::handle_mouse_input ( ) {
-		if ( ui::focused_item != -1 )
+		
+		if ( !this->can_focus ( ) )
 			return;
 
 		auto mouse_pos = ui::get_cursor ( );
 
 		this->hovering = ( mouse_pos.x > this->mins.x && mouse_pos.y > this->mins.y && mouse_pos.x < this->maxs.x && mouse_pos.y < this->maxs.y );
-		this->hold_down = ( GetAsyncKeyState ( VK_LBUTTON ) & 0x8000 );
+		
 	}
 	void small_text_input::handle ( ) {
 
 
 		handle_mouse_input ( );
-		
-		if ( this->hovering && this->hold_down ) {
-			ui::focused_item = this->_id;
-		}
-		
 
-		if ( ui::focused_item == this->_id ) {
-
-		
-				if ( key_pressed ( VK_ESCAPE ) || key_pressed ( VK_RETURN ) || ( !this->hovering && key_pressed ( VK_LBUTTON ) ) ) {
-					ui::focused_item = -1;
-				}
-				else if ( key_pressed ( VK_BACK ) && !this->text_val.empty ( ) ) {
-					this->text_val.pop_back ( );
-				}
-				else if ( this->text_val.length ( ) < 12 ) {
-					if ( key_pressed ( 0xBE ) ) {
-						this->text_val += ".";
-						return;
-					}
-					for ( int i = 0x30; i <= 0x39; i++ ) {
-						
-						if ( key_pressed ( i ) )
-							this->text_val += static_cast< char >( i );
-			
-					}
-				}
-				if ( key_pressed ( VK_RETURN ) ) {
-					auto parent = static_cast< slider * >( this->parrent );
-					try {
-						auto parsed = ::atof ( this->text_val.c_str ( ) );
-					//	*( float * ) parent->value = ( float) parsed;
-					
-						
-						//std::memmove ( parent->old_value, parent->value, sizeof ( parent->value ) );
-					}
-					catch ( int e ) {
-
-					}
-
-				}
-		
+		if ( this->hovering && key_down ( VK_LBUTTON ) ) {
+			this->focus_it ( );
 		}
 
 
+		if ( this->is_focused ( ) ) {
+
+
+			if ( key_pressed ( VK_ESCAPE ) || key_pressed ( VK_RETURN ) || ( !this->hovering && key_pressed ( VK_LBUTTON ) ) ) {
+				this->out_of_focus ( );
+			}
+			else if ( key_pressed ( VK_BACK ) && !this->text_val.empty ( ) ) {
+				this->text_val.pop_back ( );
+			}
+			else if ( this->text_val.length ( ) < 12 ) {
+				if ( key_pressed ( 0xBE ) ) {
+					this->text_val += ".";
+					return;
+				}
+				for ( int i = 0x30; i <= 0x39; i++ ) {
+
+					if ( key_pressed ( i ) )
+						this->text_val += static_cast< char >( i );
+
+				}
+			}
+			if ( key_pressed ( VK_RETURN ) ) {
+				auto parent = static_cast< slider * >( this->parrent );
+				try {
+					auto parsed = ::atof ( this->text_val.c_str ( ) );
+
+					*(float*)parent->value = ( float) parsed;
+
+
+					//std::memmove ( parent->old_value, parent->value, sizeof ( parent->value ) );
+				}
+				catch ( int e ) {
+
+				}
+				this->out_of_focus ( );
+			}
+
+		}
 	}
+
 	void small_text_input::update ( ) {
 
 		if ( this->parrent->type == object_type::slider_element ) {

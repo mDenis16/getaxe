@@ -120,6 +120,9 @@ namespace ui {
 	ui::window * main_window = nullptr;
 	ImFont * font_title = nullptr;
 	ImFont * font_widgets = nullptr;
+	
+	std::deque<debug_log *> debug_logs;
+
 	ImFont * font_tab = nullptr;
 	ImFont * font_icons = nullptr;
 	ImFont * font_menu_icons = nullptr;
@@ -243,16 +246,30 @@ namespace ui {
 		if ( !main_window )
 			initialize ( render );
 
+#ifdef PREVIEW_D3D
+		static IDirect3DTexture9 * image_buffer;
+		if (!image_buffer )
+		    D3DXCreateTextureFromFile ( reinterpret_cast< IDirect3DDevice9 * >( ui::window_device ), "C:\\Users\\topor\\Desktop\\Portofoliu fizica\\test.png", &image_buffer );
 
-
-
-
+		render->AddImage ( image_buffer, ImVec2 ( 0, 0 ), ImVec2 ( 1920, 1080 ) );
+#endif
 		main_window->handle ( );
 		main_window->draw ( );
 
 
 
-		
+#ifdef PREVIEW_D3D
+		int i = 0;
+		static const float log_expire = 5;
+		for ( auto & log : debug_logs ) {
+			render->AddText ( ui::font_widgets, 13.f, ImVec2 ( 1920 - 130, 30 + ++i * 18 ), ImColor ( 123, 255, 125, 255 ), log->text.c_str() );
+
+			if ( debug_logs.size ( ) > 20 )
+				debug_logs.pop_front ( );
+		}
+
+
+#endif
 
 		//printf ( "ssss \n" );
 	}
@@ -284,6 +301,11 @@ namespace ui {
 	ImVec2 get_cursor ( ) {
 		return ImGui::GetIO ( ).MousePos;
 	}
-
+	ImVec2 calculate_center ( ImVec2 a, ImVec2 b ) {
+		ImVec2 c;
+		c.x = ( a.x + b.x ) / 2.f;
+		c.y = ( a.y + b.y ) / 2.f;
+		return c;
+	}
 }
 

@@ -27,6 +27,7 @@ public:
 	bool first_aim = false;
 	bool avoid_bezier = false;
 	bool changed_target = false;
+	float original_angle = 0.f;
 
 	int avoid_count = 0;
 	int target_index = -1;
@@ -103,6 +104,7 @@ public:
 	std::array<std::vector<c_record_t *>, 64> records;
 
 	void reset_target ( ) {
+		    use_linear_smoothing = false;
 			running_curve = false;
 			dt_progress = 0.f;
 			low_fov = false;
@@ -119,6 +121,7 @@ public:
 			start_position = vec3_t ( 0, 0, 0 );
 			valid_target = false;
 			active_target = nullptr;
+			std::cout << "reseted target" << std::endl;
 	}
 	bool is_pistol ( void * weapon );
 	bool is_heavy_pistol ( void * weapon );

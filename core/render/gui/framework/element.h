@@ -118,14 +118,16 @@ namespace ui {
 		
 		bool should_reanimate = true;
 		bool should_reset = true;
-		bool hovering = false;
+		bool hovering = false; 
+	
 		bool in_animation = false;
 
 
 		bool hold_down = false;
 		bool registered = false;
 		bool was_hovering = false;
-		long hover_start = 0;
+		float hover_start = 0.f;
+		float hover_start_time = 0.f;
 		float hsv_val = 0.f;
 		float last_open = 0.f;
 		ImVec2 mins = ImVec2(0,0), maxs = ImVec2(0,0);
@@ -136,7 +138,7 @@ namespace ui {
 		float_side _float = none;
 		ImDrawList * renderer = nullptr;
 		object_type type;
-
+		void focus_it ( );
 		std::vector< object* > children;
 
 		void set_parent (  object *  _parrent ) {

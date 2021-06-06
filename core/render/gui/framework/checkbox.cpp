@@ -69,6 +69,13 @@ namespace ui {
 
 	    this->renderer->AddRect (ImVec2( this->bb_min.x - 9.f, this->bb_min.y), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 0,0, 0, 15 ), 8.5f );
 	     this->renderer->AddRectFilled ( ImVec2 ( this->bb_min.x - 9.f, this->bb_min.y ), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 46, 49, 52, 170 ), 8.5f );
+
+	  ImVec2 center;
+	  center.x = ( bb_min.x + bb_max.x ) / 2.f;
+	  center.y = ( bb_min.y + bb_max.y ) / 2.f;
+
+	 
+
 		 //25, 125, 123, 255
 
 		 int r = static_cast<int>( std::lerp ( 255, 25, progress ));
@@ -76,11 +83,13 @@ namespace ui {
 		 int b = static_cast< int >( std::lerp ( 255, 123, progress ));
 
 		
-
+		  
 		 ImColor progress_color = ImColor ( r,g,b, 255 );
 
+		   this->renderer->AddShadowCircle ( ImVec2 ( this->animation_step, ( bb_min.y + bb_max.y ) / 2.f ), 8.f, ImColor ( 0, 0, 0, 125 ), 3.f, ImVec2 ( 0, 0 ) );
 	       this->renderer->AddCircleFilled ( ImVec2 ( this->animation_step, ( bb_min.y + bb_max.y ) / 2.f ), 6.f, progress_color );
-	  
+		
+
 		   ImVec2 middle = ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f, ( this->maxs.y + this->mins.y ) / 2.f );
 
 		   middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;

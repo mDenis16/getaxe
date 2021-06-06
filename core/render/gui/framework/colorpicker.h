@@ -12,6 +12,9 @@ namespace ui {
 
 		ImColor progress_color = ImColor(255, 255, 255, 255);
 
+		bool modifying_picker = false;
+		bool modifying_alpha = false;
+		bool modififing_hue = false;
 		bool open = false;
 		ImVec2 bb_min;
 		ImVec2 bb_max;

@@ -295,17 +295,26 @@ namespace ui {
 
 		bool hovering_picker = ( mouse_pos.x > this->picker_bb_min.x && mouse_pos.y > this->picker_bb_min.y && mouse_pos.x < this->picker_bb_max.x && mouse_pos.y < this->picker_bb_max.y );
 
+		if ( hovering_picker && key_pressed ( VK_LBUTTON ) )
+			modifying_picker = true;
+		else if ( modifying_picker && key_released ( VK_LBUTTON ) )
+			modifying_picker = false;
+
 		
-	   
-	   
-		
-		 bool hovering_hue = ( mouse_pos.x > this->hue_bb_min.x && mouse_pos.y > this->hue_bb_min.y && mouse_pos.x < this->hue_bb_max.x && mouse_pos.y < this->hue_bb_max.y );
-		 if ( hovering_hue && key_down ( VK_LBUTTON ) ) {
+		 bool hovering_hue = !( modifying_alpha || modifying_picker) && ( mouse_pos.x > this->hue_bb_min.x && mouse_pos.y > this->hue_bb_min.y && mouse_pos.x < this->hue_bb_max.x && mouse_pos.y < this->hue_bb_max.y );
+
+		 if ( hovering_hue && key_pressed ( VK_LBUTTON ) )
+			 modififing_hue = true;
+		 else if ( modififing_hue && key_released ( VK_LBUTTON ) )
+			 modififing_hue = false;
+
+		 if ( modififing_hue ) {
 		
 			 this->colHSV[0] = ( this->hue_bb_max.y - mouse_pos.y  );
 			 this->colHSV [ 0 ] /= ( this->hue_bb_max.y - this->hue_bb_min.y  );
 			 this->colHSV [ 0 ] = ( this->colHSV[0] * 100.f / 100.f ) * 1.f;
 
+			 this->colHSV [ 0 ] =  std::clamp ( this->colHSV [ 0 ], 0.f, 1.f );
 
 			 ImGui::ColorConvertHSVtoRGB ( 1.f - colHSV [ 0 ], colHSV [ 1 ], 1.f - colHSV [ 2 ], this->color->Value.x, this->color->Value.y, this->color->Value.z );
 			 //this->color->Value.w = this->alpha * ( 255 / 255 ) * 255; bugg
@@ -319,18 +328,24 @@ namespace ui {
 			 return;
 		 }
 		 bool hovering_alpha = ( mouse_pos.x > this->alpha_bb_min.x && mouse_pos.y > this->alpha_bb_min.y && mouse_pos.x < this->alpha_bb_max.x && mouse_pos.y < this->alpha_bb_max.y );
-		 if ( hovering_alpha && key_down ( VK_LBUTTON ) ) {
+
+		 if ( hovering_alpha && key_pressed ( VK_LBUTTON ) )
+			 modifying_alpha = true;
+		 else if ( modifying_alpha && key_released ( VK_LBUTTON ) )
+			 modifying_alpha = false;
+
+		 if ( modifying_alpha && key_down ( VK_LBUTTON ) ) {
 
 			 this->alpha = ( this->alpha_bb_max.y - mouse_pos.y );
 			 this->alpha /= ( this->alpha_bb_max.y - this->alpha_bb_min.y );
 			 this->alpha = ( this->alpha * 100.f / 100.f );
-		 
+			 this->alpha = std::clamp ( this->alpha, 0.f, 1.f );
 			 this->color->Value.w = this->alpha;// this->alpha * ( 255 / 255 ) * 255;
 			  //this->color->Value.w = 0;
 			 return;
 
 		 }
-		 if ( hovering_picker && key_down ( VK_LBUTTON ) ) {
+		 if ( modifying_picker  ) {
 
 			 this->colHSV [ 1 ] = ( mouse_pos.x  -  this->picker_bb_min.x);
 			 this->colHSV [ 1 ] /= ( this->picker_bb_max.x - this->picker_bb_min.x );
@@ -340,6 +355,8 @@ namespace ui {
 			 this->colHSV [ 2 ] /= ( this->picker_bb_max.y - this->picker_bb_min.y );
 			 this->colHSV [ 2 ] = ( this->colHSV [ 2 ] * 100.f / 100.f ) ;
 
+			 this->colHSV [ 1 ] =  std::clamp ( this->colHSV [ 1 ], 0.f, 1.f );
+			 this->colHSV [ 2 ] = std::clamp ( this->colHSV [ 2 ], 0.f, 1.f );
 
 			 ImGui::ColorConvertHSVtoRGB ( 1.f - colHSV [ 0 ], colHSV [ 1 ],  1.f - colHSV [ 2 ], this->color->Value.x, this->color->Value.y, this->color->Value.z ); //this->color->Value.w = this->alpha * ( 255 / 255 ) * 255; //nu mstiu ce e cu asta aici dar de aici pare sa fie bugul
 
@@ -349,6 +366,7 @@ namespace ui {
 		    this->color->get_rgb ( );
 
 			this->hex = rgb2hex ( this->color->rgb.x, this->color->rgb.y, this->color->rgb.z, true );
+
 		 }
 
 		 bool hovering_copy = ( mouse_pos.x > this->copy_bb_min.x && mouse_pos.y > this->copy_bb_min.y && mouse_pos.x < this->copy_bb_max.x && mouse_pos.y < this->copy_bb_max.y );
@@ -359,7 +377,7 @@ namespace ui {
 		 else if ( hovering_paste && key_released ( VK_LBUTTON ) ) 			 {
 			 this->hex = get_clipboard ( );
 			 *this->color = hex2rgb ( this->hex );
-			// this->colHSV [ 0 ] = 1.f - this->color->Value.x;
+		
 			 this->picker_cursor.x = ( this->color->Value.y / 100.0 ) * this->picker_width * 100;
 			 this->picker_cursor.y = ( this->color->Value.z / 100.0 ) * this->picker_height * 100;
 

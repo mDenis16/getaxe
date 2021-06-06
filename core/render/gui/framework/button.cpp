@@ -86,7 +86,7 @@ namespace ui {
 
 		
 
-		if ( this->hovering && key_released ( VK_LBUTTON ) ) {
+		if ( this->hovering && key_pressed ( VK_LBUTTON ) ) {
 			
 			this->call_back ( );
 

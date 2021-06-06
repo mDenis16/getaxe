@@ -1,6 +1,8 @@
 
 
 #define PREVIEW
+#include <deque>
+#include <string>
 
 namespace ui {
 
@@ -18,6 +20,18 @@ namespace ui {
 
 	bool key_released ( const int key );
 
+	ImVec2 calculate_center ( ImVec2 a, ImVec2 b );
+
+	class debug_log {
+	public:
+		~debug_log ( ) {
+			
+		}
+		debug_log ( std::string msg ) { text = msg; time = ImGui::GetTime ( ); }
+		std::string text;
+		float time;
+	};
+	extern std::deque<debug_log *> debug_logs;
 
 	extern ImFont * font_title;
 	extern ImFont * font_widgets;

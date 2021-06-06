@@ -46,39 +46,46 @@
 		control_rcs ( aim_angles );
 	
 
-		
+		aim_angles.angle_normalize ( );
+
 		vec3_t delta;
 		delta.x = current_cmd->viewangles.x - aim_angles.x;
 		delta.y = current_cmd->viewangles.y - aim_angles.y;
 		delta.angle_normalize ( );
-	
-
-		float delta_percent_X = delta.x / 100.f;
-		float dleta_percent_Y = delta.y / 100.f;
 
 
 
-		float speed = active_target->velocity ( ).Length2D ( );
-	
-	
-		if ( !is_singleshot && dt_progress >= 1.f ) {
-			current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( avoid_bezier ? settings->aim_speed /4.f : ( settings->aim_speed * speed * 0.01f  ), 1.f, 100.f );
-			current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( avoid_bezier ? settings->aim_speed / 4.f : ( settings->aim_speed * speed * 0.01f ), 1.f, 100.f );
+		std::cout << " aim progress " << dt_progress << std::endl;
+
+
+		if ( !delta.is_zero ( ) ) {
+
+			float delta_percent_X = delta.x / 100.f;
+			float dleta_percent_Y = delta.y / 100.f;
+
+
+
+			float speed = active_target->velocity ( ).Length2D ( );
+
+
+			if ( !is_singleshot && dt_progress >= 1.f ) {
+				current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( ( settings->aim_speed * 1.4347826087f ) + speed * .5f, 1.f, 100.f );
+				current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( ( settings->aim_speed * 1.4347826087f ) + speed * .5f, 1.f, 100.f );
+				std::cout << " linear smooth " << std::endl;
+			}
+			else {
+				current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( settings->aim_speed - speed * .1f, 1.f, 100.f );
+				current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( settings->aim_speed - speed * .1f, 1.f, 100.f );
+
+			}
+
+
+
+
+			current_cmd->viewangles.angle_normalize ( );
+
+			interfaces::engine->set_view_angles ( current_cmd->viewangles );
 		}
-		else {
-			current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( settings->aim_speed - speed * .1f, 1.f, 100.f );
-			current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( settings->aim_speed - speed * .1f, 1.f, 100.f );
-
-		}
-	
-		
-		
-		
-		current_cmd->viewangles.angle_normalize ( );
-		current_cmd->viewangles.angle_clamp ( );
-
-		interfaces::engine->set_view_angles ( current_cmd->viewangles );
-		old_angles = current_cmd->viewangles;
 
 	}
 	double easeInExpo ( double t ) {
@@ -126,7 +133,7 @@
 
 		if ( !settings->enabled )
 			return;
-
+		changed_target = false;
 
 		is_singleshot = config.active_category == 0 || config.active_category == 1 || config.active_category == 4;
 		
@@ -150,34 +157,43 @@
 
 			find_target ( );
 
-			if ( valid_target && active_target && settings->aim_speed > 1.f ) {
-
+			if ( valid_target && active_target && settings->aim_speed > 1.f  && active_target->is_alive()) {
+				if ( first_aim ) {
+					float angle_to_enemy = math::calc_angle ( local_pointer->origin ( ), active_target->origin ( ) ).y;
+					original_angle = math::normalize_yaw ( angle_to_enemy );
+				}
 				static auto predict_origin = [ ] ( vec3_t origin, vec3_t velocity, int ticks ) {
 					return origin + ( velocity * ( interfaces::globals->interval_per_tick * static_cast< float >( ticks ) ) );
 				};
 
 				int predict_ticks = dt_progress <= 0.3f ? 5 : 2;
 
+				vec3_t target_hitbox = active_target->get_hitbox_position ( hitbox_head );
+
+				if ( !target_hitbox.is_zero ( ) && local_pointer->can_see_player_pos ( active_target, localdata.eye_position, target_hitbox ) ) {
 
 
-				hitbox = predict_origin ( active_target->get_hitbox_position ( hitbox_head ), active_target->velocity ( ), predict_ticks );
+					hitbox = predict_origin ( active_target->get_hitbox_position ( hitbox_head ), active_target->velocity ( ), predict_ticks );
 
-				if ( !local_pointer->can_see_player_pos ( active_target, localdata.eye_position, hitbox ) ) {
-					reset_target ( );
-					return;
+				
+					
+
+					vec3_t pos = calculate_trail ( );
+
+					if ( !pos.is_zero ( ) ) {
+
+						aim_at ( pos );
+					}
+					else {
+						std::cout << "pos is zero" << std::endl;
+					}
 				}
-
-				vec3_t pos = calculate_trail ( );
-
-				if ( !pos.is_zero ( ) ) {
-
-					aim_at ( pos );
-				}
-
 			}
 			else {
-				dt_progress = 0.f;
-				target_index = -1;
+				if (valid_target || active_target )
+				reset_target ( );
+
+
 				if (is_singleshot )
 				   in_aiming = false;
 			}
@@ -187,10 +203,7 @@
 				reset_target ( );
 				
 			}
-			dt_progress = 0.f;
-			target_index = -1;
-			last_target_index = -1;
-			in_aiming = false;
+			
 		
 		}
 		//std::cout << "target index " << target_index << std::endl;
@@ -216,15 +229,15 @@
 					cmd->buttons |= in_attack;
 			}
 			 
-			if ( settings->shoot_delay > 0.f && current_cmd->buttons & in_attack && !is_singleshot ) {
+			if ( active_target && valid_target && settings->shoot_delay > 0.f && current_cmd->buttons & in_attack && !is_singleshot ) {
 				if ( dt_progress <= ( settings->shoot_delay * 0.01f ) ) {
 					current_cmd->buttons &= ~in_attack; //delay shot
-					std::cout << " delay shoot " << std::endl;
+					//std::cout << " delay shoot " << std::endl;
 				}
 			}
 			
 		}
-		std::cout << "dt_progress " << dt_progress << std::endl;
+		//std::cout << "dt_progress " << dt_progress << std::endl;
 		changed_target = false;
 		//std::cout << "shot this tick"  << (did_attack_before  ? "true" : "false") << std::endl;
 	}
@@ -254,13 +267,19 @@
 
 		vec3_t forward = head_start + ( forward_dirrection * distance_to_hitbox );
 
+		float angle_to_enemy = math::calc_angle ( local_pointer->origin ( ), active_target->origin ( ) ).y;
+		angle_to_enemy = math::normalize_yaw ( angle_to_enemy );
+
+
+		if ( first_aim || (!settings->lock_path && avoid_bezier) || changed_target) {
+			start_position = forward;
+			std::cout << " grabbed start_position " <<  std::endl;
+			first_aim = false;
+			original_angle = angle_to_enemy;
+		}
+		
 		
 
-		if ( first_aim || (!settings->lock_path && avoid_bezier) || changed_target ) {
-			start_position = forward;
-			//std::cout << " grabbed start_position " <<  std::endl;
-			first_aim = false;
-		}
 
 
 		if ( !start_position.is_zero ( ) ) {
@@ -269,11 +288,13 @@
 			if ( settings->aim_speed > 0.f && current_cmd->command_number ) {
 				dt_progress += interfaces::globals->interval_per_tick * ( settings->aim_speed * 0.1f );
 				
+				
 			}
+			if ( dt_progress >= 1.f ) dt_progress = 1.f;
 		//	else
 				//std::cout << "avoiding bezier " << std::endl;
 			
-			dt_progress = std::clamp ( dt_progress, 0.f, 1.f );
+			
 			ImVec2 start2d, end2d;
 
 

@@ -46,10 +46,11 @@ int c_legitbot::best_target ( bool no_fov ) {
 
 void c_legitbot::find_target ( ) {
 	/*we can make lock target here*/
-	if ( !settings->lock_target || target_index == -1 ) { /*there is no target at the moment find one*/
+	if ( target_index == -1 ) { /*there is no target at the moment find one*/
 		target_index = best_target ( );
 		active_target = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( target_index ) );
 		valid_target = active_target != nullptr; /* check if there is no target in this tick*/
+
 	}
 	else /*check if target is still valid, if not search one in the same tick*/ {
 	 
@@ -57,6 +58,10 @@ void c_legitbot::find_target ( ) {
 
 		if ( active_target == nullptr || ( active_target && !active_target->is_alive ( ) ) ) /*reset target if is no longer available*/ {
 			reset_target ( );
+			if ( settings->lock_target ) {
+				in_aiming = false;
+				return;
+			}
 			target_index = best_target ( ); // find new one in the same tick
 			active_target = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( target_index ) );
 			valid_target = active_target != nullptr;
@@ -67,6 +72,7 @@ void c_legitbot::find_target ( ) {
 
 
 	}
+	
 
 	if ( target_index != -1 && last_target_index != -1 && target_index != last_target_index ) {
 		dt_progress = 0.f;

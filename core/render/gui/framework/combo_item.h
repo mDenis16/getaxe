@@ -8,8 +8,8 @@ namespace ui {
 
 		std::string title;
 
-		ImVec2 min;
-		ImVec2 max;
+		float alpha_progress = 0.f;
+		float target_alpha_progress = 0.f;
 		std::vector<ImVec2> triangle;
 		int* value;
 			
@@ -45,6 +45,8 @@ namespace ui {
 		void handle ( ) override;
 		void update ( ) override;
 		void handle_mouse_input ( ) override;
+
+		void handle_hovering ( );
 
 	};
 }
