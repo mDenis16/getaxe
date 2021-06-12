@@ -65,11 +65,28 @@ namespace ui {
 		
     	//this->renderer->AddRectFilled (this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ), 0.f );
 
-	  float progress = ( this->animation_step - this->bb_min.x ) / ( this->bb_max.x - this->bb_min.x );
+		float progress_alpha = ImGui::GetTime ( ) - hover_start_time;  progress_alpha = std::clamp ( progress_alpha * 3.5f, 0.f, 1.f );
 
-	    this->renderer->AddRect (ImVec2( this->bb_min.x - 9.f, this->bb_min.y), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 0,0, 0, 15 ), 8.5f );
-	     this->renderer->AddRectFilled ( ImVec2 ( this->bb_min.x - 9.f, this->bb_min.y ), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 46, 49, 52, 170 ), 8.5f );
 
+		int alpha;
+		
+		if ( this->hovering ) {
+			alpha  = ( int ) std::lerp (( max_alpha * 0.05f ), max_alpha * 0.274f, progress_alpha );
+			
+		}
+		else {
+			alpha  = ( int ) std::lerp ( ( max_alpha * 0.05f ), max_alpha * 0.274f, 1.f -  progress_alpha );
+			
+		}
+
+	  float progress = (float)( this->animation_step - this->bb_min.x ) / (float)( this->bb_max.x - this->bb_min.x );
+
+	    
+	     this->renderer->AddRectFilled ( ImVec2 ( this->bb_min.x - 9.f, this->bb_min.y ), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 46, 49, 52, (int)(max_alpha * 0.66f) ), 8.5f );
+
+		
+
+		 this->renderer->AddRect ( ImVec2 ( this->bb_min.x - 9.f, this->bb_min.y ), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y ), ImColor ( 255, 255, 255, alpha ), 8.5f );
 	  ImVec2 center;
 	  center.x = ( bb_min.x + bb_max.x ) / 2.f;
 	  center.y = ( bb_min.y + bb_max.y ) / 2.f;
@@ -78,15 +95,15 @@ namespace ui {
 
 		 //25, 125, 123, 255
 
-		 int r = static_cast<int>( std::lerp ( 255, 25, progress ));
-		 int g = static_cast< int >( std::lerp ( 255, 125, progress ));
-		 int b = static_cast< int >( std::lerp ( 255, 123, progress ));
+	  int r = static_cast< int >( std::lerp ( max_alpha, ( int )(max_alpha * 0.09f), progress ) );
+		 int g = static_cast< int >( std::lerp ( max_alpha, ( int ) ( max_alpha * 0.4901f ), progress ));
+		 int b = static_cast< int >( std::lerp ( max_alpha, ( int ) ( max_alpha * 0.482f ), progress ));
 
 		
 		  
-		 ImColor progress_color = ImColor ( r,g,b, 255 );
+		 ImColor progress_color = ImColor ( r,g,b, max_alpha );
 
-		   this->renderer->AddShadowCircle ( ImVec2 ( this->animation_step, ( bb_min.y + bb_max.y ) / 2.f ), 8.f, ImColor ( 0, 0, 0, 125 ), 3.f, ImVec2 ( 0, 0 ) );
+		   this->renderer->AddShadowCircle ( ImVec2 ( this->animation_step, ( bb_min.y + bb_max.y ) / 2.f ), 8.f, ImColor ( 0, 0, 0, (int)( max_alpha * 0.49f)), 3.f, ImVec2 ( 0, 0 ) );
 	       this->renderer->AddCircleFilled ( ImVec2 ( this->animation_step, ( bb_min.y + bb_max.y ) / 2.f ), 6.f, progress_color );
 		
 
@@ -96,9 +113,21 @@ namespace ui {
 		   float offset_x = 1.2f;
 		   float offset_y = 1.2f;
 
-	
-		   this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), this->title.c_str() );
+
+		   int alpha_title;
+
+		   if ( this->hovering ) {
+			   alpha_title = ( int ) std::lerp ( ( int ) ( max_alpha * 0.88f ), max_alpha, progress_alpha );
+
+		   }
+		   else {
+			   alpha_title = ( int ) std::lerp ( ( int ) ( max_alpha * 0.88f ), max_alpha, 1.f - progress_alpha );
+
+		   }
+
+		   this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, alpha_title ), this->title.c_str() );
 		
+		  
 
 		   for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
 			   this->children.at ( i )->draw ( );
@@ -113,8 +142,8 @@ namespace ui {
 
 
 		auto mouse_pos = ui::get_cursor ( );
-
-		this->hovering = ( mouse_pos.x > this->bb_min.x && mouse_pos.y > this->bb_min.y && mouse_pos.x < this->bb_max.x && mouse_pos.y < this->bb_max.y );
+		//ImVec2 ( this->bb_min.x - 9.f, this->bb_min.y ), ImVec2 ( this->bb_max.x + 9.f, this->bb_max.y )
+		this->hovering = ( mouse_pos.x > this->bb_min.x - 9.f && mouse_pos.y > this->bb_min.y && mouse_pos.x < this->bb_max.x + 9.f && mouse_pos.y < this->bb_max.y );
 	}
 	void checkbox::draw_keybind ( ) {
 		if ( !this->key_bind_open )
@@ -126,6 +155,8 @@ namespace ui {
 
 		handle_mouse_input ( );
 
+		
+
 		if ( this->should_reset ) {
 			this->animation_step = this->bb_min.x;
 			this->should_reset = false;
@@ -136,20 +167,16 @@ namespace ui {
 			this->should_reanimate = false;
 		}
 
-		if ( this->in_animation ) {
-			this->hovering = false;
-		}
+
+
 		if ( this->hovering && key_released ( VK_RBUTTON ) ) {
 			this->key_bind_open = !this->key_bind_open;
-
 		}
+
+		if ( this->hovering && key_pressed ( VK_LBUTTON )  && !this->in_animation )
+			*this->value = !*this->value;
 		
-	
-		if ( this->hovering && ( GetAsyncKeyState ( VK_LBUTTON ) & 0x8000 ) ) {
-
-			this->in_animation = true;
-
-		} else if ( *this->value != this->old_value ) {
+	    if ( *this->value != this->old_value ) {
 
 		
 			this->updated_last_time = true;
@@ -190,6 +217,15 @@ namespace ui {
 						this->updated_last_time = false;
 				}
 			}
+		}
+
+		if ( !this->in_animation ) {
+			if ( this->hovering != this->was_hovering )
+				hover_start_time = ImGui::GetTime ( );
+
+
+
+			this->was_hovering = this->hovering;
 		}
 	}
 	void checkbox::update ( ) {

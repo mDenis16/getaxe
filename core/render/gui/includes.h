@@ -50,6 +50,7 @@ namespace ui {
 		void movement_menu ( object * main_window, sub_tab * sub_tab );
 
 		namespace legitbot {
+			extern 	child_window * main_tab;
 			void on_weapon_change ( int weapon, int category );
 			void init ( object * main_window, sub_tab * sub_tab, std::vector<std::string> weapons );
 			void init_values ( weapon_settings * cfg );

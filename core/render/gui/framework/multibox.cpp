@@ -10,9 +10,13 @@ namespace ui {
 	double easeOutCirc ( double t ) {
 		return sqrt ( t );
 	}
-
+	double easeOutCubiccc ( double t ) {
+		return 1 + ( --t ) * t * t;
+	}
 
 	void multibox::handle_scroll ( ) {
+		if ( !this->opened )return;
+
 		if ( !should_be_scrollable ) return;
 
 		float windowSize = 120;
@@ -269,11 +273,28 @@ namespace ui {
 		
 		}
 
-		this->renderer->AddRectFilled ( this->bb_min, this->bb_max, ImColor ( 27, 28, 31, 255 ), 3.5f );
-		this->renderer->AddRect ( this->bb_min, this->bb_max, ImColor ( 255, 255, 255, 15 ), 4.5f );
+		this->renderer->PushClipRect ( this->bb_min, ImVec2 ( this->bb_max.x, this->bb_max.y + 2 ) );
+		float progress_alpha = ImGui::GetTime ( ) - hover_start_time;  progress_alpha = std::clamp ( progress_alpha * 3.5f, 0.f, 1.f );
+
+
+		int alpha;
+
+		if ( this->hovering ) {
+			alpha = ( int ) std::lerp ( 20.f, 35.f, progress_alpha );
+
+		}
+		else {
+			alpha = ( int ) std::lerp ( 20.f, 35.f, 1.f - progress_alpha );
+
+		}
+
+		this->renderer->AddRectFilled ( this->bb_min, this->bb_max, ImColor ( 27, 28, 31, ( int ) std::lerp ( 50, 160, ( float ) easeOutCubic ( animation_progress ) ) ), 3.5f );
+		auto prog = ( int ) ( !this->opened ? alpha : std::lerp ( 35.f, 70.f, ( float ) easeOutCubic ( animation_progress ) ) );
+
+		this->renderer->AddRect ( this->bb_min, this->bb_max, ImColor ( 255, 255, 255, prog ), 4.5f );
 
 	
-			this->renderer->PushClipRect ( this->bb_min, this->bb_max );
+			//this->renderer->PushClipRect ( this->bb_min, this->bb_max );
 			bool first = false;
 			for ( size_t i = 0; i < children.size ( ); i++ ) {
 				auto & child = children.at ( i );
@@ -388,7 +409,8 @@ namespace ui {
 
 		handle_mouse_input ( );
 
-
+		if ( this->was_hovering != this->hovering )
+			this->hover_start_time = ImGui::GetTime ( );
 
 		bool hovering_bb =  ( mouse_pos.x > this->bb_min.x && mouse_pos.y > this->bb_min.y && mouse_pos.x < this->bb_max.x && mouse_pos.y < this->original_bb_max_y );
 
@@ -400,8 +422,11 @@ namespace ui {
 			
 			if ( !this->hovering_thumb  ) {
 				
-				this->opened = !this->opened;
-				this->scroll_progress = this->target_scroll_progress = 0.f;
+				this->opened = !this->opened; 
+
+				this->scroll_progress = this->target_scroll_progress = thumb_progress = 0.f;
+
+				for ( auto & child : children ) child->update ( );
 
 				if ( this->opened )
 					this->target_bb_y = this->bb_max_calc;
@@ -435,7 +460,7 @@ namespace ui {
 
 
 				this->bb_min = ImVec2 ( this->maxs.x - this->bb_width, this->mins.y + 3 );
-				this->bb_max = ImVec2 ( this->maxs.x, this->maxs.y );
+				this->bb_max = ImVec2 ( this->maxs.x + 4.5f, this->maxs.y );
 
 				this->original_bb_max_y = this->bb_max.y;
 			}
@@ -444,7 +469,7 @@ namespace ui {
 				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, back->maxs.y + 8 );
 				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
 
-				this->bb_max = ImVec2 ( this->maxs.x, this->maxs.y );
+				this->bb_max = ImVec2 ( this->maxs.x + 4.5f, this->maxs.y );
 				this->bb_min = ImVec2 ( this->maxs.x - bb_width - this->parrent->padding, this->mins.y );
 
 
@@ -459,7 +484,7 @@ namespace ui {
 
 
 			this->bb_min = ImVec2 ( this->maxs.x - this->bb_width, this->mins.y + 3 );
-			this->bb_max = ImVec2 ( this->maxs.x, this->maxs.y );
+			this->bb_max = ImVec2 ( this->maxs.x + 4.5f, this->maxs.y );
 
 			this->original_bb_max_y = this->bb_max.y;
 		}

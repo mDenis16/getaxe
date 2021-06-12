@@ -42,11 +42,12 @@ namespace ImGui
 namespace ui {
 
 	bezier_dot::bezier_dot ( object * parent, float & value_x, float & value_y ) {
-
+		this->animation_start = ImGui::GetTime ( );
 		this->parrent = parent;
 		this->renderer = this->parrent->renderer;
 		this->value_x = &value_x;
 		this->value_y = &value_y;
+		this->in_animation = true;
 
 		this->parrent->add_children ( this );
 
@@ -80,6 +81,9 @@ namespace ui {
 	}
 	void bezier_editor::draw ( ) {
 		handle ( );
+
+		for ( auto & child : children )
+			child->update ( );
 
 		static struct { const char * name; float points [ 4 ]; } presets [ ] = {
 		  { "Linear", 0.000f, 0.000f, 1.000f, 1.000f },
@@ -199,6 +203,7 @@ ImColor ( 255, 255, 255, 25 ) );
 	void bezier_dot::draw ( ) {
 		
 		handle ( );
+		update ( );
 
 		const ImVec2 circle_center = ImVec2 ( this->mins.x + 5.5f, this->mins.y + 5.5f );
 
@@ -217,7 +222,7 @@ ImColor ( 255, 255, 255, 25 ) );
 
 		auto mouse_pos = ui::get_cursor ( );
 
-
+	
 		this->hovering = ( mouse_pos.x > this->mins.x && mouse_pos.y > this->mins.y && mouse_pos.x < this->maxs.x && mouse_pos.y < this->maxs.y );
 
 		if ( this->hovering && key_down ( VK_LBUTTON ) && this->can_focus ( ) ) {
@@ -266,23 +271,51 @@ ImColor ( 255, 255, 255, 25 ) );
 		}
 
 	}
+	double easeOutBounce ( double t ) {
+		return 1 - pow ( 2, -6 * t ) * abs ( cos ( t * 3.14159265358979323846 * 3.5 ) );
+	}
 	void bezier_dot::update ( ) {
 
+		float prog = easeOutBounce(std::clamp ( ( float ) ( ImGui::GetTime ( ) - animation_start ) * 0.5f, 0.f, 1.f ));
 
-		if ( this->index > 0 ) {
-			this->mins.x = this->parrent->mins.x + ( ( this->parrent->maxs.x - 11.f - this->parrent->mins.x ) * (  *this->value_x ) );
-			this->maxs.x = this->mins.x + 5.5f * 2.f;
+		if ( prog >= 1.f )
+			this->in_animation = false;
 
-			this->mins.y = this->parrent->mins.y + ( ( this->parrent->maxs.y - 11.f - this->parrent->mins.y ) * ( 1.f -  *this->value_y ) );
-			this->maxs.y = this->mins.y + 5.5f * 2.f;
+		if ( this->in_animation ) {
+			if ( this->index > 0 ) {
+				this->mins.x = this->parrent->mins.x + ( ( this->parrent->maxs.x - 11.f - this->parrent->mins.x ) * ( (std::lerp(0.f, *this->value_x, prog ))) );
+				this->maxs.x = this->mins.x + 5.5f * 2.f;
+
+				this->mins.y = this->parrent->mins.y + ( ( this->parrent->maxs.y - 11.f - this->parrent->mins.y ) * ( 1.f -  ( std::lerp ( 0.f, *this->value_y, prog )) ) );
+				this->maxs.y = this->mins.y + 5.5f * 2.f;
+			}
+			else {
+				this->mins.x = this->parrent->mins.x + ( ( this->parrent->maxs.x - 11.f - this->parrent->mins.x ) * (  ( (std::lerp ( 0.f, *this->value_x, prog )) )) );
+				this->maxs.x = this->mins.x + 5.5f * 2.f;
+
+				this->mins.y = this->parrent->mins.y + ( ( this->parrent->maxs.y - 11.f - this->parrent->mins.y ) * ( 1.f -  ( (std::lerp ( 0.f, *this->value_y, prog )) )) );
+				this->maxs.y = this->mins.y + 5.5f * 2.f;
+			}
 		}
 		else {
-			this->mins.x = this->parrent->mins.x + ( ( this->parrent->maxs.x - 11.f - this->parrent->mins.x ) * (  *this->value_x) );
-			this->maxs.x = this->mins.x + 5.5f * 2.f;
+			if ( this->index > 0 ) {
+				this->mins.x = this->parrent->mins.x + ( ( this->parrent->maxs.x - 11.f - this->parrent->mins.x ) * ( *this->value_x ) );
+				this->maxs.x = this->mins.x + 5.5f * 2.f;
 
-			this->mins.y = this->parrent->mins.y + ( ( this->parrent->maxs.y - 11.f - this->parrent->mins.y ) * ( 1.f - *this->value_y) );
-			this->maxs.y = this->mins.y + 5.5f * 2.f;
+				this->mins.y = this->parrent->mins.y + ( ( this->parrent->maxs.y - 11.f - this->parrent->mins.y ) * ( 1.f - *this->value_y ) );
+				this->maxs.y = this->mins.y + 5.5f * 2.f;
+			}
+			else {
+				this->mins.x = this->parrent->mins.x + ( ( this->parrent->maxs.x - 11.f - this->parrent->mins.x ) * ( *this->value_x ) );
+				this->maxs.x = this->mins.x + 5.5f * 2.f;
+
+				this->mins.y = this->parrent->mins.y + ( ( this->parrent->maxs.y - 11.f - this->parrent->mins.y ) * ( 1.f - *this->value_y ) );
+				this->maxs.y = this->mins.y + 5.5f * 2.f;
+			}
 		}
+
+
+		
 
 
 

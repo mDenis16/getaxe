@@ -21,9 +21,26 @@ namespace ui {
 		float middle_y = ( text_mins.y + text_maxs.y ) / 2.f;
 
 		
-		this->renderer->AddText ( this->icon_font, this->icon_size, ImVec2 ( center_X - text_size.x / 2.f, middle_y - text_size.y - 1.175f + offset_y) , ImColor ( 255, 255, 255, this->selected ? 245 : 195 ), this->icon_text.data() );
+		float progress = ImGui::GetTime ( ) - hover_start_time;  progress = std::clamp ( progress * 3.5f, 0.f, 1.f );
 
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f - text_size_name.x / 2.f, middle_y - text_size.y + text_size.y + 1.175f  ), ImColor ( 255, 255, 255, this->selected ? 245 : 195 ), this->text.c_str ( ) );
+
+		int alpha = 0;
+		if ( this->selected )alpha = 255;
+		else {
+			if ( this->hovering )
+				alpha = ( int ) std::lerp ( 155.f, 255.f, progress );
+			else
+				alpha = ( int ) std::lerp ( 155.f, 255.f, 1.f - progress );
+		}
+
+		if (this->selected )
+		this->renderer->AddText ( this->icon_font, this->icon_size, ImVec2 ( center_X - text_size.x / 2.f + 2.f, middle_y - text_size.y - 1.175f + offset_y + 2.f), ImColor ( 0, 0, 0, alpha ), this->icon_text.data ( ) );
+
+		this->renderer->AddText ( this->icon_font, this->icon_size, ImVec2 ( center_X - text_size.x / 2.f, middle_y - text_size.y - 1.175f + offset_y) , ImColor ( 255, 255, 255, alpha ), this->icon_text.data() );
+		if ( this->selected )
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f - text_size_name.x / 2.f + 2.f, middle_y - text_size.y + text_size.y + 1.175f + 2.f), ImColor ( 0, 0, 0, alpha ), this->text.c_str ( ) );
+
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f - text_size_name.x / 2.f, middle_y - text_size.y + text_size.y + 1.175f  ), ImColor ( 255, 255, 255, alpha ), this->text.c_str ( ) );
 	
 
 		//this->renderer->AddRect (this->mins, this->maxs, ImColor(255, 0,255, 255));
@@ -33,7 +50,12 @@ namespace ui {
 	}
 	void sub_tab::handle ( ) {
 		this->handle_mouse_input ( );
-		if ( this->hovering && key_released ( VK_LBUTTON ) ) {
+		if ( this->hovering && !this->was_hovering )
+			hover_start_time = ImGui::GetTime ( );
+		else if ( this->was_hovering && !this->hovering )
+			hover_start_time = ImGui::GetTime ( );
+
+		if ( this->hovering && key_down ( VK_LBUTTON ) ) {
 			if ( this->selected )
 				return;
 
@@ -88,6 +110,7 @@ namespace ui {
 						// If YES, then return number of children
 						ui::object * p = q.front ( );
 						p->should_reanimate = true;
+						p->should_reset = true;
 
 						q.pop ( );
 
@@ -103,6 +126,10 @@ namespace ui {
 			}
 		}
 		
+		
+
+
+		this->was_hovering = this->hovering;
 		
 	}
 	void sub_tab::handle_mouse_input ( ) {

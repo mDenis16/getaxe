@@ -19,7 +19,7 @@ namespace ui {
 	}
 	void tab::handle ( ) {
 		this->handle_mouse_input ( );
-		if ( this->hovering && key_released ( VK_LBUTTON ) )
+		if ( this->hovering && key_pressed ( VK_LBUTTON ) )
 		{
 			if ( this->selected )
 				return;

@@ -100,14 +100,15 @@ namespace ui {
 		scrollbar = 1 << 10,
 		render_forward = 1 << 11,
 		text_input_as_element = 1 << 12,
-		big_inventory_item = 1 << 13
+		big_inventory_item = 1 << 13, 
+		window_resizable = 1 << 14
 	};
 	
 	class object {
 	public:
 	
 		
-
+		int max_alpha = 255;
 		object * parrent = nullptr;
 		int flags = 0;
 		int width = 0;

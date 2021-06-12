@@ -1094,7 +1094,7 @@ public:
 				return vec3_t ( ( min.x + max.x ) * 0.5f, ( min.y + max.y ) * 0.5f, ( min.z + max.z ) * 0.5f );
 			}
 		}
-		delete bone_matrix;
+		delete[] bone_matrix;
 		return vec3_t {};
 	}
 	vec3_t get_hitbox_position ( matrix3x4_t bone_matrix [ MAXSTUDIOBONES ], studio_box_t * hitbox ) {

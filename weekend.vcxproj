@@ -120,6 +120,7 @@
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\movement\autostrafer.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
+    <ClCompile Include="core\features\visuals\damage_indicator\damage_indicator.cpp" />
     <ClCompile Include="core\features\visuals\grenade\visual_grenade.cpp" />
     <ClCompile Include="core\features\visuals\LOCAL\thirdperson.cpp" />
     <ClCompile Include="core\features\visuals\modulation\materials.cpp" />
@@ -128,6 +129,7 @@
     <ClCompile Include="core\features\visuals\player\visual_player.cpp" />
     <ClCompile Include="core\features\visuals\projectile\visual_project.cpp" />
     <ClCompile Include="core\features\visuals\projectile_prediction.cpp" />
+    <ClCompile Include="core\features\visuals\radar\radar.cpp" />
     <ClCompile Include="core\features\visuals\removals\removals.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\features\visuals\visual_handler.cpp" />
@@ -154,7 +156,10 @@
     <ClCompile Include="core\hooks\csplayer\setup_bones.cpp" />
     <ClCompile Include="core\hooks\csplayer\standard_blending_rules.cpp" />
     <ClCompile Include="core\hooks\csplayer\update_client_side_animation.cpp" />
+    <ClCompile Include="core\hooks\d3d\graphic.cpp" />
     <ClCompile Include="core\hooks\d3d\present_hk.cpp" />
+    <ClCompile Include="core\hooks\d3d\steam_present.cpp" />
+    <ClCompile Include="core\hooks\d3d\steam_reset.cpp" />
     <ClCompile Include="core\hooks\d3d\wnd_proc.cpp" />
     <ClCompile Include="core\hooks\engine\cl_move.cpp" />
     <ClCompile Include="core\hooks\engine\crc_server_check.cpp" />
@@ -244,10 +249,12 @@
     <ClInclude Include="core\features\legitbot\legitbot.h" />
     <ClInclude Include="core\features\movement\autostrafer.h" />
     <ClInclude Include="core\features\setup\animations.h" />
+    <ClInclude Include="core\features\visuals\damage_indicator\damage_indicator.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
     <ClInclude Include="core\features\visuals\modulation\modulation.h" />
     <ClInclude Include="core\features\visuals\player\visual_player.h" />
     <ClInclude Include="core\features\visuals\projectile\visual_projectile.h" />
+    <ClInclude Include="core\features\visuals\radar\radar.h" />
     <ClInclude Include="core\features\visuals\visuals.h" />
     <ClInclude Include="core\features\visuals\visual_entities.h" />
     <ClInclude Include="core\features\visuals\weapon\visual_weapon.h" />

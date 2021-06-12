@@ -13,6 +13,8 @@ namespace ui {
 
 		bool  open = false;
 
+		float state_change_time = 0.f;
+
 		float width = 185;
 		float height = 130;
 

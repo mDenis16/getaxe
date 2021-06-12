@@ -9,6 +9,8 @@ namespace ui {
 
 		std::string text;
 		float * value;
+		float start_animation_time = 0.f;
+		
 
 		int animated_alpha = 255;
 		ImVec2 animation_position;
@@ -26,6 +28,7 @@ namespace ui {
 	public:
 		bezier_dot ( object * parent, float& value_x, float& value_y );
 
+		float animation_start = 0.f;
 		float * value_x;
 		float * value_y;
 

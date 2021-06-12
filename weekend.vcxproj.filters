@@ -129,6 +129,11 @@
     <ClCompile Include="core\features\legitbot\weapon_grup_identifier.cpp" />
     <ClCompile Include="core\features\engine_prediction\engine_start.cpp" />
     <ClCompile Include="core\features\engine_prediction\engine_end.cpp" />
+    <ClCompile Include="core\features\visuals\radar\radar.cpp" />
+    <ClCompile Include="core\hooks\d3d\graphic.cpp" />
+    <ClCompile Include="core\hooks\d3d\steam_present.cpp" />
+    <ClCompile Include="core\hooks\d3d\steam_reset.cpp" />
+    <ClCompile Include="core\features\visuals\damage_indicator\damage_indicator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -273,6 +278,8 @@
     <ClInclude Include="core\features\legitbot\legitbot.h" />
     <ClInclude Include="core\features\autowall\autowall.h" />
     <ClInclude Include="core\features\engine_prediction\engine_prediction.h" />
+    <ClInclude Include="core\features\visuals\radar\radar.h" />
+    <ClInclude Include="core\features\visuals\damage_indicator\damage_indicator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

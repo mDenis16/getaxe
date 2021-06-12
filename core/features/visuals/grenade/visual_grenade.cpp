@@ -297,7 +297,7 @@ namespace visuals {
 
 
 			dormant = grenade->dormant ( );
-
+			is_fire = true;
 			index = grenade->index ( );
 			origin = grenade->origin ( );
 

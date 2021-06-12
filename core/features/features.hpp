@@ -21,6 +21,7 @@
 #include "../features/visuals/modulation/modulation.h"
 #include "../features/visuals/visuals.h"
 #include "../features/movement/autostrafer.h"
+#include "../features/visuals/damage_indicator/damage_indicator.h"
 #include "../render/d3dfont.h"
 
 

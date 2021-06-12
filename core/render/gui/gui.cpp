@@ -115,9 +115,10 @@ namespace ui {
 	MSG msg;
 
 	void * window_device = nullptr;
-
+	void * radar_window_extern = nullptr;
 	std::vector< key_bind_component *> key_bind_list;
 	ui::window * main_window = nullptr;
+	ui::window * radar_window = nullptr;
 	ImFont * font_title = nullptr;
 	ImFont * font_widgets = nullptr;
 	
@@ -147,6 +148,8 @@ namespace ui {
 
 		main_window = new ui::window ( "neverwin", 600, 700, render, menu_opened, 12.f );
 		main_window->flex = flex_direction::automatic;
+		main_window->is_main_window = true;
+		main_window->flags |= flags::window_resizable;
 		window_pointer_cheat = static_cast< void * >( main_window );
 
 		auto top_side = new ui::child_window ( "", 100, 100, ImColor ( 25, 25, 25, 255 ), main_window, child_type::tab_container );
@@ -203,6 +206,11 @@ namespace ui {
 		   	menu::settings_menu ( main_window, configs_sub_tab );
 		}
 
+		static bool open_radar = true;
+
+		 radar_window = new ui::window ( "Radar", 80, 80, render, open_radar, 12.f );
+		 radar_window->flags |= flags::window_resizable;
+		 radar_window_extern = radar_window;
 	}
 
 	void render_debug ( ) {
@@ -251,11 +259,17 @@ namespace ui {
 		if (!image_buffer )
 		    D3DXCreateTextureFromFile ( reinterpret_cast< IDirect3DDevice9 * >( ui::window_device ), "C:\\Users\\topor\\Desktop\\Portofoliu fizica\\test.png", &image_buffer );
 
-		render->AddImage ( image_buffer, ImVec2 ( 0, 0 ), ImVec2 ( 1920, 1080 ) );
+		//render->AddImage ( image_buffer, ImVec2 ( 0, 0 ), ImVec2 ( 1920, 1080 ) );
 #endif
+
 		main_window->handle ( );
 		main_window->draw ( );
 
+		radar_window->handle ( );
+		radar_window->draw ( );
+
+	//	std::string focused = ui::se
+	//	render->AddText ( ui::font_widgets, 13.f, ImVec2 ( 1920 - 130, 50 ), ImColor ( 123, 255, 125, 255 ), log->text.c_str ( ) );
 
 
 #ifdef PREVIEW_D3D

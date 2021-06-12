@@ -7,10 +7,20 @@
 namespace ui {
 
 	class window : public object {
+	private:
+		ImVec2 last_mouse_pos;
+		bool hovering_resize = false;
+		ImVec2 original_pos;
+		bool resizing = false;
+		ImVec2 resize_min, resize_max;
+	public:
+		bool is_main_window = false;
 		std::string title;
 		float rounding = 0.f;
 		bool dragging = false;
 		bool failed_dragging = false;
+		float delta_x = 0.f;
+		float delta_y = 0.f;
 		bool pressed_drag = false;
 		bool* open;
 	public:

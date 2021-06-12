@@ -28,7 +28,10 @@ namespace hooks::callback {
 
 		visuals::render = ImGui::GetBackgroundDrawList ( );
 		visuals::handler->on_render ( );
+		dmg_indicator->on_render ( );
 		overlay::present ( device, visuals::render );
+		if ( visuals::radar )
+			visuals::radar->on_render ( );
 
 		ImGui::Render ( );
 		ImGui_ImplDX9_RenderDrawData ( ImGui::GetDrawData ( ) );

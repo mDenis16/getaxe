@@ -8,7 +8,36 @@
 #include "../../features.hpp"
 
 namespace visuals {
+	void visual_player::render_range ( ) {
+ 
+		if ( !( taze || is_knife ) ) return;
 
+		
+		if ( taze && !cfg->taser_range )
+			return;
+
+		if ( is_knife && !cfg->knife_range )
+			return;
+
+
+
+			float step = M_PI * 2.0 / 32;
+			const float radius = is_knife ? 48.f : 70.f;
+			const vec3_t position = player->abs_origin ( );
+			ImVec2 screen; vec3_t location;
+			location.z = position.z;
+
+			for ( float a = 0; a < ( M_PI * 2.0 ); a += step ) {
+				location.x = radius * cos ( a ) + position.x; location.y = radius * sin ( a ) + position.y; 
+
+				if ( visuals::world_to_screen ( location, screen ) )
+					warning_range.push_back ( screen );
+			}
+
+
+			render->AddShadowConvexPoly ( warning_range.data ( ), warning_range.size ( ), is_knife  ? cfg->knife_range_color : cfg->taser_range_color, 30.f, ImVec2(0,0) );
+			warning_range.clear ( );
+	}
 	void visual_player::render_name ( ) {
 
 
@@ -56,8 +85,9 @@ namespace visuals {
 			overlay::text ( ImVec2 ( box_data.top_center.x, box_data.top_center.y - 16 ), wsTmp, config.player_visual [ type ].name_color, overlay::fonts_ns::esp, flags );
 		}
 		else {
+		//this->renderer->AddText ( this->icon_font, this->icon_size, ImVec2 ( center_X - text_size.x / 2.f + 2.f, middle_y - text_size.y - 1.175f + offset_y + 2.f), ImColor ( 0, 0, 0, alpha ), this->icon_text.data ( ) );
 			if ( cfg->shadow_name )
-				render->AddText ( visuals::esp_font, cfg->dynamic_name_size ? name_size : cfg->name_size, ImVec2 ( center_x + offset_x, center_y + offset_y ), ImColor ( 0, 0, 0, 255 ), print.c_str ( ) );
+				render->AddText ( visuals::esp_font, cfg->dynamic_name_size ? name_size : cfg->name_size, ImVec2 ( center_x + 1.f, center_y + 1.f ), ImColor ( 0, 0, 0, 255 ), print.c_str ( ) );
 
 			render->AddText ( visuals::esp_font, cfg->dynamic_name_size ? name_size : cfg->name_size, ImVec2 ( center_x, center_y ), config.player_visual [ type ].name_color, print.c_str ( ) );
 		}
@@ -235,12 +265,22 @@ namespace visuals {
 		clip = std::clamp ( clip, 0, 1000 );
 		max_clip = std::clamp ( max_clip, 1, 1000 );
 
+		float percent = 0.f;
+
+		if ( clip > 0 ) {
+			percent = (float)clip / (float)max_clip;
+
+		}
 		render->AddRect ( ImVec2 ( box_data.mins.x, box_data.maxs.y + 3 ), ImVec2 ( box_data.maxs.x, box_data.maxs.y + 6 ), ImColor ( 0, 0, 0, 125 ), 3.f );
-		render->AddRectFilled ( ImVec2 ( box_data.mins.x + 1, box_data.maxs.y + 4 ), ImVec2 ( box_data.maxs.x - 1, box_data.maxs.y + 5 ), ImColor ( 0, 0, 200, 255 ), 3.f );
+		render->AddRectFilled ( ImVec2 ( box_data.mins.x + 1, box_data.maxs.y + 4 ), ImVec2 ( box_data.mins.x  + (box_data.maxs.x - box_data.mins.x ) * percent - 1, box_data.maxs.y + 5 ), ImColor ( 0, 0, 200, 255 ), 3.f );
 
 
 
 	}
+	double easeOutBack ( double t ) {
+		return 1 + ( --t ) * t * ( 2.70158 * t + 1.70158 );
+	}
+
 	void visual_player::render_health ( ) {
 		static auto get_health_clr = [ & ] ( int health ) {
 			return ImColor ( static_cast< int >( 255 - ( health * 2.55f ) ), static_cast< int >( health * 2.55f ), 0, 100 );
@@ -288,9 +328,27 @@ namespace visuals {
 
 		const auto height = ( box_data.h - 2 ) * multiplier;
 
+		float progress_height = 0.f;
+		
+		if ( animating_health ) {
+			progress_height = ImGui::GetTime ( ) - this->health_animation_start;  progress_height = easeOutBack( std::clamp ( progress_height * 1.5f, 0.f, 1.f ));
+			if ( progress_height >= 1.f )
+				animating_health = false;
+		}
+		else {
+			progress_height = health * 0.01f;
+		}
+
+		float progress_health = 1.f; 
+		if ( animating_health ) 
+			progress_health = std::lerp ( health_on_change, health, progress_height );
+		else
+			progress_health = 	std::lerp ( 0.f, 100.f, progress_height );
+
 
 		const int red = static_cast< int >( 255 - health * 2.55f );
 		const int green = static_cast< int >( health * 2.55f );
+
 
 
 
@@ -299,7 +357,7 @@ namespace visuals {
 		//render->Flags = ImDrawListFlags_AntiAliasedLines || ImDrawListFlags_AntiAliasedLinesUseTex || ImDrawListFlags_AntiAliasedFill;
 
 		render->AddRectFilled ( ImVec2 ( box_data.mins.x - 5, box_data.mins.y ), ImVec2 ( box_data.mins.x - 2, box_data.maxs.y ), ImColor ( 0, 0, 0, 125 ) );
-		render->AddRectFilled ( ImVec2 ( box_data.mins.x - 4, box_data.mins.y + 1 ), ImVec2 ( box_data.mins.x - 3, box_data.maxs.y - 1 ), config.player_visual [ type ].health_color );
+		render->AddRectFilled ( ImVec2 ( box_data.mins.x - 4, box_data.mins.y + 1 ), ImVec2 ( box_data.mins.x - 3,  box_data.mins.y + 1 + ( box_data.maxs.y - box_data.mins.y ) * progress_health * 0.01f - 2 ), config.player_visual [ type ].health_color );
 
 		//filled_box ( box_data.x - 5.7f, box_data.y + box_data.h - height - 1, 1.0f, height - 1.5f, ImColor ( red, green, 0, static_cast< int >( 255 ) ) );
 		//primitive_string ( true, fonts [ FLAGS ],  rend_pos.x, rend_pos.y, ImColor(0, 0, 0, 255), ImColor ( 255, 255, 255, 255 ), font_center, std::to_string ( health ).c_str ( ) );
@@ -372,6 +430,8 @@ namespace visuals {
 				render_flags ( );
 			if ( cfg->skeleton )
 				render_skeleton ( );
+			if ( cfg->knife_range || cfg->taser_range )
+				render_range ( );
 
 			if ( type <= 1 && static_cast< player_visual * >( cfg )->view_barrel )
 				render_barrel ( );
@@ -416,7 +476,23 @@ namespace visuals {
 		maxs = player->maxs ( );
 		type = player->is_enemy ( ) ? 1 : 0;
 		valid = true;
+		if ( player->spotted ( ) && !spotted ) {
+			spot_time = ImGui::GetTime ( );
+		}
 
+		spotted = player->spotted ( );
+
+		is_knife = false;
+		taze = false;
+
+		if ( !animating_health && std::fabs ( health - old_health ) > 1 ) {
+			health_animation_start = ImGui::GetTime ( );
+			animating_health = true;
+			health_on_change = old_health;
+		}
+
+		old_health = health;
+		
 		on_screen = calculate_box ( );
 		distance = localdata.eye_position.distance_to ( player->abs_origin ( ) );
 
@@ -426,10 +502,16 @@ namespace visuals {
 
 			never_seen = false;
 		}
-
-		if ( player->active_weapon ( ) )
-			weapon_icon = weapon_icons [ player->active_weapon ( )->item_definition_index ( ) ];
-
+		
+		const auto weap = player->active_weapon ( );
+		if ( weap ) {
+			weapon_icon = weapon_icons [ weap->item_definition_index ( ) ];
+			clip = weap->clip1_count ( );
+			max_clip = weap->get_weapon_data ( )->iMaxClip1;
+			is_knife = weap->is_knife ( );
+ 
+			taze = weap->item_definition_index ( ) == weapon_taser;
+		}
 		if ( config.player_visual [ type ].skeleton && on_screen && !dormant && player && player->is_alive ( ) ) {
 			auto p_studio_hdr = interfaces::model_info->get_studio_model ( player->model ( ) );
 			if ( !p_studio_hdr )

@@ -1,0 +1,580 @@
+CCCC_Module@COLOR@struct@
+CCCC_ModExt@COLOR@struct@colorpicker.cpp@55@definition@F???0@LOC:5 COM:0 MVG:0@0@d@
+CCCC_Module@ImColor@@
+CCCC_Module@anonymous@@
+CCCC_Module@bezier_dot@@
+CCCC_Module@bezier_editor@@
+CCCC_Module@bool@@
+CCCC_Module@button@@
+CCCC_Module@char@builtin@
+CCCC_ModExt@char@builtin@<nofile>@0@builtin definition@d?????@@0@d@
+CCCC_Module@checkbox@@
+CCCC_Module@child_window@@
+CCCC_Module@colorpicker@@
+CCCC_Module@combo_item@@
+CCCC_Module@combobox@@
+CCCC_Module@config_box@@
+CCCC_Module@config_item@@
+CCCC_Module@double@builtin@
+CCCC_ModExt@double@builtin@<nofile>@0@builtin definition@d?????@@0@d@
+CCCC_Module@element_extender@@
+CCCC_Module@float@builtin@
+CCCC_ModExt@float@builtin@<nofile>@0@builtin definition@d?????@@0@d@
+CCCC_Module@function@@
+CCCC_Module@image_queue@@
+CCCC_Module@int@builtin@
+CCCC_ModExt@int@builtin@<nofile>@0@builtin definition@d?????@@0@d@
+CCCC_Module@inventory_changer@@
+CCCC_Module@inventory_item@@
+CCCC_Module@key_bind_item@@
+CCCC_Module@key_bind_muie@@
+CCCC_Module@key_selector@@
+CCCC_Module@long@builtin@
+CCCC_ModExt@long@builtin@<nofile>@0@builtin definition@d?????@@0@d@
+CCCC_Module@multibox@@
+CCCC_Module@object@@
+CCCC_Module@paintkit@@
+CCCC_Module@panel@@
+CCCC_Module@panel_container@@
+CCCC_Module@short@@
+CCCC_Module@slider@@
+CCCC_Module@slider_type@@
+CCCC_Module@small_text_input@@
+CCCC_Module@string@@
+CCCC_Module@sub_tab@@
+CCCC_Module@tab@@
+CCCC_Module@text_input@@
+CCCC_Module@ui@@
+CCCC_Module@vector@@
+CCCC_Module@void@builtin@
+CCCC_ModExt@void@builtin@<nofile>@0@builtin definition@d?????@@0@d@
+CCCC_Module@weapon@@
+CCCC_Module@window@@
+CCCC_Member@anonymous@BezierValue@@(...)@
+CCCC_MemExt@anonymous@BezierValue@@(...)@bezier_editor.cpp@34@definition@F????@LOC:7 COM:0 MVG:3@?@d@
+CCCC_Member@anonymous@InvLerp@@(float,float,float)@
+CCCC_MemExt@anonymous@InvLerp@@(float,float,float)@slider.cpp@8@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@InvLerp2@@(float,float,float)@
+CCCC_MemExt@anonymous@InvLerp2@@(float,float,float)@small_text_input.cpp@11@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@SplitWithCharacters@@(const string &,int)@
+CCCC_MemExt@anonymous@SplitWithCharacters@@(const string &,int)@colorpicker.cpp@38@definition@F????@LOC:11 COM:1 MVG:3@?@d@
+CCCC_Member@anonymous@bezier_table@@(...)@
+CCCC_MemExt@anonymous@bezier_table@@(...)@bezier_editor.cpp@13@definition@F????@LOC:20 COM:4 MVG:3@?@d@
+CCCC_Member@anonymous@clamp@@(const T &,const T &,const T &)@
+CCCC_MemExt@anonymous@clamp@@(const T &,const T &,const T &)@colorpicker.cpp@236@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@contains@@(const string &,const string &)@
+CCCC_MemExt@anonymous@contains@@(const string &,const string &)@inventory_changer.cpp@461@definition@F????@LOC:5 COM:0 MVG:4@?@d@
+CCCC_Member@anonymous@contains@@(const vector &,const U &)@
+CCCC_MemExt@anonymous@contains@@(const vector &,const U &)@inventory_changer.cpp@245@definition@F????@LOC:8 COM:0 MVG:3@?@d@
+CCCC_Member@anonymous@copy_inv_item@@(inventory_item *,inventory_item *)@
+CCCC_MemExt@anonymous@copy_inv_item@@(inventory_item *,inventory_item *)@inventory_changer.cpp@455@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@anonymous@degrees_to_radians@@(const float)@
+CCCC_MemExt@anonymous@degrees_to_radians@@(const float)@combobox.cpp@13@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@done@@(...)@
+CCCC_MemExt@anonymous@done@@(...)@inventory_changer.cpp@51@declaration@F????@LOC:1 COM:0 MVG:0@?@D@
+CCCC_Member@anonymous@easeInOutQuint@@(double)@
+CCCC_MemExt@anonymous@easeInOutQuint@@(double)@combobox.cpp@259@definition@F????@LOC:11 COM:0 MVG:3@?@d@
+CCCC_Member@anonymous@easeOutCirc@@(double)@
+CCCC_MemExt@anonymous@easeOutCirc@@(double)@multibox.cpp@10@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@easeOutCubic@@(double)@
+CCCC_MemExt@anonymous@easeOutCubic@@(double)@multibox.cpp@239@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@easeOutCubicc@@(double)@
+CCCC_MemExt@anonymous@easeOutCubicc@@(double)@combobox.cpp@11@definition@F????@LOC:2 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@generate_hex@@(const int)@
+CCCC_MemExt@anonymous@generate_hex@@(const int)@config_box.cpp@28@definition@F????@LOC:11 COM:0 MVG:3@?@d@
+CCCC_Member@anonymous@hex2rgb@@(string)@
+CCCC_MemExt@anonymous@hex2rgb@@(string)@colorpicker.cpp@61@definition@F????@LOC:14 COM:0 MVG:3@?@d@
+CCCC_Member@anonymous@keydown@@(int)@
+CCCC_MemExt@anonymous@keydown@@(int)@text_input.cpp@152@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@random_char@@()@
+CCCC_MemExt@anonymous@random_char@@()@config_box.cpp@21@definition@F????@LOC:6 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@rgb2hex@@(int,int,int,bool)@
+CCCC_MemExt@anonymous@rgb2hex@@(int,int,int,bool)@colorpicker.cpp@31@definition@F????@LOC:7 COM:0 MVG:2@?@d@
+CCCC_Member@anonymous@rotate_triangle@@(vector &,float)@
+CCCC_MemExt@anonymous@rotate_triangle@@(vector &,float)@combobox.cpp@17@definition@F????@LOC:18 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@round_up@@(double,int)@
+CCCC_MemExt@anonymous@round_up@@(double,int)@text_input.cpp@28@definition@F????@LOC:4 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@samp@@()@
+CCCC_MemExt@anonymous@samp@@()@inventory_changer.cpp@52@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@anonymous@search@@(char *,char *)@
+CCCC_MemExt@anonymous@search@@(char *,char *)@inventory_changer.cpp@473@definition@F????@LOC:13 COM:3 MVG:7@?@d@
+CCCC_Member@anonymous@to_lower@@(string)@
+CCCC_MemExt@anonymous@to_lower@@(string)@inventory_changer.cpp@468@definition@F????@LOC:4 COM:0 MVG:1@?@d@
+CCCC_Member@anonymous@triangle@@(ImVec2,ImDrawList *,ImColor,float,bool)@
+CCCC_MemExt@anonymous@triangle@@(ImVec2,ImDrawList *,ImColor,float,bool)@combobox.cpp@271@definition@F????@LOC:11 COM:0 MVG:0@?@d@
+CCCC_Member@bezier_dot@bezier_dot@@(object *,float &,float &)@
+CCCC_MemExt@bezier_dot@bezier_dot@@(object *,float &,float &)@bezier_editor.cpp@44@definition@F????@LOC:8 COM:0 MVG:0@?@d@
+CCCC_Member@bezier_dot@draw@@()@
+CCCC_MemExt@bezier_dot@draw@@()@bezier_editor.cpp@199@definition@F????@LOC:9 COM:1 MVG:2@?@d@
+CCCC_Member@bezier_dot@handle@@()@
+CCCC_MemExt@bezier_dot@handle@@()@bezier_editor.cpp@216@definition@F????@LOC:36 COM:0 MVG:11@?@d@
+CCCC_Member@bezier_dot@handle_mouse_input@@()@
+CCCC_MemExt@bezier_dot@handle_mouse_input@@()@bezier_editor.cpp@291@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@bezier_dot@update@@()@
+CCCC_MemExt@bezier_dot@update@@()@bezier_editor.cpp@269@definition@F????@LOC:14 COM:0 MVG:1@?@d@
+CCCC_Member@bezier_editor@bezier_editor@@(object *,float *)@
+CCCC_MemExt@bezier_editor@bezier_editor@@(object *,float *)@bezier_editor.cpp@57@definition@F????@LOC:15 COM:0 MVG:1@?@d@
+CCCC_Member@bezier_editor@draw@@()@
+CCCC_MemExt@bezier_editor@draw@@()@bezier_editor.cpp@81@definition@F????@LOC:54 COM:11 MVG:4@?@d@
+CCCC_Member@bezier_editor@handle@@()@
+CCCC_MemExt@bezier_editor@handle@@()@bezier_editor.cpp@171@definition@F????@LOC:4 COM:0 MVG:0@?@d@
+CCCC_Member@bezier_editor@handle_mouse_input@@()@
+CCCC_MemExt@bezier_editor@handle_mouse_input@@()@bezier_editor.cpp@162@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@bezier_editor@update@@()@
+CCCC_MemExt@bezier_editor@update@@()@bezier_editor.cpp@182@definition@F????@LOC:9 COM:0 MVG:1@?@d@
+CCCC_Member@button@button@@(string,object *,float,float,function)@
+CCCC_MemExt@button@button@@(string,object *,float,float,function)@button.cpp@31@definition@F????@LOC:11 COM:0 MVG:0@?@d@
+CCCC_Member@button@button@@(string,object *,function)@
+CCCC_MemExt@button@button@@(string,object *,function)@button.cpp@10@definition@F????@LOC:11 COM:0 MVG:0@?@d@
+CCCC_Member@button@draw@@()@
+CCCC_MemExt@button@draw@@()@button.cpp@51@definition@F????@LOC:13 COM:0 MVG:1@?@d@
+CCCC_Member@button@handle@@()@
+CCCC_MemExt@button@handle@@()@button.cpp@83@definition@F????@LOC:26 COM:0 MVG:8@?@d@
+CCCC_Member@button@handle_mouse_input@@()@
+CCCC_MemExt@button@handle_mouse_input@@()@button.cpp@74@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@button@update@@()@
+CCCC_MemExt@button@update@@()@button.cpp@122@definition@F????@LOC:48 COM:3 MVG:9@?@d@
+CCCC_Member@checkbox@checkbox@@(string,object *,bool &,ImColor &)@
+CCCC_MemExt@checkbox@checkbox@@(string,object *,bool &,ImColor &)@checkbox.cpp@45@definition@F????@LOC:10 COM:0 MVG:0@?@d@
+CCCC_Member@checkbox@checkbox@@(string,object *,bool &,ImColor &,key_bind_item &)@
+CCCC_MemExt@checkbox@checkbox@@(string,object *,bool &,ImColor &,key_bind_item &)@checkbox.cpp@11@definition@F????@LOC:12 COM:0 MVG:0@?@d@
+CCCC_Member@checkbox@checkbox@@(string,object *,bool &,key_bind_item *)@
+CCCC_MemExt@checkbox@checkbox@@(string,object *,bool &,key_bind_item *)@checkbox.cpp@28@definition@F????@LOC:11 COM:0 MVG:0@?@d@
+CCCC_Member@checkbox@draw@@()@
+CCCC_MemExt@checkbox@draw@@()@checkbox.cpp@62@definition@F????@LOC:23 COM:2 MVG:1@?@d@
+CCCC_Member@checkbox@draw_keybind@@()@
+CCCC_MemExt@checkbox@draw_keybind@@()@checkbox.cpp@119@definition@F????@LOC:4 COM:0 MVG:2@?@d@
+CCCC_Member@checkbox@handle@@()@
+CCCC_MemExt@checkbox@handle@@()@checkbox.cpp@125@definition@F????@LOC:51 COM:0 MVG:18@?@d@
+CCCC_Member@checkbox@handle_mouse_input@@()@
+CCCC_MemExt@checkbox@handle_mouse_input@@()@checkbox.cpp@108@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@checkbox@update@@()@
+CCCC_MemExt@checkbox@update@@()@checkbox.cpp@195@definition@F????@LOC:40 COM:8 MVG:8@?@d@
+CCCC_Member@child_window@draw@@()@
+CCCC_MemExt@child_window@draw@@()@child_window.cpp@141@definition@F????@LOC:39 COM:5 MVG:13@?@d@
+CCCC_Member@child_window@draw_scrollbar@@()@
+CCCC_MemExt@child_window@draw_scrollbar@@()@child_window.cpp@7@definition@F????@LOC:10 COM:0 MVG:1@?@d@
+CCCC_Member@child_window@handle@@()@
+CCCC_MemExt@child_window@handle@@()@child_window.cpp@204@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@child_window@handle_mouse_input@@()@
+CCCC_MemExt@child_window@handle_mouse_input@@()@child_window.cpp@207@definition@F????@LOC:4 COM:0 MVG:3@?@d@
+CCCC_Member@child_window@handle_scrollbar@@()@
+CCCC_MemExt@child_window@handle_scrollbar@@()@child_window.cpp@23@definition@F????@LOC:70 COM:6 MVG:21@?@d@
+CCCC_Member@child_window@handle_tab_children@@()@
+CCCC_MemExt@child_window@handle_tab_children@@()@child_window.cpp@212@definition@F????@LOC:6 COM:0 MVG:0@?@d@
+CCCC_Member@child_window@update@@()@
+CCCC_MemExt@child_window@update@@()@child_window.cpp@220@definition@F????@LOC:96 COM:5 MVG:20@?@d@
+CCCC_Member@colorpicker@clipboard_copy@@()@
+CCCC_MemExt@colorpicker@clipboard_copy@@()@colorpicker.cpp@414@definition@F????@LOC:10 COM:0 MVG:0@?@d@
+CCCC_Member@colorpicker@colorpicker@@(object *,ImColor &)@
+CCCC_MemExt@colorpicker@colorpicker@@(object *,ImColor &)@colorpicker.cpp@17@definition@F????@LOC:10 COM:0 MVG:0@?@d@
+CCCC_Member@colorpicker@create_hex@@(int,int,int)@
+CCCC_MemExt@colorpicker@create_hex@@(int,int,int)@colorpicker.cpp@180@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@colorpicker@draw@@()@
+CCCC_MemExt@colorpicker@draw@@()@colorpicker.cpp@80@definition@F????@LOC:54 COM:5 MVG:4@?@d@
+CCCC_Member@colorpicker@get_clipboard@@()@
+CCCC_MemExt@colorpicker@get_clipboard@@()@colorpicker.cpp@388@definition@F????@LOC:14 COM:6 MVG:7@?@d@
+CCCC_Member@colorpicker@handle@@()@
+CCCC_MemExt@colorpicker@handle@@()@colorpicker.cpp@240@definition@F????@LOC:97 COM:4 MVG:58@?@d@
+CCCC_Member@colorpicker@handle_mouse_input@@()@
+CCCC_MemExt@colorpicker@handle_mouse_input@@()@colorpicker.cpp@223@definition@F????@LOC:4 COM:0 MVG:3@?@d@
+CCCC_Member@colorpicker@handle_text@@()@
+CCCC_MemExt@colorpicker@handle_text@@()@colorpicker.cpp@231@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@colorpicker@picker_gradient@@()@
+CCCC_MemExt@colorpicker@picker_gradient@@()@colorpicker.cpp@183@definition@F????@LOC:23 COM:3 MVG:1@?@d@
+CCCC_Member@colorpicker@update@@()@
+CCCC_MemExt@colorpicker@update@@()@colorpicker.cpp@424@definition@F????@LOC:32 COM:0 MVG:0@?@d@
+CCCC_Member@combo_item@draw@@()@
+CCCC_MemExt@combo_item@draw@@()@combo_item.cpp@9@definition@F????@LOC:37 COM:6 MVG:9@?@d@
+CCCC_Member@combo_item@handle@@()@
+CCCC_MemExt@combo_item@handle@@()@combo_item.cpp@92@definition@F????@LOC:27 COM:6 MVG:11@?@d@
+CCCC_Member@combo_item@handle_hovering@@()@
+CCCC_MemExt@combo_item@handle_hovering@@()@combo_item.cpp@71@definition@F????@LOC:14 COM:3 MVG:5@?@d@
+CCCC_Member@combo_item@handle_mouse_input@@()@
+CCCC_MemExt@combo_item@handle_mouse_input@@()@combo_item.cpp@65@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@combo_item@update@@()@
+CCCC_MemExt@combo_item@update@@()@combo_item.cpp@138@definition@F????@LOC:25 COM:0 MVG:4@?@d@
+CCCC_Member@combobox@combobox@@(string,object *,vector,int &)@
+CCCC_MemExt@combobox@combobox@@(string,object *,vector,int &)@combobox.cpp@238@definition@F????@LOC:12 COM:0 MVG:1@?@d@
+CCCC_Member@combobox@combobox@@(string,object *,vector,int &,float)@
+CCCC_MemExt@combobox@combobox@@(string,object *,vector,int &,float)@combobox.cpp@163@definition@F????@LOC:14 COM:0 MVG:2@?@d@
+CCCC_Member@combobox@combobox@@(string,object *,vector,int &,key_bind_item &,float)@
+CCCC_MemExt@combobox@combobox@@(string,object *,vector,int &,key_bind_item &,float)@combobox.cpp@211@definition@F????@LOC:16 COM:1 MVG:2@?@d@
+CCCC_Member@combobox@combobox@@(string,object *,vector,int *,float)@
+CCCC_MemExt@combobox@combobox@@(string,object *,vector,int *,float)@combobox.cpp@187@definition@F????@LOC:14 COM:0 MVG:2@?@d@
+CCCC_Member@combobox@draw@@()@
+CCCC_MemExt@combobox@draw@@()@combobox.cpp@308@definition@F????@LOC:41 COM:5 MVG:12@?@d@
+CCCC_Member@combobox@draw_scroll_thumb@@()@
+CCCC_MemExt@combobox@draw_scroll_thumb@@()@combobox.cpp@300@definition@F????@LOC:5 COM:0 MVG:2@?@d@
+CCCC_Member@combobox@draw_scrollbar@@()@
+CCCC_MemExt@combobox@draw_scrollbar@@()@combobox.cpp@148@definition@F????@LOC:7 COM:2 MVG:0@?@d@
+CCCC_Member@combobox@handle@@()@
+CCCC_MemExt@combobox@handle@@()@combobox.cpp@432@definition@F????@LOC:38 COM:0 MVG:23@?@d@
+CCCC_Member@combobox@handle_mouse_input@@()@
+CCCC_MemExt@combobox@handle_mouse_input@@()@combobox.cpp@417@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@combobox@handle_scroll@@()@
+CCCC_MemExt@combobox@handle_scroll@@()@combobox.cpp@40@definition@F????@LOC:66 COM:6 MVG:20@?@d@
+CCCC_Member@combobox@set_value@@(int)@
+CCCC_MemExt@combobox@set_value@@(int)@combobox.cpp@288@definition@F????@LOC:8 COM:0 MVG:2@?@d@
+CCCC_Member@combobox@update@@()@
+CCCC_MemExt@combobox@update@@()@combobox.cpp@491@definition@F????@LOC:46 COM:8 MVG:6@?@d@
+CCCC_Member@combobox@update_triangle@@()@
+CCCC_MemExt@combobox@update_triangle@@()@combobox.cpp@398@definition@F????@LOC:11 COM:0 MVG:0@?@d@
+CCCC_Member@config_box@config_box@@(object *)@
+CCCC_MemExt@config_box@config_box@@(object *)@config_box.cpp@40@definition@F????@LOC:7 COM:0 MVG:0@?@d@
+CCCC_Member@config_box@draw@@()@
+CCCC_MemExt@config_box@draw@@()@config_box.cpp@432@definition@F????@LOC:15 COM:2 MVG:2@?@d@
+CCCC_Member@config_box@get_raw_pointer@@()@
+CCCC_MemExt@config_box@get_raw_pointer@@()@config_box.cpp@55@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@config_box@handle@@()@
+CCCC_MemExt@config_box@handle@@()@config_box.cpp@477@definition@F????@LOC:20 COM:3 MVG:7@?@d@
+CCCC_Member@config_box@handle_mouse_input@@()@
+CCCC_MemExt@config_box@handle_mouse_input@@()@config_box.cpp@466@definition@F????@LOC:4 COM:0 MVG:3@?@d@
+CCCC_Member@config_box@load_config@@(string,bool)@
+CCCC_MemExt@config_box@load_config@@(string,bool)@config_box.cpp@150@definition@F????@LOC:110 COM:1 MVG:38@?@d@
+CCCC_Member@config_box@local_files@@()@
+CCCC_MemExt@config_box@local_files@@()@config_box.cpp@59@definition@F????@LOC:22 COM:0 MVG:5@?@d@
+CCCC_Member@config_box@refresh_list@@()@
+CCCC_MemExt@config_box@refresh_list@@()@config_box.cpp@94@definition@F????@LOC:26 COM:6 MVG:3@?@d@
+CCCC_Member@config_box@save_config@@(string,bool,string)@
+CCCC_MemExt@config_box@save_config@@(string,bool,string)@config_box.cpp@305@definition@F????@LOC:84 COM:1 MVG:19@?@d@
+CCCC_Member@config_box@update@@()@
+CCCC_MemExt@config_box@update@@()@config_box.cpp@519@definition@F????@LOC:15 COM:1 MVG:1@?@d@
+CCCC_Member@config_item@config_item@@(object *,string,string)@
+CCCC_MemExt@config_item@config_item@@(object *,string,string)@config_item.cpp@10@definition@F????@LOC:9 COM:0 MVG:0@?@d@
+CCCC_Member@config_item@draw@@()@
+CCCC_MemExt@config_item@draw@@()@config_item.cpp@25@definition@F????@LOC:17 COM:3 MVG:2@?@d@
+CCCC_Member@config_item@handle@@()@
+CCCC_MemExt@config_item@handle@@()@config_item.cpp@70@definition@F????@LOC:14 COM:1 MVG:4@?@d@
+CCCC_Member@config_item@handle_mouse_input@@()@
+CCCC_MemExt@config_item@handle_mouse_input@@()@config_item.cpp@57@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@config_item@update@@()@
+CCCC_MemExt@config_item@update@@()@config_item.cpp@96@definition@F????@LOC:33 COM:3 MVG:1@?@d@
+CCCC_Member@element_extender@draw@@()@
+CCCC_MemExt@element_extender@draw@@()@element_extender.cpp@23@definition@F????@LOC:15 COM:2 MVG:3@?@d@
+CCCC_Member@element_extender@element_extender@@(object *)@
+CCCC_MemExt@element_extender@element_extender@@(object *)@element_extender.cpp@9@definition@F????@LOC:9 COM:0 MVG:0@?@d@
+CCCC_Member@element_extender@handle@@()@
+CCCC_MemExt@element_extender@handle@@()@element_extender.cpp@67@definition@F????@LOC:34 COM:3 MVG:16@?@d@
+CCCC_Member@element_extender@handle_mouse_input@@()@
+CCCC_MemExt@element_extender@handle_mouse_input@@()@element_extender.cpp@57@definition@F????@LOC:4 COM:0 MVG:3@?@d@
+CCCC_Member@element_extender@update@@()@
+CCCC_MemExt@element_extender@update@@()@element_extender.cpp@137@definition@F????@LOC:29 COM:0 MVG:8@?@d@
+CCCC_Member@element_extender@update_isolate@@()@
+CCCC_MemExt@element_extender@update_isolate@@()@element_extender.cpp@127@definition@F????@LOC:8 COM:0 MVG:2@?@d@
+CCCC_Member@image_queue@remove@@(int)@
+CCCC_MemExt@image_queue@remove@@(int)@inventory_changer.cpp@37@definition@F????@LOC:2 COM:2 MVG:0@?@d@
+CCCC_Member@inventory_changer@add_item_to_inventory@@(weapon *,paintkit *)@
+CCCC_MemExt@inventory_changer@add_item_to_inventory@@(weapon *,paintkit *)@inventory_changer.cpp@168@definition@F????@LOC:25 COM:2 MVG:0@?@d@
+CCCC_Member@inventory_changer@change_page@@(int,int)@
+CCCC_MemExt@inventory_changer@change_page@@(int,int)@inventory_changer.cpp@210@definition@F????@LOC:25 COM:0 MVG:8@?@d@
+CCCC_Member@inventory_changer@draw@@()@
+CCCC_MemExt@inventory_changer@draw@@()@inventory_changer.cpp@492@definition@F????@LOC:44 COM:0 MVG:12@?@d@
+CCCC_Member@inventory_changer@handle@@()@
+CCCC_MemExt@inventory_changer@handle@@()@inventory_changer.cpp@578@definition@F????@LOC:4 COM:0 MVG:0@?@d@
+CCCC_Member@inventory_changer@handle_mouse_input@@()@
+CCCC_MemExt@inventory_changer@handle_mouse_input@@()@inventory_changer.cpp@569@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@inventory_changer@inventory_changer@@(object *)@
+CCCC_MemExt@inventory_changer@inventory_changer@@(object *)@inventory_changer.cpp@311@definition@F????@LOC:69 COM:2 MVG:0@?@d@
+CCCC_Member@inventory_changer@on_start@@()@
+CCCC_MemExt@inventory_changer@on_start@@()@inventory_changer.cpp@116@definition@F????@LOC:36 COM:2 MVG:2@?@d@
+CCCC_Member@inventory_changer@painkit_modify@@(paintkit *)@
+CCCC_MemExt@inventory_changer@painkit_modify@@(paintkit *)@inventory_changer.cpp@253@definition@F????@LOC:43 COM:1 MVG:0@?@d@
+CCCC_Member@inventory_changer@parse_data@@()@
+CCCC_MemExt@inventory_changer@parse_data@@()@inventory_changer.cpp@447@definition@F????@LOC:4 COM:18 MVG:0@?@d@
+CCCC_Member@inventory_changer@update@@()@
+CCCC_MemExt@inventory_changer@update@@()@inventory_changer.cpp@589@definition@F????@LOC:12 COM:0 MVG:1@?@d@
+CCCC_Member@inventory_item@draw@@()@
+CCCC_MemExt@inventory_item@draw@@()@inventory_item.cpp@102@definition@F????@LOC:33 COM:19 MVG:3@?@d@
+CCCC_Member@inventory_item@generate_preview@@()@
+CCCC_MemExt@inventory_item@generate_preview@@()@inventory_item.cpp@74@definition@F????@LOC:17 COM:1 MVG:4@?@d@
+CCCC_Member@inventory_item@handle@@()@
+CCCC_MemExt@inventory_item@handle@@()@inventory_item.cpp@185@definition@F????@LOC:13 COM:0 MVG:9@?@d@
+CCCC_Member@inventory_item@handle_mouse_input@@()@
+CCCC_MemExt@inventory_item@handle_mouse_input@@()@inventory_item.cpp@178@definition@F????@LOC:4 COM:0 MVG:3@?@d@
+CCCC_Member@inventory_item@inventory_item@@(object *,paintkit *,void *)@
+CCCC_MemExt@inventory_item@inventory_item@@(object *,paintkit *,void *)@inventory_item.cpp@40@definition@F????@LOC:9 COM:0 MVG:0@?@d@
+CCCC_Member@inventory_item@inventory_item@@(object *,paintkit *,void *,function)@
+CCCC_MemExt@inventory_item@inventory_item@@(object *,paintkit *,void *,function)@inventory_item.cpp@26@definition@F????@LOC:10 COM:0 MVG:0@?@d@
+CCCC_Member@inventory_item@inventory_item@@(object *,weapon *,void *,function)@
+CCCC_MemExt@inventory_item@inventory_item@@(object *,weapon *,void *,function)@inventory_item.cpp@54@definition@F????@LOC:10 COM:0 MVG:0@?@d@
+CCCC_Member@inventory_item@is_glove@@()@
+CCCC_MemExt@inventory_item@is_glove@@()@inventory_item.cpp@70@definition@F????@LOC:3 COM:0 MVG:3@?@d@
+CCCC_Member@inventory_item@update@@()@
+CCCC_MemExt@inventory_item@update@@()@inventory_item.cpp@207@definition@F????@LOC:43 COM:0 MVG:4@?@d@
+CCCC_Member@inventory_item@~inventory_item@@()@
+CCCC_MemExt@inventory_item@~inventory_item@@()@inventory_item.cpp@19@definition@F????@LOC:6 COM:0 MVG:1@?@d@
+CCCC_Member@key_bind_muie@draw@@()@
+CCCC_MemExt@key_bind_muie@draw@@()@keybind.cpp@82@definition@F????@LOC:9 COM:0 MVG:3@?@d@
+CCCC_Member@key_bind_muie@handle@@()@
+CCCC_MemExt@key_bind_muie@handle@@()@keybind.cpp@114@definition@F????@LOC:11 COM:0 MVG:7@?@d@
+CCCC_Member@key_bind_muie@handle_mouse_input@@()@
+CCCC_MemExt@key_bind_muie@handle_mouse_input@@()@keybind.cpp@102@definition@F????@LOC:4 COM:0 MVG:3@?@d@
+CCCC_Member@key_bind_muie@key_bind_muie@@(object *,key_bind_item *)@
+CCCC_MemExt@key_bind_muie@key_bind_muie@@(object *,key_bind_item *)@keybind.cpp@9@definition@F????@LOC:55 COM:2 MVG:11@?@d@
+CCCC_Member@key_bind_muie@update@@()@
+CCCC_MemExt@key_bind_muie@update@@()@keybind.cpp@135@definition@F????@LOC:10 COM:0 MVG:2@?@d@
+CCCC_Member@key_selector@draw@@()@
+CCCC_MemExt@key_selector@draw@@()@key_selector.cpp@49@definition@F????@LOC:10 COM:1 MVG:0@?@d@
+CCCC_Member@key_selector@handle@@()@
+CCCC_MemExt@key_selector@handle@@()@key_selector.cpp@76@definition@F????@LOC:35 COM:3 MVG:11@?@d@
+CCCC_Member@key_selector@handle_mouse_input@@()@
+CCCC_MemExt@key_selector@handle_mouse_input@@()@key_selector.cpp@67@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@key_selector@key_selector@@(string,object *,int *)@
+CCCC_MemExt@key_selector@key_selector@@(string,object *,int *)@key_selector.cpp@34@definition@F????@LOC:8 COM:0 MVG:0@?@d@
+CCCC_Member@key_selector@update@@()@
+CCCC_MemExt@key_selector@update@@()@key_selector.cpp@120@definition@F????@LOC:13 COM:4 MVG:1@?@d@
+CCCC_Member@multibox@animate_preview@@()@
+CCCC_MemExt@multibox@animate_preview@@()@multibox.cpp@336@definition@F????@LOC:8 COM:0 MVG:2@?@d@
+CCCC_Member@multibox@draw@@()@
+CCCC_MemExt@multibox@draw@@()@multibox.cpp@242@definition@F????@LOC:61 COM:2 MVG:22@?@d@
+CCCC_Member@multibox@draw_scrollbar@@()@
+CCCC_MemExt@multibox@draw_scrollbar@@()@multibox.cpp@123@definition@F????@LOC:7 COM:2 MVG:0@?@d@
+CCCC_Member@multibox@handle@@()@
+CCCC_MemExt@multibox@handle@@()@multibox.cpp@359@definition@F????@LOC:33 COM:5 MVG:21@?@d@
+CCCC_Member@multibox@handle_mouse_input@@()@
+CCCC_MemExt@multibox@handle_mouse_input@@()@multibox.cpp@347@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@multibox@handle_scroll@@()@
+CCCC_MemExt@multibox@handle_scroll@@()@multibox.cpp@15@definition@F????@LOC:66 COM:6 MVG:20@?@d@
+CCCC_Member@multibox@multibox@@(string,object *,vector,vector &,float)@
+CCCC_MemExt@multibox@multibox@@(string,object *,vector,vector &,float)@multibox.cpp@164@definition@F????@LOC:14 COM:1 MVG:2@?@d@
+CCCC_Member@multibox@multibox@@(string,object *,vector,vector &,key_bind_item &,float)@
+CCCC_MemExt@multibox@multibox@@(string,object *,vector,vector &,key_bind_item &,float)@multibox.cpp@192@definition@F????@LOC:16 COM:3 MVG:2@?@d@
+CCCC_Member@multibox@multibox@@(string,object *,vector,void *,float)@
+CCCC_MemExt@multibox@multibox@@(string,object *,vector,void *,float)@multibox.cpp@137@definition@F????@LOC:14 COM:0 MVG:2@?@d@
+CCCC_Member@multibox@update@@()@
+CCCC_MemExt@multibox@update@@()@multibox.cpp@425@definition@F????@LOC:41 COM:0 MVG:5@?@d@
+CCCC_Member@multibox@update_triangle@@()@
+CCCC_MemExt@multibox@update_triangle@@()@multibox.cpp@220@definition@F????@LOC:10 COM:0 MVG:0@?@d@
+CCCC_Member@object@can_focus@@()@
+CCCC_MemExt@object@can_focus@@()@element.cpp@26@definition@F????@LOC:11 COM:1 MVG:12@?@d@
+CCCC_Member@object@focus_it@@()@
+CCCC_MemExt@object@focus_it@@()@element.cpp@13@definition@F????@LOC:3 COM:0 MVG:0@?@d@
+CCCC_Member@object@handle_mouse_input@@()@
+CCCC_MemExt@object@handle_mouse_input@@()@element.cpp@8@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@object@is_focused@@()@
+CCCC_MemExt@object@is_focused@@()@element.cpp@39@definition@F????@LOC:3 COM:0 MVG:1@?@d@
+CCCC_Member@object@out_of_focus@@()@
+CCCC_MemExt@object@out_of_focus@@()@element.cpp@16@definition@F????@LOC:8 COM:1 MVG:4@?@d@
+CCCC_Member@paintkit@generate_image_path@@()@
+CCCC_MemExt@paintkit@generate_image_path@@()@inventory_changer.cpp@614@definition@F????@LOC:18 COM:1 MVG:8@?@d@
+CCCC_Member@panel@draw@@()@
+CCCC_MemExt@panel@draw@@()@panel.cpp@5@definition@F????@LOC:4 COM:1 MVG:1@?@d@
+CCCC_Member@panel@handle@@()@
+CCCC_MemExt@panel@handle@@()@panel.cpp@15@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@panel@handle_mouse_input@@()@
+CCCC_MemExt@panel@handle_mouse_input@@()@panel.cpp@22@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@panel@update@@()@
+CCCC_MemExt@panel@update@@()@panel.cpp@26@definition@F????@LOC:31 COM:0 MVG:5@?@d@
+CCCC_Member@panel_container@draw@@()@
+CCCC_MemExt@panel_container@draw@@()@panel_container.cpp@6@definition@F????@LOC:5 COM:1 MVG:1@?@d@
+CCCC_Member@panel_container@handle@@()@
+CCCC_MemExt@panel_container@handle@@()@panel_container.cpp@19@definition@F????@LOC:25 COM:0 MVG:6@?@d@
+CCCC_Member@panel_container@handle_mouse_input@@()@
+CCCC_MemExt@panel_container@handle_mouse_input@@()@panel_container.cpp@55@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@panel_container@update@@()@
+CCCC_MemExt@panel_container@update@@()@panel_container.cpp@59@definition@F????@LOC:33 COM:0 MVG:6@?@d@
+CCCC_Member@slider@draw@@()@
+CCCC_MemExt@slider@draw@@()@slider.cpp@60@definition@F????@LOC:16 COM:1 MVG:3@?@d@
+CCCC_Member@slider@handle@@()@
+CCCC_MemExt@slider@handle@@()@slider.cpp@103@definition@F????@LOC:84 COM:10 MVG:24@?@d@
+CCCC_Member@slider@handle_mouse_input@@()@
+CCCC_MemExt@slider@handle_mouse_input@@()@slider.cpp@93@definition@F????@LOC:6 COM:0 MVG:6@?@d@
+CCCC_Member@slider@slider@@(string,object *,float &,float,float,slider_type)@
+CCCC_MemExt@slider@slider@@(string,object *,float &,float,float,slider_type)@slider.cpp@12@definition@F????@LOC:16 COM:0 MVG:0@?@d@
+CCCC_Member@slider@slider@@(string,object *,float &,float,float,slider_type,key_bind_item *)@
+CCCC_MemExt@slider@slider@@(string,object *,float &,float,float,slider_type,key_bind_item *)@slider.cpp@35@definition@F????@LOC:15 COM:2 MVG:0@?@d@
+CCCC_Member@slider@update@@()@
+CCCC_MemExt@slider@update@@()@slider.cpp@244@definition@F????@LOC:37 COM:12 MVG:6@?@d@
+CCCC_Member@small_text_input@draw@@()@
+CCCC_MemExt@small_text_input@draw@@()@small_text_input.cpp@15@definition@F????@LOC:14 COM:2 MVG:1@?@d@
+CCCC_Member@small_text_input@handle@@()@
+CCCC_MemExt@small_text_input@handle@@()@small_text_input.cpp@53@definition@F????@LOC:34 COM:1 MVG:15@?@d@
+CCCC_Member@small_text_input@handle_mouse_input@@()@
+CCCC_MemExt@small_text_input@handle_mouse_input@@()@small_text_input.cpp@43@definition@F????@LOC:6 COM:0 MVG:5@?@d@
+CCCC_Member@small_text_input@update@@()@
+CCCC_MemExt@small_text_input@update@@()@small_text_input.cpp@103@definition@F????@LOC:15 COM:0 MVG:2@?@d@
+CCCC_Member@sub_tab@draw@@()@
+CCCC_MemExt@sub_tab@draw@@()@sub_tab.cpp@7@definition@F????@LOC:14 COM:1 MVG:3@?@d@
+CCCC_Member@sub_tab@handle@@()@
+CCCC_MemExt@sub_tab@handle@@()@sub_tab.cpp@34@definition@F????@LOC:49 COM:5 MVG:16@?@d@
+CCCC_Member@sub_tab@handle_mouse_input@@()@
+CCCC_MemExt@sub_tab@handle_mouse_input@@()@sub_tab.cpp@108@definition@F????@LOC:4 COM:0 MVG:3@?@d@
+CCCC_Member@sub_tab@update@@()@
+CCCC_MemExt@sub_tab@update@@()@sub_tab.cpp@112@definition@F????@LOC:16 COM:0 MVG:1@?@d@
+CCCC_Member@tab@draw@@()@
+CCCC_MemExt@tab@draw@@()@tab.cpp@5@definition@F????@LOC:9 COM:1 MVG:4@?@d@
+CCCC_Member@tab@handle@@()@
+CCCC_MemExt@tab@handle@@()@tab.cpp@20@definition@F????@LOC:15 COM:0 MVG:6@?@d@
+CCCC_Member@tab@handle_mouse_input@@()@
+CCCC_MemExt@tab@handle_mouse_input@@()@tab.cpp@39@definition@F????@LOC:4 COM:0 MVG:3@?@d@
+CCCC_Member@tab@update@@()@
+CCCC_MemExt@tab@update@@()@tab.cpp@44@definition@F????@LOC:17 COM:17 MVG:2@?@d@
+CCCC_Member@text_input@draw@@()@
+CCCC_MemExt@text_input@draw@@()@text_input.cpp@32@definition@F????@LOC:80 COM:0 MVG:30@?@d@
+CCCC_Member@text_input@handle@@()@
+CCCC_MemExt@text_input@handle@@()@text_input.cpp@155@definition@F????@LOC:101 COM:1 MVG:45@?@d@
+CCCC_Member@text_input@handle_mouse_input@@()@
+CCCC_MemExt@text_input@handle_mouse_input@@()@text_input.cpp@140@definition@F????@LOC:7 COM:0 MVG:7@?@d@
+CCCC_Member@text_input@update@@()@
+CCCC_MemExt@text_input@update@@()@text_input.cpp@286@definition@F????@LOC:54 COM:0 MVG:9@?@d@
+CCCC_Member@ui@handle_image_data@@()@
+CCCC_MemExt@ui@handle_image_data@@()@inventory_changer.cpp@56@definition@F????@LOC:26 COM:2 MVG:7@?@d@
+CCCC_Member@weapon@weapon@@(int)@
+CCCC_MemExt@weapon@weapon@@(int)@inventory_changer.cpp@609@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@window@draw@@()@
+CCCC_MemExt@window@draw@@()@window.cpp@7@definition@F????@LOC:52 COM:6 MVG:23@?@d@
+CCCC_Member@window@handle@@()@
+CCCC_MemExt@window@handle@@()@window.cpp@97@definition@F????@LOC:27 COM:0 MVG:7@?@d@
+CCCC_Member@window@handle_mouse_input@@()@
+CCCC_MemExt@window@handle_mouse_input@@()@window.cpp@137@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_Member@window@update@@()@
+CCCC_MemExt@window@update@@()@window.cpp@133@definition@F????@LOC:2 COM:0 MVG:0@?@d@
+CCCC_UseRel@object@bezier_dot@
+CCCC_UseExt@object@bezier_dot@bezier_editor.cpp@44@pass by reference@F????@*@?@p@
+CCCC_UseRel@object@bezier_editor@
+CCCC_UseExt@object@bezier_editor@bezier_editor.cpp@57@pass by reference@F????@*@?@p@
+CCCC_UseRel@function@button@
+CCCC_UseExt@function@button@button.cpp@10@pass by value@?????@*@?@P@
+CCCC_UseExt@function@button@button.cpp@31@pass by value@F????@*@?@P@
+CCCC_UseRel@object@button@
+CCCC_UseExt@object@button@button.cpp@10@pass by reference@?????@*@?@p@
+CCCC_UseExt@object@button@button.cpp@31@pass by reference@F????@*@?@p@
+CCCC_UseRel@string@button@
+CCCC_UseExt@string@button@button.cpp@10@pass by value@?????@*@?@P@
+CCCC_UseExt@string@button@button.cpp@31@pass by value@F????@*@?@P@
+CCCC_UseRel@ImColor@checkbox@
+CCCC_UseExt@ImColor@checkbox@checkbox.cpp@11@pass by reference@?????@*@?@p@
+CCCC_UseExt@ImColor@checkbox@checkbox.cpp@45@pass by reference@F????@*@?@p@
+CCCC_UseRel@bool@checkbox@
+CCCC_UseExt@bool@checkbox@checkbox.cpp@11@pass by reference@?????@*@?@p@
+CCCC_UseExt@bool@checkbox@checkbox.cpp@28@pass by reference@F????@*@?@p@
+CCCC_UseExt@bool@checkbox@checkbox.cpp@45@pass by reference@F????@*@?@p@
+CCCC_UseRel@key_bind_item@checkbox@
+CCCC_UseExt@key_bind_item@checkbox@checkbox.cpp@11@pass by reference@?????@*@?@p@
+CCCC_UseExt@key_bind_item@checkbox@checkbox.cpp@28@pass by reference@F????@*@?@p@
+CCCC_UseRel@object@checkbox@
+CCCC_UseExt@object@checkbox@checkbox.cpp@11@pass by reference@?????@*@?@p@
+CCCC_UseExt@object@checkbox@checkbox.cpp@28@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@checkbox@checkbox.cpp@45@pass by reference@F????@*@?@p@
+CCCC_UseRel@string@checkbox@
+CCCC_UseExt@string@checkbox@checkbox.cpp@11@pass by value@?????@*@?@P@
+CCCC_UseExt@string@checkbox@checkbox.cpp@28@pass by value@F????@*@?@P@
+CCCC_UseExt@string@checkbox@checkbox.cpp@45@pass by value@F????@*@?@P@
+CCCC_UseRel@ImColor@colorpicker@
+CCCC_UseExt@ImColor@colorpicker@colorpicker.cpp@17@pass by reference@?????@*@?@p@
+CCCC_UseRel@object@colorpicker@
+CCCC_UseExt@object@colorpicker@colorpicker.cpp@17@pass by reference@?????@*@?@p@
+CCCC_UseRel@key_bind_item@combobox@
+CCCC_UseExt@key_bind_item@combobox@combobox.cpp@211@pass by reference@F????@*@?@p@
+CCCC_UseRel@object@combobox@
+CCCC_UseExt@object@combobox@combobox.cpp@163@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@combobox@combobox.cpp@187@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@combobox@combobox.cpp@211@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@combobox@combobox.cpp@238@pass by reference@F????@*@?@p@
+CCCC_UseRel@string@combobox@
+CCCC_UseExt@string@combobox@combobox.cpp@163@pass by value@F????@*@?@P@
+CCCC_UseExt@string@combobox@combobox.cpp@187@pass by value@F????@*@?@P@
+CCCC_UseExt@string@combobox@combobox.cpp@211@pass by value@F????@*@?@P@
+CCCC_UseExt@string@combobox@combobox.cpp@238@pass by value@F????@*@?@P@
+CCCC_UseRel@vector@combobox@
+CCCC_UseExt@vector@combobox@combobox.cpp@163@pass by value@F????@*@?@P@
+CCCC_UseExt@vector@combobox@combobox.cpp@187@pass by value@F????@*@?@P@
+CCCC_UseExt@vector@combobox@combobox.cpp@211@pass by value@F????@*@?@P@
+CCCC_UseExt@vector@combobox@combobox.cpp@238@pass by value@F????@*@?@P@
+CCCC_UseRel@bool@config_box@
+CCCC_UseExt@bool@config_box@config_box.cpp@150@pass by value@F????@*@?@P@
+CCCC_UseExt@bool@config_box@config_box.cpp@305@pass by value@F????@*@?@P@
+CCCC_UseRel@object@config_box@
+CCCC_UseExt@object@config_box@config_box.cpp@40@pass by reference@F????@*@?@p@
+CCCC_UseRel@string@config_box@
+CCCC_UseExt@string@config_box@config_box.cpp@150@pass by value@F????@*@?@P@
+CCCC_UseExt@string@config_box@config_box.cpp@305@pass by value@F????@*@?@P@
+CCCC_UseExt@string@config_box@config_box.cpp@305@pass by value@F????@*@?@P@
+CCCC_UseRel@object@config_item@
+CCCC_UseExt@object@config_item@config_item.cpp@10@pass by reference@?????@*@?@p@
+CCCC_UseRel@string@config_item@
+CCCC_UseExt@string@config_item@config_item.cpp@10@pass by value@?????@*@?@P@
+CCCC_UseExt@string@config_item@config_item.cpp@10@pass by value@?????@*@?@P@
+CCCC_UseRel@object@element_extender@
+CCCC_UseExt@object@element_extender@element_extender.cpp@9@pass by reference@?????@*@?@p@
+CCCC_UseRel@object@inventory_changer@
+CCCC_UseExt@object@inventory_changer@inventory_changer.cpp@311@pass by reference@F????@*@?@p@
+CCCC_UseRel@paintkit@inventory_changer@
+CCCC_UseExt@paintkit@inventory_changer@inventory_changer.cpp@168@pass by reference@F????@*@?@p@
+CCCC_UseExt@paintkit@inventory_changer@inventory_changer.cpp@253@pass by reference@F????@*@?@p@
+CCCC_UseRel@weapon@inventory_changer@
+CCCC_UseExt@weapon@inventory_changer@inventory_changer.cpp@168@pass by reference@F????@*@?@p@
+CCCC_UseRel@function@inventory_item@
+CCCC_UseExt@function@inventory_item@inventory_item.cpp@26@pass by value@F????@*@?@P@
+CCCC_UseExt@function@inventory_item@inventory_item.cpp@54@pass by value@F????@*@?@P@
+CCCC_UseRel@object@inventory_item@
+CCCC_UseExt@object@inventory_item@inventory_item.cpp@26@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@inventory_item@inventory_item.cpp@40@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@inventory_item@inventory_item.cpp@54@pass by reference@F????@*@?@p@
+CCCC_UseRel@paintkit@inventory_item@
+CCCC_UseExt@paintkit@inventory_item@inventory_item.cpp@26@pass by reference@F????@*@?@p@
+CCCC_UseExt@paintkit@inventory_item@inventory_item.cpp@40@pass by reference@F????@*@?@p@
+CCCC_UseRel@weapon@inventory_item@
+CCCC_UseExt@weapon@inventory_item@inventory_item.cpp@54@pass by reference@F????@*@?@p@
+CCCC_UseRel@key_bind_item@key_bind_muie@
+CCCC_UseExt@key_bind_item@key_bind_muie@keybind.cpp@9@pass by reference@?????@*@?@p@
+CCCC_UseRel@object@key_bind_muie@
+CCCC_UseExt@object@key_bind_muie@keybind.cpp@9@pass by reference@?????@*@?@p@
+CCCC_UseRel@object@key_selector@
+CCCC_UseExt@object@key_selector@key_selector.cpp@34@pass by reference@?????@*@?@p@
+CCCC_UseRel@string@key_selector@
+CCCC_UseExt@string@key_selector@key_selector.cpp@34@pass by value@?????@*@?@P@
+CCCC_UseRel@key_bind_item@multibox@
+CCCC_UseExt@key_bind_item@multibox@multibox.cpp@192@pass by reference@F????@*@?@p@
+CCCC_UseRel@object@multibox@
+CCCC_UseExt@object@multibox@multibox.cpp@137@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@multibox@multibox.cpp@164@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@multibox@multibox.cpp@192@pass by reference@F????@*@?@p@
+CCCC_UseRel@string@multibox@
+CCCC_UseExt@string@multibox@multibox.cpp@137@pass by value@F????@*@?@P@
+CCCC_UseExt@string@multibox@multibox.cpp@164@pass by value@F????@*@?@P@
+CCCC_UseExt@string@multibox@multibox.cpp@192@pass by value@F????@*@?@P@
+CCCC_UseRel@vector@multibox@
+CCCC_UseExt@vector@multibox@multibox.cpp@137@pass by value@F????@*@?@P@
+CCCC_UseExt@vector@multibox@multibox.cpp@164@pass by value@F????@*@?@P@
+CCCC_UseExt@vector@multibox@multibox.cpp@164@pass by reference@F????@*@?@p@
+CCCC_UseExt@vector@multibox@multibox.cpp@192@pass by value@F????@*@?@P@
+CCCC_UseExt@vector@multibox@multibox.cpp@192@pass by reference@F????@*@?@p@
+CCCC_UseRel@key_bind_item@slider@
+CCCC_UseExt@key_bind_item@slider@slider.cpp@35@pass by reference@F????@*@?@p@
+CCCC_UseRel@object@slider@
+CCCC_UseExt@object@slider@slider.cpp@12@pass by reference@F????@*@?@p@
+CCCC_UseExt@object@slider@slider.cpp@35@pass by reference@F????@*@?@p@
+CCCC_UseRel@slider_type@slider@
+CCCC_UseExt@slider_type@slider@slider.cpp@12@pass by value@F????@*@?@P@
+CCCC_UseExt@slider_type@slider@slider.cpp@35@pass by value@F????@*@?@P@
+CCCC_UseRel@string@slider@
+CCCC_UseExt@string@slider@slider.cpp@12@pass by value@F????@*@?@P@
+CCCC_UseExt@string@slider@slider.cpp@35@pass by value@F????@*@?@P@
+CCCC_RejExt@bezier_editor.cpp@1@<file scope items>@F????@LOC:5 COM:0 MVG:0@?@r@
+CCCC_RejExt@bind_manager.cpp@1@<file scope items>@?????@LOC:0 COM:0 MVG:0@?@r@
+CCCC_RejExt@button.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@checkbox.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@child_window.cpp@1@<file scope items>@F????@LOC:3 COM:0 MVG:0@?@r@
+CCCC_RejExt@colorpicker.cpp@1@<file scope items>@F????@LOC:3 COM:0 MVG:0@?@r@
+CCCC_RejExt@combobox.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@combo_item.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@config_box.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@config_item.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@element.cpp@1@<file scope items>@F????@LOC:3 COM:0 MVG:0@?@r@
+CCCC_RejExt@element_extender.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@inventory_changer.cpp@1@<file scope items>@F????@LOC:9 COM:1 MVG:0@?@r@
+CCCC_RejExt@inventory_item.cpp@17@gloves = { @?????@LOC:1 COM:0 MVG:0@?@r@
+CCCC_RejExt@keybind.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@key_selector.cpp@1@<file scope items>@F????@LOC:25 COM:0 MVG:0@?@r@
+CCCC_RejExt@multibox.cpp@1@<file scope items>@F????@LOC:3 COM:0 MVG:0@?@r@
+CCCC_RejExt@panel.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@panel_container.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@slider.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@small_text_input.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@sub_tab.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@sub_window.cpp@1@<file scope items>@?????@LOC:1 COM:0 MVG:0@?@r@
+CCCC_RejExt@tab.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@
+CCCC_RejExt@text_input.cpp@1@<file scope items>@F????@LOC:19 COM:0 MVG:0@?@r@
+CCCC_RejExt@window.cpp@1@<file scope items>@F????@LOC:2 COM:0 MVG:0@?@r@

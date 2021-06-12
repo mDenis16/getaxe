@@ -1,4 +1,7 @@
 #include "../includes.h"
+#include <string>       // std::string
+#include <iostream>     // std::cout
+#include <sstream>      // std::stringstream
 
 namespace ui {
 
@@ -155,11 +158,58 @@ namespace ui {
 			this->renderer->AddRectFilled ( this->mins, this->maxs, this->bg_color, this->rounding, ImDrawCornerFlags_::ImDrawCornerFlags_Top );
 			this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 0, 0, 0, 25 ) );
 
+
+			  static const std::string logo_text = "AXEUS.NET";
+			  static float change_time [ 12 ];
+			  static bool was_hovering [ 12 ];
+			   float x = 0.f;
+
+			   std::string str_temp = "a";
+			   int i = 0;
+			   auto mouse_pos = ui::get_cursor ( );
+
+			   if ( this->should_reset || this->should_reanimate ) {
+				   for ( size_t i = 0; i < 12; i++ ) {
+					   change_time [ i ] = ImGui::GetTime ( ) + (i + 2) * 0.3f;
+				   }
+				   this->should_reset = false;
+				   this->should_reanimate = false;
+			   }
+
+			   for(const auto& c : logo_text ){
+				   str_temp [ 0 ] = c;
+
+				   static float off = 130;
+				   ImVec2 text_size = ImGui::CalcTextSize ( str_temp.c_str ( ), 17.f, ui::font_widgets );
+
+				   ImVec2 char_min = ImVec2 ( this->maxs.x - off + x, this->mins.y + 10 );
+				   ImVec2 char_max = ImVec2 ( this->maxs.x - off + x + text_size.x,  ( this->mins.y + this->children.front ( )->maxs.y ) / 2.f + text_size.y / 2.f );
+
+				    bool hovering = ( mouse_pos.x > char_min.x && mouse_pos.y > char_min.y && mouse_pos.x < char_max.x && mouse_pos.y < char_max.y );
+
+					if ( hovering != was_hovering[i] )
+						change_time[i] = ImGui::GetTime ( );
+
+					float progress = ImGui::GetTime ( ) - change_time [ i ];  progress = std::clamp ( progress * 3.5f, 0.f, 1.f );
+
+					renderer->AddText ( ui::font_widgets, 17.f, ImVec2 ( this->maxs.x - off + x + 2.f,  this->mins.y + 10 + 2.f ), ImColor ( 0, 0, 0, ( int ) ( std::lerp ( 50, 240, hovering ? progress : 1.f - progress ) ) ), str_temp.c_str ( ) );
+
+				   renderer->AddText ( ui::font_widgets, 17.f, ImVec2 ( this->maxs.x - off + x, this->mins.y + 10 ), ImColor ( 255, 255, 255, (int)(std::lerp(120, 255, hovering ? progress : 1.f - progress ))), str_temp.c_str() );
+				  // renderer->AddRect ( char_min, char_max, ImColor ( 255, 0, 0, 255 ) );
+
+				   float add = c == '.' ? -3.f : 3.f;
+				   was_hovering [ i ] = hovering;
+				   x += ImGui::CalcTextSize( str_temp.c_str(), 17.f, ui::font_widgets).y / 2.f + add;
+				   i++;
+			   }
 			
 
+			this->bg_color = ImColor ( 27, 27, 37, 12 );
+
+		
 
 			if ( !this->children.empty ( ) )
-				this->renderer->AddRectFilled ( ImVec2 ( this->mins.x, this->children.front ( )->maxs.y ), this->maxs, ImColor ( 50, 50, 50, 255 ) );
+				this->renderer->AddLine ( ImVec2 ( this->mins.x, this->children.front ( )->maxs.y ), ImVec2 ( this->maxs.x, this->children.front ( )->maxs.y ), ImColor ( 0, 0, 0, 55 ));
 		}
 		else {
             if ( !( this->flags & flags::no_background ) ) {

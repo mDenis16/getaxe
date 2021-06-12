@@ -35,7 +35,7 @@ namespace modulation {
 		for ( int i = 0; i < interfaces::glow_manager->size; i++ ) {
 			if ( interfaces::glow_manager->objects [ i ].unused ( ) || !interfaces::glow_manager->objects [ i ].entity )
 				continue;
-			continue;
+			//continue;
 			auto & glow_object = interfaces::glow_manager->objects [ i ];
 
 			auto entity = reinterpret_cast< entity_t * >( glow_object.entity );

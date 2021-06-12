@@ -27,7 +27,9 @@
 	double easeOutBounce ( double t ) {
 		return 1 - pow ( 2, -6 * t ) * abs ( cos ( t * M_PI * 3.5 ) );
 	}
-
+	float InvLerpc ( float a, float b, float v ) {
+		return ( v - a ) / ( b - a );
+	}
 	void c_legitbot::aim_at ( vec3_t & position ) {
 		static vec3_t old_angles = vec3_t ( );
 
@@ -66,12 +68,15 @@
 
 
 			float speed = active_target->velocity ( ).Length2D ( );
-
+			speed = std::clamp ( speed, 1.f, 255.f );
 
 			if ( !is_singleshot && dt_progress >= 1.f ) {
-				current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( ( settings->aim_speed * 1.4347826087f ) + speed * .5f, 1.f, 100.f );
-				current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * std::clamp ( ( settings->aim_speed * 1.4347826087f ) + speed * .5f, 1.f, 100.f );
-				std::cout << " linear smooth " << std::endl;
+				float invlerp =  InvLerpc ( 1.f, 300.f, speed );
+				float aim_speed = std::clamp ( ( settings->aim_speed * 1.4347826087f ) - std::lerp( invlerp, 1.f, settings->aim_speed), 1.f, 100.f );
+				
+				current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * aim_speed;
+				current_cmd->viewangles.y = current_cmd->viewangles.y - dleta_percent_Y * aim_speed;
+				std::cout << " linear smooth "  << " aim speed : " << aim_speed  << std::endl;
 			}
 			else {
 				current_cmd->viewangles.x = current_cmd->viewangles.x - delta_percent_X * std::clamp ( settings->aim_speed - speed * .1f, 1.f, 100.f );

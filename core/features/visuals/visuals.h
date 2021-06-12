@@ -4,6 +4,7 @@
 #include "../visuals/projectile/visual_projectile.h"
 #include "../visuals/weapon/visual_weapon.h"
 #include "../visuals/grenade/visual_grenade.h"
+#include "../visuals/radar/radar.h"
 #include "../../../dependencies/interfaces/i_client_entity_list.hpp"
 
 namespace visuals {

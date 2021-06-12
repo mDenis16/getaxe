@@ -2923,7 +2923,7 @@ namespace overlay {
 	         D3DXCreateFont ( device, 15, 0, FW_REGULAR, 1, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH, "Verdana", &visuals::fonts [ visuals::fonts::ESP ] );
 			 D3DXCreateFont ( device, 9, 0, FW_REGULAR, 1, 0, ANSI_CHARSET, OUT_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH, "Choktoff", &visuals::fonts [ visuals::fonts::FLAGS ] );
 
-			visuals::esp_font = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\MaisonNeue-Medium.ttf", 25.f );
+			visuals::esp_font = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\Verdana.ttf", 25.f );
 
 			visuals::device = device;
 

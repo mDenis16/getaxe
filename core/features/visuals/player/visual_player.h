@@ -7,9 +7,16 @@ namespace visuals {
 		vec3_t barrel_start, barrel_end;
 		player_visual_base * cfg;
 
+		std::vector<ImVec2> warning_range;
+
 		player_t * player;
 		int health;
+		int old_health;
+		int health_on_change;
+		float health_animation_start = 0.f;
+		bool animating_health = false;
 		bool alive;
+		bool is_knife = false;
 		bool enemy;
 		int type = 0;
 		int ammo = 0;
@@ -22,6 +29,7 @@ namespace visuals {
 		bool fake_duck = false;
 		int clip = 0;
 		int max_clip = 0;
+		int last_tick_update = 0;
 		float l1_cycle = 0.f;
 		int last_tick = 0;
 		int act = 0;
@@ -40,6 +48,7 @@ namespace visuals {
 		float alpha = 255;
 		player_info_t player_info;
 		bool out_of_pov = false;
+		void render_range ( );
 		void render_name ( ) ;
 		void render_box ( ) ;
 		void render_ammo ( ) ;

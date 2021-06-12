@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Detailed report on module combobox-->
+<CCCC_Project>
+<module_summary>
+<lines_of_code value="284" level="0" />
+<lines_of_code_per_member_function value="******" level="0" />
+<McCabes_cyclomatic_complexity value="77" level="0" />
+<McCabes_cyclomatic_complexity_per_member_function value="******" level="2" />
+<lines_of_code value="22" level="0" />
+<lines_of_code_per_member_function value="********" level="2" />
+<lines_of_code_per_line_of_comment value="12.909" level="1" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="3.500" level="0" />
+<weighted_methods_per_class_unity value="13" level="0" />
+<weighted_methods_per_class_visibility value="0" level="0" />
+<depth_of_inheritance_tree value="0" level="0" />
+<number_of_children value="0" level="0" />
+<coupling_between_objects value="4" level="0" />
+<IF4 value="0" level="0" />
+<IF4_per_member_function value="********" level="0" />
+<IF4_visible value="0" level="0" />
+<IF4_visible_per_member_function value="********" level="0" />
+<IF4_concrete value="0" level="0" />
+<IF4_concrete_per_member_function value="********" level="0" />
+</module_summary>
+<module_detail>
+</module_detail>
+<procedural_detail>
+<member_function>
+<name>combobox(string,object *,vector,int &amp;)</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="238" />
+</extent>
+<lines_of_code value="12" level="0" />
+<McCabes_cyclomatic_complexity value="1" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>combobox(string,object *,vector,int &amp;,float)</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="163" />
+</extent>
+<lines_of_code value="14" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>combobox(string,object *,vector,int &amp;,key_bind_item &amp;,float)</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="211" />
+</extent>
+<lines_of_code value="16" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="1" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>combobox(string,object *,vector,int *,float)</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="187" />
+</extent>
+<lines_of_code value="14" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>draw()</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="308" />
+</extent>
+<lines_of_code value="41" level="1" />
+<McCabes_cyclomatic_complexity value="12" level="1" />
+<lines_of_comment value="5" level="0" />
+<lines_of_code_per_line_of_comment value="8.200" level="1" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="2.400" level="0" />
+</member_function>
+<member_function>
+<name>draw_scroll_thumb()</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="300" />
+</extent>
+<lines_of_code value="5" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>draw_scrollbar()</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="148" />
+</extent>
+<lines_of_code value="7" level="0" />
+<McCabes_cyclomatic_complexity value="0" level="0" />
+<lines_of_comment value="2" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>handle()</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="432" />
+</extent>
+<lines_of_code value="38" level="1" />
+<McCabes_cyclomatic_complexity value="23" level="1" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="******" level="2" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="******" level="2" />
+</member_function>
+<member_function>
+<name>handle_mouse_input()</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="417" />
+</extent>
+<lines_of_code value="6" level="0" />
+<McCabes_cyclomatic_complexity value="5" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="******" level="0" />
+</member_function>
+<member_function>
+<name>handle_scroll()</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="40" />
+</extent>
+<lines_of_code value="66" level="1" />
+<McCabes_cyclomatic_complexity value="20" level="1" />
+<lines_of_comment value="6" level="0" />
+<lines_of_code_per_line_of_comment value="11.000" level="1" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="3.333" level="0" />
+</member_function>
+<member_function>
+<name>set_value(int)</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="288" />
+</extent>
+<lines_of_code value="8" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>update()</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="491" />
+</extent>
+<lines_of_code value="46" level="1" />
+<McCabes_cyclomatic_complexity value="6" level="0" />
+<lines_of_comment value="8" level="0" />
+<lines_of_code_per_line_of_comment value="5.750" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="0.750" level="0" />
+</member_function>
+<member_function>
+<name>update_triangle()</name>
+<extent>
+<description>definition</description>
+<source_reference file="combobox.cpp" line="398" />
+</extent>
+<lines_of_code value="11" level="0" />
+<McCabes_cyclomatic_complexity value="0" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+</procedural_detail>
+<structural_detail>
+<module>
+<name>combobox</name>
+<client_module>
+</client_module>
+<supplier_module>
+<name>key_bind_item</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="211" />
+</extent>
+<name>object</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="163" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="187" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="211" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="238" />
+</extent>
+<name>string</name>
+<visible>true</visible>
+<concrete>true</concrete>
+<extent>
+<description>pass by value</description>
+<source_reference file="combobox.cpp" line="163" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="combobox.cpp" line="187" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="combobox.cpp" line="211" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="combobox.cpp" line="238" />
+</extent>
+<name>vector</name>
+<visible>true</visible>
+<concrete>true</concrete>
+<extent>
+<description>pass by value</description>
+<source_reference file="combobox.cpp" line="163" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="combobox.cpp" line="187" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="combobox.cpp" line="211" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="combobox.cpp" line="238" />
+</extent>
+</supplier_module>
+</module>
+</structural_detail>
+</CCCC_Project>

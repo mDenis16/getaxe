@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Detailed report on module multibox-->
+<CCCC_Project>
+<module_summary>
+<lines_of_code value="276" level="0" />
+<lines_of_code_per_member_function value="******" level="0" />
+<McCabes_cyclomatic_complexity value="81" level="0" />
+<McCabes_cyclomatic_complexity_per_member_function value="******" level="2" />
+<lines_of_code value="19" level="0" />
+<lines_of_code_per_member_function value="********" level="2" />
+<lines_of_code_per_line_of_comment value="14.526" level="1" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="4.263" level="0" />
+<weighted_methods_per_class_unity value="11" level="0" />
+<weighted_methods_per_class_visibility value="0" level="0" />
+<depth_of_inheritance_tree value="0" level="0" />
+<number_of_children value="0" level="0" />
+<coupling_between_objects value="4" level="0" />
+<IF4 value="0" level="0" />
+<IF4_per_member_function value="********" level="0" />
+<IF4_visible value="0" level="0" />
+<IF4_visible_per_member_function value="********" level="0" />
+<IF4_concrete value="0" level="0" />
+<IF4_concrete_per_member_function value="********" level="0" />
+</module_summary>
+<module_detail>
+</module_detail>
+<procedural_detail>
+<member_function>
+<name>animate_preview()</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="336" />
+</extent>
+<lines_of_code value="8" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>draw()</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="242" />
+</extent>
+<lines_of_code value="61" level="1" />
+<McCabes_cyclomatic_complexity value="22" level="1" />
+<lines_of_comment value="2" level="0" />
+<lines_of_code_per_line_of_comment value="30.500" level="2" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="11.000" level="2" />
+</member_function>
+<member_function>
+<name>draw_scrollbar()</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="123" />
+</extent>
+<lines_of_code value="7" level="0" />
+<McCabes_cyclomatic_complexity value="0" level="0" />
+<lines_of_comment value="2" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>handle()</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="359" />
+</extent>
+<lines_of_code value="33" level="1" />
+<McCabes_cyclomatic_complexity value="21" level="1" />
+<lines_of_comment value="5" level="0" />
+<lines_of_code_per_line_of_comment value="6.600" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="4.200" level="0" />
+</member_function>
+<member_function>
+<name>handle_mouse_input()</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="347" />
+</extent>
+<lines_of_code value="6" level="0" />
+<McCabes_cyclomatic_complexity value="5" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="******" level="0" />
+</member_function>
+<member_function>
+<name>handle_scroll()</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="15" />
+</extent>
+<lines_of_code value="66" level="1" />
+<McCabes_cyclomatic_complexity value="20" level="1" />
+<lines_of_comment value="6" level="0" />
+<lines_of_code_per_line_of_comment value="11.000" level="1" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="3.333" level="0" />
+</member_function>
+<member_function>
+<name>multibox(string,object *,vector,vector &amp;,float)</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="164" />
+</extent>
+<lines_of_code value="14" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="1" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>multibox(string,object *,vector,vector &amp;,key_bind_item &amp;,float)</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="192" />
+</extent>
+<lines_of_code value="16" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="3" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>multibox(string,object *,vector,void *,float)</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="137" />
+</extent>
+<lines_of_code value="14" level="0" />
+<McCabes_cyclomatic_complexity value="2" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>update()</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="425" />
+</extent>
+<lines_of_code value="41" level="1" />
+<McCabes_cyclomatic_complexity value="5" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="******" level="2" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="******" level="0" />
+</member_function>
+<member_function>
+<name>update_triangle()</name>
+<extent>
+<description>definition</description>
+<source_reference file="multibox.cpp" line="220" />
+</extent>
+<lines_of_code value="10" level="0" />
+<McCabes_cyclomatic_complexity value="0" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+</procedural_detail>
+<structural_detail>
+<module>
+<name>multibox</name>
+<client_module>
+</client_module>
+<supplier_module>
+<name>key_bind_item</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="192" />
+</extent>
+<name>object</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="137" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="164" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="192" />
+</extent>
+<name>string</name>
+<visible>true</visible>
+<concrete>true</concrete>
+<extent>
+<description>pass by value</description>
+<source_reference file="multibox.cpp" line="137" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="multibox.cpp" line="164" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="multibox.cpp" line="192" />
+</extent>
+<name>vector</name>
+<visible>true</visible>
+<concrete>true</concrete>
+<extent>
+<description>pass by value</description>
+<source_reference file="multibox.cpp" line="137" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="multibox.cpp" line="164" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="164" />
+</extent>
+<extent>
+<description>pass by value</description>
+<source_reference file="multibox.cpp" line="192" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="192" />
+</extent>
+</supplier_module>
+</module>
+</structural_detail>
+</CCCC_Project>

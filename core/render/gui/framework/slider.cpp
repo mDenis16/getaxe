@@ -73,7 +73,7 @@ namespace ui {
 		this->renderer->AddRectFilled ( this->bb_min, this->bb_max, ImColor ( 46, 49, 52, 170 ), 12.f );
 	
 		auto filled = this->fill_percent * ( ( this->bb_max.x - this->bb_min.x ) ) / 100.f;
-		this->renderer->AddRectFilled (this->bb_min, ImVec2( this->bb_min.x + filled, this->bb_max.y), ImColor(25, 125, 123, 255), 12.f );
+		this->renderer->AddRectFilled (this->bb_min, ImVec2( this->bb_min.x + filled, this->bb_max.y), ImColor(25, 125, 123, max_alpha ), 12.f );
 
 
 		ImVec2 middle = ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f, ( this->maxs.y + this->mins.y ) / 2.f );
@@ -81,10 +81,10 @@ namespace ui {
 		middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
 
 
-		this->renderer->AddCircleFilled ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 255, 255, 255, 255 ) );
-		this->renderer->AddShadowCircle ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 0, 0, 0, 125 ), 5.f, ImVec2(0,0) );
+		this->renderer->AddCircleFilled ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 255, 255, 255, max_alpha ) );
+		this->renderer->AddShadowCircle ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 0, 0, 0, (int)(max_alpha * 0.49f) ), 5.f, ImVec2(0,0) );
 
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ),  this->title.c_str() );
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, (int)(max_alpha * 0.8823f) ),  this->title.c_str() );
 
 		for ( auto & child : this->children )
 			child->draw ( );
@@ -101,28 +101,53 @@ namespace ui {
 		this->hovering = this->can_focus ( ) && ( mouse_pos.x > this->bb_min.x && mouse_pos.y > this->bb_min.y && mouse_pos.x < this->bb_max.x && mouse_pos.y < this->bb_max.y );
 	}
 	void slider::handle ( ) {
+		if ( this->should_reanimate || this->should_reset ) {
+			this->in_animation = true;
+			float cur_val = ( float ) *( float * ) this->value;
+			float max_value = ( float ) *( float * ) &this->value_maxs;
+			float min_value = ( float ) *( float * ) &this->value_mins;
+
+			//this->target_fill = ( cur_val * 100.f ) / max_value;
+
+			//float ratio_fill = target_fill / 100.f;
+
+			// this->target_fill = InvLerp ( ratio_fill, ( cur_val * 100.f ) / min_value, ( cur_val * 100.f ) / max_value );
+
+			//this->fill_percent = this->target_fill;
+
+			this->target_fill = InvLerp ( min_value, max_value, cur_val );
+			this->target_fill = std::lerp ( 0.f, 100.f, this->target_fill );
+			this->should_reanimate = false;
+			this->should_reset = false;
+			return;
+		}
 
 		if ( !this->old_value ) {
 			this->old_value = std::malloc ( sizeof ( this->value ) );
 			std::memcpy ( this->old_value, this->value, sizeof ( this->value ) );
 		}
+		
 
 		
 		if ( this->in_animation ) {
+			float delta_t = ImGui::GetIO ( ).DeltaTime;
 
-			if ( this->fill_percent >= this->target_fill )
-				this->fill_percent -= ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 4.f;
-			else if ( this->fill_percent <= this->target_fill ) 
-				this->fill_percent += ( 1000.0 / ( double ) ImGui::GetIO ( ).Framerate ) / 4.f;
+			
 
-		
-			if ( std::fabs ( this->fill_percent - this->target_fill ) <= 2.f ) {
+			this->fill_percent = std::clamp ( this->fill_percent, 0.f, 100.f );
+
+			if ( std::abs( (int) this->fill_percent - (int)this->target_fill) <= 1) {
 				this->fill_percent = this->target_fill;
 				this->in_animation = false;
 				finished_animation = true;
 				if ( this->updated_last_time )
 					this->updated_last_time = false;
 			}
+
+			if ( this->fill_percent > this->target_fill )
+				this->fill_percent -= delta_t * 150.f;
+			else if ( this->fill_percent < this->target_fill )
+				this->fill_percent += delta_t * 150.f;
 			return;
 		}
 
@@ -303,8 +328,8 @@ namespace ui {
 		//this->fill_percent = this->target_fill;
 
 
-		this->target_fill = InvLerp(min_value, max_value, cur_val);
-		this->fill_percent = this->target_fill = std::lerp(0.f, 100.f, this->target_fill);
+		//this->target_fill = InvLerp(min_value, max_value, cur_val);
+	//	this->fill_percent = this->target_fill = std::lerp(0.f, 100.f, this->target_fill);
 
 		for ( auto & child : this->children )
 			child->update ( );

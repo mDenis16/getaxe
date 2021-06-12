@@ -104,46 +104,26 @@ void c_event_listener::fire_game_event ( i_game_event * m_event ) {
 	}
 
 
-	/*if ( !strcmp ( m_event->get_name ( ), "player_hurt" ) ) {
-		int attacker = g_csgo.m_engine->get_player_for_user_id ( m_event->get_int ( "attacker" ) );
-		int target = g_csgo.m_engine->get_player_for_user_id ( m_event->get_int ( "userid" ) );
-		if ( attacker == g_csgo.m_engine->get_local_player ( ) && target != g_csgo.m_engine->get_local_player ( ) ) {
-			auto * ent = g_csgo.m_entity_list->get< c_csplayer > ( target );
-
-			player_info_t info;
-			if ( g_csgo.m_engine->get_player_info ( target, &info ) && ent ) {
-				if ( g_vars.misc.hitmarker_sound ) {
-					std::string sound_path = "hitsounds\\" + g_menu.m_selected_sound_text;
-
-					// you can do this better but im lazy.
-					PlaySoundA ( sound_path.c_str ( ), nullptr, SND_ASYNC );
-				}
-
-				std::string s = info.m_player_name;
-				std::transform ( s.begin ( ), s.end ( ), s.begin ( ), tolower );
-
-				if ( g_vars.visuals.hitmarker )
-					g_cl.m_hitmarker_alpha = 1.f;
-
-				if ( g_vars.misc.log_damage )
-					g_notify.add ( true, OSHGui::Drawing::Color::FromARGB ( 220, 249, 44, 69 ), "hit %s in the %s for %i damage.", s.c_str ( ),
-						hitgroup_to_name ( m_event->get_int ( "hitgroup" ) ), m_event->get_int ( "dmg_health" ) );
-			}
-		}
-	}
-	else if ( !strcmp ( m_event->get_name ( ), "item_purchase" ) ) {
-		int user = g_csgo.m_engine->get_player_for_user_id ( m_event->get_int ( "userid" ) );
-
-		auto local = c_csplayer::get_local ( );
-		if ( !local || local->team ( ) == m_event->get_int ( "team" ) )
+	if ( !strcmp ( m_event->get_name ( ), "player_hurt" ) ) {
+		
+		int attacker_id = m_event->get_int ( "attacker" );
+		auto attacker = interfaces::entity_list->get< player_t > ( interfaces::engine->get_player_for_user_id ( attacker_id ) );
+		if ( !attacker )
 			return;
 
-		player_info_t info;
-		if ( g_csgo.m_engine->get_player_info ( user, &info ) ) {
-			if ( g_vars.misc.log_purchases )
-				g_notify.add ( true, OSHGui::Drawing::Color::FromARGB ( 220, 249, 44, 69 ), "%s bought %s", info.m_player_name, m_event->get_string ( "weapon" ) );
-		}
-	}*/
+		if ( attacker != local_pointer )
+			return;
+
+
+		int user_id = m_event->get_int ( "userid" );
+		auto user = interfaces::entity_list->get< player_t > ( interfaces::engine->get_player_for_user_id ( user_id ) );
+		if ( !user )
+			return;
+
+		dmg_indicator->addDmg ( new damage_log ( m_event->get_int ( "dmg_health" ), user->origin ( ) ) );
+	 
+	}
+	
 
 	if ( !strcmp ( m_event->get_name ( ), "player_footstep" ) ) {
 		int user_id = m_event->get_int( "userid" );

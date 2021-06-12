@@ -45,7 +45,7 @@ namespace ui {
 
 		middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
 		
-
+		
 		if ( this->parrent->type == combobox_element ) {
 			if ( *parent->value == this->index )
 				this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 25, 125, 123, 15 ), 0.f );

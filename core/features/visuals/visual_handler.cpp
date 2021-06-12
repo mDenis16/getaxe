@@ -49,10 +49,12 @@ namespace visuals {
 
 			visual_player * data = new visual_player ( );
 			
+			data->warning_range.reserve ( 32 );
 			data->index = entity->index ( );
 			data->class_id = entity->client_class ( )->class_id;
 			data->entity = entity;
 			data->player = reinterpret_cast< player_t * >( entity );
+
 			entity_list.push_back ( data );
 
 			//delete data;
@@ -123,7 +125,9 @@ namespace visuals {
 			if ( it != handler->entity_list.end ( ) ) {
 
 				const int list_index = std::distance ( handler->entity_list.begin ( ), it );
-				
+				if (entity_list.at(list_index )->class_id == CCSPlayer )
+					static_cast< visual_player * >( entity_list.at ( list_index ) )->warning_range.shrink_to_fit ( );
+
 				delete entity_list.at ( list_index );
 				entity_list.erase ( it );
 			}
@@ -161,7 +165,7 @@ namespace visuals {
 		if ( visuals::render && legitbot )
 			legitbot->draw_debug ( visuals::render );
 
-
+		
 		mtx.lock ( );
 		for ( auto & entity : entity_list ) {
 			
@@ -187,6 +191,9 @@ namespace visuals {
 			
 		}
 		mtx.unlock ( );
+
+	
+
 	}
 
 	void c_handler::local_player ( ) {

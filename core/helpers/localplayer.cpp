@@ -153,7 +153,7 @@ namespace local_player {
 	void end_tick ( c_usercmd * cmd ) {
 
 		if ( localdata.alive ) {
-			//engine_prediction->end ( );
+			localdata.last_punch = local_pointer->aim_punch_angle ( );
 		}
 
 		fix_movement ( cmd, localdata.strafe_angles );

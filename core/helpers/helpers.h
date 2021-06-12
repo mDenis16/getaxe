@@ -73,6 +73,7 @@ namespace local_player {
 		int next_tickbase_shift = 0;
 		int tickbase_shift = 0;
 		int fixed_tickbase = 0;
+		vec3_t last_punch = vec3_t ( );
 		int backup_tickbase = 0;
 		int current_weapon = 0;
 		int last_aimbot_shot = 0;

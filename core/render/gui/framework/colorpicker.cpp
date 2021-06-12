@@ -249,8 +249,9 @@ namespace ui {
 			this->should_reanimate = false;
 		}
 
-		if ( ui::focused_item != -1 && ui::focused_item != this->_id )
+		if ( !this->can_focus ( ) && !this->is_focused ( ) )
 			return;
+
 
 
 		
@@ -259,7 +260,7 @@ namespace ui {
 
 		handle_mouse_input ( );
 
-		if ( this->hovering && key_released ( VK_LBUTTON ) ) {
+		if ( this->hovering && key_pressed ( VK_LBUTTON ) ) {
 			auto time = ImGui::GetIO ( ).DeltaTime;
 
 			if ( time == this->last_open )
@@ -268,11 +269,10 @@ namespace ui {
 			this->last_open = time;
 
 			this->open = !this->open;
-			if ( this->open ) {
-				ui::focused_item = this->_id;
-			}
+			if ( this->open )
+				this->focus_it ( );
 			else
-				ui::focused_item = -1;
+				this->out_of_focus ( );
 
 			return;
 		}
@@ -285,9 +285,9 @@ namespace ui {
 		auto mouse_pos = ui::get_cursor ( );
 		bool hovering_bb = ( mouse_pos.x > this->bb_min.x && mouse_pos.y > this->bb_min.y && mouse_pos.x < this->bb_max.x && mouse_pos.y < this->bb_max.y );
 
-		if ( key_released ( VK_LBUTTON ) && !hovering_bb ) {
+		if ( key_pressed ( VK_LBUTTON ) && !hovering_bb ) {
 			this->open = false;
-			ui::focused_item = -1;
+			this->out_of_focus ( );
 			return;
 		}
 

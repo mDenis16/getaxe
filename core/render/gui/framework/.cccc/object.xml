@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Detailed report on module object-->
+<CCCC_Project>
+<module_summary>
+<lines_of_code value="27" level="0" />
+<lines_of_code_per_member_function value="******" level="0" />
+<McCabes_cyclomatic_complexity value="17" level="0" />
+<McCabes_cyclomatic_complexity_per_member_function value="******" level="2" />
+<lines_of_code value="2" level="0" />
+<lines_of_code_per_member_function value="********" level="2" />
+<lines_of_code_per_line_of_comment value="13.500" level="1" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="8.500" level="1" />
+<weighted_methods_per_class_unity value="5" level="0" />
+<weighted_methods_per_class_visibility value="0" level="0" />
+<depth_of_inheritance_tree value="0" level="0" />
+<number_of_children value="0" level="0" />
+<coupling_between_objects value="15" level="0" />
+<IF4 value="0" level="0" />
+<IF4_per_member_function value="********" level="0" />
+<IF4_visible value="0" level="0" />
+<IF4_visible_per_member_function value="********" level="0" />
+<IF4_concrete value="0" level="0" />
+<IF4_concrete_per_member_function value="********" level="0" />
+</module_summary>
+<module_detail>
+</module_detail>
+<procedural_detail>
+<member_function>
+<name>can_focus()</name>
+<extent>
+<description>definition</description>
+<source_reference file="element.cpp" line="26" />
+</extent>
+<lines_of_code value="11" level="0" />
+<McCabes_cyclomatic_complexity value="12" level="1" />
+<lines_of_comment value="1" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="12.000" level="2" />
+</member_function>
+<member_function>
+<name>focus_it()</name>
+<extent>
+<description>definition</description>
+<source_reference file="element.cpp" line="13" />
+</extent>
+<lines_of_code value="3" level="0" />
+<McCabes_cyclomatic_complexity value="0" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>handle_mouse_input()</name>
+<extent>
+<description>definition</description>
+<source_reference file="element.cpp" line="8" />
+</extent>
+<lines_of_code value="2" level="0" />
+<McCabes_cyclomatic_complexity value="0" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>is_focused()</name>
+<extent>
+<description>definition</description>
+<source_reference file="element.cpp" line="39" />
+</extent>
+<lines_of_code value="3" level="0" />
+<McCabes_cyclomatic_complexity value="1" level="0" />
+<lines_of_comment value="0" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+<member_function>
+<name>out_of_focus()</name>
+<extent>
+<description>definition</description>
+<source_reference file="element.cpp" line="16" />
+</extent>
+<lines_of_code value="8" level="0" />
+<McCabes_cyclomatic_complexity value="4" level="0" />
+<lines_of_comment value="1" level="0" />
+<lines_of_code_per_line_of_comment value="------" level="0" />
+<McCabes_cyclomatic_complexity_per_line_of_comment value="------" level="0" />
+</member_function>
+</procedural_detail>
+<structural_detail>
+<module>
+<name>object</name>
+<client_module>
+<name>bezier_dot</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="bezier_editor.cpp" line="44" />
+</extent>
+<name>bezier_editor</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="bezier_editor.cpp" line="57" />
+</extent>
+<name>button</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="button.cpp" line="10" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="button.cpp" line="31" />
+</extent>
+<name>checkbox</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="checkbox.cpp" line="11" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="checkbox.cpp" line="28" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="checkbox.cpp" line="45" />
+</extent>
+<name>colorpicker</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="colorpicker.cpp" line="17" />
+</extent>
+<name>combobox</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="163" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="187" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="211" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="combobox.cpp" line="238" />
+</extent>
+<name>config_box</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="config_box.cpp" line="40" />
+</extent>
+<name>config_item</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="config_item.cpp" line="10" />
+</extent>
+<name>element_extender</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="element_extender.cpp" line="9" />
+</extent>
+<name>inventory_changer</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="inventory_changer.cpp" line="311" />
+</extent>
+<name>inventory_item</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="inventory_item.cpp" line="26" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="inventory_item.cpp" line="40" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="inventory_item.cpp" line="54" />
+</extent>
+<name>key_bind_muie</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="keybind.cpp" line="9" />
+</extent>
+<name>key_selector</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="key_selector.cpp" line="34" />
+</extent>
+<name>multibox</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="137" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="164" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="multibox.cpp" line="192" />
+</extent>
+<name>slider</name>
+<visible>true</visible>
+<concrete>false</concrete>
+<extent>
+<description>pass by reference</description>
+<source_reference file="slider.cpp" line="12" />
+</extent>
+<extent>
+<description>pass by reference</description>
+<source_reference file="slider.cpp" line="35" />
+</extent>
+</client_module>
+<supplier_module>
+</supplier_module>
+</module>
+</structural_detail>
+</CCCC_Project>

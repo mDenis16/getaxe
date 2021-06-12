@@ -42,6 +42,7 @@ namespace ui {
 	extern ImFont * weapon_font;
 	extern ImFont * weapon_icons;
 	extern ImFont * test;
+	extern void * radar_window_extern;
 	extern void * window_device;
 
 	extern int focused_item;

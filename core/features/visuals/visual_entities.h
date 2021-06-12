@@ -38,15 +38,21 @@ namespace visuals {
 	
 		int class_id = -1;
 		int index;
+		int glow_index = -1;
 		bool mark_deletetion = false;
-
+		bool is_fire = false;
 		bool already_predicted = false;
 
 		bool on_screen;
 		bool valid;
 		bool dormant;
+	
+	
+		bool spotted = false;
+	
 		int distance = 0;
 		int idx = 0;
+		float spot_time = 0.f;
 
 		float last_seen_time = 0.f;
 		vec3_t origin, mins, maxs;
