@@ -114,6 +114,7 @@ namespace ui {
 		ImVec2 animation_position;
 		
 		void on_start ( );
+		void update_player ( );
 		void add_item_to_inventory ( weapon * weap, paintkit * pkit );
 		inventory_changer ( object * parent );
 		void parse_data ( );

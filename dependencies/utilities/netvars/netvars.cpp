@@ -1,13 +1,13 @@
 #include "netvars.hpp"
 #include "../../interfaces/interfaces.hpp"
 
-//antario if i remember correctly
+
 namespace netvar_manager {
 	using netvar_key_value_map = std::unordered_map< uint32_t, uintptr_t >;
 	using netvar_table_map = std::unordered_map< uint32_t, netvar_key_value_map >;
 	void initialize_props(netvar_table_map& table_map);
 
-	uintptr_t get_net_var(const uint32_t table,
+ uintptr_t get_net_var(const uint32_t table,
 		const uint32_t prop) {
 		static netvar_table_map map = {};
 		if (map.empty())

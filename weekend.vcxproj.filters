@@ -37,11 +37,6 @@
     <ClCompile Include="core\hooks\renderview\scene_end.cpp" />
     <ClCompile Include="core\hooks\traceray\clip_ray_collideable.cpp" />
     <ClCompile Include="core\hooks\traceray\trace_ray.cpp" />
-    <ClCompile Include="dependencies\minhook\buffer.c" />
-    <ClCompile Include="dependencies\minhook\hde\hde32.c" />
-    <ClCompile Include="dependencies\minhook\hde\hde64.c" />
-    <ClCompile Include="dependencies\minhook\hook.c" />
-    <ClCompile Include="dependencies\minhook\trampoline.c" />
     <ClCompile Include="dependencies\interfaces\interfaces.cpp" />
     <ClCompile Include="dependencies\math\math.cpp" />
     <ClCompile Include="dependencies\utilities\console\console.cpp" />
@@ -134,6 +129,13 @@
     <ClCompile Include="core\hooks\d3d\steam_present.cpp" />
     <ClCompile Include="core\hooks\d3d\steam_reset.cpp" />
     <ClCompile Include="core\features\visuals\damage_indicator\damage_indicator.cpp" />
+    <ClCompile Include="dependencies\math\PolynomialSolver.cpp" />
+    <ClCompile Include="dependencies\minhook\buffer.cpp" />
+    <ClCompile Include="dependencies\minhook\hook.cpp" />
+    <ClCompile Include="dependencies\minhook\trampoline.cpp" />
+    <ClCompile Include="dependencies\minhook\hde\hde32.cpp" />
+    <ClCompile Include="dependencies\minhook\hde\hde64.cpp" />
+    <ClCompile Include="core\helpers\signatures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -280,6 +282,11 @@
     <ClInclude Include="core\features\engine_prediction\engine_prediction.h" />
     <ClInclude Include="core\features\visuals\radar\radar.h" />
     <ClInclude Include="core\features\visuals\damage_indicator\damage_indicator.h" />
+    <ClInclude Include="dependencies\math\PolynomialSolver.h" />
+    <ClInclude Include="dependencies\utilities\aye_imports.hpp" />
+    <ClInclude Include="security\safe_string.h" />
+    <ClInclude Include="security\stack_strings.h" />
+    <ClInclude Include="core\helpers\signatures.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

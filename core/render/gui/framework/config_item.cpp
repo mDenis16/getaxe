@@ -26,6 +26,22 @@ namespace ui {
 
 		this->handle ( );
 
+		
+
+		float progress_alpha = ImGui::GetTime ( ) - hovering_button_time;  progress_alpha = std::clamp ( progress_alpha * 3.5f, 0.f, 1.f );
+
+
+		int alpha;
+
+		if ( this->hovering ) {
+			alpha = ( int ) std::lerp ( 45.f, 211.f, progress_alpha );
+
+		}
+		else {
+			alpha = ( int ) std::lerp ( 45.f, 211.f, 1.f - progress_alpha );
+
+		}
+		this->renderer->AddShadowRect ( ImVec2 ( this->mins.x + 20, this->mins.y + 20 ), ImVec2 ( this->maxs.x - 20, this->maxs.y - 20 ), ImColor ( 255, 255, 255, 255 ), 55.f, ImVec2 ( 0, 0 ), ImDrawShadowFlags_CutOutShapeBackground, 50.f, ImDrawCornerFlags_::ImDrawCornerFlags_All );
 
 		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 27, 28, 31, 255 ), 5.5f );
 		this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 15 ), 5.5f );
@@ -36,7 +52,7 @@ namespace ui {
 
 		this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 12.f, this->mins.y + 12.f ), ImColor ( 255, 255, 255, 255 ), name.data() );
 
-		this->renderer->AddRectFilled ( this->button_mins, this->button_maxs, ImColor ( 46, 49, 52, ui::focused_item == this->_id ? 211 : 45 ), 4.5f );
+		this->renderer->AddRectFilled ( this->button_mins, this->button_maxs, ImColor ( 46, 49, 52, alpha ), 4.5f );
 		this->renderer->AddRect ( this->button_mins, this->button_maxs, ImColor ( 255, 255, 255, 15 ), 4.5f );
 
 		std::string status = this->loaded ? "Save" : "Load";
@@ -53,6 +69,14 @@ namespace ui {
 
 		this->renderer->AddText ( ui::font_icons, 13.f, this->delete_pos, ImColor ( 255, 255, 255, 200 ), ICON_BIN );
 		this->renderer->AddText ( ui::font_icons, 13.f, this->copy_pos, ImColor ( 255, 255, 255, 200 ), ICON_COPY );
+		
+			if ( this->hovering != this->was_hovering )
+				hover_start_time = ImGui::GetTime ( );
+
+
+
+			this->was_hovering = this->hovering;
+		
 	}
 	void config_item::handle_mouse_input ( ) {
 
@@ -72,7 +96,9 @@ namespace ui {
 
 		handle_mouse_input ( );
 
-		
+		if ( this->was_hovering_button != this->hovering_button )
+			this->hovering_button_time = ImGui::GetTime ( );
+
 		if ( this->hovering_button && key_released ( VK_LBUTTON ) ) {
 			if ( this->loaded ) {
 				/*to do save config ;)*/
@@ -111,9 +137,9 @@ namespace ui {
 			this->maxs.x = this->parrent->maxs.x - 15;
 
 		
-			this->mins.y = this->parrent->mins.y - parent->scroll_progress;
 
-
+			this->mins.y = this->parrent->mins.y - parent->scroll_progress + 10.f;
+			this->maxs.y = this->mins.y + 60.f;
 
 
 			

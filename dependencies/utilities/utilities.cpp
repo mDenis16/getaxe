@@ -62,8 +62,15 @@ std::uintptr_t utilities::code_style_pattern ( const char * moduleName, std::str
 
     return 0;
 }
+#define strcat_(x, y) x ## y
+#define strcat(x, y) strcat_(x, y)
+#define PRINT_VALUE(x) template <int> struct strcat(strcat(value_of_, x), _is); static_assert(strcat(strcat(value_of_, x), _is)<x>::x, "");
+
+
 
 std::uint8_t* utilities::pattern_scan(const char* module_name, const char* signature) noexcept {
+   
+
     const auto module_handle = GetModuleHandleA(module_name);
 
     if (!module_handle)

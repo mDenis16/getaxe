@@ -1,10 +1,15 @@
 #include "../dependencies/utilities/csgo.hpp"
 #include "features/features.hpp"
+#include <Windows.h>
+
+#include "../dependencies/utilities/aye_imports.hpp"
 #define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS 
 
 
 unsigned long WINAPI initialize(void* instance) {
-	
+
+
+
 	while ( !GetModuleHandleA ( "serverbrowser.dll" ) )
 		std::this_thread::sleep_for ( std::chrono::milliseconds ( 100 ) );
 
@@ -63,7 +68,7 @@ unsigned long WINAPI initialize(void* instance) {
 	FreeLibraryAndExitThread(static_cast<HMODULE>(instance), 0);
 
 	ui::done = true;
-
+	return true;
 }
 
 unsigned long WINAPI release() {
@@ -88,7 +93,10 @@ unsigned long WINAPI release() {
 std::int32_t WINAPI DllMain(const HMODULE instance [[maybe_unused]], const unsigned long reason, const void* reserved [[maybe_unused]] ) {
 	DisableThreadLibraryCalls(instance);
 
-	switch (reason) {
+
+
+	utilities::pattern_scan(dll, pattern);
+	/*switch (reason) {
 	case DLL_PROCESS_ATTACH: {
 		if (auto handle = CreateThread(nullptr, NULL, initialize, instance, NULL, nullptr))
 			CloseHandle(handle);
@@ -100,7 +108,7 @@ std::int32_t WINAPI DllMain(const HMODULE instance [[maybe_unused]], const unsig
 		release();
 		break;
 	}
-	}
+	}*/
 
 	return true;
 }

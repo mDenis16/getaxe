@@ -40,6 +40,8 @@ bool interfaces::initialize() {
 
 	client = get_interface<i_base_client_dll, interface_type::index>("client.dll", "VClient018");
 
+	printf("INTERFACE: client %p \n", client);
+
 	entity_list = get_interface<i_client_entity_list, interface_type::index>("client.dll", "VClientEntityList003");
 
 	engine = get_interface<iv_engine_client, interface_type::index>("engine.dll", "VEngineClient014");

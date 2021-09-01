@@ -8,6 +8,12 @@ namespace hooks::callback {
 		if ( !cmd)
 			return create_move_original ( input_sample_frametime, cmd );
 
+		local_player::m_data.last_mouse_x = cmd->mousedx;
+		local_player::m_data.last_mouse_y = cmd->mousedy;
+
+
+		if (cmd->command_number != 0)
+			return  create_move_original(input_sample_frametime, cmd);
 
 		if ( !interfaces::engine->is_in_game ( ) )
 			return  create_move_original ( input_sample_frametime, cmd );
@@ -38,7 +44,13 @@ namespace hooks::callback {
 
 		local_player::end_tick ( cmd );
 
+
 		auto original_result = create_move_original ( input_sample_frametime, cmd );
 	
+		if (cmd->buttons & in_attack) {
+			printf("In attack \n");
+
+		}
+
 	}
 }

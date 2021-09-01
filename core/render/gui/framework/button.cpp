@@ -22,10 +22,11 @@ namespace ui {
 		height = 30;
 		width = ( 85.f / 100.f ) * this->parrent->width;
 
-
-		this->parrent->add_children ( this );
 		update ( );
-
+		this->parrent->update ( );
+		this->parrent->add_children ( this );
+		this->parrent->update ( );
+		update ( );
 
 	}
 	button::button ( std::string text, object * parent, float percent_width, float percent_height, std::function<void ( )> func ) {
@@ -44,20 +45,36 @@ namespace ui {
 		this->width = ( percent_width / 100.f ) * parent->width;
 		this->height = ( percent_height / 100.f ) * parent->height;
 
-
+		update ( );
+		this->parrent->update ( );
 		this->parrent->add_children ( this );
+		this->parrent->update ( );
 		update ( );
 	}
 	void button::draw ( ) {
 
 		this->handle ( );
 
+		float progress_alpha = ImGui::GetTime ( ) - hover_start_time;  progress_alpha = std::clamp ( progress_alpha * 3.5f, 0.f, 1.f );
+
+
+		int alpha;
+
+		if ( this->hovering ) {
+			alpha = ( int ) std::lerp ( 45.f, 211.f, progress_alpha );
+
+		}
+		else {
+			alpha = ( int ) std::lerp ( 45.f, 211.f, 1.f - progress_alpha );
+
+		}
+		
 		this->renderer->PushClipRect ( this->mins, this->maxs, true );
 		this->renderer->AddCircleFilled ( this->animation_position, this->animation_step, ImColor ( 25, 125, 123, this->animated_alpha ) );
 		this->renderer->PopClipRect ( );
 
 
-		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 46, 49, 52, ui::focused_item == this->_id ? 211 : 45 ), 4.5f );
+		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 46, 49, 52, alpha ), 4.5f );
 		this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 15 ), 4.5f );
 
 		const ImVec2 text_size = ImGui::CalcTextSize ( this->text.c_str ( ), 15.f, ui::font_widgets );
@@ -72,8 +89,7 @@ namespace ui {
 
 	}
 	void button::handle_mouse_input ( ) {
-		if ( ui::focused_item != -1 )
-			return;
+		
 
 		auto mouse_pos = ui::get_cursor ( );
 
@@ -82,9 +98,16 @@ namespace ui {
 
 	void button::handle ( ) {
 
+
+		if ( !this->can_focus ( ) )
+			return;
+
 		handle_mouse_input ( );
 
-		
+		if ( this->was_hovering != this->hovering )
+			this->hover_start_time = ImGui::GetTime ( );
+
+	
 
 		if ( this->hovering && key_pressed ( VK_LBUTTON ) ) {
 			
@@ -118,6 +141,7 @@ namespace ui {
 				this->animated_alpha = 0;
 			}
 		}
+		this->was_hovering = this->hovering;
 	}
 	void button::update ( ) {
 		

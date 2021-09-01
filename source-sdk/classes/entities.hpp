@@ -6,6 +6,8 @@
 #include "../structs/animstate.hpp"
 
 #include "../../dependencies/utilities/netvars/netvars.hpp"
+#include "../../core/features/inventory_changer/CEconItem.h"
+
 namespace csgo {
 	extern player_t * local_player;
 
@@ -415,7 +417,31 @@ public:
 		}
 	}
 };
+class C_EconItemDefinition {
+public:
+	/*char pad_0x0000 [ 0x8 ]; ///0x0000
+	int32_t m_iItemDefinitionIndex; ///0x0008 
+	char pad_0x000C [ 0x40 ]; ///0x000C
+	char * m_szHudName; ///0x004C 
+	char pad_0x0050 [ 0x4 ]; ///0x0050
+	char * m_szWeaponType; ///0x0054 
+	char pad_0x0058 [ 0x4 ]; ///0x0058
+	char * m_szWeaponDescription; ///0x005C 
+	char pad_0x0060 [ 0x34 ]; ///0x0060
+	char * m_szViewModel; ///0x0094 
+	char pad_0x0098 [ 0x4 ]; ///0x0098
+	char * m_szWorldModel; ///0x009C 
+	char * m_szWorldModelDropped; ///0x00A0 
+	char pad_0x00A4 [ 0x110 ]; ///0x00A4
+	char * m_szWeaponName1; ///0x01B4 
+	char pad_0x01B8 [ 0x8 ]; ///0x01B8
+	char * m_szWeaponName; ///0x01C0 
+	char pad_0x01C4 [ 0x27C ]; ///0x01C4*/
 
+	int GetEquippedPosition ( ) {
+		return *reinterpret_cast< int * >( ( uintptr_t ) this + 0x28C );
+	}
+}; ///Size=0x0440
 class C_EconItemView {
 private:
 	using str_32 = char [ 32 ];
@@ -431,6 +457,33 @@ public:
 
 	c_utl_vector<IRefCounted *> & m_CustomMaterials ( );
 	c_utl_vector<IRefCounted *> & m_VisualsDataProcessors ( );
+
+
+	
+
+	C_EconItemDefinition * GetStaticData ( ) {
+		static auto fnGetStaticData
+			= reinterpret_cast< C_EconItemDefinition * ( __thiscall * )( void * ) >(
+				utilities::pattern_scan (  ( "client.dll" ), "55 8B EC 51 53 8B D9 8B ? ? ? ? ? 56 57 8B ? ? ? ? ? 85 FF 74 16" )
+				);
+		return fnGetStaticData ( this );
+	}
+	template <typename T>
+	static constexpr auto relativeToAbsolute ( uintptr_t address ) noexcept {
+		return ( T ) ( address + 4 + *reinterpret_cast< std::int32_t * >( address ) );
+	}
+	CEconItem * GetSOCData ( ) {
+		if ( !this )return nullptr;
+		static bool no_init = false;
+		static CEconItem * ( __thiscall * getSOCData )( C_EconItemView * itemView );
+		if ( !no_init ) {
+			
+			getSOCData = relativeToAbsolute<decltype( getSOCData )> ( utilities::code_style_pattern ( "client.dll", "\xE8????\x32\xC9" ) + 1 );
+			no_init = true;
+		}
+
+		return getSOCData ( this );
+	}
 };
 
 class base_view_model_t : public entity_t {
@@ -447,6 +500,10 @@ public:
 	NETVAR ( "DT_BaseCombatWeapon", "m_flNextSecondaryAttack", next_secondary_attack, float );
 	NETVAR ( "DT_BaseCombatWeapon", "m_iClip1", clip1_count, int );
 	NETVAR ( "DT_BaseCombatWeapon", "m_iClip2", clip2_count, int );
+
+	NETVAR ( "DT_BaseAttributableItem", "m_OriginalOwnerXuidHigh", m_OriginalOwnerXuidHigh, int );
+	NETVAR ( "DT_BaseAttributableItem", "m_OriginalOwnerXuidLow", m_OriginalOwnerXuidLow, int );
+
 	NETVAR ( "DT_BaseCombatWeapon", "m_iPrimaryReserveAmmoCount", primary_reserve_ammo_acount, int );
 	NETVAR ( "DT_WeaponCSBase", "m_flRecoilIndex", recoil_index, float );
 	NETVAR ( "DT_WeaponCSBaseGun", "m_zoomLevel", zoom_level, float );
@@ -691,6 +748,17 @@ public:
 	weapon_info_t * get_weapon_data ( ) {
 		return interfaces::weapon_system->get_weapon_data ( this->item_definition_index ( ) );
 	}
+	//NETVAR ( "DT_BaseAttributableItem", "m_Item", GetEconItemView, C_EconItemView * );
+
+	C_EconItemView * GetEconItemView ( ) {
+		using GetEconItemView_t = C_EconItemView * ( __thiscall * )( weapon_t * );
+
+		static GetEconItemView_t        GetEconItemViewS = reinterpret_cast< GetEconItemView_t >(utilities::pattern_scan ( "client.dll", ( "8B 81 ? ? ? ? 81 C1 ? ? ? ? FF 50 04 83 C0 40 C3" ) ));
+
+		return GetEconItemViewS ( this );
+	}
+	//GetEconItemView                 = pattern::find( m_client_dll, XOR( "8B 81 ? ? ? ? 81 C1 ? ? ? ? FF 50 04 83 C0 40 C3" ) ).as< GetEconItemView_t >( );
+	
 };
 
 class grenade_t : public entity_t {
@@ -724,6 +792,20 @@ public:
 	 
 	NETVAR ( "DT_BaseAnimating", "m_bClientSideAnimation", m_bClientSideAnimation, bool );
 	
+
+	NETVAR_PTR("DT_CSPlayer", "m_hMyWearables", get_wearables, UINT);
+
+	/*UINT* get_wearables() {
+		return (UINT*)((uintptr_t)this + (netvar_manager::get_net_var(fnv::hash("DT_CSPlayer"), fnv::hash("m_hMyWearables"))));
+	}*/
+	NETVAR_PTR("DT_CSPlayer", "m_hMyWeapons", get_weapons, UINT);
+
+	/*UINT* get_weapons() {
+		return (UINT*)((uintptr_t)this + (netvar_manager::get_net_var(fnv::hash("DT_CSPlayer"), fnv::hash("m_hMyWeapons"))));
+	}*/
+
+
+
 	NETVAR ( "DT_CSPlayer", "m_ArmorValue", armor, int );
 	NETVAR ( "DT_CSPlayer", "m_bHasHelmet", has_helmet, bool );
 	NETVAR ( "DT_CSPlayer", "m_bIsScoped", is_scoped, bool );
@@ -807,17 +889,17 @@ public:
 
 
 	weapon_t * active_weapon ( ) {
-		auto active_weapon = read<uintptr_t> ( netvar_manager::get_net_var ( fnv::hash ( "DT_CSPlayer" ), fnv::hash ( "m_hActiveWeapon" ) ) ) & 0xFFF;
+		static auto constexpr table_hash = fnv::hash("DT_CSPlayer");
+		static auto constexpr prop_hash = fnv::hash("m_hActiveWeapon");
+
+
+		static auto offset = netvar_manager::get_net_var(table_hash, prop_hash);
+
+
+		auto active_weapon = read<uintptr_t> (offset) & 0xFFF;
 		return reinterpret_cast< weapon_t * >( interfaces::entity_list->get_client_entity ( active_weapon ) );
 	}
 
-	UINT * get_wearables ( ) {
-		return ( UINT * ) ( ( uintptr_t ) this + ( netvar_manager::get_net_var ( fnv::hash ( "DT_CSPlayer" ), fnv::hash ( "m_hMyWearables" ) ) ) );
-	}
-
-	UINT * get_weapons ( ) {
-		return ( UINT * ) ( ( uintptr_t ) this + ( netvar_manager::get_net_var ( fnv::hash ( "DT_CSPlayer" ), fnv::hash ( "m_hMyWeapons" ) ) ) );
-	}
 
 	c_utl_vector<matrix3x4_t> & GetBoneCache ( ) {
 		static auto m_CachedBoneData = *( DWORD * ) ( utilities::pattern_scan ("client.dll",

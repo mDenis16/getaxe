@@ -31,7 +31,7 @@ namespace ui {
 
 		
 
-			auto main_tab = new ui::child_window ( config.player_types.at ( player ).first + " Assist" , 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
+			auto main_tab = new ui::child_window ( config.player_types.at ( player ).first + " Assist" , 45.f, 55.f, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
 			{
 				
 			

@@ -46,6 +46,12 @@ int c_legitbot::best_target ( bool no_fov ) {
 
 void c_legitbot::find_target ( ) {
 	/*we can make lock target here*/
+
+	if (settings->target_delay > 0 && (interfaces::globals->tick_count - target_change_tick ) < settings->target_delay ) {
+		valid_target = false;
+		active_target = nullptr;
+		return;
+	}
 	if ( target_index == -1 ) { /*there is no target at the moment find one*/
 		target_index = best_target ( );
 		active_target = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( target_index ) );
@@ -60,6 +66,7 @@ void c_legitbot::find_target ( ) {
 			reset_target ( );
 			if ( settings->lock_target ) {
 				in_aiming = false;
+				reset_target();
 				return;
 			}
 			target_index = best_target ( ); // find new one in the same tick
@@ -77,6 +84,8 @@ void c_legitbot::find_target ( ) {
 	if ( target_index != -1 && last_target_index != -1 && target_index != last_target_index ) {
 		dt_progress = 0.f;
 		changed_target = true;
+		target_change_tick = interfaces::globals->tick_count;
+
 		std::cout << "changed target " << std::endl;
 	}
 

@@ -106,6 +106,7 @@ namespace ui {
 			if ( this->hovering && key_pressed ( VK_LBUTTON ) ) {
 				parent->set_value ( this->index );
 				ui::debug_logs.push_back ( new debug_log ( "Set value" ) );
+				
 			}
 		}
 		else if ( this->parrent->type == multibox_element ) {

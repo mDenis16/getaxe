@@ -28,6 +28,7 @@ public:
 	bool avoid_bezier = false;
 	bool changed_target = false;
 	float original_angle = 0.f;
+	void linear_aim();
 
 	int avoid_count = 0;
 	int target_index = -1;
@@ -43,10 +44,15 @@ public:
 	
 	weapon_t * last_weapon = nullptr;
 	bool in_aiming = false;
+	bool target_changed = false;
+	int target_change_tick = 0;
+
 	void find_target ( );
 	void target_check ( );
 	bool low_fov = false;
 	float fov = 0.f;
+	float initial_fov = 0.f;
+
 	int aim_start_tick = 0;
 
 	void weapon_change ( );
@@ -73,6 +79,7 @@ public:
 	bool did_attack_before = false;
 	void run ( c_usercmd * cmd );
 	void draw_debug ( ImDrawList * render );
+
 	void aim_at ( vec3_t& position );
 	vec3_t calculate_trail ( );
 
@@ -106,12 +113,12 @@ public:
 	void reset_target ( ) {
 		    use_linear_smoothing = false;
 			running_curve = false;
+			target_index = -1;
+
 			dt_progress = 0.f;
 			low_fov = false;
 			fov = 0.f;
 			aim_start_tick = 0;
-			use_linear_smoothing = false;
-			in_aiming = false;
 			target_index = -1;
 			current_target_shots_fired = 0;
 			last_shots_fired = 0;

@@ -43,12 +43,12 @@ namespace ui {
 		this->renderer = this->parrent->renderer;
 		this->type = config_box_element;
 		
-		
+		update ( );
 
 		this->parrent->add_children ( this );
 		update ( );
 
-
+		update ( );
 
 	}
 
@@ -448,9 +448,6 @@ namespace ui {
 
 
 
-		auto address = std::addressof ( *this );
-
-
 	
 		this->renderer->AddText ( this->mins, ImColor ( 255, 0, 0, 255 ), std::to_string ( this->_id ).c_str ( ) );
 		
@@ -462,6 +459,9 @@ namespace ui {
 
 		this->renderer->AddRectFilled ( this->thumb_mins, this->thumb_maxs, ImColor ( 34, 46, 80, 255 ), 3.f );
 		this->renderer->PopClipRect ( );
+
+
+		handle_scroll ( );
 	}
 	void config_box::handle_mouse_input ( ) {
 
@@ -476,43 +476,7 @@ namespace ui {
 
 	void config_box::handle ( ) {
 
-		//if ( ui::focused_item != -1 && ui::focused_item != this->_id )
-			//return;
-
-
 		handle_mouse_input ( );
-
-		ImGuiIO & io = ImGui::GetIO ( );
-
-		const float scroll_speed = ImFloor ( 1296.f * io.DeltaTime );
-
-
-		if ( this->hovering) {
-
-			if ( this->children.empty ( ) ) 			
-			{
-				//MessageBox ( NULL,  ( std::to_string ( this->_id ).c_str ( ) ),  ( "message" ), MB_OK | MB_SYSTEMMODAL );
-				return;
-			}
-			this->max_scroll_progress = 60.f * this->children.size ( );
-
-
-			if ( ImGui::GetIO ( ).MouseWheel > 0.0f && this->scroll_progress > 0.f ) {
-				this->scroll_progress -= scroll_speed;
-
-			}
-			else if ( ImGui::GetIO ( ).MouseWheel < 0.0f && this->children.back ( )->maxs.y > this->maxs.y ) {
-				this->scroll_progress += scroll_speed;
-
-			}
-			this->thumb_percent = ( this->scroll_progress / this->max_scroll_progress ) * 100.f;
-
-
-
-			update ( );
-		}
-
-
 
 	}
 
@@ -531,14 +495,128 @@ namespace ui {
 		this->bb_max = this->maxs;
 		this->bb_max.y = this->maxs.y - 15;
 
-		float thumb_center_y = this->bb_min.y + this->thumb_percent * ( ( this->bb_max.y - this->bb_min.y ) ) / 100.f;
-		this->thumb_mins = ImVec2 ( this->bb_max.x - 8.f, thumb_center_y );
-		this->thumb_maxs = ImVec2 ( this->bb_max.x - 2.f, thumb_center_y + 30.f );
-		//this->hovering_thumb = ( mouse_pos.x > this->thumb_min.x && mouse_pos.y > this->bb_min.y && mouse_pos.x < this->thumb_max.x && mouse_pos.y < this->bb_max.y );
-
-
-
+	
 		for ( auto & children : this->children )
 			children->update ( );
+	}
+	void config_box::handle_scroll ( ) {
+	
+
+		float windowSize = (this->maxs.y - this->mins.y);
+
+
+		float contentSize = this->children.size ( ) * 60.f + this->children.size ( )  * 10.f - 10.f;
+		float trackSize = windowSize / 3; //80 unknown units
+
+		float windowContentRatio = windowSize / contentSize;
+		float gripSize = trackSize * windowContentRatio;
+
+
+		float percentage = windowSize / contentSize;
+		this->thumb_length = windowSize * percentage;
+
+
+		this->thumb_path_mins = ImVec2 ( this->bb_max.x - 7, this->bb_min.y );
+		this->thumb_path_maxs = ImVec2 ( this->bb_max.x - 2, this->bb_max.y );
+
+
+
+
+		float s = ( contentSize / windowSize );
+		float location = windowSize / 0.5f;
+
+		float pos = ( this->bb_max.y - this->bb_min.y ) * this->thumb_progress;
+		//m_rctThumb.Size.Height = m_rctShaft.Height * m_flThumbPerc;
+		//   thumb.Location.Y += m_rctBounds.Size.Width + m_rctThumb.Location.Y;
+		this->thumb_mins = ImVec2 ( this->bb_max.x - 5, this->bb_min.y + pos );
+		this->thumb_maxs = ImVec2 ( this->bb_max.x, this->thumb_mins.y + this->thumb_length );
+
+		auto mouse_pos = ui::get_cursor ( );
+
+		bool hovering_thumb = ( mouse_pos.x > this->thumb_path_mins.x && mouse_pos.y > this->thumb_path_mins.y && mouse_pos.x < this->thumb_path_maxs.x && mouse_pos.y < this->thumb_path_maxs.y );
+
+
+		if ( ui::key_pressed ( VK_LBUTTON ) && hovering_thumb ) {
+			this->modifying_thumb = true;
+		}
+		else if ( this->modifying_thumb && ui::key_released ( VK_LBUTTON ) ) {
+			this->modifying_thumb = false;
+		}
+
+		if ( this->hovering && ImGui::GetIO ( ).MouseWheel != 0.f ) {
+			float old = this->thumb_progress;
+
+			if ( ImGui::GetIO ( ).MouseWheel > 0.f )
+				this->thumb_progress -= 0.1f;
+			else if ( ImGui::GetIO ( ).MouseWheel < 0.f )
+				this->thumb_progress += 0.1f;
+
+
+			this->thumb_progress = std::lerp ( old, this->thumb_progress, ImGui::GetIO ( ).DeltaTime * 13.5f );
+			this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, 1.f );
+
+			this->max_thumb_progress = 1.f - this->thumb_length / windowSize;
+			if ( this->max_thumb_progress < 0.f )
+				return; /*dont handle unmodifiable scrollbar*/
+			this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, this->max_thumb_progress );
+
+
+			this->target_scroll_progress = maximumContentSize * this->thumb_progress;
+			lastUpdateTime = ImGui::GetTime ( );
+
+
+
+		}
+
+		if ( this->target_scroll_progress != this->scroll_progress ) {
+
+			this->scroll_progress = std::lerp ( this->scroll_progress, this->target_scroll_progress, ( float ) ( ImGui::GetTime ( ) - lastUpdateTime ) * 1.5f );
+			for ( auto & children : this->children )
+				children->update ( );
+		}
+
+		if ( this->modifying_thumb ) {
+
+			float dist = mouse_pos.y - ( this->thumb_length ) / 2.f - this->mins.y;
+			dist /= ( this->maxs.y - this->mins.y );
+
+			float old = this->thumb_progress;
+			this->max_thumb_progress = 1.f - this->thumb_length / contentSize;
+			if ( this->max_thumb_progress < 0.f )
+				return; /*dont handle unmodifiable scrollbar*/
+
+			this->thumb_progress = dist;
+
+			this->thumb_progress = std::lerp ( old, this->thumb_progress, ImGui::GetIO ( ).DeltaTime * 13.5f );
+			this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, 1.f );
+
+			this->max_thumb_progress = 1.f - this->thumb_length / windowSize;
+			if ( this->max_thumb_progress < 0.f )
+				return; /*dont handle unmodifiable scrollbar*/
+			this->thumb_progress = std::clamp ( this->thumb_progress, 0.f, this->max_thumb_progress );
+
+
+			this->scroll_progress = maximumContentSize * this->thumb_progress;
+			for ( auto & children : this->children )
+				children->update ( );
+		}
+	
+			maximumContentSize = this->children.size ( ) * 60.f + this->children.size ( ) * 10.f + 20.f;
+		
+
+		draw_scrollbar ( );
+	}
+	void config_box::draw_scrollbar ( ) {
+		this->renderer->AddRectFilledMultiColor ( ImVec2 ( this->mins.x, this->mins.y ), ImVec2 ( this->maxs.x, this->mins.y + 25.f ), ImColor ( 0, 0, 0, 25 ), ImColor ( 0, 0, 0, 25 ), ImColor ( 0, 0, 0, 15 ), ImColor ( 0, 0, 0, 15 ) );
+
+		this->renderer->PushClipRect ( this->thumb_path_mins, this->thumb_path_maxs );
+		//this->renderer->AddRectFilled ( this->thumb_path_mins, this->thumb_path_maxs, ImColor ( 255, 0, 0, 125 ) );
+		this->renderer->AddRectFilled ( this->thumb_mins, this->thumb_maxs, ImColor ( 34, 46, 80, 255 ), 3.f );
+		this->renderer->PopClipRect ( );
+		//this->renderer->AddRect ( this->bb_min, this->bb_max, ImColor ( 255, 255, 255, 15 ), 3.5f );
+
+
+		this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->maxs.x + 14, this->mins.y + 14 ), ImColor ( 255, 255, 255, 225 ), std::to_string ( this->thumb_progress ).c_str ( ) );
+
 	}
 }

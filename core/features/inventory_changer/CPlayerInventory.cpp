@@ -58,6 +58,10 @@ C_EconItemView * CPlayerInventory::getInventoryItemByItemID ( unsigned long long
 		return econ;
 }
 
+C_EconItemView * CPlayerInventory::GetItemInLoadout ( int team, int slot ) {
+	typedef C_EconItemView * ( __thiscall * tOriginal )( void *, unsigned int, signed int );
+	return utilities::get_virtual_function<tOriginal> ( this, 8 )( this, team, slot );
+}
 C_EconItemView * CPlayerInventory::findOrCreateReferenceEconItem ( unsigned long long itemID ) {
 	static auto oFindOrCreateReferenceEconItem = ( C_EconItemView * ( __thiscall * )( void *, int64_t ) )( utilities::pattern_scan (  ( "client.dll" ),  ( "55 8B EC 51 8B 55 0C 53 56" ) ) );
 	return oFindOrCreateReferenceEconItem ( this, itemID );

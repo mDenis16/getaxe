@@ -4,27 +4,30 @@
 class glow_object_definition_t {
 public:
 	void set(const float& r, const float & g, const float & b, const float & a, const float& _bloom_amount, const bool& _render_when_occluded, const bool& _render_when_unoccluded ) {
-		color = vec3_t(r, g, b);
-		alpha = a;
-		render_when_occluded = _render_when_occluded;
-		render_when_unoccluded = _render_when_unoccluded;
-		bloom_amount = _bloom_amount;
+		m_vGlowColor = vec3_t(r, g, b);
+		m_flGlowAlpha = a;
+		m_bRenderWhenOccluded = _render_when_occluded;
+		m_bRenderWhenUnoccluded = _render_when_unoccluded;
+		
 	}
 	bool unused() {
-		return next_free_slot != -2;
+		return m_nNextFreeSlot != -2;
 	}
 
-	void* entity;
-	vec3_t color;
-	float alpha;
-	char unknown0[8];
-	float bloom_amount;
-	char unknown1[4];
-	bool render_when_occluded;
-	bool render_when_unoccluded;
-	bool full_bloom_render;
-	char unknown2[13];
-	int next_free_slot;
+	int m_nNextFreeSlot;
+	void* m_pEntity;
+	vec3_t m_vGlowColor;
+	float m_flGlowAlpha;
+	bool m_bGlowAlphaCappedByRenderAlpha;
+	float m_flGlowAlphaFunctionOfMaxVelocity;
+	float m_flGlowAlphaMax;
+	float m_flGlowPulseOverdrive;
+	bool m_bRenderWhenOccluded;
+	bool m_bRenderWhenUnoccluded;
+	bool m_bFullBloomRender;
+	int m_nFullBloomStencilTestValue;
+	int m_nRenderStyle;
+	int m_nSplitScreenSlot;
 };
 
 class glow_manager_t {

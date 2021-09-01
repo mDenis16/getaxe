@@ -331,12 +331,11 @@ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			}
 			else {
 				if ( static_cast< child_window * >( this->parrent )->flags & flags::vertical_align_center ) {
-
-					if ( this->children.size ( ) < 1 ) {
+					if ( this->parrent->children.size ( ) <= 1 ) {
 						this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->parrent->mins.y + this->height ) ) / 2.f;
 					}
 					else {
-						this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->children.back ( )->maxs.y ) ) / 2.f;
+						this->mins.y = this->parrent->mins.y + ( this->parrent->maxs.y - ( this->parrent->children.back ( )->maxs.y ) ) / 2.f;
 					}
 				}
 

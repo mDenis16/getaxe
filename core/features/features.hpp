@@ -12,7 +12,7 @@
 #include "../features/engine_prediction/engine_prediction.h"
 #include "../features/autowall/autowall.h"
 
-#include "../features/inventory_changer/CEconItem.h"
+
 #include "../features/inventory_changer/CSharedObject.h"
 #include "../features/inventory_changer/CPlayerInventory.h"
 #include "../features/inventory_changer/CSInventoryManager.h"

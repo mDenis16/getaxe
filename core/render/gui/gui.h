@@ -31,6 +31,17 @@ namespace ui {
 		std::string text;
 		float time;
 	};
+
+	class game_log {
+	public:
+		~game_log ( ) {
+
+		}
+		game_log ( std::string msg ) { text = msg; time = ImGui::GetTime ( ); }
+		std::string text;
+		float time;
+	};
+	extern std::deque<game_log *> game_logs;
 	extern std::deque<debug_log *> debug_logs;
 
 	extern ImFont * font_title;

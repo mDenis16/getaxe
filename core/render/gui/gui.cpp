@@ -123,6 +123,7 @@ namespace ui {
 	ImFont * font_widgets = nullptr;
 	
 	std::deque<debug_log *> debug_logs;
+	std::deque<game_log *> game_logs;
 
 	ImFont * font_tab = nullptr;
 	ImFont * font_icons = nullptr;
@@ -159,7 +160,7 @@ namespace ui {
 		{
 			auto ragebot_sub_tab = new ui::sub_tab ( "Rage", ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
 
-			//menu::inventory_changer_menu ( main_window, ragebot_sub_tab );
+		
 
 
 
@@ -198,6 +199,10 @@ namespace ui {
 		{
 			auto movement_sub_tab = new ui::sub_tab ( "Movement", ICON_MOVEMENT, font_icons, 0.f, 20.f, misc_tab );
 			menu::movement_menu ( main_window, movement_sub_tab );
+
+
+			auto skins_sub_tab = new ui::sub_tab ( "Skins", ICON_SETTINGS, font_icons, 0.f, 20.f, misc_tab );
+			menu::inventory_changer_menu ( main_window, skins_sub_tab );
 
 		}
 		auto settings_tab = new ui::tab ( "Settings", top_side, 13 );
@@ -259,7 +264,7 @@ namespace ui {
 		if (!image_buffer )
 		    D3DXCreateTextureFromFile ( reinterpret_cast< IDirect3DDevice9 * >( ui::window_device ), "C:\\Users\\topor\\Desktop\\Portofoliu fizica\\test.png", &image_buffer );
 
-		//render->AddImage ( image_buffer, ImVec2 ( 0, 0 ), ImVec2 ( 1920, 1080 ) );
+		render->AddImage ( image_buffer, ImVec2 ( 0, 0 ), ImVec2 ( 1920, 1080 ) );
 #endif
 
 		main_window->handle ( );

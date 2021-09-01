@@ -214,8 +214,9 @@ namespace ui {
 		else {
             if ( !( this->flags & flags::no_background ) ) {
 
-				this->renderer->AddShadowRect ( ImVec2 ( this->mins.x + 20, this->mins.y + 20 ), ImVec2 ( this->maxs.x - 20, this->maxs.y - 20 ), ImColor ( 255, 255, 255, 255 ), 55.f, ImVec2 ( 0, 0 ), ImDrawShadowFlags_CutOutShapeBackground, 50.f, ImDrawCornerFlags_::ImDrawCornerFlags_All );
-
+				if (!( this->flags & flags::no_bg_shadow) ) {
+					this->renderer->AddShadowRect ( ImVec2 ( this->mins.x + 20, this->mins.y + 20 ), ImVec2 ( this->maxs.x - 20, this->maxs.y - 20 ), ImColor ( 255, 255, 255, 255 ), 55.f, ImVec2 ( 0, 0 ), ImDrawShadowFlags_CutOutShapeBackground, 50.f, ImDrawCornerFlags_::ImDrawCornerFlags_All );
+				}
                 this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 0, 0, 0, 25 ), this->rounding );
 				
 
@@ -272,6 +273,9 @@ namespace ui {
 
 		this->width = ( percent_width / 100.f ) * this->parrent->width;
 		this->height = ( percent_height / 100.f ) * this->parrent->height;
+	//	if ( this->children.size ( ) > 2 )
+		//	this->height = this->children.size ( ) * 22.9f;
+	
 
        if ( this->parrent->type == panel_element ) {
        
@@ -311,6 +315,7 @@ namespace ui {
 				child->update ( );
 			return;
 		}
+
 
 		if ( this->_float > 0 ) {
 			if ( _float == float_side::bottom ) {

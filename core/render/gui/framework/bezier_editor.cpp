@@ -135,7 +135,7 @@ namespace ui {
 
 		ss << "cubic-bezier(" << this->value [ 0 ] << "," << this->value [ 1 ] << "," << this->value [ 2 ] << "," << this->value [ 3 ] << ",";
 
-		renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->maxs.x + 20.f, this->mins.y ), ImColor ( 255, 255, 255, 225 ), ss.str().c_str() );
+		//renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->maxs.x + 20.f, this->mins.y ), ImColor ( 255, 255, 255, 225 ), ss.str().c_str() );
 		renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 25, 125, 123, 15 ) );
 
 

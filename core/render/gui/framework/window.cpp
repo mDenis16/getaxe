@@ -57,7 +57,7 @@ namespace ui {
 		this->renderer->AddRectFilled ( this->mins, ImVec2 ( this->maxs.x, this->mins.y + 10 ), ImColor ( 27, 27, 37, 255 ), 12.f, ImDrawCornerFlags_::ImDrawCornerFlags_Top );
 		this->renderer->AddRectFilledMultiColor ( ImVec2 ( this->mins.x, this->mins.y + 10 ), this->maxs, ImColor ( 27, 27, 37, 255 ), ImColor ( 27, 27, 37, 255 ), clr, clr );
 //
-		this->renderer->AddLine ( ImVec2( this->resize_min.x, this->resize_max.y), ImVec2 ( this->resize_max.x, this->resize_min.y ), ImColor ( 255, 0, 255, 125 ));
+	//	this->renderer->AddLine ( ImVec2( this->resize_min.x, this->resize_max.y), ImVec2 ( this->resize_max.x, this->resize_min.y ), ImColor ( 255, 0, 255, 125 ));
 
 		for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
 			this->children.at ( i )->draw ( );

@@ -19,6 +19,8 @@ namespace utilities {
 		return (unsigned int)(*(int**)pp_class)[index];
 	}
 	std::uint8_t* pattern_scan( const char* module_name, const char* signature ) noexcept;
+
+
 	std::string unicode_to_ascii( const std::wstring& unicode );
 	std::uintptr_t code_style_pattern ( const char * moduleName, std::string_view pattern, bool reportNotFound = true ) noexcept;
 

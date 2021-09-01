@@ -102,4 +102,4 @@ typedef struct _TRAMPOLINE
 	UINT8  newIPs[8];       // [Out] Instruction boundaries of the trampoline function.
 } TRAMPOLINE, * PTRAMPOLINE;
 
-BOOL CreateTrampolineFunction(PTRAMPOLINE ct);
+extern BOOL CreateTrampolineFunction(PTRAMPOLINE ct);

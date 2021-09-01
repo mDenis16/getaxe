@@ -47,6 +47,8 @@ namespace local_player {
 		player_t * old_pointer = nullptr;
 		bool alive = false;
 		bool have_weapon = false;
+		float last_mouse_x = 0.f;
+		float last_mouse_y = 0.f;
 		float weapon_spread = 0.f;
 		float weapon_cone = 0.f;
 		std::vector <int> choked_number;

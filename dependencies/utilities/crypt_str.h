@@ -73,10 +73,6 @@ public:
 	}
 };
 
-#if RELEASE
 #define crypt_str(s) XorString <sizeof(s) - 1, __COUNTER__> (s, std::make_index_sequence <sizeof(s) - 1>()).decrypt()
-#else
-#define crypt_str(s) s
-#endif
 
 #pragma optimize ("", on)

@@ -46,8 +46,11 @@ namespace ui {
 		
 			
 			update ( );
+			this->parrent->update ( );
 			this->parrent->add_children ( this );
+			this->parrent->update ( );
 			update ( );
+
 		}
 		text_input ( object * parent, text_type _type ) {
 
@@ -59,7 +62,10 @@ namespace ui {
 			height = 30;
 
 			update ( );
+			this->parrent->update ( );
 			this->parrent->add_children ( this );
+			this->parrent->update ( );
+			update ( );
 		}
 		text_input ( object * parent, float & _value, float mins, float maxs, text_type _type ) {
 
@@ -70,7 +76,10 @@ namespace ui {
 	
 
 			update ( );
+			this->parrent->update ( );
 			this->parrent->add_children ( this );
+			this->parrent->update ( );
+			update ( );
 		}
 
 

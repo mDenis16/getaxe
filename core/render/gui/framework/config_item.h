@@ -22,7 +22,9 @@ namespace ui {
 
 		bool loaded = false;
 
+		bool was_hovering_button = false;
 		bool hovering_button = false;
+		float hovering_button_time = 0.f;
 
 		config_item ( object * parent, std::string _name, std::string _hash );
 

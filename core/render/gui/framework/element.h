@@ -101,7 +101,8 @@ namespace ui {
 		render_forward = 1 << 11,
 		text_input_as_element = 1 << 12,
 		big_inventory_item = 1 << 13, 
-		window_resizable = 1 << 14
+		window_resizable = 1 << 14,
+		no_bg_shadow = 1 << 15
 	};
 	
 	class object {

@@ -71,7 +71,7 @@ namespace ui {
 
 
 				if ( !images_data.empty ( ) ) {
-					if ( ( ImGui::GetTime ( ) - last_gpu_scan ) > 0.05f ) {
+					if ( ( ImGui::GetTime ( ) - last_gpu_scan ) > 0.015f ) {
 
 
 						mutex_image_data.lock ( );
@@ -165,11 +165,14 @@ namespace ui {
 
 	}
 
+	
 	void inventory_changer::add_item_to_inventory ( weapon * weap, paintkit * pkit ) {
 #ifdef PREVIEW_D3D
 
 		std::string samp = "shit called";
 		int i = 0;
+		
+		auto inv = new ui::inventory_item ( (ui::object*)items_weapons_active, pkit, this->archive, std::bind ( &inventory_changer::painkit_modify, this, pkit ) );
 
 
 #else
@@ -329,7 +332,7 @@ namespace ui {
 			auto active_weapons_list_panel = new ui::panel ( panel_container ); active_weapons_list_panel->flags = flags::fullscreen;
 			active_weapons_list_panel->flex = flex_direction::automatic;
 			{
-				auto window = new ui::child_window ( "", 100.f, 100.f, ImColor ( 255, 255, 255, 0 ), active_weapons_list_panel, child_type::normal, flags::no_background ); window->flex = flex_direction::block; window->padding = 0;
+				auto window = new ui::child_window ( "", 100.f, 100.f, ImColor ( 255, 255, 255, 0 ), active_weapons_list_panel, child_type::normal, 0 ); window->flex = flex_direction::block; window->padding = 0;
 
 				auto top_header = new ui::child_window ( "Weapons skins list", 100.f, 10.f, ImColor ( 23, 24, 27, 255 ), window, float_side::none, 0.f, 0.f );
 				top_header->flex = flex_direction::automatic;

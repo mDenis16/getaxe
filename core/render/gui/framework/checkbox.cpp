@@ -173,9 +173,10 @@ namespace ui {
 			this->key_bind_open = !this->key_bind_open;
 		}
 
-		if ( this->hovering && key_pressed ( VK_LBUTTON )  && !this->in_animation )
+		if ( this->hovering && key_pressed ( VK_LBUTTON ) && !this->in_animation ) {
 			*this->value = !*this->value;
-		
+			ui::game_logs.push_back ( new game_log ( "Denis bought a scout 123$." ) );
+		}
 	    if ( *this->value != this->old_value ) {
 
 		

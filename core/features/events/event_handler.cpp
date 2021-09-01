@@ -44,7 +44,7 @@ void c_event_listener::fire_game_event ( i_game_event * m_event ) {
 	if ( !m_event )
 		return;
 
-	if ( !strcmp ( m_event->get_name ( ), "bullet_impact" ) ) {
+	if ( fnv::hash(m_event->get_name()) ==  fnv::hash ("bullet_impact" )) {
 		int user_id = m_event->get_int ( "userid" );
 
 		auto ent = interfaces::entity_list->get< player_t > ( interfaces::engine->get_player_for_user_id ( user_id ) );
@@ -104,7 +104,7 @@ void c_event_listener::fire_game_event ( i_game_event * m_event ) {
 	}
 
 
-	if ( !strcmp ( m_event->get_name ( ), "player_hurt" ) ) {
+	if (fnv::hash(m_event->get_name()) == fnv::hash("player_hurt")) {
 		
 		int attacker_id = m_event->get_int ( "attacker" );
 		auto attacker = interfaces::entity_list->get< player_t > ( interfaces::engine->get_player_for_user_id ( attacker_id ) );
