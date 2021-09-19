@@ -30,6 +30,7 @@ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		return std::ceil ( value * multiplier ) / multiplier;
 	}
 	void text_input::draw ( ) {
+		if (!this->place_holder) return;
 
 		this->handle ( );
 		if ( this->flags & ui::flags::text_input_as_element ) {
@@ -37,7 +38,7 @@ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			this->renderer->AddRect ( this->bb_min, this->bb_max, ImColor ( 255, 255, 255, 15 ), 4.5f );
 
 
-			const ImVec2 text_size = ImGui::CalcTextSize ( this->text_val->empty ( ) ? this->place_holder.c_str ( ) : this->text_val->c_str ( ), 12.f, ui::font_widgets );
+			const ImVec2 text_size = ImGui::CalcTextSize ( this->text_val->empty ( ) ? this->place_holder->data ( ) : this->text_val->c_str ( ), 12.f, ui::font_widgets );
 			ImVec2 text_pos = ImVec2 ( );
 			text_pos.x = this->bb_min.x + 10;
 			text_pos.y = ( this->bb_min.y + this->bb_max.y ) / 2.f - text_size.y / 2.f;
@@ -47,14 +48,14 @@ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			}
 			else {
 				if ( this->input_type != text_type::password ) {
-					this->renderer->AddText ( ui::font_widgets, 12.f, text_pos, ImColor ( 255, 255, 255, this->text_val->empty ( ) ? 125 : 255 ), this->text_val->empty ( ) ? this->place_holder.c_str ( ) : this->text_val->c_str ( ) );
+					this->renderer->AddText ( ui::font_widgets, 12.f, text_pos, ImColor ( 255, 255, 255, this->text_val->empty ( ) ? 125 : 255 ), this->text_val->empty ( ) ? this->place_holder->data ( ) : this->text_val->data ( ) );
 				}
 				else {
 					std::string t = "";
 					for ( size_t i = 0; i < this->text_val->size ( ); i++ ) {
 						t += "*";
 					}
-					this->renderer->AddText ( ui::font_widgets, 12.f, text_pos, ImColor ( 255, 255, 255, this->text_val->empty ( ) ? 125 : 255 ), this->text_val->empty ( ) ? this->place_holder.c_str ( ) : t.c_str ( ) );
+					this->renderer->AddText ( ui::font_widgets, 12.f, text_pos, ImColor ( 255, 255, 255, this->text_val->empty ( ) ? 125 : 255 ), this->text_val->empty ( ) ? this->place_holder->data ( ) : t.data ( ) );
 				}
 			}
 
@@ -84,20 +85,20 @@ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 			if ( this->input_type == text_type::string || this->input_type == text_type::password ) {
 				this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 46, 49, 52, ui::focused_item == this->_id ? 211 : 45 ), 4.5f );
 				this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 15 ), 4.5f );
-				const ImVec2 text_size = ImGui::CalcTextSize ( this->text_val->empty ( ) ? this->place_holder.c_str ( ) : this->text_val->c_str ( ), 15.f, ui::font_widgets );
+				const ImVec2 text_size = ImGui::CalcTextSize ( this->text_val->empty ( ) ? this->place_holder->data( ) : this->text_val->c_str ( ), 15.f, ui::font_widgets );
 				ImVec2 text_pos = ImVec2 ( );
 				text_pos.x = this->mins.x + 10;
 				text_pos.y = ( this->mins.y + this->maxs.y ) / 2.f - text_size.y / 2.f;
 
 				if ( this->input_type != text_type::password ) {
-					this->renderer->AddText ( ui::font_widgets, 15.f, text_pos, ImColor ( 255, 255, 255, this->text_val->empty ( ) ? 125 : 255 ), this->text_val->empty ( ) ? this->place_holder.c_str ( ) : this->text_val->c_str ( ) );
+					this->renderer->AddText ( ui::font_widgets, 15.f, text_pos, ImColor ( 255, 255, 255, this->text_val->empty ( ) ? 125 : 255 ), this->text_val->empty ( ) ? this->place_holder->data ( ) : this->text_val->data ( ) );
 				}
 				else {
 					std::string t = "";
 					for ( size_t i = 0; i < this->text_val->size ( ); i++ ) {
 						t += "*";
 					}
-					this->renderer->AddText ( ui::font_widgets, 15.f, text_pos, ImColor ( 255, 255, 255, this->text_val->empty ( ) ? 125 : 255 ), this->text_val->empty ( ) ? this->place_holder.c_str ( ) : t.c_str ( ) );
+					this->renderer->AddText ( ui::font_widgets, 15.f, text_pos, ImColor ( 255, 255, 255, this->text_val->empty ( ) ? 125 : 255 ), this->text_val->empty ( ) ? this->place_holder->data ( ) : t.data ( ) );
 				}
 				if ( !this->text_val->empty ( ) ) {
 					const ImVec2 last_character_size = ImGui::CalcTextSize ( &this->text_val->back ( ), 15.f, ui::font_widgets );

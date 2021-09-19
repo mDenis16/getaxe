@@ -12,7 +12,7 @@ namespace ui {
 	public:
 
 		bool modifying = false;
-		std::string title;
+		SecureString* title;
 		bool key_bind_open = false;
 		ImVec2 bb_min;
 		float time_started_grab = 0.f;
@@ -33,8 +33,8 @@ namespace ui {
 		bool animate_left = false;
 		bool finished_animation = false;
 		bool animate_right = false;
-		slider ( std::string text, object * parent, float & _value, float mins, float maxs, slider_type _type, config_manager::key_bind_item * key_bind_item );
-		slider ( std::string text, object * parent, float & _value, float mins, float maxs, slider_type _type );
+		slider ( SecureString& text, object * parent, float & _value, float mins, float maxs, slider_type _type, config_manager::key_bind_item * key_bind_item );
+		slider ( SecureString& text, object * parent, float & _value, float mins, float maxs, slider_type _type );
 
 		void draw ( ) override;
 		void handle ( ) override;

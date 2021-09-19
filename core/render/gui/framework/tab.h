@@ -2,7 +2,7 @@
 namespace ui {
 
 	class tab : public object {
-		std::string text;
+		SecureString* text;
 		object * panel;
 
 
@@ -14,10 +14,10 @@ namespace ui {
 		bool in_leaving = false;
 		float anim_frame = 0.f;
 
-		tab ( std::string text, object * parent, float padding ) {
+		tab ( SecureString& text, object * parent, float padding ) {
 			
 			this->parrent = parent;
-			this->text = text;
+			this->text = &text;
 			this->padding = padding;
 			this->width = ((90.f / 100.f) * (float)parent->width) ;
 			this->renderer = parent->renderer;

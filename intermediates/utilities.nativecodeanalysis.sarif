@@ -1,0 +1,3394 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'matrix3x4_t::m_flMatVal' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/math/vector3d.hpp"
+                },
+                "region": {
+                  "startLine": 453,
+                  "startColumn": 2,
+                  "endLine": 453,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "matrix3x4_t::{ctor}",
+                  "decoratedName": "??0matrix3x4_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "matrix3x4_t::m_flMatVal"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::entity_index' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::entity_index"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::hitboxset' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::hitboxset"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::body' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::body"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::instance' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::instance"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::pRenderable' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::pRenderable"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::pad' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::pad"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::pModel' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::pModel"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::skin' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::skin"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'model_render_info_t::flags' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "model_render_info_t::{ctor}",
+                  "decoratedName": "??0model_render_info_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "model_render_info_t::flags"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'button_code_t' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_input_system.hpp"
+                },
+                "region": {
+                  "startLine": 156,
+                  "startColumn": 7,
+                  "endLine": 156,
+                  "endColumn": 7
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "i_inputsytem::is_button_down",
+                  "decoratedName": "?is_button_down@i_inputsytem@@QAE_NW4button_code_t@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'analog_code_t' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_input_system.hpp"
+                },
+                "region": {
+                  "startLine": 161,
+                  "startColumn": 6,
+                  "endLine": 161,
+                  "endColumn": 6
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "i_inputsytem::get_analog_value",
+                  "decoratedName": "?get_analog_value@i_inputsytem@@QAEHW4analog_code_t@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ray_t::m_is_swept' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_trace.hpp"
+                },
+                "region": {
+                  "startLine": 218,
+                  "startColumn": 2,
+                  "endLine": 218,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ray_t::{ctor}",
+                  "decoratedName": "??0ray_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ray_t::m_is_swept"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ray_t::m_is_ray' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_trace.hpp"
+                },
+                "region": {
+                  "startLine": 218,
+                  "startColumn": 2,
+                  "endLine": 218,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ray_t::{ctor}",
+                  "decoratedName": "??0ray_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ray_t::m_is_ray"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'VectorAligned::w' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_trace.hpp"
+                },
+                "region": {
+                  "startLine": 204,
+                  "startColumn": 1,
+                  "endLine": 204,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "VectorAligned::{ctor}",
+                  "decoratedName": "??0VectorAligned@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "VectorAligned::w"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'TraceType_t' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_trace.hpp"
+                },
+                "region": {
+                  "startLine": 317,
+                  "startColumn": 3,
+                  "endLine": 317,
+                  "endColumn": 10
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "trace_filter::GetTraceType",
+                  "decoratedName": "?GetTraceType@trace_filter@@UBE?AW4TraceType_t@@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_nStartAttachment' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_nStartAttachment"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_nStartFrame' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_nStartFrame"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_pStartEnt' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_pStartEnt"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flSpeed' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flSpeed"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flRed' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flRed"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flAmplitude' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flAmplitude"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flFrameRate' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flFrameRate"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_nEndAttachment' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_nEndAttachment"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flEndRadius' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flEndRadius"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flHaloScale' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flHaloScale"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flGreen' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flGreen"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_pEndEnt' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_pEndEnt"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flFadeLength' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flFadeLength"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flStartRadius' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flStartRadius"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flEndWidth' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flEndWidth"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flLife' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flLife"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flBrightness' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flBrightness"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flWidth' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flWidth"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'BeamInfo_t::m_flBlue' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+                },
+                "region": {
+                  "startLine": 164,
+                  "startColumn": 2,
+                  "endLine": 164,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "BeamInfo_t::{ctor}",
+                  "decoratedName": "??0BeamInfo_t@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "BeamInfo_t::m_flBlue"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'SolidType_t' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                },
+                "region": {
+                  "startLine": 207,
+                  "startColumn": 8,
+                  "endLine": 207,
+                  "endColumn": 40
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "entity_t::IsStandable",
+                  "decoratedName": "?IsStandable@entity_t@@QAE_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 32 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                },
+                "region": {
+                  "startLine": 456,
+                  "startColumn": 2,
+                  "endLine": 456,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "C_EconItemView::m_iCustomName",
+                  "decoratedName": "?m_iCustomName@C_EconItemView@@QAEAAY0CA@DXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'class_ids' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                },
+                "region": {
+                  "startLine": 701,
+                  "startColumn": 3,
+                  "endLine": 701,
+                  "endColumn": 40
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "weapon_t::is_planted_c4",
+                  "decoratedName": "?is_planted_c4@weapon_t@@QAE_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'bone_matrix' could be '0':  this does not adhere to the specification for the function 'memcpy'. "
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                },
+                "region": {
+                  "startLine": 1193,
+                  "startColumn": 4,
+                  "endLine": 1193,
+                  "endColumn": 102
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "player_t::get_hitbox_position",
+                  "decoratedName": "?get_hitbox_position@player_t@@QAE?AVvec3_t@@QAVmatrix3x4_t@@PAUstudio_box_t@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                          },
+                          "region": {
+                            "startLine": 1183,
+                            "startColumn": 8
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                          },
+                          "region": {
+                            "startLine": 1186,
+                            "startColumn": 8
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                          },
+                          "region": {
+                            "startLine": 1189,
+                            "startColumn": 8
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                          },
+                          "region": {
+                            "startLine": 1192,
+                            "startColumn": 8
+                          }
+                        },
+                        "message": {
+                          "text": "'bone_matrix' may be NULL (Enter this branch)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                          },
+                          "region": {
+                            "startLine": 1193,
+                            "startColumn": 11
+                          }
+                        },
+                        "message": {
+                          "text": "'bone_matrix' is an In/Out argument to 'memcpy' (declared at d:\\program files\\microsoft visual studio\\2022\\preview\\vc\\tools\\msvc\\14.30.30423\\include\\vcruntime_string.h:43)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+                          },
+                          "region": {
+                            "startLine": 1193,
+                            "startColumn": 11
+                          }
+                        },
+                        "message": {
+                          "text": "'bone_matrix' should not be NULL, because this is not consistent with the SAL annotation on 'memcpy'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'trace_filter::skip' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_trace.hpp"
+                },
+                "region": {
+                  "startLine": 321,
+                  "startColumn": 1,
+                  "endLine": 321,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "trace_filter::{ctor}",
+                  "decoratedName": "??0trace_filter@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "trace_filter::skip"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXFLOAT16::value' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 59,
+                  "startColumn": 5,
+                  "endLine": 59,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXFLOAT16::{ctor}",
+                  "decoratedName": "??0D3DXFLOAT16@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXFLOAT16::value"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR2::y' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 91,
+                  "startColumn": 5,
+                  "endLine": 91,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR2::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR2@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR2::y"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR2::x' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 91,
+                  "startColumn": 5,
+                  "endLine": 91,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR2::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR2@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR2::x"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR4::x' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 240,
+                  "startColumn": 5,
+                  "endLine": 240,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR4::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR4@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR4::x"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR4::z' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 240,
+                  "startColumn": 5,
+                  "endLine": 240,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR4::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR4@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR4::z"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR4::y' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 240,
+                  "startColumn": 5,
+                  "endLine": 240,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR4::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR4@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR4::y"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR4::w' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 240,
+                  "startColumn": 5,
+                  "endLine": 240,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR4::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR4@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR4::w"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXQUATERNION::x' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 429,
+                  "startColumn": 5,
+                  "endLine": 429,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXQUATERNION::{ctor}",
+                  "decoratedName": "??0D3DXQUATERNION@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXQUATERNION::x"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXQUATERNION::z' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 429,
+                  "startColumn": 5,
+                  "endLine": 429,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXQUATERNION::{ctor}",
+                  "decoratedName": "??0D3DXQUATERNION@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXQUATERNION::z"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXQUATERNION::y' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 429,
+                  "startColumn": 5,
+                  "endLine": 429,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXQUATERNION::{ctor}",
+                  "decoratedName": "??0D3DXQUATERNION@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXQUATERNION::y"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXQUATERNION::w' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 429,
+                  "startColumn": 5,
+                  "endLine": 429,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXQUATERNION::{ctor}",
+                  "decoratedName": "??0D3DXQUATERNION@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXQUATERNION::w"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXPLANE::d' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 475,
+                  "startColumn": 5,
+                  "endLine": 475,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXPLANE::{ctor}",
+                  "decoratedName": "??0D3DXPLANE@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXPLANE::d"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXPLANE::b' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 475,
+                  "startColumn": 5,
+                  "endLine": 475,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXPLANE::{ctor}",
+                  "decoratedName": "??0D3DXPLANE@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXPLANE::b"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXPLANE::c' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 475,
+                  "startColumn": 5,
+                  "endLine": 475,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXPLANE::{ctor}",
+                  "decoratedName": "??0D3DXPLANE@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXPLANE::c"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXPLANE::a' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 475,
+                  "startColumn": 5,
+                  "endLine": 475,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXPLANE::{ctor}",
+                  "decoratedName": "??0D3DXPLANE@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXPLANE::a"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXCOLOR::a' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 516,
+                  "startColumn": 5,
+                  "endLine": 516,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXCOLOR::{ctor}",
+                  "decoratedName": "??0D3DXCOLOR@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXCOLOR::a"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXCOLOR::g' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 516,
+                  "startColumn": 5,
+                  "endLine": 516,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXCOLOR::{ctor}",
+                  "decoratedName": "??0D3DXCOLOR@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXCOLOR::g"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXCOLOR::b' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 516,
+                  "startColumn": 5,
+                  "endLine": 516,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXCOLOR::{ctor}",
+                  "decoratedName": "??0D3DXCOLOR@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXCOLOR::b"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXCOLOR::r' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+                },
+                "region": {
+                  "startLine": 516,
+                  "startColumn": 5,
+                  "endLine": 516,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXCOLOR::{ctor}",
+                  "decoratedName": "??0D3DXCOLOR@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXCOLOR::r"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXFLOAT16::value' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 14,
+                  "endLine": 26,
+                  "endColumn": 14
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXFLOAT16::{ctor}",
+                  "decoratedName": "??0D3DXFLOAT16@@QAE@M@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXFLOAT16::value"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR2::y' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 77,
+                  "startColumn": 14,
+                  "endLine": 77,
+                  "endColumn": 14
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR2::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR2@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR2::y"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR4::z' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 517,
+                  "startColumn": 14,
+                  "endLine": 517,
+                  "endColumn": 14
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR4::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR4@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR4::z"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR4::y' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 517,
+                  "startColumn": 14,
+                  "endLine": 517,
+                  "endColumn": 14
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR4::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR4@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR4::y"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXVECTOR4::w' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 517,
+                  "startColumn": 14,
+                  "endLine": 517,
+                  "endColumn": 14
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXVECTOR4::{ctor}",
+                  "decoratedName": "??0D3DXVECTOR4@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXVECTOR4::w"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXQUATERNION::z' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1068,
+                  "startColumn": 17,
+                  "endLine": 1068,
+                  "endColumn": 17
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXQUATERNION::{ctor}",
+                  "decoratedName": "??0D3DXQUATERNION@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXQUATERNION::z"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXQUATERNION::y' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1068,
+                  "startColumn": 17,
+                  "endLine": 1068,
+                  "endColumn": 17
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXQUATERNION::{ctor}",
+                  "decoratedName": "??0D3DXQUATERNION@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXQUATERNION::y"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXQUATERNION::w' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1068,
+                  "startColumn": 17,
+                  "endLine": 1068,
+                  "endColumn": 17
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXQUATERNION::{ctor}",
+                  "decoratedName": "??0D3DXQUATERNION@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXQUATERNION::w"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXPLANE::d' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1241,
+                  "startColumn": 12,
+                  "endLine": 1241,
+                  "endColumn": 12
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXPLANE::{ctor}",
+                  "decoratedName": "??0D3DXPLANE@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXPLANE::d"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXPLANE::b' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1241,
+                  "startColumn": 12,
+                  "endLine": 1241,
+                  "endColumn": 12
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXPLANE::{ctor}",
+                  "decoratedName": "??0D3DXPLANE@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXPLANE::b"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXPLANE::c' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1241,
+                  "startColumn": 12,
+                  "endLine": 1241,
+                  "endColumn": 12
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXPLANE::{ctor}",
+                  "decoratedName": "??0D3DXPLANE@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXPLANE::c"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXCOLOR::a' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1376,
+                  "startColumn": 12,
+                  "endLine": 1376,
+                  "endColumn": 12
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXCOLOR::{ctor}",
+                  "decoratedName": "??0D3DXCOLOR@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXCOLOR::a"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXCOLOR::g' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1376,
+                  "startColumn": 12,
+                  "endLine": 1376,
+                  "endColumn": 12
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXCOLOR::{ctor}",
+                  "decoratedName": "??0D3DXCOLOR@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXCOLOR::g"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'D3DXCOLOR::b' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+                },
+                "region": {
+                  "startLine": 1376,
+                  "startColumn": 12,
+                  "endLine": 1376,
+                  "endColumn": 12
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "D3DXCOLOR::{ctor}",
+                  "decoratedName": "??0D3DXCOLOR@@QAE@PBUD3DXFLOAT16@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "D3DXCOLOR::b"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'hooks::hook::original' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/hooks/hooks.hpp"
+                },
+                "region": {
+                  "startLine": 145,
+                  "startColumn": 3,
+                  "endLine": 145,
+                  "endColumn": 3
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "hooks::hook::{ctor}",
+                  "decoratedName": "??0hook@hooks@@QAE@PAX0@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "hooks::hook::original"
+          }
+        },
+        {
+          "ruleId": "C28020",
+          "message": {
+            "text": "The expression '0<=_Param_(1)&&_Param_(1)<=256-1' is not true at this call."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 9,
+                  "endLine": 33,
+                  "endColumn": 91
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "generateBadCharTable",
+                  "decoratedName": "?generateBadCharTable@@YA@V?$basic_string_view@DU?$char_traits@D@std@@@std@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 21,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 23,
+                            "startColumn": 80
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 25,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 26,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 29,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 30,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 32,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 32,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 33,
+                            "startColumn": 64
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'Temp_value_#1082' could be '0':  this does not adhere to the specification for the function 'GetProcAddress'. "
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                },
+                "region": {
+                  "startLine": 132,
+                  "startColumn": 10,
+                  "endLine": 132,
+                  "endColumn": 114
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "utilities::grab_interface",
+                  "decoratedName": "?grab_interface@utilities@@YAPAXPBD0_N@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 132,
+                            "startColumn": 10
+                          }
+                        },
+                        "message": {
+                          "text": "'<symbol>' receives the Return value from 'GetModuleHandleA' (declared at d:\\windows kits\\10\\include\\10.0.19041.0\\um\\libloaderapi.h:260)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 132,
+                            "startColumn": 10
+                          }
+                        },
+                        "message": {
+                          "text": "'<symbol>' receives the Return value from 'GetModuleHandleA' (declared at d:\\windows kits\\10\\include\\10.0.19041.0\\um\\libloaderapi.h:260)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/utilities/utilities.cpp"
+                          },
+                          "region": {
+                            "startLine": 132,
+                            "startColumn": 10
+                          }
+                        },
+                        "message": {
+                          "text": "'Temp_value_#1082' should not be NULL, because this is not consistent with the SAL annotation on 'GetProcAddress'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.30.30423.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "commandLine": "\"D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x006DD1B0 -il C:\\Users\\topor\\AppData\\Local\\Temp\\_CL_4031da6cast -typedil -f dependencies\\utilities\\utilities.cpp -Ze -D_MSC_EXTENSIONS -Zp8 -Gs -pc \\:/ -D_MSC_VER=1930 -D_MSC_FULL_VER=193030423 -D_MSC_BUILD=0 -D_WIN32 -D_M_IX86=600 -D_M_IX86_FP=2 -I E:\\repos\\mDenis16\\getaxe-menu-framework\\ImGui Application -nologo -W 4 -diagnostics:column -D_GUARDOVERFLOW_CRT_ALLOCATORS=1 -Og -Ot -Oi -Oy -DCODE_ANALYSIS -DLOCAL_BUILD -DIMGUI_IMPL_WIN32_DISABLE_GAMEPAD -D_CRT_SECURE_NO_WARNINGS -D_WINDLL -D_MBCS -GF -EHs -D_CPPUNWIND -EHc -MT -clrNoPureCRT -D_MT -GS -fpfast -D_M_FP_FAST -Zc:wchar_t -Zc:forScope -std:c++latest -permissive- -Fo.\\intermediates\\utilities.obj -Fd.\\intermediates\\vc142.pdb -external:W 4 -Gd -analyze:projectdirectory D:\\repos\\getaxe -analyze:rulesetdirectory ;D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\\\Rule Sets; -analyze:ruleset D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\Rule Sets\\NativeRecommendedRules.ruleset -analyze:quiet -analyze:plugin D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\EspXEngine.dll -FC -errorreport:prompt -I F:\\includes\\nlohmann -I F:\\includes\\jsoncpp\\include -I F:\\includes\\dx9\\Include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I F:\\includes\\websocketpp-master -I F:\\includes\\boost_1_73_0 -I F:\\includes\\clip-master -I F:\\includes\\freetype\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -external:I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -MPdiagMutex 0000000000000A90",
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "b5bc2d2787f413f48da07bab8fe39970ee6f9a5274ae46d243b0e4c9f856b810"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "64609d2605732e93be169fddc6dae2c51dcea9f213ae6059db391db8d1456187"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_tables.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "46d6b67bbac52e673dc1affec519cea2c31c708d206949c013d50cbba0c8d1ad"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imconfig.h"
+          },
+          "hashes": {
+            "sha-256": "3f1761f0200014792061c71d872e6fbe6cff6ee08ad5a6b1981ed88f3e60ff4f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imstb_textedit.h"
+          },
+          "hashes": {
+            "sha-256": "fd8408584842d13ca4a3f5b002a77c80491626d289a96463ba52c11981816024"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/source-sdk/math/vector3d.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "0be966dcd0278a448b880c79a3b23e367b4f631571dc46c33df0f29adbe91b0f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/source-sdk/structs/models.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "f05a8b8457ac4261fe02b5929baa3151446a4009cd353837ea5392052efaec9c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_input_system.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "81b36a72a18ac5e2ddb6723b3d94099e5d92348e3572897c2476f5747f026345"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/interfaces/i_trace.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "03b33e75be3b3f90ab2cd5adb26a4afc06ff0979895c79b26c5b56400ca7a086"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/interfaces/iv_render_beams.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "81235b8dba4422a0fc703e5f542c1b1f5802de105956bc7ce9ce4eff565179ff"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/source-sdk/classes/entities.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "eda42c8f0edf1c27276b5086b0592c1b17e7e5d0f8ad153abb6dc400b47e6dc8"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///F:/includes/dx9/Include/d3dx9math.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "27ac937a3eb64f9ed917a4265ac4e1f6817a94bd15ca7a5cc1eb63c2cb9ea1d9"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///F:/includes/dx9/Include/d3dx9math.inl"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "51ae36e6cbec27c7ecd8be77b9587ca6e32e541228e8580a20bad08c5289abf6"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/core/hooks/hooks.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "33e4b7c7ab19a2ed09e59c675cc28338e5e042ec48fa5c423f27ae2ac7018c90"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/utilities/utilities.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "52a9409c2bfd8153329bbfcf93fddf1813b6b2b2b5321f5a3d7195ae296dbfc3"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/utilities.hpp"
+          },
+          "hashes": {
+            "sha-256": "006ae98532d3d4c31e213d00d0e0ab3a459e422965c404da8fa3405ed0f35ffc"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/csgo.hpp"
+          },
+          "hashes": {
+            "sha-256": "d6eae24b7e90b6f837b8bd4d5b7c2c92e2de8e17df03aacd594531d970d8365d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/rpcsal.h"
+          },
+          "hashes": {
+            "sha-256": "e591c6b5171243a513694ef788011e411222393b422c988a23014071afc8c37c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/singleton.hpp"
+          },
+          "hashes": {
+            "sha-256": "28169f6280b3c5a4c2cca884476e80b73b84571d786a20d46030c76a8cbb64b5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/fnv.hpp"
+          },
+          "hashes": {
+            "sha-256": "7b0c00069e8080dac7cd78546a61faf4f882844b9091da2882a6f8a01b5b31cf"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/minhook/minhook.h"
+          },
+          "hashes": {
+            "sha-256": "94201efd5badbd13e9aa9e7faad05b8d692175571fabf1f04c297ebdaff5d569"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/interfaces.hpp"
+          },
+          "hashes": {
+            "sha-256": "18c222156abcc30e3cd6414da99caa16f9dceb2b6b3c5a2a00d61f599c5ccc83"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_base_client_dll.hpp"
+          },
+          "hashes": {
+            "sha-256": "e9d612886bc7e124e7f675016347a16681122d3a69bba2aa8e5b1cc754ea7b5d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/client_class.hpp"
+          },
+          "hashes": {
+            "sha-256": "7cbe9912f257aaf4cfe9c8f9b76c3f6658719ef99f27eef920a4e862d12944a0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/recv_props.hpp"
+          },
+          "hashes": {
+            "sha-256": "7ff45e019d0573f22a5ce86e4590cb7dc74ecc9f61ccd077bf5234ca3eedb3ef"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_client_entity_list.hpp"
+          },
+          "hashes": {
+            "sha-256": "8a773fa2e7c24e1ca6f42a1e6c0deb2dab7fa21976ef3c91d67e531198e81f9e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/iv_engine_client.hpp"
+          },
+          "hashes": {
+            "sha-256": "1f9f3d4747e63d4b530c7d67c4b1f74ad8debcedf32738399144005b6f255a06"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/math/vector2d.hpp"
+          },
+          "hashes": {
+            "sha-256": "7a4a0495f9a76eda3b0c82b3a1d64311a3ac0c88f7c5303848ebf920664ec104"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/math/view_matrix.hpp"
+          },
+          "hashes": {
+            "sha-256": "19408832e9fd343e518fda4a76235a3e3e1caacb1f841835a7aafe24ccf800d8"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/net_channel.hpp"
+          },
+          "hashes": {
+            "sha-256": "2d74b49ea184547f4874d05d735607fa29fb550685cece81e81fde36fd8a28ff"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_client_state.hpp"
+          },
+          "hashes": {
+            "sha-256": "9e8a586fcce558a056b6acdfc852c696286e4ee284e977b2dadecd7753d686a0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_panel.hpp"
+          },
+          "hashes": {
+            "sha-256": "af8c9e3d971802b14adf0b1665299ca194ea0da084ac761ac13cd8f3c83bb692"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_surface.hpp"
+          },
+          "hashes": {
+            "sha-256": "7caccc7b9981d2ff4f50c4a15e5d2a826e1701f5d685f074b080c8ce8e2dc035"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/structs/vertex_t.hpp"
+          },
+          "hashes": {
+            "sha-256": "7047412300dc8f990de7363d13db5bae97a8a6e74423f861f71f80d66827e110"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/c_global_vars_base.hpp"
+          },
+          "hashes": {
+            "sha-256": "785de22622c4dc78f665570bcd25bd56453dd458a38ed2a4c18e2f5a5b8bc224"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_material_system.hpp"
+          },
+          "hashes": {
+            "sha-256": "176d28752c2f88e4c892af4c6752927b1b8c335914753e5fb84d2e1c77420fb4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/structs/materials.hpp"
+          },
+          "hashes": {
+            "sha-256": "d9afe04285022793f5c5db9fc817d989c2fea4492e0046328be3887540062c1a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/iv_model_info.hpp"
+          },
+          "hashes": {
+            "sha-256": "0540243e9a07b0466100350a1dfed8a23fb9d0fcd01c351daefc37e32f811970"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/studio.hpp"
+          },
+          "hashes": {
+            "sha-256": "766ea332e1901499d7342d4fa4bde56ba4cf1af8704c1c1f77694407f24d5873"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/iv_model_render.hpp"
+          },
+          "hashes": {
+            "sha-256": "ce09fbe2b0bf0e81b1b91a72ef1004cae3a82c2ba00a3936479ab2e1c02e1074"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/iv_debug_overlay.hpp"
+          },
+          "hashes": {
+            "sha-256": "eb98612cd1fef1d87b0ae07fda6934ea21fb3c0b9ef4a3425af1b99e073bccf8"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_console.hpp"
+          },
+          "hashes": {
+            "sha-256": "0add2cdab0fc032695517559561096551b5ae6d5091ef9e0642b395c3676833d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/convar.hpp"
+          },
+          "hashes": {
+            "sha-256": "12d62071de8d45b00a039e142009043f0e0cbded041fe9a914ec1a3dd8193aa0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/misc/color.hpp"
+          },
+          "hashes": {
+            "sha-256": "e2c9dcfbf0eb9acf19a1227e98aade56c8643341df91314ce5402b124e9b2f23"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3d9.h"
+          },
+          "hashes": {
+            "sha-256": "6c1c418a584ace286e6d662868bc051cb1b91817a8e23270c3e61f7b155b314a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3d9types.h"
+          },
+          "hashes": {
+            "sha-256": "aab4990c88f745057f994ecb1b651ac2a7a7c2cb4b01e63896a10de5825d6459"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3d9caps.h"
+          },
+          "hashes": {
+            "sha-256": "55ddce31499d02bf9b40c77cfb078876bc1999c9e94cb99278141a5034afdf90"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_app_system.hpp"
+          },
+          "hashes": {
+            "sha-256": "5f9e2be1fa926b499767f07a70eb0e358d25ea4f489c27d4a9a86b98769a3f54"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_memalloc.h"
+          },
+          "hashes": {
+            "sha-256": "d6bbdb2bead0cf9bec303014b4637dc01a36ccc346c243c3b178e927ad402213"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_localize.hpp"
+          },
+          "hashes": {
+            "sha-256": "8d1b0b1f2a27b8bf3080e61e5af9d2572ed57c3f9e0c723ead68c2c47be8aa80"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_game_event_manager.hpp"
+          },
+          "hashes": {
+            "sha-256": "b8a9ef6b757182e4c3bfc790f15d480f86dab78b7535a815d54c688ac9169dd2"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_input.hpp"
+          },
+          "hashes": {
+            "sha-256": "f22e415407e849501d315c5fba6735222371302ba88c6646708efa0d0a6d50a2"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/c_usercmd.hpp"
+          },
+          "hashes": {
+            "sha-256": "db84d28d28479b9c12631a3f0c35f16998196bce2e03990a4361fbbc9f8357b0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/core/helpers/checksum_crc.h"
+          },
+          "hashes": {
+            "sha-256": "576da9a3c69e3ba87bdf4533a10c49eb885b4ba4b741e5eea49120aeb66e44d0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/core/helpers/checksum_md5.h"
+          },
+          "hashes": {
+            "sha-256": "696d2b55307b3dfad23a02bceb32fa9de1519f1fcf254918722bbcad5d793739"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_render_view.hpp"
+          },
+          "hashes": {
+            "sha-256": "548d2e104be4574e0b06f6b105f052fbad04610af0ed350812848e3ae98c9669"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/glow_manager.hpp"
+          },
+          "hashes": {
+            "sha-256": "278d86bc8edb65360517209bff0fccdb3960b14a3d8716c553e4049fa72cf751"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_player_movement.hpp"
+          },
+          "hashes": {
+            "sha-256": "00dd7eab479967e81201a3e19f136278bcdd21f5986029c8089c391a8e314d81"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_weapon_system.hpp"
+          },
+          "hashes": {
+            "sha-256": "6d9e8a26c19710a13c480aaffa1bac815d0033b9dcd8974b60738188200a773d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/structs/weaponinfo.hpp"
+          },
+          "hashes": {
+            "sha-256": "7a70ba969fe3913a29551133cd82db5e942687df31a86e4613554077903d473f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/i_hud_chat.hpp"
+          },
+          "hashes": {
+            "sha-256": "ef7f217d14a09eb560be1490aa7a3fa2e248b77441c5185a46e967852f5a779a"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/c_csplayerresource.h"
+          },
+          "hashes": {
+            "sha-256": "19be007e1aa81466f11141bc83b4efb42889edb40e81668352befd4574821b16"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/crypt_str.h"
+          },
+          "hashes": {
+            "sha-256": "9bdb3b0a25da550dc9dd7fe7df69431ea07ed6509bd64a6dbc6d104785c82107"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/netvars/netvars.hpp"
+          },
+          "hashes": {
+            "sha-256": "e865d90d83f2ca231f803228f98cba53a5e2d320d63a94a42df1566d2626d397"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/engine_sounds.hpp"
+          },
+          "hashes": {
+            "sha-256": "80e0eff61f3a668a27a6fd9f5a1383ce476ada8f39b939dbb584bb5a2381afc7"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/utl_vector.h"
+          },
+          "hashes": {
+            "sha-256": "ce429a6812417e977dae0ef568233f06c01363cb0464364aafad30a92eb947ee"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/interfaces/utl_memory.h"
+          },
+          "hashes": {
+            "sha-256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/sdk.hpp"
+          },
+          "hashes": {
+            "sha-256": "8a1ee3d5b6a7ac0bb810a6e50cb17e66a47d325679008a4701f248e8535e5976"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/structs/dlight.hpp"
+          },
+          "hashes": {
+            "sha-256": "0a8a2b3ad7d3a5342debcb0ecbc6db5ebbbfa16effb117c6b51017e5e8092c9f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/view_setup.h"
+          },
+          "hashes": {
+            "sha-256": "10eadcb7929897379dc288d2a735639d43652891f8e8e985f5d69d6d28e1b2c7"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/basehandle.h"
+          },
+          "hashes": {
+            "sha-256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/math/math.hpp"
+          },
+          "hashes": {
+            "sha-256": "af58e58eed26c5dba0924cf656c568d192d1cc67c74200ec6b6dc54af5345500"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/classes/collideable.hpp"
+          },
+          "hashes": {
+            "sha-256": "d9c34b13f18f5fc1271f763929ea2ee05c5897c1eaa4e4fbab20a11cf590fed7"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/source-sdk/structs/animstate.hpp"
+          },
+          "hashes": {
+            "sha-256": "73f3dad057239ff04d7936bf761e8e2fae2847325cd57cd184298db2803d00b7"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/core/features/inventory_changer/ceconitem.h"
+          },
+          "hashes": {
+            "sha-256": "2494575720dbdc2eef973671631f84892b6f345a7a3111659098f90bc6bd213c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9.h"
+          },
+          "hashes": {
+            "sha-256": "7b20fea554f2aaef744d17e31ddf303b7c6b4bd4c8d279bad8cb2998781cab79"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9core.h"
+          },
+          "hashes": {
+            "sha-256": "7e360611940e9520c9dd983dbe9e48a78df8b723d95de1a57a63580de52a0207"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9xof.h"
+          },
+          "hashes": {
+            "sha-256": "145c211ccbcd880f411195e66881a9172df52ac495f309dc7c97875ba73d3c55"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9mesh.h"
+          },
+          "hashes": {
+            "sha-256": "9430487b9a0f6cbbb6839e27811bb70bbcd2d958666fc75c8da9d20ccc60bc41"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9shader.h"
+          },
+          "hashes": {
+            "sha-256": "235bf935a1381c68d0847cfb8d5422f33cdd92d33acee5a59befeef6afad78d4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9effect.h"
+          },
+          "hashes": {
+            "sha-256": "72d6665d54c425b8a99fe0716518b2711f7cece6a3b2f8e7c6fc307e0a3fae26"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9tex.h"
+          },
+          "hashes": {
+            "sha-256": "64dfa1f26d6df792f6cf261c79f737e6e5c7670787ba6abfe0f76aba348e9422"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9shape.h"
+          },
+          "hashes": {
+            "sha-256": "481ce5fc79bba00750dce857e6d0507cb0b7b82013bcea1728b1abfdc5fe9a7b"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/d3dx9anim.h"
+          },
+          "hashes": {
+            "sha-256": "13e3d815d23e6daddde706dafef769bb40416e5c6c5ba817296377595a9716b2"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/console/console.hpp"
+          },
+          "hashes": {
+            "sha-256": "59ae68dd84f32f257ccaa311c8cf1a705ec091c0676276d7f540a409607275e6"
+          }
+        }
+      ]
+    }
+  ]
+}

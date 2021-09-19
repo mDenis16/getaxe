@@ -1,0 +1,1837 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImDrawCmdHeader::VtxOffset' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 2333,
+                  "startColumn": 1,
+                  "endLine": 2333,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawCmdHeader::{ctor}",
+                  "decoratedName": "??0ImDrawCmdHeader@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImDrawCmdHeader::VtxOffset"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImDrawCmdHeader::TextureId' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 2333,
+                  "startColumn": 1,
+                  "endLine": 2333,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawCmdHeader::{ctor}",
+                  "decoratedName": "??0ImDrawCmdHeader@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImDrawCmdHeader::TextureId"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiInputSource' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1561,
+                  "startColumn": 9,
+                  "endLine": 1561,
+                  "endColumn": 26
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiContext::{ctor}",
+                  "decoratedName": "??0ImGuiContext@@QAE@PAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiNavLayer' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1577,
+                  "startColumn": 9,
+                  "endLine": 1577,
+                  "endColumn": 20
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiContext::{ctor}",
+                  "decoratedName": "??0ImGuiContext@@QAE@PAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiNavForward' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1589,
+                  "startColumn": 9,
+                  "endLine": 1589,
+                  "endColumn": 33
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiContext::{ctor}",
+                  "decoratedName": "??0ImGuiContext@@QAE@PAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiLogType' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1644,
+                  "startColumn": 9,
+                  "endLine": 1644,
+                  "endColumn": 19
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiContext::{ctor}",
+                  "decoratedName": "??0ImGuiContext@@QAE@PAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiInputReadMode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 2327,
+                  "startColumn": 29,
+                  "endLine": 2327,
+                  "endColumn": 29
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::IsNavInputTest",
+                  "decoratedName": "?IsNavInputTest@ImGui@@YA_NHW4ImGuiInputReadMode@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiColorMod::Col' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 904,
+                  "startColumn": 1,
+                  "endLine": 904,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiColorMod::{ctor}",
+                  "decoratedName": "??0ImGuiColorMod@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiColorMod::Col"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::CurrLineTextBaseOffset' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::CurrLineTextBaseOffset"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::TreeJumpToParentOnPopMask' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::TreeJumpToParentOnPopMask"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::LastItemId' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::LastItemId"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::TextWrapPos' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::TextWrapPos"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::StateStorage' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::StateStorage"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::CurrentColumns' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::CurrentColumns"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::CurrentTableIdx' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::CurrentTableIdx"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::TreeDepth' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::TreeDepth"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::LastItemStatusFlags' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::LastItemStatusFlags"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::PrevLineTextBaseOffset' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::PrevLineTextBaseOffset"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::LayoutType' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::LayoutType"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::ParentLayoutType' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::ParentLayoutType"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::NavLayerCurrent' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::NavLayerCurrent"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::NavLayerActiveMask' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::NavLayerActiveMask"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::NavLayerActiveMaskNext' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::NavLayerActiveMaskNext"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::NavFocusScopeIdCurrent' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::NavFocusScopeIdCurrent"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::NavHasScroll' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::NavHasScroll"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::MenuBarAppending' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::MenuBarAppending"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::NavHideHighlightOneFrame' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::NavHideHighlightOneFrame"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::FocusCounterRegular' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::FocusCounterRegular"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::FocusCounterTabStop' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::FocusCounterTabStop"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::ItemFlags' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::ItemFlags"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiWindowTempData::ItemWidth' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1724,
+                  "startColumn": 1,
+                  "endLine": 1724,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiWindowTempData::{ctor}",
+                  "decoratedName": "??0ImGuiWindowTempData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiWindowTempData::ItemWidth"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiContextHookType' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 3366,
+                  "startColumn": 5,
+                  "endLine": 3366,
+                  "endColumn": 5
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::AddContextHook",
+                  "decoratedName": "?AddContextHook@ImGui@@YAIPAUImGuiContext@@PBUImGuiContextHook@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 3619,
+                  "startColumn": 44,
+                  "endLine": 3619,
+                  "endColumn": 73
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::UpdateMouseInputs",
+                  "decoratedName": "?UpdateMouseInputs@ImGui@@YAXXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiCol_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 4061,
+                  "startColumn": 46,
+                  "endLine": 4061,
+                  "endColumn": 75
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::UpdateDebugToolItemPicker",
+                  "decoratedName": "?UpdateDebugToolItemPicker@ImGui@@YAXXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C28182",
+          "message": {
+            "text": "Dereferencing NULL pointer. 'window' contains the same NULL value as 'hovered_window' did. See line 4518 for an earlier location where this can occur"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 4544,
+                  "startColumn": 13,
+                  "endLine": 4544,
+                  "endColumn": 118
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "FindHoveredWindow",
+                  "decoratedName": "?FindHoveredWindow@@YAXXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4506,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4508,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4509,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4510,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4513,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4514,
+                            "startColumn": 12
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4515,
+                            "startColumn": 14
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4515,
+                            "startColumn": 40
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4517,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4518,
+                            "startColumn": 29
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4520,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4524,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4525,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4528,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4529,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4534,
+                            "startColumn": 39
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4542,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4543,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4544,
+                            "startColumn": 59
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4546,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4515,
+                            "startColumn": 47
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4515,
+                            "startColumn": 40
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4517,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4518,
+                            "startColumn": 29
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4520,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4524,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4525,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4528,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4529,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4534,
+                            "startColumn": 39
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4542,
+                            "startColumn": 28
+                          }
+                        },
+                        "message": {
+                          "text": "'window' may be NULL"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4543,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4544,
+                            "startColumn": 59
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume '<branch condition>' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                          },
+                          "region": {
+                            "startLine": 4544,
+                            "startColumn": 59
+                          }
+                        },
+                        "message": {
+                          "text": "'window' is dereferenced, but may still be NULL"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImGuiSizeCallbackData::UserData' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 1947,
+                  "startColumn": 1,
+                  "endLine": 1947,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiSizeCallbackData::{ctor}",
+                  "decoratedName": "??0ImGuiSizeCallbackData@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImGuiSizeCallbackData::UserData"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiMouseCursor_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 5332,
+                  "startColumn": 30,
+                  "endLine": 5332,
+                  "endColumn": 81
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::UpdateWindowManualResize",
+                  "decoratedName": "?UpdateWindowManualResize@ImGui@@YA_NPAUImGuiWindow@@ABUImVec2@@PAHHQAIABUImRect@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImDrawCornerFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 5495,
+                  "startColumn": 150,
+                  "endLine": 5495,
+                  "endColumn": 213
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::RenderWindowDecorations",
+                  "decoratedName": "?RenderWindowDecorations@ImGui@@YAXPAUImGuiWindow@@ABUImRect@@_NHQBIM@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiPopupPositionPolicy' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 8357,
+                  "startColumn": 15,
+                  "endLine": 8357,
+                  "endColumn": 15
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::FindBestWindowPosForPopupEx",
+                  "decoratedName": "?FindBestWindowPosForPopupEx@ImGui@@YA?AUImVec2@@ABU2@0PAHABUImRect@@2W4ImGuiPopupPositionPolicy@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiDir_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 8535,
+                  "startColumn": 17,
+                  "endLine": 8535,
+                  "endColumn": 47
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGetDirQuadrantFromDelta",
+                  "decoratedName": "?ImGetDirQuadrantFromDelta@@YAHMM@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26451",
+          "message": {
+            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 11137,
+                  "startColumn": 56,
+                  "endLine": 11137,
+                  "endColumn": 82
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::DebugNodeColumns",
+                  "decoratedName": "?DebugNodeColumns@ImGui@@YAXPAUImGuiOldColumns@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiTreeNodeFlags_' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+                },
+                "region": {
+                  "startLine": 11345,
+                  "startColumn": 43,
+                  "endLine": 11345,
+                  "endColumn": 98
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::DebugNodeWindow",
+                  "decoratedName": "?DebugNodeWindow@ImGui@@YAXPAUImGuiWindow@@PBD@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.30.30423.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "commandLine": "\"D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x006DD1B0 -il C:\\Users\\topor\\AppData\\Local\\Temp\\_CL_ebbb9ed5ast -typedil -f dependencies\\imgui\\imgui.cpp -Ze -D_MSC_EXTENSIONS -Zp8 -Gs -pc \\:/ -D_MSC_VER=1930 -D_MSC_FULL_VER=193030423 -D_MSC_BUILD=0 -D_WIN32 -D_M_IX86=600 -D_M_IX86_FP=2 -I E:\\repos\\mDenis16\\getaxe-menu-framework\\ImGui Application -nologo -W 4 -diagnostics:column -D_GUARDOVERFLOW_CRT_ALLOCATORS=1 -Og -Ot -Oi -Oy -DCODE_ANALYSIS -DLOCAL_BUILD -DIMGUI_IMPL_WIN32_DISABLE_GAMEPAD -D_CRT_SECURE_NO_WARNINGS -D_WINDLL -D_MBCS -GF -EHs -D_CPPUNWIND -EHc -MT -clrNoPureCRT -D_MT -GS -fpfast -D_M_FP_FAST -Zc:wchar_t -Zc:forScope -std:c++latest -permissive- -Fo.\\intermediates\\imgui.obj -Fd.\\intermediates\\vc142.pdb -external:W 4 -Gd -analyze:projectdirectory D:\\repos\\getaxe -analyze:rulesetdirectory ;D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\\\Rule Sets; -analyze:ruleset D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\Rule Sets\\NativeRecommendedRules.ruleset -analyze:quiet -analyze:plugin D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\EspXEngine.dll -FC -errorreport:prompt -I F:\\includes\\nlohmann -I F:\\includes\\jsoncpp\\include -I F:\\includes\\dx9\\Include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I F:\\includes\\websocketpp-master -I F:\\includes\\boost_1_73_0 -I F:\\includes\\clip-master -I F:\\includes\\freetype\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -external:I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -MPdiagMutex 0000000000000A90",
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "b5bc2d2787f413f48da07bab8fe39970ee6f9a5274ae46d243b0e4c9f856b810"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "64609d2605732e93be169fddc6dae2c51dcea9f213ae6059db391db8d1456187"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "23e7df2617935d4a53ffbf880f5ee89a781d0bbd174fedbd13631151cc8a6a8d"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imconfig.h"
+          },
+          "hashes": {
+            "sha-256": "3f1761f0200014792061c71d872e6fbe6cff6ee08ad5a6b1981ed88f3e60ff4f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imstb_textedit.h"
+          },
+          "hashes": {
+            "sha-256": "fd8408584842d13ca4a3f5b002a77c80491626d289a96463ba52c11981816024"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -75,9 +75,6 @@
     <ClCompile Include="core\render\gui\framework\config_item.cpp" />
     <ClCompile Include="core\render\gui\framework\config_box.cpp" />
     <ClCompile Include="core\render\gui\framework\button.cpp" />
-    <ClCompile Include="core\render\gui\menu\ragebot_menu.cpp" />
-    <ClCompile Include="core\render\gui\menu\visuals_menu.cpp" />
-    <ClCompile Include="core\render\gui\menu\settings_menu.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\setup\animations.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
@@ -90,22 +87,18 @@
     <ClCompile Include="core\features\visuals\modulation\materials.cpp" />
     <ClCompile Include="core\features\visuals\modulation\modulation.cpp" />
     <ClCompile Include="core\features\visuals\modulation\player_modulation.cpp" />
-    <ClCompile Include="core\render\gui\menu\weapons_visuals_menu.cpp" />
-    <ClCompile Include="core\render\gui\menu\projectiles_visuals_menu.cpp" />
     <ClCompile Include="core\features\visuals\projectile_prediction.cpp" />
     <ClCompile Include="core\features\visuals\player\visual_player.cpp" />
     <ClCompile Include="core\features\visuals\visual_handler.cpp" />
     <ClCompile Include="core\features\visuals\weapon\visual_weapon.cpp" />
     <ClCompile Include="core\features\visuals\projectile\visual_project.cpp" />
     <ClCompile Include="core\features\visuals\grenade\visual_grenade.cpp" />
-    <ClCompile Include="core\render\gui\menu\visuals_world_menu.cpp" />
     <ClCompile Include="core\features\events\event_handler.cpp" />
     <ClCompile Include="core\hooks\engine\get_screen_aspect_ratio.cpp" />
     <ClCompile Include="core\hooks\client\calc_view_model_bob.cpp" />
     <ClCompile Include="core\hooks\clientmode\draw_fog.cpp" />
     <ClCompile Include="core\features\visuals\removals\removals.cpp" />
     <ClCompile Include="core\features\movement\autostrafer.cpp" />
-    <ClCompile Include="core\render\gui\menu\movement_menu.cpp" />
     <ClCompile Include="core\features\visuals\LOCAL\thirdperson.cpp" />
     <ClCompile Include="core\render\gui\menu\legitbot_menu.cpp" />
     <ClCompile Include="core\render\gui\framework\bezier_editor.cpp" />
@@ -136,6 +129,15 @@
     <ClCompile Include="dependencies\minhook\hde\hde32.cpp" />
     <ClCompile Include="dependencies\minhook\hde\hde64.cpp" />
     <ClCompile Include="core\helpers\signatures.cpp" />
+    <ClCompile Include="core\render\gui\menu\movement_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\projectiles_visuals_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\ragebot_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\settings_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\visuals_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\visuals_world_menu.cpp" />
+    <ClCompile Include="core\render\gui\menu\weapons_visuals_menu.cpp" />
+    <ClCompile Include="dependencies\utilities\interfaces\interfaces_new.cpp" />
+    <ClCompile Include="dependencies\utilities\modules\modules.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -284,9 +286,9 @@
     <ClInclude Include="core\features\visuals\damage_indicator\damage_indicator.h" />
     <ClInclude Include="dependencies\math\PolynomialSolver.h" />
     <ClInclude Include="dependencies\utilities\aye_imports.hpp" />
-    <ClInclude Include="security\safe_string.h" />
-    <ClInclude Include="security\stack_strings.h" />
     <ClInclude Include="core\helpers\signatures.h" />
+    <ClInclude Include="dependencies\utilities\stack_strings.hpp" />
+    <ClInclude Include="dependencies\utilities\interfaces\interfaces_new.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">
@@ -295,5 +297,8 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="freetype.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dependencies\utilities\modules\modules.hpp" />
   </ItemGroup>
 </Project>

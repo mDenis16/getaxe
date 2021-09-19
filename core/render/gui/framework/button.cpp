@@ -7,11 +7,11 @@
 
 namespace ui {
 
-	button::button ( std::string text, object * parent, std::function<void ( )> func ) {
+	button::button ( SecureString& text, object * parent, std::function<void ( )> func ) {
 
 
 
-		this->text = text;
+		this->text = &text;
 
 		this->call_back = func;
 
@@ -29,12 +29,12 @@ namespace ui {
 		update ( );
 
 	}
-	button::button ( std::string text, object * parent, float percent_width, float percent_height, std::function<void ( )> func ) {
+	button::button ( SecureString& text, object * parent, float percent_width, float percent_height, std::function<void ( )> func ) {
 	
 
 
 
-		this->text = text;
+		this->text = &text;
 
 		this->call_back = func;
 
@@ -77,13 +77,13 @@ namespace ui {
 		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 46, 49, 52, alpha ), 4.5f );
 		this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 15 ), 4.5f );
 
-		const ImVec2 text_size = ImGui::CalcTextSize ( this->text.c_str ( ), 15.f, ui::font_widgets );
+		const ImVec2 text_size = ImGui::CalcTextSize ( this->text->data ( ), 15.f, ui::font_widgets );
 		ImVec2 text_pos = ImVec2 ( );
 		text_pos.x = ( ( this->mins.x + this->maxs.x ) / 2.f ) - text_size.x / 2.f;
 		text_pos.y = ( this->mins.y + this->maxs.y ) / 2.f - text_size.y / 2.f;
 
 
-		this->renderer->AddText ( ui::font_widgets, 15.f, text_pos, ImColor ( 255, 255, 255, 255 ), this->text.c_str ( ) );
+		this->renderer->AddText ( ui::font_widgets, 15.f, text_pos, ImColor ( 255, 255, 255, 255 ), this->text->data ( ) );
 
 
 

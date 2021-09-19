@@ -1,6 +1,8 @@
 
 
-#define PREVIEW
+#pragma once
+
+
 #include <deque>
 #include <string>
 

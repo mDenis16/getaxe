@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <memory>
@@ -5,6 +6,8 @@
 #include "../../../dependencies/imgui/imgui.h"
 #include "../../../dependencies/imgui/imgui_internal.h"
 #include "../../../dependencies/utilities/vpk_parser.h"
+#include "../../../dependencies/utilities/stack_strings.hpp"
+
 
 #include "config.h"
 

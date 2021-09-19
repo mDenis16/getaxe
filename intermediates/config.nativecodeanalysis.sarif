@@ -1,0 +1,899 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImDrawCmdHeader::VtxOffset' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 2333,
+                  "startColumn": 1,
+                  "endLine": 2333,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawCmdHeader::{ctor}",
+                  "decoratedName": "??0ImDrawCmdHeader@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImDrawCmdHeader::VtxOffset"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImDrawCmdHeader::TextureId' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 2333,
+                  "startColumn": 1,
+                  "endLine": 2333,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawCmdHeader::{ctor}",
+                  "decoratedName": "??0ImDrawCmdHeader@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImDrawCmdHeader::TextureId"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'config_manager::key_bind_item::value' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.h"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 3,
+                  "endLine": 47,
+                  "endColumn": 3
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "config_manager::key_bind_item::{ctor}",
+                  "decoratedName": "??0key_bind_item@config_manager@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "config_manager::key_bind_item::value"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'config_manager::key_bind_item::old_value' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.h"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 3,
+                  "endLine": 47,
+                  "endColumn": 3
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "config_manager::key_bind_item::{ctor}",
+                  "decoratedName": "??0key_bind_item@config_manager@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "config_manager::key_bind_item::old_value"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'config_manager::key_bind_item::var_type' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.h"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 3,
+                  "endLine": 47,
+                  "endColumn": 3
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "config_manager::key_bind_item::{ctor}",
+                  "decoratedName": "??0key_bind_item@config_manager@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "config_manager::key_bind_item::var_type"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'config_manager::key_bind_item::new_value' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.h"
+                },
+                "region": {
+                  "startLine": 47,
+                  "startColumn": 3,
+                  "endLine": 47,
+                  "endColumn": 3
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "config_manager::key_bind_item::{ctor}",
+                  "decoratedName": "??0key_bind_item@config_manager@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "config_manager::key_bind_item::new_value"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'variable_type' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.h"
+                },
+                "region": {
+                  "startLine": 62,
+                  "startColumn": 3,
+                  "endLine": 62,
+                  "endColumn": 3
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "config_manager::config_item::{ctor}",
+                  "decoratedName": "??0config_item@config_manager@@QAE@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@PAXW4variable_type@@PAVkey_bind_item@1@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'c_config::active_category' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.h"
+                },
+                "region": {
+                  "startLine": 548,
+                  "startColumn": 2,
+                  "endLine": 548,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "c_config::{ctor}",
+                  "decoratedName": "??0c_config@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "c_config::active_category"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'c_config::active_weapon' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.h"
+                },
+                "region": {
+                  "startLine": 548,
+                  "startColumn": 2,
+                  "endLine": 548,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "c_config::{ctor}",
+                  "decoratedName": "??0c_config@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "c_config::active_weapon"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ui::key_bind_component::old_value' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/framework/element.h"
+                },
+                "region": {
+                  "startLine": 34,
+                  "startColumn": 3,
+                  "endLine": 34,
+                  "endColumn": 3
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ui::key_bind_component::{ctor}",
+                  "decoratedName": "??0key_bind_component@ui@@QAE@PAX0AAH1H@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ui::key_bind_component::old_value"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ui::key_bind_value_type' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/framework/element.h"
+                },
+                "region": {
+                  "startLine": 35,
+                  "startColumn": 4,
+                  "endLine": 35,
+                  "endColumn": 39
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ui::key_bind_component::{ctor}",
+                  "decoratedName": "??0key_bind_component@ui@@QAE@PAX0AAH1H@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ui::key_bind_mode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/framework/element.h"
+                },
+                "region": {
+                  "startLine": 39,
+                  "startColumn": 4,
+                  "endLine": 39,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ui::key_bind_component::{ctor}",
+                  "decoratedName": "??0key_bind_component@ui@@QAE@PAX0AAH1H@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ui::object_type' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                },
+                "region": {
+                  "startLine": 217,
+                  "startColumn": 2,
+                  "endLine": 217,
+                  "endColumn": 2
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "config_manager::save::<lambda_2>::()",
+                  "decoratedName": "??R<lambda_2>@?1??save@config_manager@@QAEXV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z@QBE@W4object_type@ui@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6387",
+          "message": {
+            "text": "'this->old_value' could be '0':  this does not adhere to the specification for the function 'memcpy'. "
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                },
+                "region": {
+                  "startLine": 449,
+                  "startColumn": 9,
+                  "endLine": 449,
+                  "endColumn": 61
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "config_manager::key_bind_item::update",
+                  "decoratedName": "?update@key_bind_item@config_manager@@QAEXXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                          },
+                          "region": {
+                            "startLine": 425,
+                            "startColumn": 22
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'this->var_type==multibox_type' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                          },
+                          "region": {
+                            "startLine": 430,
+                            "startColumn": 7
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume '!this->old_value')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                          },
+                          "region": {
+                            "startLine": 431,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                          },
+                          "region": {
+                            "startLine": 434,
+                            "startColumn": 15
+                          }
+                        },
+                        "message": {
+                          "text": "Assume switch ( 'this->mode' ) resolves to case 0: "
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                          },
+                          "region": {
+                            "startLine": 435,
+                            "startColumn": 2
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                          },
+                          "region": {
+                            "startLine": 436,
+                            "startColumn": 21
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'key_down(this->key)' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                          },
+                          "region": {
+                            "startLine": 447,
+                            "startColumn": 17
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this branch, (assume 'this->was_hold')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+                          },
+                          "region": {
+                            "startLine": 449,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'this->old_value' should not be NULL, because this is not consistent with the SAL annotation on 'memcpy'"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C28020",
+          "message": {
+            "text": "The expression '0<=_Param_(1)&&_Param_(1)<=400-1' is not true at this call."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/utilities/json.hpp"
+                },
+                "region": {
+                  "startLine": 15600,
+                  "startColumn": 36,
+                  "endLine": 15600,
+                  "endColumn": 56
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "nlohmann::detail::serializer<nlohmann::basic_json<std::map,std::vector,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,bool,__int64,unsigned __int64,double,std::allocator,nlohmann::adl_serializer,std::vector<unsigned char,std::allocator<unsigned char> > > >::decode",
+                  "decoratedName": "?decode@?$serializer@V?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@V?$vector@EV?$allocator@E@std@@@2@@nlohmann@@@detail@nlohmann@@CAEAAEAAIE@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/json.hpp"
+                          },
+                          "region": {
+                            "startLine": 15579,
+                            "startColumn": 60
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/json.hpp"
+                          },
+                          "region": {
+                            "startLine": 15599,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///d:/repos/getaxe/dependencies/utilities/json.hpp"
+                          },
+                          "region": {
+                            "startLine": 15600,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "important"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "Unannotated fallthrough between switch labels (es.78)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/utilities/json.hpp"
+                },
+                "region": {
+                  "startLine": 6809,
+                  "startColumn": 22,
+                  "endLine": 6809,
+                  "endColumn": 22
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "nlohmann::detail::lexer<nlohmann::basic_json<std::map,std::vector,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,bool,__int64,unsigned __int64,double,std::allocator,nlohmann::adl_serializer,std::vector<unsigned char,std::allocator<unsigned char> > >,nlohmann::detail::input_stream_adapter>::scan_comment",
+                  "decoratedName": "?scan_comment@?$lexer@V?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@V?$vector@EV?$allocator@E@std@@@2@@nlohmann@@Vinput_stream_adapter@detail@2@@detail@nlohmann@@AAE_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "Unannotated fallthrough between switch labels (es.78)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/utilities/json.hpp"
+                },
+                "region": {
+                  "startLine": 6843,
+                  "startColumn": 21,
+                  "endLine": 6843,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "nlohmann::detail::lexer<nlohmann::basic_json<std::map,std::vector,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,bool,__int64,unsigned __int64,double,std::allocator,nlohmann::adl_serializer,std::vector<unsigned char,std::allocator<unsigned char> > >,nlohmann::detail::input_stream_adapter>::scan_comment",
+                  "decoratedName": "?scan_comment@?$lexer@V?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@V?$vector@EV?$allocator@E@std@@@2@@nlohmann@@Vinput_stream_adapter@detail@2@@detail@nlohmann@@AAE_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "Unannotated fallthrough between switch labels (es.78)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/utilities/json.hpp"
+                },
+                "region": {
+                  "startLine": 6809,
+                  "startColumn": 22,
+                  "endLine": 6809,
+                  "endColumn": 22
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "nlohmann::detail::lexer<nlohmann::basic_json<std::map,std::vector,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,bool,__int64,unsigned __int64,double,std::allocator,nlohmann::adl_serializer,std::vector<unsigned char,std::allocator<unsigned char> > >,nlohmann::detail::iterator_input_adapter<char const *> >::scan_comment",
+                  "decoratedName": "?scan_comment@?$lexer@V?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@V?$vector@EV?$allocator@E@std@@@2@@nlohmann@@V?$iterator_input_adapter@PBD@detail@2@@detail@nlohmann@@AAE_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "Unannotated fallthrough between switch labels (es.78)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/utilities/json.hpp"
+                },
+                "region": {
+                  "startLine": 6843,
+                  "startColumn": 21,
+                  "endLine": 6843,
+                  "endColumn": 37
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "nlohmann::detail::lexer<nlohmann::basic_json<std::map,std::vector,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,bool,__int64,unsigned __int64,double,std::allocator,nlohmann::adl_serializer,std::vector<unsigned char,std::allocator<unsigned char> > >,nlohmann::detail::iterator_input_adapter<char const *> >::scan_comment",
+                  "decoratedName": "?scan_comment@?$lexer@V?$basic_json@Vmap@std@@Vvector@2@V?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@2@_N_J_KNVallocator@2@Uadl_serializer@nlohmann@@V?$vector@EV?$allocator@E@std@@@2@@nlohmann@@V?$iterator_input_adapter@PBD@detail@2@@detail@nlohmann@@AAE_NXZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.30.30423.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "commandLine": "\"D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x006DD1B0 -il C:\\Users\\topor\\AppData\\Local\\Temp\\_CL_d49e7b8east -typedil -f core\\render\\gui\\config.cpp -Ze -D_MSC_EXTENSIONS -Zp8 -Gs -pc \\:/ -D_MSC_VER=1930 -D_MSC_FULL_VER=193030423 -D_MSC_BUILD=0 -D_WIN32 -D_M_IX86=600 -D_M_IX86_FP=2 -I E:\\repos\\mDenis16\\getaxe-menu-framework\\ImGui Application -nologo -W 4 -diagnostics:column -D_GUARDOVERFLOW_CRT_ALLOCATORS=1 -Og -Ot -Oi -Oy -DCODE_ANALYSIS -DLOCAL_BUILD -DIMGUI_IMPL_WIN32_DISABLE_GAMEPAD -D_CRT_SECURE_NO_WARNINGS -D_WINDLL -D_MBCS -GF -EHs -D_CPPUNWIND -EHc -MT -clrNoPureCRT -D_MT -GS -fpfast -D_M_FP_FAST -Zc:wchar_t -Zc:forScope -std:c++latest -permissive- -Fo.\\intermediates\\config.obj -Fd.\\intermediates\\vc142.pdb -external:W 4 -Gd -analyze:projectdirectory D:\\repos\\getaxe -analyze:rulesetdirectory ;D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\\\Rule Sets; -analyze:ruleset D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\Rule Sets\\NativeRecommendedRules.ruleset -analyze:quiet -analyze:plugin D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\EspXEngine.dll -FC -errorreport:prompt -I F:\\includes\\nlohmann -I F:\\includes\\jsoncpp\\include -I F:\\includes\\dx9\\Include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I F:\\includes\\websocketpp-master -I F:\\includes\\boost_1_73_0 -I F:\\includes\\clip-master -I F:\\includes\\freetype\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -external:I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -MPdiagMutex 0000000000000A90",
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "b5bc2d2787f413f48da07bab8fe39970ee6f9a5274ae46d243b0e4c9f856b810"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/core/render/gui/config.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "4bd737cdef9636e7374f2c72637b9f4ec766e7a83d9f075ab04fb92d102dced1"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/core/render/gui/framework/element.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "6a7ab6ca5739d7640857ddae77d9ac8b31a278032a626df2ac15cb30b30eda65"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/core/render/gui/config.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "4279e630d3aa7e50af45426a6b086fafbb4f97cc8c617029faea446e87f57787"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/utilities/json.hpp"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "b6b067c3444b26fafdc591d172f4257f3a76461a585917ac1a1a14efdb406f97"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/base64.h"
+          },
+          "hashes": {
+            "sha-256": "80447dca591d134ea2c8e9838d022ed4dc0986b6121d91ce475784d37d9f3e66"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/crypt_str.h"
+          },
+          "hashes": {
+            "sha-256": "9bdb3b0a25da550dc9dd7fe7df69431ea07ed6509bd64a6dbc6d104785c82107"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/rpcsal.h"
+          },
+          "hashes": {
+            "sha-256": "e591c6b5171243a513694ef788011e411222393b422c988a23014071afc8c37c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imconfig.h"
+          },
+          "hashes": {
+            "sha-256": "3f1761f0200014792061c71d872e6fbe6cff6ee08ad5a6b1981ed88f3e60ff4f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/utilities/singleton.hpp"
+          },
+          "hashes": {
+            "sha-256": "28169f6280b3c5a4c2cca884476e80b73b84571d786a20d46030c76a8cbb64b5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/core/render/gui/gui.h"
+          },
+          "hashes": {
+            "sha-256": "bc980fb33245c1c57bf6df03b2394aaf332b2eaf99ec0c80f101b83308c3f103"
+          }
+        }
+      ]
+    }
+  ]
+}

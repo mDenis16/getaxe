@@ -36,13 +36,17 @@ void* interfaces::model_cache = nullptr;
 void* interfaces::file_system = nullptr;
 
 bool interfaces::initialize() {
+	
+	client = reinterpret_cast<i_base_client_dll*>(81396024 + (DWORD)GetModuleHandle("client.dll"));
+	// get_interface<i_base_client_dll, interface_type::index>("client.dll", "VClient018");
+	std::cout << " client interface addreess " << client->get_client_classes() << std::endl;
 
-
-	client = get_interface<i_base_client_dll, interface_type::index>("client.dll", "VClient018");
-
-	printf("INTERFACE: client %p \n", client);
 
 	entity_list = get_interface<i_client_entity_list, interface_type::index>("client.dll", "VClientEntityList003");
+
+	auto entaddr = (std::uint32_t)entity_list - (std::uint32_t)GetModuleHandleA("client.dll");
+	std::cout << "entity list address " << entaddr << std::endl;
+
 
 	engine = get_interface<iv_engine_client, interface_type::index>("engine.dll", "VEngineClient014");
 
@@ -89,6 +93,7 @@ bool interfaces::initialize() {
 
 	globals = **reinterpret_cast< c_global_vars_base*** >( ( *reinterpret_cast< uintptr_t** >( client ) ) [ 11 ] + 10 );
 
+	
 	clientstate = **(i_client_state ***)(utilities::pattern_scan("engine.dll", sig_client_state) + 1);
 
 	directx = **(IDirect3DDevice9***)(utilities::pattern_scan("shaderapidx9.dll", sig_directx) + 1);

@@ -7,7 +7,7 @@ namespace ui {
 		bool should_be_scrollable = false;
 		float maximumContentSize = 0.f;
 		float click_time = 0.f;
-		std::string title;
+		SecureString* title;
 		config_manager::key_bind_item * key_bind_controller = nullptr;
 		ImVec2 bb_min;
 		bool key_bind_open = false;
@@ -58,11 +58,11 @@ namespace ui {
 
 		void draw_scrollbar ( );
 		std::vector<ImVec2> triangle_buffer;
-		combobox ( std::string text, object * parent, std::vector<std::string> _items, int & _value, float _bb_width = 0.f );
-		combobox ( std::string text, object * parent, std::vector<std::string> _items, int* _value, float _bb_width = 0.f );
-		combobox ( std::string text, object * parent, std::vector<std::string> _items,  int & _value, config_manager::key_bind_item & key_bind_item, float _bb_width = 0.f );
+		combobox ( SecureString& text, object * parent, std::vector<std::string> _items, int & _value, float _bb_width = 0.f );
+		combobox ( SecureString& text, object * parent, std::vector<std::string> _items, int* _value, float _bb_width = 0.f );
+		combobox ( SecureString& text, object * parent, std::vector<std::string> _items,  int & _value, config_manager::key_bind_item & key_bind_item, float _bb_width = 0.f );
 
-		combobox ( std::string text, object * parent, std::vector<std::string> _items, int & _value );
+		combobox ( SecureString& text, object * parent, std::vector<std::string> _items, int & _value );
 
 
 		void set_value ( int index );

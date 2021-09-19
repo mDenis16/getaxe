@@ -1,15 +1,16 @@
 
-#include <font_awesome.h>
 #include "../includes.h"
 #include <queue>
 
 namespace ui {
 	void sub_tab::draw ( ) {
+		if (!this->text) return;
+
 		handle ( );
 
 
 		auto text_size = ImGui::CalcTextSize ( this->icon_text.data(), this->icon_size, this->icon_font );
-		auto text_size_name = ImGui::CalcTextSize ( this->text.c_str ( ), 13.f, ui::font_widgets );
+		auto text_size_name = ImGui::CalcTextSize ( this->text->data ( ), 13.f, ui::font_widgets );
 		
 		
 		FLOAT center_Y = ( this->mins.y + this->maxs.y ) / 2.f;
@@ -38,9 +39,9 @@ namespace ui {
 
 		this->renderer->AddText ( this->icon_font, this->icon_size, ImVec2 ( center_X - text_size.x / 2.f, middle_y - text_size.y - 1.175f + offset_y) , ImColor ( 255, 255, 255, alpha ), this->icon_text.data() );
 		if ( this->selected )
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f - text_size_name.x / 2.f + 2.f, middle_y - text_size.y + text_size.y + 1.175f + 2.f), ImColor ( 0, 0, 0, alpha ), this->text.c_str ( ) );
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f - text_size_name.x / 2.f + 2.f, middle_y - text_size.y + text_size.y + 1.175f + 2.f), ImColor ( 0, 0, 0, alpha ), this->text->data ( ) );
 
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f - text_size_name.x / 2.f, middle_y - text_size.y + text_size.y + 1.175f  ), ImColor ( 255, 255, 255, alpha ), this->text.c_str ( ) );
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f - text_size_name.x / 2.f, middle_y - text_size.y + text_size.y + 1.175f  ), ImColor ( 255, 255, 255, alpha ), this->text->data ( ) );
 	
 
 		//this->renderer->AddRect (this->mins, this->maxs, ImColor(255, 0,255, 255));
@@ -137,7 +138,7 @@ namespace ui {
 		this->hovering = ( mouse_pos.x > this->mins.x && mouse_pos.y > this->mins.y && mouse_pos.x < this->maxs.x && mouse_pos.y < this->maxs.y );
 	}
 	void sub_tab::update ( ) {
-		auto text_size = ImGui::CalcTextSize ( this->text.data ( ), 15.f, ui::font_widgets );
+		auto text_size = ImGui::CalcTextSize ( this->text->data ( ), 15.f, ui::font_widgets );
 
 		if ( this->index > 0 ) {
 			auto & back = this->parrent->children.at ( this->index - 1 );

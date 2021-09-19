@@ -1,0 +1,126 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImDrawCmdHeader::VtxOffset' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 2333,
+                  "startColumn": 1,
+                  "endLine": 2333,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawCmdHeader::{ctor}",
+                  "decoratedName": "??0ImDrawCmdHeader@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImDrawCmdHeader::VtxOffset"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImDrawCmdHeader::TextureId' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 2333,
+                  "startColumn": 1,
+                  "endLine": 2333,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawCmdHeader::{ctor}",
+                  "decoratedName": "??0ImDrawCmdHeader@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImDrawCmdHeader::TextureId"
+          }
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.30.30423.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "commandLine": "\"D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x006DD1B0 -il C:\\Users\\topor\\AppData\\Local\\Temp\\_CL_fd40b639ast -typedil -f dependencies\\imgui\\impl\\imgui_impl_win32.cpp -Ze -D_MSC_EXTENSIONS -Zp8 -Gs -pc \\:/ -D_MSC_VER=1930 -D_MSC_FULL_VER=193030423 -D_MSC_BUILD=0 -D_WIN32 -D_M_IX86=600 -D_M_IX86_FP=2 -I E:\\repos\\mDenis16\\getaxe-menu-framework\\ImGui Application -nologo -W 4 -diagnostics:column -D_GUARDOVERFLOW_CRT_ALLOCATORS=1 -Og -Ot -Oi -Oy -DCODE_ANALYSIS -DLOCAL_BUILD -DIMGUI_IMPL_WIN32_DISABLE_GAMEPAD -D_CRT_SECURE_NO_WARNINGS -D_WINDLL -D_MBCS -GF -EHs -D_CPPUNWIND -EHc -MT -clrNoPureCRT -D_MT -GS -fpfast -D_M_FP_FAST -Zc:wchar_t -Zc:forScope -std:c++latest -permissive- -Fo.\\intermediates\\imgui_impl_win32.obj -Fd.\\intermediates\\vc142.pdb -external:W 4 -Gd -analyze:projectdirectory D:\\repos\\getaxe -analyze:rulesetdirectory ;D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\\\Rule Sets; -analyze:ruleset D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\Rule Sets\\NativeRecommendedRules.ruleset -analyze:quiet -analyze:plugin D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\EspXEngine.dll -FC -errorreport:prompt -I F:\\includes\\nlohmann -I F:\\includes\\jsoncpp\\include -I F:\\includes\\dx9\\Include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I F:\\includes\\websocketpp-master -I F:\\includes\\boost_1_73_0 -I F:\\includes\\clip-master -I F:\\includes\\freetype\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -external:I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -MPdiagMutex 0000000000000A90",
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "b5bc2d2787f413f48da07bab8fe39970ee6f9a5274ae46d243b0e4c9f856b810"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/impl/imgui_impl_win32.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "7a4d57cb836485e6a2ecef9519866048e2f2821d1cca2d37021d08c97aae5cc5"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imconfig.h"
+          },
+          "hashes": {
+            "sha-256": "3f1761f0200014792061c71d872e6fbe6cff6ee08ad5a6b1981ed88f3e60ff4f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/impl/imgui_impl_win32.h"
+          },
+          "hashes": {
+            "sha-256": "701054b55ac01ba3fc4e2046569687adde9c2b140b62ece8e32b36de8c14500d"
+          }
+        }
+      ]
+    }
+  ]
+}

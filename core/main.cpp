@@ -16,12 +16,7 @@ unsigned long WINAPI initialize(void* instance) {
 
 	
 
-	std::time_t t = std::time ( 0 );   // get time now
-	std::tm * now = std::localtime ( &t );
 
-
-	///while( now->tm_mday != 27 )
-	//	std::this_thread::sleep_for ( std::chrono::milliseconds ( 100 ) );
 
 	csgo::window = FindWindowA ( "Valve001", nullptr );
 
@@ -30,6 +25,8 @@ unsigned long WINAPI initialize(void* instance) {
 
 
 	console::initialize("csgo-cheat console");
+
+	interfaces_manager::init_prop_table();
 
 //#if RELEASE
 	//connection::main ( );
@@ -42,6 +39,7 @@ unsigned long WINAPI initialize(void* instance) {
 
 		hooks::initialize();
 		hooks::create_hooks ( );
+
 		std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
 	
 	}
@@ -95,8 +93,7 @@ std::int32_t WINAPI DllMain(const HMODULE instance [[maybe_unused]], const unsig
 
 
 
-	utilities::pattern_scan(dll, pattern);
-	/*switch (reason) {
+	switch (reason) {
 	case DLL_PROCESS_ATTACH: {
 		if (auto handle = CreateThread(nullptr, NULL, initialize, instance, NULL, nullptr))
 			CloseHandle(handle);
@@ -108,7 +105,7 @@ std::int32_t WINAPI DllMain(const HMODULE instance [[maybe_unused]], const unsig
 		release();
 		break;
 	}
-	}*/
+	}
 
 	return true;
 }

@@ -2913,8 +2913,8 @@ namespace overlay {
 			static const ImWchar icons_ranges [ ] = { 'a', 'd', 0 };
 			ImFontConfig icons_config; icons_config.PixelSnapH = true;
 			ui::font_icons = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\icomoon.ttf", 20.f, &icons_config );
-			ui::font_menu_icons = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\undefeated.ttf", 50.0f );
-			ui::menuicons = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\menuicons.ttf", 50.0f );
+			//ui::font_menu_icons = io.Fonts->AddFontFromFileTTF ( "C:\\Windows\\Fonts\\undefeated.ttf", 50.0f );
+		
 			visuals::weapon_font = ImGui::GetIO ( ).Fonts->AddFontFromMemoryTTF ( weaponicons.data ( ), weaponicons.size ( ), 20 );
 			ui::weapon_icons = ImGui::GetIO ( ).Fonts->AddFontFromMemoryTTF ( weaponicons.data ( ), weaponicons.size ( ), 20 );
 

@@ -3,13 +3,15 @@
 
 namespace ui {
 	void tab::draw ( ) {
+		if (!this->text) return;
+
 		handle ( );
 		
 
 
 	//	this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ) );
-		auto text_size = ImGui::CalcTextSize ( this->text.data ( ), 14.f, ui::font_widgets );
-		this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( (this->mins.x + this->maxs.x ) / 2.f - text_size.x / 2.f, (this->mins.y + this->maxs.y) / 2.f - text_size.y / 2.f), ImColor ( 255, 255, 255, this->selected ? 245 : 195 ), this->text.c_str ( ) );
+		auto text_size = ImGui::CalcTextSize ( this->text->data ( ), 14.f, ui::font_widgets );
+		this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( (this->mins.x + this->maxs.x ) / 2.f - text_size.x / 2.f, (this->mins.y + this->maxs.y) / 2.f - text_size.y / 2.f), ImColor ( 255, 255, 255, this->selected ? 245 : 195 ), this->text->data ( ) );
 
 		if ( !this->selected )
 			return;
@@ -57,7 +59,7 @@ namespace ui {
 
 		*/
 
-		auto text_size = ImGui::CalcTextSize ( this->text.data ( ), 18.f, ui::font_widgets );
+		auto text_size = ImGui::CalcTextSize ( this->text->data ( ), 18.f, ui::font_widgets );
 		if ( this->index > 0 ) {
 			auto & old = this->parrent->children.at ( this->index - 1 );
 

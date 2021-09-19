@@ -156,15 +156,15 @@ namespace ui {
 		//this->renderer->AddRect ( this->bb_min, this->bb_max, ImColor ( 255, 255, 255, 15 ), 3.5f );
 
 
-		this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->maxs.x + 14, this->mins.y + 14 ), ImColor ( 255, 255, 255, 225 ), std::to_string ( this->thumb_progress ).c_str ( ) );
+		//this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->maxs.x + 14, this->mins.y + 14 ), ImColor ( 255, 255, 255, 225 ), std::to_string ( this->thumb_progress ).c_str ( ) );
 
 	}
 
 
-	combobox::combobox ( std::string text, object * parent, std::vector<std::string> _items, int & _value, float _bb_width ) {
+	combobox::combobox ( SecureString& text, object * parent, std::vector<std::string> _items, int & _value, float _bb_width ) {
 
 		this->items = _items;
-		this->title = text;
+		this->title = &text;
 		this->value = &_value;
 	
 
@@ -185,10 +185,10 @@ namespace ui {
 		update ( );
 
 	}
-	combobox::combobox ( std::string text, object * parent, std::vector<std::string> _items, int * _value, float _bb_width ) {
+	combobox::combobox ( SecureString& text, object * parent, std::vector<std::string> _items, int * _value, float _bb_width ) {
 
 		this->items = _items;
-		this->title = text;
+		this->title = &text;
 		this->value = _value;
 
 
@@ -209,11 +209,11 @@ namespace ui {
 		update ( );
 
 	}
-	combobox::combobox ( std::string text, object * parent, std::vector<std::string> _items, int & _value, config_manager::key_bind_item & key_bind_item, float _bb_width )
+	combobox::combobox ( SecureString& text, object * parent, std::vector<std::string> _items, int & _value, config_manager::key_bind_item & key_bind_item, float _bb_width )
 	{
 
 		this->items = _items;
-		this->title = text;
+		this->title = &text;
 		this->value = &_value;
 
 
@@ -236,10 +236,10 @@ namespace ui {
 
 	}
 
-	combobox::combobox ( std::string text, object * parent, std::vector<std::string> _items, int & _value ) {
+	combobox::combobox ( SecureString& text, object * parent, std::vector<std::string> _items, int & _value ) {
 
 		this->items = _items;
-		this->title = text;
+		this->title = &text;
 		this->value = &_value;
 
 
@@ -389,7 +389,7 @@ namespace ui {
 	
 
 
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), this->title.c_str ( ) );
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), this->title->data ( ) );
 
 
 

@@ -13,36 +13,48 @@ namespace ui {
 	namespace menu {
 
 
-		void movement_menu ( object * main_window, sub_tab * sub_tab ) {
-			auto visuals_window = new ui::child_window ( "", 100.f, 80.f, ImColor ( 255, 255, 255, 0 ), main_window, child_type::main_container, flags::no_background ); visuals_window->flex = flex_direction::automatic; visuals_window->padding = 15;
+		void movement_menu(object* main_window, sub_tab* sub_tab) {
+			auto visuals_window = new ui::child_window(GET_STR(""), 100.f, 80.f, ImColor(255, 255, 255, 0), main_window, child_type::main_container, flags::no_background); visuals_window->flex = flex_direction::automatic; visuals_window->padding = 15;
+
 			visuals_window->tab_assign = sub_tab;
 			sub_tab->child_assign = visuals_window;
 
 			float child_rounding = 15.f;
 
-			auto & cfg = c_config::get ( ).misc.movement;
+			auto& cfg = c_config::get().misc.movement;
 
-			auto main_tab = new ui::child_window ( "Bhop assist", 45.f, 50.f, ImColor ( 23, 24, 27, 255 ), visuals_window, float_side::none, child_rounding, 15.f );
+			auto main_tab = new ui::child_window(GET_STR("Bhop assist"), 45.f, 50.f, ImColor(23, 24, 27, 255), visuals_window, float_side::none, child_rounding, 15.f);
+
 			{
 
 
 
 
-				auto bhop = new ui::checkbox ( "Auto bhop", main_tab, cfg.bhop, &cfg.bhop_keybind );
-				new ui::checkbox ( "Duck in air", main_tab, cfg.air_duck );
-				new ui::checkbox ( "Slow walk", main_tab, cfg.slow_walk, &cfg.slow_walk_keybind );
+				auto bhop = new ui::checkbox(GET_STR("Auto bhop"), main_tab, cfg.bhop, &cfg.bhop_keybind);
+
+				new ui::checkbox(GET_STR("Duck in air"), main_tab, cfg.air_duck);
+
+				new ui::checkbox(GET_STR("Slow walk"), main_tab, cfg.slow_walk, &cfg.slow_walk_keybind);
+
 				//new ui::checkbox ( "Fakeduck", main_tab, cfg.fake_duck, &cfg.slow_walk_keybind );
 
-				new ui::checkbox ( "Auto strafe", main_tab, cfg.auto_strafe, &cfg.auto_strafe_keybind );
-				new ui::checkbox ( "Key strafer", main_tab, cfg.wasd_strafe, &cfg.wasd_strafe_keybind );
-				new ui::checkbox ( "Circle strafer", main_tab, cfg.circle_strafe, &cfg.circle_keybind );
-				new ui::checkbox ( "Align strafer", main_tab, cfg.a_strafe, &cfg.auto_strafe_keybind );
-				auto z_strafer = new ui::checkbox ( "Z strafer", main_tab, cfg.z_strafe, &cfg.z_keybind );
-				auto z_strafer_extender = new ui::element_extender ( z_strafer );
+				new ui::checkbox(GET_STR("Auto strafe"), main_tab, cfg.auto_strafe, &cfg.auto_strafe_keybind);
+
+				new ui::checkbox(GET_STR("Key strafer"), main_tab, cfg.wasd_strafe, &cfg.wasd_strafe_keybind);
+
+				new ui::checkbox(GET_STR("Circle strafer"), main_tab, cfg.circle_strafe, &cfg.circle_keybind);
+
+				new ui::checkbox(GET_STR("Align strafer"), main_tab, cfg.a_strafe, &cfg.auto_strafe_keybind);
+
+				auto z_strafer = new ui::checkbox(GET_STR("Z strafer"), main_tab, cfg.z_strafe, &cfg.z_keybind);
+
+				auto z_strafer_extender = new ui::element_extender(z_strafer);
 				{
 
-					new ui::slider ( "Frequency", z_strafer_extender, cfg.z_strafe_frequency, 1.f, 100.f, ui::slider_type::floates );
-					new ui::slider ( "Distance", z_strafer_extender, cfg.z_strafer_distance, 1.f, 100.f, ui::slider_type::floates );
+					new ui::slider(GET_STR("Frequency"), z_strafer_extender, cfg.z_strafe_frequency, 1.f, 100.f, ui::slider_type::floates);
+
+					new ui::slider(GET_STR("Distance"), z_strafer_extender, cfg.z_strafer_distance, 1.f, 100.f, ui::slider_type::floates);
+
 
 
 				}

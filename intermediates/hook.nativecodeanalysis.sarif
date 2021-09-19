@@ -1,0 +1,397 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C6001",
+          "message": {
+            "text": "Using uninitialized memory '*hThread'."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                },
+                "region": {
+                  "startLine": 344,
+                  "startColumn": 18,
+                  "endLine": 344,
+                  "endColumn": 18
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "Unfreeze",
+                  "decoratedName": "?Unfreeze@@YAXPAU_FROZEN_THREADS@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 336,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 338,
+                            "startColumn": 8
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 339,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 339,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 341,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 342,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 344,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 345,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 339,
+                            "startColumn": 35
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 339,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 341,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 342,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 344,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 345,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'*hThread' is not initialized"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                          },
+                          "region": {
+                            "startLine": 344,
+                            "startColumn": 18
+                          }
+                        },
+                        "message": {
+                          "text": "'*hThread' is used, but may not have been initialized"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26454",
+          "message": {
+            "text": "Arithmetic overflow: '-' operation produces a negative unsigned result at compile time (io.5)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                },
+                "region": {
+                  "startLine": 380,
+                  "startColumn": 33,
+                  "endLine": 380,
+                  "endColumn": 62
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "EnableHookLL",
+                  "decoratedName": "?EnableHookLL@@YA?AW4MH_STATUS@@IH@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'MH_STATUS' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+                },
+                "region": {
+                  "startLine": 399,
+                  "startColumn": 2,
+                  "endLine": 399,
+                  "endColumn": 9
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "EnableHookLL",
+                  "decoratedName": "?EnableHookLL@@YA?AW4MH_STATUS@@IH@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.30.30423.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "commandLine": "\"D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x006DD1B0 -il C:\\Users\\topor\\AppData\\Local\\Temp\\_CL_33c93ae6ast -typedil -f dependencies\\minhook\\hook.cpp -Ze -D_MSC_EXTENSIONS -Zp8 -Gs -pc \\:/ -D_MSC_VER=1930 -D_MSC_FULL_VER=193030423 -D_MSC_BUILD=0 -D_WIN32 -D_M_IX86=600 -D_M_IX86_FP=2 -I E:\\repos\\mDenis16\\getaxe-menu-framework\\ImGui Application -nologo -W 4 -diagnostics:column -D_GUARDOVERFLOW_CRT_ALLOCATORS=1 -Og -Ot -Oi -Oy -DCODE_ANALYSIS -DLOCAL_BUILD -DIMGUI_IMPL_WIN32_DISABLE_GAMEPAD -D_CRT_SECURE_NO_WARNINGS -D_WINDLL -D_MBCS -GF -EHs -D_CPPUNWIND -EHc -MT -clrNoPureCRT -D_MT -GS -fpfast -D_M_FP_FAST -Zc:wchar_t -Zc:forScope -std:c++latest -permissive- -Fo.\\intermediates\\hook.obj -Fd.\\intermediates\\vc142.pdb -external:W 4 -Gd -analyze:projectdirectory D:\\repos\\getaxe -analyze:rulesetdirectory ;D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\\\Rule Sets; -analyze:ruleset D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\Rule Sets\\NativeRecommendedRules.ruleset -analyze:quiet -analyze:plugin D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\EspXEngine.dll -FC -errorreport:prompt -I F:\\includes\\nlohmann -I F:\\includes\\jsoncpp\\include -I F:\\includes\\dx9\\Include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I F:\\includes\\websocketpp-master -I F:\\includes\\boost_1_73_0 -I F:\\includes\\clip-master -I F:\\includes\\freetype\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -external:I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -MPdiagMutex 0000000000000A90",
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/core/hooks/d3d/steam_reset.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/minhook/hook.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "8ac6e5fc04abe63f674dddb9f3d53773904b95ed51259de16ee6b82ba17d649e"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///f:/includes/dx9/include/rpcsal.h"
+          },
+          "hashes": {
+            "sha-256": "e591c6b5171243a513694ef788011e411222393b422c988a23014071afc8c37c"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/minhook/minhook.h"
+          },
+          "hashes": {
+            "sha-256": "94201efd5badbd13e9aa9e7faad05b8d692175571fabf1f04c297ebdaff5d569"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/minhook/buffer.h"
+          },
+          "hashes": {
+            "sha-256": "37a2aecfb3cd96617fcae00cd33317c528317a1902f4d1bbb405bcb52cff3769"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/minhook/trampoline.h"
+          },
+          "hashes": {
+            "sha-256": "92bda960d55c501b213178159b29389d39c066b2575847bdc600996ae0dea37b"
+          }
+        }
+      ]
+    }
+  ]
+}

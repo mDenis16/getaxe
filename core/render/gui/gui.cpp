@@ -153,19 +153,19 @@ namespace ui {
 		main_window->flags |= flags::window_resizable;
 		window_pointer_cheat = static_cast< void * >( main_window );
 
-		auto top_side = new ui::child_window ( "", 100, 100, ImColor ( 25, 25, 25, 255 ), main_window, child_type::tab_container );
+		auto top_side = new ui::child_window (GET_STR(""), 100, 100, ImColor(25, 25, 25, 255), main_window, child_type::tab_container);
 		top_side->rounding = 12.f;
 
-		auto aimbot_tab = new ui::tab ( "Aimbot", top_side, 13 );
+		auto aimbot_tab = new ui::tab ( GET_STR ("Aimbot"), top_side, 13 );
 		{
-			auto ragebot_sub_tab = new ui::sub_tab ( "Rage", ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
+			auto ragebot_sub_tab = new ui::sub_tab ( GET_STR("Rage"), ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
 
 		
 
 
 
-			auto antiaim_sub_tab = new ui::sub_tab ( "Anti-aim", ICON_ANTIAIM, font_icons, 0.f, 20.f, aimbot_tab );
-			auto legitbot_sub_tab = new ui::sub_tab ( "Legitbot", ICON_LEGITBOT, font_icons, 0.f, 20.f, aimbot_tab );
+			auto antiaim_sub_tab = new ui::sub_tab ( GET_STR("Anti-aim"), ICON_ANTIAIM, font_icons, 0.f, 20.f, aimbot_tab );
+			auto legitbot_sub_tab = new ui::sub_tab ( GET_STR("Legitbot"), ICON_LEGITBOT, font_icons, 0.f, 20.f, aimbot_tab );
 
 			menu::legitbot::init ( main_window, legitbot_sub_tab, weapons );
 
@@ -173,21 +173,29 @@ namespace ui {
 		}
 
 
-		auto visuals_tab = new ui::tab ( "Visuals", top_side, 13 );
+		auto visuals_tab = new ui::tab ( GET_STR("Visuals"), top_side, 13 );
 		{
-		
-			for ( size_t i = 0; i < 3; i++ ) {
-				auto player_sub_tab = new ui::sub_tab ( config.player_types.at(i).first, config.player_types.at ( i ).second, font_icons, -0.5875f, 20.f, visuals_tab );
-				menu::visuals_player_menu ( main_window, player_sub_tab, i );
-			}
+			/*
+				{ "Team", "f" },
+	{ "Enemy", "e" },
+	{ "Local", "D" }
+			*/
+			auto team_sub_tab = new ui::sub_tab(GET_STR("Team"), config.player_types.at(0).second, font_icons, -0.5875f, 20.f, visuals_tab);
+			menu::visuals_player_menu(main_window, team_sub_tab, 0);
 
-			auto weapons_sub_tab = new ui::sub_tab ( "Weapons", "W", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
+			auto enemy_sub_tab = new ui::sub_tab(GET_STR("Enemy"), config.player_types.at(1).second, font_icons, -0.5875f, 20.f, visuals_tab);
+			menu::visuals_player_menu(main_window, enemy_sub_tab, 1);
+
+			auto local_sub_tab = new ui::sub_tab(GET_STR("Local"), config.player_types.at(2).second, font_icons, -0.5875f, 20.f, visuals_tab);
+			menu::visuals_player_menu(main_window, local_sub_tab,2);
+
+			auto weapons_sub_tab = new ui::sub_tab ( GET_STR("Weapons"), "W", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
 			menu::visuals_weapons_menu ( main_window, weapons_sub_tab );
 
-			auto projectiles_sub_tab = new ui::sub_tab ( "Projectiles", "o", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
+			auto projectiles_sub_tab = new ui::sub_tab ( GET_STR("Projectiles"), "o", ui::weapon_icons, -0.5875f, 20.f, visuals_tab );
 			menu::projectiles_weapons_menu ( main_window, projectiles_sub_tab );
 
-			auto world_sub_tab = new ui::sub_tab ( "World", ICON_WORLD, font_icons, -0.5875f, 20.f, visuals_tab );
+			auto world_sub_tab = new ui::sub_tab ( GET_STR("World"), ICON_WORLD, font_icons, -0.5875f, 20.f, visuals_tab );
 
 			menu::visuals_world_menu ( main_window, world_sub_tab );
 
@@ -195,20 +203,20 @@ namespace ui {
 
 
 
-		auto misc_tab = new ui::tab ( "Miscellaneus", top_side, 13 );
+		auto misc_tab = new ui::tab ( GET_STR("Miscellaneus"), top_side, 13 );
 		{
-			auto movement_sub_tab = new ui::sub_tab ( "Movement", ICON_MOVEMENT, font_icons, 0.f, 20.f, misc_tab );
-			menu::movement_menu ( main_window, movement_sub_tab );
+			auto movement_sub_tab = new ui::sub_tab ( GET_STR("Movement"), ICON_MOVEMENT, font_icons, 0.f, 20.f, misc_tab );
+		//	menu::movement_menu ( main_window, movement_sub_tab );
 
 
-			auto skins_sub_tab = new ui::sub_tab ( "Skins", ICON_SETTINGS, font_icons, 0.f, 20.f, misc_tab );
-			menu::inventory_changer_menu ( main_window, skins_sub_tab );
+			auto skins_sub_tab = new ui::sub_tab ( GET_STR("Skins"), ICON_SETTINGS, font_icons, 0.f, 20.f, misc_tab );
+			//menu::inventory_changer_menu ( main_window, skins_sub_tab );
 
 		}
-		auto settings_tab = new ui::tab ( "Settings", top_side, 13 );
+		auto settings_tab = new ui::tab (GET_STR("Settings"), top_side, 13 );
 		{
-			auto configs_sub_tab = new ui::sub_tab ( "Configs", ICON_SETTINGS, font_icons, 0.f, 20.f, settings_tab );
-		   	menu::settings_menu ( main_window, configs_sub_tab );
+			auto configs_sub_tab = new ui::sub_tab (GET_STR("Configs"), ICON_SETTINGS, font_icons, 0.f, 20.f, settings_tab );
+		   //	menu::settings_menu ( main_window, configs_sub_tab );
 		}
 
 		static bool open_radar = true;

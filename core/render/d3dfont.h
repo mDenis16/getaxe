@@ -1,7 +1,8 @@
 #pragma once
 
-#include "includes.h"
+#include "gui/includes.h"
 #include <d3dx9math.h>
+
 
 
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p) = NULL; } }

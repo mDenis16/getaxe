@@ -9,10 +9,10 @@ namespace ui {
 		return ( v - a ) / ( b - a );
 	}
 
-	slider::slider ( std::string text, object * parent, float & _value, float mins, float maxs, slider_type _type ) {
+	slider::slider ( SecureString& text, object * parent, float & _value, float mins, float maxs, slider_type _type ) {
 
 
-		this->title = text;
+		this->title = &text;
 		this->value = &_value;
 		*( float * ) &this->value_mins = mins;
 		*( float * ) &this->value_maxs = maxs;
@@ -32,10 +32,10 @@ namespace ui {
 
 		this->parrent->add_children ( this );
 	}
-	slider::slider ( std::string text, object * parent, float & _value, float mins, float maxs,  slider_type _type, config_manager::key_bind_item * key_bind_item ) {
+	slider::slider ( SecureString& text, object * parent, float & _value, float mins, float maxs,  slider_type _type, config_manager::key_bind_item * key_bind_item ) {
 
 
-		this->title = text;
+		this->title = &text;
 		 this->value = &_value;
 		*( float * ) &this->value_mins = mins;
 		*( float * ) &this->value_maxs = maxs;
@@ -78,13 +78,13 @@ namespace ui {
 
 		ImVec2 middle = ImVec2 ( ( this->mins.x + this->maxs.x ) / 2.f, ( this->maxs.y + this->mins.y ) / 2.f );
 
-		middle.y -= ImGui::CalcTextSize ( this->title.c_str ( ), 13.f, ui::font_widgets ).y / 2.f;
+		middle.y -= ImGui::CalcTextSize ( this->title->data ( ), 13.f, ui::font_widgets ).y / 2.f;
 
 
 		this->renderer->AddCircleFilled ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 255, 255, 255, max_alpha ) );
 		this->renderer->AddShadowCircle ( ImVec2 ( this->bb_min.x + filled, this->bb_min.y + ( this->bb_max.y - this->bb_min.y ) / 2.f ), 5.f, ImColor ( 0, 0, 0, (int)(max_alpha * 0.49f) ), 5.f, ImVec2(0,0) );
 
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, (int)(max_alpha * 0.8823f) ),  this->title.c_str() );
+		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, (int)(max_alpha * 0.8823f) ),  this->title->data() );
 
 		for ( auto & child : this->children )
 			child->draw ( );

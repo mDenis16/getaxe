@@ -1,0 +1,3646 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "runs": [
+    {
+      "results": [
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImDrawCmdHeader::VtxOffset' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 2333,
+                  "startColumn": 1,
+                  "endLine": 2333,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawCmdHeader::{ctor}",
+                  "decoratedName": "??0ImDrawCmdHeader@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImDrawCmdHeader::VtxOffset"
+          }
+        },
+        {
+          "ruleId": "C26495",
+          "message": {
+            "text": "Variable 'ImDrawCmdHeader::TextureId' is uninitialized. Always initialize a member variable (type.6)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+                },
+                "region": {
+                  "startLine": 2333,
+                  "startColumn": 1,
+                  "endLine": 2333,
+                  "endColumn": 1
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawCmdHeader::{ctor}",
+                  "decoratedName": "??0ImDrawCmdHeader@@QAE@XZ",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "targetSymbol": "ImDrawCmdHeader::TextureId"
+          }
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiInputSource' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1561,
+                  "startColumn": 9,
+                  "endLine": 1561,
+                  "endColumn": 26
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiContext::{ctor}",
+                  "decoratedName": "??0ImGuiContext@@QAE@PAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiNavLayer' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1577,
+                  "startColumn": 9,
+                  "endLine": 1577,
+                  "endColumn": 20
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiContext::{ctor}",
+                  "decoratedName": "??0ImGuiContext@@QAE@PAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiNavForward' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1589,
+                  "startColumn": 9,
+                  "endLine": 1589,
+                  "endColumn": 33
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiContext::{ctor}",
+                  "decoratedName": "??0ImGuiContext@@QAE@PAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiLogType' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 1644,
+                  "startColumn": 9,
+                  "endLine": 1644,
+                  "endColumn": 19
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGuiContext::{ctor}",
+                  "decoratedName": "??0ImGuiContext@@QAE@PAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26812",
+          "message": {
+            "text": "The enum type 'ImGuiInputReadMode' is unscoped. Prefer 'enum class' over 'enum' (Enum.3)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+                },
+                "region": {
+                  "startLine": 2327,
+                  "startColumn": 29,
+                  "endLine": 2327,
+                  "endColumn": 29
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImGui::IsNavInputTest",
+                  "decoratedName": "?IsNavInputTest@ImGui@@YA_NHW4ImGuiInputReadMode@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C26819",
+          "message": {
+            "text": "Unannotated fallthrough between switch labels (es.78)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                },
+                "region": {
+                  "startLine": 2111,
+                  "startColumn": 12
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "stbtt__run_charstring",
+                  "decoratedName": "?stbtt__run_charstring@@YAHPBUstbtt_fontinfo@@HPAUstbtt__csctx@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6385",
+          "message": {
+            "text": "Reading invalid data from 'buffer':  the readable size is '_Old_3`kernel_width' bytes, but '3' bytes may be read."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                },
+                "region": {
+                  "startLine": 3906,
+                  "startColumn": 10,
+                  "endLine": 3906,
+                  "endColumn": 46
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "stbtt__h_prefilter",
+                  "decoratedName": "?stbtt__h_prefilter@@YAXPAEHHHI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3854,
+                            "startColumn": 18
+                          }
+                        },
+                        "message": {
+                          "text": "'buffer' is a 8 byte array"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3855,
+                            "startColumn": 8
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3856,
+                            "startColumn": 8
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3857,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'buffer' is an Output from 'memset' (declared at d:\\program files\\microsoft visual studio\\2022\\preview\\vc\\tools\\msvc\\14.30.30423\\include\\vcruntime_string.h:63)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3858,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3858,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'j<h')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3859,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3860,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3861,
+                            "startColumn": 19
+                          }
+                        },
+                        "message": {
+                          "text": "'buffer' is an Output from 'memset' (declared at d:\\program files\\microsoft visual studio\\2022\\preview\\vc\\tools\\msvc\\14.30.30423\\include\\vcruntime_string.h:63)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3863,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3866,
+                            "startColumn": 15
+                          }
+                        },
+                        "message": {
+                          "text": "Assume switch ( 'kernel_width' ) resolves to case 2: "
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3867,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3868,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3868,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3869,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3870,
+                            "startColumn": 60
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3871,
+                            "startColumn": 26
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3868,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3868,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3904,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'i<w')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3905,
+                            "startColumn": 10
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume '!!((pixels[i]==0))')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3906,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3907,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3904,
+                            "startColumn": 21
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3904,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume 'i<w')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3905,
+                            "startColumn": 10
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume '!!((pixels[i]==0))')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3906,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Invalid read from 'buffer[2]', (readable range is 0 to 1)"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6385",
+          "message": {
+            "text": "Reading invalid data from 'buffer':  the readable size is '_Old_3`kernel_width' bytes, but '3' bytes may be read."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                },
+                "region": {
+                  "startLine": 3968,
+                  "startColumn": 10,
+                  "endLine": 3968,
+                  "endColumn": 46
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "stbtt__v_prefilter",
+                  "decoratedName": "?stbtt__v_prefilter@@YAXPAEHHHI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3916,
+                            "startColumn": 18
+                          }
+                        },
+                        "message": {
+                          "text": "'buffer' is a 8 byte array"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3917,
+                            "startColumn": 8
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3918,
+                            "startColumn": 8
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3919,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'buffer' is an Output from 'memset' (declared at d:\\program files\\microsoft visual studio\\2022\\preview\\vc\\tools\\msvc\\14.30.30423\\include\\vcruntime_string.h:63)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3920,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3920,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'j<w')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3921,
+                            "startColumn": 11
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3922,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3923,
+                            "startColumn": 19
+                          }
+                        },
+                        "message": {
+                          "text": "'buffer' is an Output from 'memset' (declared at d:\\program files\\microsoft visual studio\\2022\\preview\\vc\\tools\\msvc\\14.30.30423\\include\\vcruntime_string.h:63)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3925,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3928,
+                            "startColumn": 15
+                          }
+                        },
+                        "message": {
+                          "text": "Assume switch ( 'kernel_width' ) resolves to case 2: "
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3929,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3930,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3930,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3931,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3932,
+                            "startColumn": 60
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3933,
+                            "startColumn": 42
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3930,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3930,
+                            "startColumn": 25
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3966,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'i<h')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3967,
+                            "startColumn": 10
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume '<branch condition>')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3968,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3969,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3966,
+                            "startColumn": 21
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3966,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume 'i<h')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3967,
+                            "startColumn": 10
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume '<branch condition>')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+                          },
+                          "region": {
+                            "startLine": 3968,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "Invalid read from 'buffer[2]', (readable range is 0 to 1)"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 765,
+                  "startColumn": 41,
+                  "endLine": 765,
+                  "endColumn": 104
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawList::AddPolyline",
+                  "decoratedName": "?AddPolyline@ImDrawList@@QAEXPBUImVec2@@HI_NM@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 1012,
+                  "startColumn": 41,
+                  "endLine": 1012,
+                  "endColumn": 63
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawList::AddConvexPolyFilled",
+                  "decoratedName": "?AddConvexPolyFilled@ImDrawList@@QAEXPBUImVec2@@HI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 1646,
+                  "startColumn": 26,
+                  "endLine": 1646,
+                  "endColumn": 61
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ClipPolygonShape",
+                  "decoratedName": "?ClipPolygonShape@@YAHPAUImVec2@@H0HU1@1@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 1674,
+                  "startColumn": 28,
+                  "endLine": 1674,
+                  "endColumn": 63
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ClipPolygonShape",
+                  "decoratedName": "?ClipPolygonShape@@YAHPAUImVec2@@H0HU1@1@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6386",
+          "message": {
+            "text": "Buffer overrun while writing to 'outflags[0]':  the writable size is '2*allocated_dest_points*sizeof(ImU8)' bytes, but '2' bytes might be written."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 1656,
+                  "startColumn": 9,
+                  "endLine": 1656,
+                  "endColumn": 34
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ClipPolygonShape",
+                  "decoratedName": "?ClipPolygonShape@@YAHPAUImVec2@@H0HU1@1@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1636,
+                            "startColumn": 44
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1640,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1645,
+                            "startColumn": 11
+                          }
+                        },
+                        "message": {
+                          "text": "'outflags' is a 8 byte array"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1646,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1647,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1650,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1651,
+                            "startColumn": 10
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1652,
+                            "startColumn": 14
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1652,
+                            "startColumn": 39
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'point_idx<num_src_points')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1654,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1655,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1656,
+                            "startColumn": 32
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1657,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1658,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1652,
+                            "startColumn": 66
+                          }
+                        },
+                        "message": {
+                          "text": "'point_idx' may equal 1"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1652,
+                            "startColumn": 39
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume 'point_idx<num_src_points')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1654,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1655,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1656,
+                            "startColumn": 32
+                          }
+                        },
+                        "message": {
+                          "text": "Invalid write to 'outflags[0]', (outside its writable range)"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 1783,
+                  "startColumn": 41,
+                  "endLine": 1783,
+                  "endColumn": 69
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "AddSubtractedRect",
+                  "decoratedName": "?AddSubtractedRect@@YAXPAUImDrawList@@ABUImVec2@@111PAU2@HI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6385",
+          "message": {
+            "text": "Reading invalid data from 'b_points':  the readable size is 'max_clipped_points*sizeof(ImVec2)' bytes, but '16' bytes may be read."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 1852,
+                  "startColumn": 13,
+                  "endLine": 1852,
+                  "endColumn": 208
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "AddSubtractedRect",
+                  "decoratedName": "?AddSubtractedRect@@YAXPAUImDrawList@@ABUImVec2@@111PAU2@HI@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1778,
+                            "startColumn": 28
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1782,
+                            "startColumn": 15
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1783,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "'clipped_b_points' is a 0 byte array"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1784,
+                            "startColumn": 15
+                          }
+                        },
+                        "message": {
+                          "text": "'clipped_b_points' is an In/Out argument to 'ClipPolygonShape' (declared on line 1633)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1785,
+                            "startColumn": 5
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume '!!((num_clipped_points>=0))')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1787,
+                            "startColumn": 14
+                          }
+                        },
+                        "message": {
+                          "text": "(alias) 'b_points' receives the value of 'clipped_b_points'"
+                        }
+                      },
+                      "kinds": [
+                        "alias"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1788,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1790,
+                            "startColumn": 28
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'num_clipped_points==0' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1800,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1801,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1802,
+                            "startColumn": 31
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1804,
+                            "startColumn": 20
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1805,
+                            "startColumn": 21
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1806,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1809,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1810,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1814,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1814,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1816,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1817,
+                            "startColumn": 29
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1818,
+                            "startColumn": 30
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1814,
+                            "startColumn": 44
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1814,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1822,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1825,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1827,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1828,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1829,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1830,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1831,
+                            "startColumn": 24
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1833,
+                            "startColumn": 26
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1833,
+                            "startColumn": 60
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1833,
+                            "startColumn": 111
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1834,
+                            "startColumn": 26
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1834,
+                            "startColumn": 60
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1834,
+                            "startColumn": 111
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1835,
+                            "startColumn": 26
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1835,
+                            "startColumn": 60
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1835,
+                            "startColumn": 111
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1836,
+                            "startColumn": 26
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1836,
+                            "startColumn": 60
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1836,
+                            "startColumn": 111
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1838,
+                            "startColumn": 35
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1839,
+                            "startColumn": 33
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1842,
+                            "startColumn": 16
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1843,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1844,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1845,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 1852,
+                            "startColumn": 13
+                          }
+                        },
+                        "message": {
+                          "text": "Invalid read from 'b_points', (outside its readable range)"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 1938,
+                  "startColumn": 38,
+                  "endLine": 1938,
+                  "endColumn": 71
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawList::AddShadowRect",
+                  "decoratedName": "?AddShadowRect@ImDrawList@@QAEXABUImVec2@@0IM0HMH@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 2017,
+                  "startColumn": 51,
+                  "endLine": 2017,
+                  "endColumn": 58
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImDrawList::AddShadowConvexPoly",
+                  "decoratedName": "?AddShadowConvexPoly@ImDrawList@@QAEXPBUImVec2@@HIMABU2@H@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 3499,
+                  "startColumn": 27,
+                  "endLine": 3499,
+                  "endColumn": 48
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "GaussianBlur",
+                  "decoratedName": "?GaussianBlur@@YAXPAMH@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 3535,
+                  "startColumn": 35,
+                  "endLine": 3535,
+                  "endColumn": 56
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImFontAtlasBuildRenderShadowTexData",
+                  "decoratedName": "?ImFontAtlasBuildRenderShadowTexData@@YAXPAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6255",
+          "message": {
+            "text": "_alloca indicates failure by raising a stack overflow exception.  Consider using _malloca instead."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 3597,
+                  "startColumn": 35,
+                  "endLine": 3597,
+                  "endColumn": 56
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImFontAtlasBuildRenderShadowTexData",
+                  "decoratedName": "?ImFontAtlasBuildRenderShadowTexData@@YAXPAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6386",
+          "message": {
+            "text": "Buffer overrun while writing to 'tex_data':  the writable size is 'size*size*sizeof(float)' bytes, but '8' bytes might be written."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 3542,
+                  "startColumn": 17,
+                  "endLine": 3542,
+                  "endColumn": 44
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImFontAtlasBuildRenderShadowTexData",
+                  "decoratedName": "?ImFontAtlasBuildRenderShadowTexData@@YAXPAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3507,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3508,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3513,
+                            "startColumn": 38
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3517,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3518,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3519,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3522,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3523,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3526,
+                            "startColumn": 31
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3527,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3528,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3529,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3530,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3531,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3535,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'tex_data' is a 0 byte array"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3536,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3536,
+                            "startColumn": 27
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'y<size')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3537,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3537,
+                            "startColumn": 31
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'x<size')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3539,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3540,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3541,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3542,
+                            "startColumn": 42
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3537,
+                            "startColumn": 40
+                          }
+                        },
+                        "message": {
+                          "text": "'x' may equal 1"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3537,
+                            "startColumn": 31
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume 'x<size')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3539,
+                            "startColumn": 23
+                          }
+                        },
+                        "message": {
+                          "text": "'x' is an In/Out argument to 'ImVec2::{ctor}' (declared at d:\\repos\\getaxe\\dependencies\\imgui\\imgui.h:233)"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3540,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3541,
+                            "startColumn": 23
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3542,
+                            "startColumn": 42
+                          }
+                        },
+                        "message": {
+                          "text": "Invalid write to 'tex_data', (outside its writable range)"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ruleId": "C6385",
+          "message": {
+            "text": "Reading invalid data from 'tex_data':  the readable size is 'size*size*sizeof(float)' bytes, but '8' bytes may be read."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                },
+                "region": {
+                  "startLine": 3555,
+                  "startColumn": 29,
+                  "endLine": 3555,
+                  "endColumn": 60
+                }
+              },
+              "logicalLocations": [
+                {
+                  "fullyQualifiedName": "ImFontAtlasBuildRenderShadowTexData",
+                  "decoratedName": "?ImFontAtlasBuildRenderShadowTexData@@YAXPAUImFontAtlas@@@Z",
+                  "kind": "function"
+                }
+              ]
+            }
+          ],
+          "codeFlows": [
+            {
+              "threadFlows": [
+                {
+                  "locations": [
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3507,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3508,
+                            "startColumn": 5
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3513,
+                            "startColumn": 38
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3517,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3518,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3519,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3522,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3523,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3526,
+                            "startColumn": 31
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3527,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3528,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3529,
+                            "startColumn": 13
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3530,
+                            "startColumn": 17
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3531,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3535,
+                            "startColumn": 16
+                          }
+                        },
+                        "message": {
+                          "text": "'tex_data' is a 0 byte array"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3536,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3536,
+                            "startColumn": 27
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3546,
+                            "startColumn": 23
+                          }
+                        },
+                        "message": {
+                          "text": "Skip this branch, (assume 'shadow_cfg->TexBlur' is false)"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3550,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3551,
+                            "startColumn": 19
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3552,
+                            "startColumn": 18
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3552,
+                            "startColumn": 27
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'y<shadow_tex_size')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3553,
+                            "startColumn": 22
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3553,
+                            "startColumn": 31
+                          }
+                        },
+                        "message": {
+                          "text": "Enter this loop, (assume 'x<shadow_tex_size')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3555,
+                            "startColumn": 29
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3556,
+                            "startColumn": 36
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3557,
+                            "startColumn": 48
+                          }
+                        }
+                      },
+                      "importance": "unimportant"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3553,
+                            "startColumn": 51
+                          }
+                        },
+                        "message": {
+                          "text": "'x' may equal 1"
+                        }
+                      },
+                      "kinds": [
+                        "declaration"
+                      ],
+                      "importance": "essential"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3553,
+                            "startColumn": 31
+                          }
+                        },
+                        "message": {
+                          "text": "Continue this loop, (assume 'x<shadow_tex_size')"
+                        }
+                      },
+                      "kinds": [
+                        "branch"
+                      ],
+                      "importance": "important"
+                    },
+                    {
+                      "location": {
+                        "physicalLocation": {
+                          "artifactLocation": {
+                            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+                          },
+                          "region": {
+                            "startLine": 3555,
+                            "startColumn": 29
+                          }
+                        },
+                        "message": {
+                          "text": "Invalid read from 'tex_data', (outside its readable range)"
+                        }
+                      },
+                      "kinds": [
+                        "usage"
+                      ],
+                      "importance": "essential"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tool": {
+        "driver": {
+          "name": "PREfast",
+          "fullName": "PREfast Code Analysis",
+          "version": "14.30.30423.0",
+          "informationUri": "https://aka.ms/cpp/ca"
+        }
+      },
+      "invocations": [
+        {
+          "commandLine": "\"D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x006DD1B0 -il C:\\Users\\topor\\AppData\\Local\\Temp\\_CL_fb9c80e9ast -typedil -f dependencies\\imgui\\imgui_draw.cpp -Ze -D_MSC_EXTENSIONS -Zp8 -Gs -pc \\:/ -D_MSC_VER=1930 -D_MSC_FULL_VER=193030423 -D_MSC_BUILD=0 -D_WIN32 -D_M_IX86=600 -D_M_IX86_FP=2 -I E:\\repos\\mDenis16\\getaxe-menu-framework\\ImGui Application -nologo -W 4 -diagnostics:column -D_GUARDOVERFLOW_CRT_ALLOCATORS=1 -Og -Ot -Oi -Oy -DCODE_ANALYSIS -DLOCAL_BUILD -DIMGUI_IMPL_WIN32_DISABLE_GAMEPAD -D_CRT_SECURE_NO_WARNINGS -D_WINDLL -D_MBCS -GF -EHs -D_CPPUNWIND -EHc -MT -clrNoPureCRT -D_MT -GS -fpfast -D_M_FP_FAST -Zc:wchar_t -Zc:forScope -std:c++latest -permissive- -Fo.\\intermediates\\imgui_draw.obj -Fd.\\intermediates\\vc142.pdb -external:W 4 -Gd -analyze:projectdirectory D:\\repos\\getaxe -analyze:rulesetdirectory ;D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\\\Rule Sets; -analyze:ruleset D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Team Tools\\Static Analysis Tools\\Rule Sets\\NativeRecommendedRules.ruleset -analyze:quiet -analyze:plugin D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\bin\\HostX86\\x86\\EspXEngine.dll -FC -errorreport:prompt -I F:\\includes\\nlohmann -I F:\\includes\\jsoncpp\\include -I F:\\includes\\dx9\\Include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I F:\\includes\\websocketpp-master -I F:\\includes\\boost_1_73_0 -I F:\\includes\\clip-master -I F:\\includes\\freetype\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.30.30423\\atlmfc\\include -external:I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -I D:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Auxiliary\\VS\\include -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\ucrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\um -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\shared -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\winrt -external:I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -I D:\\Windows Kits\\10\\Include\\10.0.19041.0\\cppwinrt -external:I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.8\\Include\\um -MPdiagMutex 0000000000000A90",
+          "executionSuccessful": true
+        }
+      ],
+      "artifacts": [
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/core/render/gui/framework/sub_window.cpp"
+          },
+          "roles": [
+            "analysisTarget"
+          ],
+          "hashes": {
+            "sha-256": "aecb9819eb04bf5ad6cd2535cfac9b1bed5ef7946e551eff2224759862e16294"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "b5bc2d2787f413f48da07bab8fe39970ee6f9a5274ae46d243b0e4c9f856b810"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_internal.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "64609d2605732e93be169fddc6dae2c51dcea9f213ae6059db391db8d1456187"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imstb_truetype.h"
+          },
+          "roles": [
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "bb24084056cd1fe17078b755cbd600d23449173d6a927ad7f067d3ce6fbdd1f0"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///D:/repos/getaxe/dependencies/imgui/imgui_draw.cpp"
+          },
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ],
+          "hashes": {
+            "sha-256": "fc43f8d0a746f8b3aaf8445164e7ae0260f7820a3c3902b15849996c1d3d33a4"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imconfig.h"
+          },
+          "hashes": {
+            "sha-256": "3f1761f0200014792061c71d872e6fbe6cff6ee08ad5a6b1981ed88f3e60ff4f"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imstb_textedit.h"
+          },
+          "hashes": {
+            "sha-256": "fd8408584842d13ca4a3f5b002a77c80491626d289a96463ba52c11981816024"
+          }
+        },
+        {
+          "location": {
+            "uri": "file:///d:/repos/getaxe/dependencies/imgui/imstb_rectpack.h"
+          },
+          "hashes": {
+            "sha-256": "61eb7950e45d4831faac6629a727ac464ddcfcf199eb27a7b47de02b898ab6ef"
+          }
+        }
+      ]
+    }
+  ]
+}

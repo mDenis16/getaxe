@@ -15,7 +15,7 @@ namespace ui {
 		ImColor bg_color = ImColor ( 255, 255, 255, 255 );
 	public:
 		object * tab_assign  = nullptr;
-		std::string title = "";
+		SecureString* title = nullptr;
 		bool float_bottom = false;
 
 		std::string search_child = "";
@@ -41,9 +41,9 @@ namespace ui {
 
 		child_type type_child = normal;
 		float rounding = 0.f;
-		child_window ( std::string title_font, int width, int height, ImColor color, object * parent ) {
+		child_window ( SecureString& title_font, int width, int height, ImColor color, object * parent ) {
 		
-			this->title = title_font;
+			this->title = &title_font;
 			this->width = width;
 			this->height = height;
 			this->renderer = parent->renderer;
@@ -52,11 +52,11 @@ namespace ui {
 			this->bg_color = color;
 			parent->add_children ( this );
 		}
-		child_window ( std::string title_font, float _percent_width, float _percent_height, ImColor color, object * parent, child_type _type ) {
+		child_window ( SecureString& title_font, float _percent_width, float _percent_height, ImColor color, object * parent, child_type _type ) {
 		
 
 
-			this->title = title_font;
+			this->title = &title_font;
 
 
 			this->percent_width = _percent_width;
@@ -80,11 +80,11 @@ namespace ui {
 			parent->add_children ( this );
 			update ( );
 		}
-		child_window ( std::string title_font, float _percent_width, float _percent_height, ImColor color, object * parent, child_type _type, int _flags ) {
+		child_window ( SecureString& title_font, float _percent_width, float _percent_height, ImColor color, object * parent, child_type _type, int _flags ) {
 		
 			this->flags = _flags;
 
-			this->title = title_font;
+			this->title = &title_font;
 
 			this->percent_width = _percent_width;
 			this->percent_height = _percent_height;
@@ -106,9 +106,9 @@ namespace ui {
 			parent->add_children ( this );
 			update ( );
 		}
-		child_window ( std::string title_font, float _percent_width, float _percent_height, ImColor color, object * parent, float_side __float, float _rounding = 0.f, float _padding = 0.f ) {
+		child_window ( SecureString& title_font, float _percent_width, float _percent_height, ImColor color, object * parent, float_side __float, float _rounding = 0.f, float _padding = 0.f ) {
 		
-			this->title = title_font;
+			this->title = &title_font;
 			this->padding = _padding;
 			this->rounding = _rounding;
 			this->percent_width = _percent_width;

@@ -228,8 +228,10 @@ namespace ui {
 		}
 	//	this->renderer->AddShadowRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 255 ), 15.f, ImVec2 ( 0, 0 ), ImDrawShadowFlags_CutOutShapeBackground, this->rounding, ImDrawCornerFlags_::ImDrawCornerFlags_All );
 
-        this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 14, this->mins.y + 14 ), ImColor ( 0, 0, 0, 225 ), this->title.c_str ( ) );
-        this->renderer->AddText ( ui::font_widgets, 14.f, ImVec2 ( this->mins.x + 13, this->mins.y + 13 ), ImColor ( 255, 255, 255, 225 ), this->title.c_str ( ) );
+		if (this->title) {
+			this->renderer->AddText(ui::font_widgets, 14.f, ImVec2(this->mins.x + 14, this->mins.y + 14), ImColor(0, 0, 0, 225), this->title->data());
+			this->renderer->AddText(ui::font_widgets, 14.f, ImVec2(this->mins.x + 13, this->mins.y + 13), ImColor(255, 255, 255, 225), this->title->data());
+		}
 
 
 		if ( flags & flags::hide_overflow ) {
