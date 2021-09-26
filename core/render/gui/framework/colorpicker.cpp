@@ -117,9 +117,9 @@ namespace ui {
 		if ( this->parrent->type == checkbox_element ) {
 			//L"Hello, \u0444!\n";
 			//this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ) );
-			auto text_size = ImGui::CalcTextSize ( ICON_COLOR_PALLETE, 18.f, ui::font_icons );
+			auto text_size = ImGui::CalcTextSize ( ICON_COLOR_PALLETE, 20.f, ui::font_icons );
 
-			this->renderer->AddText ( ui::font_icons, 18.f, ImVec2((this->mins.x + this->maxs.x) / 2.f - text_size.x / 2.f, ((this->mins.y + this->maxs.y) / 2.f) - text_size.y / 2.f), progress_color, ICON_COLOR_PALLETE );
+			this->renderer->AddText ( ui::font_icons, 20.f, ImVec2((this->mins.x + this->maxs.x) / 2.f - text_size.x / 2.f, ((this->mins.y + this->maxs.y) / 2.f) - text_size.y / 2.f), progress_color, ICON_COLOR_PALLETE );
 
 
 
@@ -424,8 +424,8 @@ namespace ui {
 	void colorpicker::update ( ) {
 
 	
-		this->maxs.x = this->parrent->maxs.x - 33;
-		this->mins.x = this->maxs.x - 25;
+		this->maxs.x = this->parrent->maxs.x - 47;
+		this->mins.x = this->maxs.x - 15;
 
 		this->mins.y = ( this->parrent->mins.y + this->parrent->maxs.y ) / 2.f - 8.f;
 		this->maxs.y = ( this->parrent->mins.y + this->parrent->maxs.y ) / 2.f + 8.f;

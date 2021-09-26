@@ -18,6 +18,8 @@
 #include "../utilities/utilities.hpp"
 #include "../../dependencies/minhook/minhook.h"
 #include "../interfaces/interfaces.hpp"
+#include "../utilities/patterns/patterns.h"
+#include "../../dependencies/utilities/modules/modules.hpp"
 #include "../../dependencies/utilities/interfaces/interfaces_new.h"
 #include "../../source-sdk/sdk.hpp"
 #include "../../core/hooks/hooks.hpp"

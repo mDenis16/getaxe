@@ -159,6 +159,7 @@ namespace ui {
 		auto aimbot_tab = new ui::tab ( GET_STR ("Aimbot"), top_side, 13 );
 		{
 			auto ragebot_sub_tab = new ui::sub_tab ( GET_STR("Rage"), ICON_RAGEBOT, font_icons, 0.f, 20.f, aimbot_tab );
+			menu::ragebot::init(main_window, ragebot_sub_tab, weapons);
 
 		
 
@@ -278,8 +279,8 @@ namespace ui {
 		main_window->handle ( );
 		main_window->draw ( );
 
-		radar_window->handle ( );
-		radar_window->draw ( );
+	//	radar_window->handle ( );
+		//radar_window->draw ( );
 
 	//	std::string focused = ui::se
 	//	render->AddText ( ui::font_widgets, 13.f, ImVec2 ( 1920 - 130, 50 ), ImColor ( 123, 255, 125, 255 ), log->text.c_str ( ) );

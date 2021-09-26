@@ -1,6 +1,6 @@
 
 #ifdef PREVIEW_D3D
-#include "E:\repos\mDenis16\getaxe-menu-framework\ImGui Application\includes.h"
+#include "D:\repos\mDenis16\getaxe-menu-framework\ImGui Application\includes.h"
 #else
 #include "../includes.h"
 #endif 
@@ -70,15 +70,7 @@ namespace ui {
 				aim_settings->empty_children();
 				//aim settings
 				{
-					new ui::slider(GET_STR("Shoot delay"), aim_settings, cfg->shoot_delay, 0.f, 100.f, ui::slider_type::floates, &cfg->shoot_delay_keybind);
-;
-					new ui::slider(GET_STR("Aim speed"), aim_settings, cfg->aim_speed, 1.f, 100.f, ui::slider_type::floates, &cfg->aim_speed_keybind);
-;
-
-					new ui::slider(GET_STR("Recoil X"), aim_settings, cfg->recoil_control_x, 0.f, 100.f, ui::slider_type::floates, &cfg->recoil_control_x_keybind);
-;
-					new ui::slider(GET_STR("Recoil Y"), aim_settings, cfg->recoil_control_y, 0.f, 100.f, ui::slider_type::floates, &cfg->recoil_control_y_keybind);
-;
+				
 				}
 			}
 			void on_weapon_change(int weapon, int category) {

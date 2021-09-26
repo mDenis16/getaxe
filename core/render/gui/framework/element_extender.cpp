@@ -118,28 +118,34 @@ namespace ui {
 	void element_extender::handle ( ) {
 
 
+		
 		if ( !this->can_focus ( ) && !this->is_focused ( ) )
 			return;
 
 
 		handle_mouse_input ( );
 
-		if ( this->hovering && key_pressed ( VK_LBUTTON ) ) {
+		if ( !this->open && this->hovering && key_pressed ( VK_LBUTTON ) ) {
 
 
-			this->open = !this->open;
+			this->open = true;
 
-
-			if ( this->open )
 				this->focus_it ( );
-			else
-				this->out_of_focus ( );
-
+		
 
 			this->state_change_time = ImGui::GetTime ( );
 
-		}
+		}else if (this->open && key_pressed(VK_LBUTTON))
+		{
+			auto mouse_pos = ui::get_cursor();
+			hovering_extender = (mouse_pos.x > this->mins.x && mouse_pos.y > this->mins.y && mouse_pos.x < this->maxs.x&& mouse_pos.y < this->maxs.y);
 
+			if (!hovering_extender)
+			{
+				this->open = false;
+				this->out_of_focus();
+			}
+		}
 	}
 
 
@@ -157,7 +163,7 @@ namespace ui {
 
 		if ( this->parrent->type != slider_element && this->index > 0 && this->parrent->children.size ( ) && this->parrent->children.at ( this->index - 1 )->type != keybind_element ) {
 			this->parrent->children.at ( this->index - 1 )->update ( );
-			this->icon_maxs.x = this->parrent->children.at ( this->index - 1 )->mins.x - 4;
+			this->icon_maxs.x = this->parrent->children.at ( this->index - 1 )->mins.x - 5;
 		}
 		else {
 
@@ -168,7 +174,7 @@ namespace ui {
 				this->icon_maxs.x = parent->bb_min.x;
 			}
 			else {
-				this->icon_maxs.x = this->parrent->maxs.x - 33;
+				this->icon_maxs.x = this->parrent->maxs.x - 39;
 			}
 		}
 

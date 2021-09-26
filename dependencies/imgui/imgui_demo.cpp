@@ -3821,7 +3821,7 @@ static void ShowDemoWindowTables()
         // First example: showcase use of padding flags and effect of BorderOuterV/BorderInnerV on X padding.
         // We don't expose BorderOuterH/BorderInnerH here because they have no effect on X padding.
         HelpMarker(
-            "We often want outer padding activated when any using features which makes the edges of a column visible:\n"
+            "We often want outer padding activated when any using features which makes the edges of a column visiblD:\n"
             "e.g.:\n"
             "- BorderOuterV\n"
             "- any form of row selection\n"
@@ -5377,7 +5377,7 @@ static void ShowDemoWindowMisc()
         // Helper class to easy setup a text filter.
         // You may want to implement a more feature-full filtering scheme in your own application.
         static ImGuiTextFilter filter;
-        ImGui::Text("Filter usage:\n"
+        ImGui::Text("Filter usagD:\n"
                     "  \"\"         display all lines\n"
                     "  \"xxx\"      display lines containing \"xxx\"\n"
                     "  \"xxx,yyy\"  display lines containing \"xxx\" or \"yyy\"\n"

@@ -63,7 +63,7 @@ namespace ui {
 
 		this->handle();
 
-		//this->renderer->AddRectFilled (this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ), 0.f );
+	//	this->renderer->AddRectFilled (this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ), 0.f );
 
 		float progress_alpha = ImGui::GetTime() - hover_start_time;  progress_alpha = std::clamp(progress_alpha * 3.5f, 0.f, 1.f);
 
@@ -240,8 +240,8 @@ namespace ui {
 			this->maxs = ImVec2(this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20);
 
 
-			this->bb_min = ImVec2(this->maxs.x - 20, this->mins.y);
-			this->bb_max = ImVec2(this->maxs.x - 3, this->maxs.y);
+			this->bb_min = ImVec2(this->maxs.x - 30, this->mins.y);
+			this->bb_max = ImVec2(this->maxs.x - 10, this->maxs.y);
 
 			if (*this->value)
 				this->animation_step = this->bb_max.x;
@@ -264,16 +264,16 @@ namespace ui {
 				this->maxs = ImVec2(this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20);
 
 
-				this->bb_min = ImVec2(this->maxs.x - 20, this->mins.y);
-				this->bb_max = ImVec2(this->maxs.x - 3, this->maxs.y);
+				this->bb_min = ImVec2(this->maxs.x - 30, this->mins.y);
+				this->bb_max = ImVec2(this->maxs.x - 10, this->maxs.y);
 			}
 			else {
 				this->mins = ImVec2(this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40);
 				this->maxs = ImVec2(this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20);
 
 
-				this->bb_min = ImVec2(this->maxs.x - 20, this->mins.y);
-				this->bb_max = ImVec2(this->maxs.x - 3, this->maxs.y);
+				this->bb_min = ImVec2(this->maxs.x - 30, this->mins.y);
+				this->bb_max = ImVec2(this->maxs.x - 10, this->maxs.y);
 			}
 
 			if (*this->value)

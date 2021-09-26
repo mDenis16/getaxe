@@ -55,7 +55,7 @@ void c_engine_prediction::start ( player_t * _player, c_usercmd * cmd ) {
 
 	// CPlayerMove::StartCommand
 	{
-		*reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x3338 ) = reinterpret_cast < std::uint32_t >( cmd );
+		*reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x3348) = reinterpret_cast < std::uint32_t >( cmd );
 
 		*prediction_random_seed = cmd ? cmd->randomseed : -1;
 		*prediction_player = reinterpret_cast< int >( player );
@@ -87,12 +87,12 @@ void c_engine_prediction::start ( player_t * _player, c_usercmd * cmd ) {
 		cmd->buttons |= *reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x3330 );
 
 		int m_nButtons = cmd->buttons;
-		int * m_afButtonLast = reinterpret_cast< int * >( reinterpret_cast< std::uint32_t >( player ) + 0x31F8 );
+		int * m_afButtonLast = reinterpret_cast< int * >( reinterpret_cast< std::uint32_t >( player ) + 0x3208);
 		int buttonsChanged = m_nButtons ^ *m_afButtonLast;
-		*reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x31EC ) = *m_afButtonLast;
+		*reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x31FC) = *m_afButtonLast;
 		*m_afButtonLast = m_nButtons;
-		*reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x31F0 ) = m_nButtons & buttonsChanged;
-		*reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x31F4 ) = buttonsChanged & ~m_nButtons;
+		*reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x3200) = m_nButtons & buttonsChanged;
+		*reinterpret_cast< std::uint32_t * >( reinterpret_cast< std::uint32_t >( player ) + 0x3204) = buttonsChanged & ~m_nButtons;
 	}
 
 	interfaces::prediction->check_moving_ground ( player, interfaces::globals->frame_time );

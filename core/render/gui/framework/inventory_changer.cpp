@@ -114,8 +114,8 @@ namespace ui {
 	}
 
 	void inventory_changer::on_start() {
-		std::ifstream in("E:\\repos\\mDenis16\\getaxe-menu-framework\\Release\\skins.json"); /*this needs to be streamed from main network*/
-		std::ifstream weapons_stream("E:\\SteamLibrary\\steamapps\\common\\Counter-Strike Global Offensive\\csgo\\scripts\\items\\csgo_weaponid_dumper-master\\Debug\\weapons.json");
+		std::ifstream in("D:\\repos\\mDenis16\\getaxe-menu-framework\\Release\\skins.json"); /*this needs to be streamed from main network*/
+		std::ifstream weapons_stream("D:\\SteamLibrary\\steamapps\\common\\Counter-Strike Global Offensive\\csgo\\scripts\\items\\csgo_weaponid_dumper-master\\Debug\\weapons.json");
 
 		archive = new c_vpk_archive();
 		static_cast<c_vpk_archive*>(archive)->load("E:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/csgo/pak01_dir.vpk");

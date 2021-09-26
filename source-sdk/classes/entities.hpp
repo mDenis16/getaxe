@@ -281,11 +281,11 @@ public:
 
 	bool is_player ( ) {
 		using original_fn = bool ( __thiscall * )( entity_t * );
-		return ( *( original_fn ** ) this ) [ 158 ] ( this );
+		return ( *( original_fn ** ) this ) [158] ( this );
 	}
 	bool is_weapon ( ) {
 		using original_fn = bool ( __thiscall * )( entity_t * );
-		return ( *( original_fn ** ) this ) [ 166 ] ( this );
+		return ( *( original_fn ** ) this ) [166] ( this );
 	}
 	vec3_t get_absolute_origin ( ) {
 		__asm {
@@ -732,17 +732,17 @@ public:
 
 	float inaccuracy ( ) {
 		using original_fn = float ( __thiscall * )( void * );
-		return ( *( original_fn ** ) this ) [ 482 ] ( this );
+		return ( *( original_fn ** ) this ) [ 483 ] ( this );
 	}
 
 	float get_spread ( ) {
 		using original_fn = float ( __thiscall * )( void * );
-		return ( *( original_fn ** ) this ) [ 452 ] ( this );
+		return ( *( original_fn ** ) this ) [ 453 ] ( this );
 	}
 
 	void update_accuracy_penalty ( ) {
 		using original_fn = void ( __thiscall * )( void * );
-					( *( original_fn ** ) this ) [ 483 ] ( this );
+					( *( original_fn ** ) this ) [ 484 ] ( this );
 	}
 
 	weapon_info_t * get_weapon_data ( ) {
@@ -783,7 +783,7 @@ public:
 	void write ( uintptr_t offset, T data ) {
 		*reinterpret_cast< T * >( reinterpret_cast< uintptr_t >( this ) + offset ) = data;
 	}
-	OFFSET ( bool, JiggleBones, 0x292C );
+	OFFSET ( bool, JiggleBones, 0x2930);
 	NETVAR ( "DT_BasePlayer", "m_hViewModel[0]", view_model, int );
 	NETVAR ( "DT_CSPlayer", "m_bHasDefuser", has_defuser, bool );
 	NETVAR ( "DT_CSPlayer", "m_bGunGameImmunity", has_gun_game_immunity, bool );
@@ -1352,10 +1352,10 @@ public:
 
 
 	}
-	virtual_fn ( pre_think ( void ), 317, void ( __thiscall * )( void * ) ); // 55 8B EC 83 E4 F8 51 56 8B F1 8B 06
-	virtual_fn ( think ( void ), 138, void ( __thiscall * )( void * ) ); // 8B C1 8B 50 40
+	virtual_fn ( pre_think ( void ), 318, void ( __thiscall * )( void * ) ); // 55 8B EC 83 E4 F8 51 56 8B F1 8B 06
+	virtual_fn ( think ( void ), 139, void ( __thiscall * )( void * ) ); // 8B C1 8B 50 40
 	bool physics_run_think ( int index ) {
-		static auto physics_run_think_fn = reinterpret_cast< bool ( __thiscall * )( void *, int ) >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 EC 10 53 56 57 8B F9 8B 87" ) );
+		static auto physics_run_think_fn = reinterpret_cast< bool ( __thiscall * )( void *, int ) >( utilities::pattern_scan ( "client.dll", "E8 ? ? ? ? 84 C0 74 0A 8B 06 8B" ) );
 		return physics_run_think_fn ( this, index );
 	}
 

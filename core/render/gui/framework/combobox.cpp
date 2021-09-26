@@ -551,24 +551,27 @@ namespace ui {
 				else {
 					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 8);
 				}*/
+
 				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y );
 				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 22.9f );
 
 
 
 				this->bb_min = ImVec2 ( this->maxs.x - this->bb_width, this->mins.y );
-				this->bb_max = ImVec2 ( this->maxs.x + 4.5f, this->maxs.y );
+				this->bb_max = ImVec2 ( this->maxs.x, this->maxs.y );
 
 				this->original_bb_max_y = this->bb_max.y;
 			}
 			else {
 
-				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40 );
-				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 22.9f );
+
+				this->mins = ImVec2(this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40);
+				this->maxs = ImVec2(this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20);
 
 
-				this->bb_min = ImVec2 ( this->maxs.x - this->bb_width, this->mins.y);
-				this->bb_max = ImVec2 ( this->maxs.x + 4.5f, this->maxs.y );
+				this->bb_max = ImVec2(this->maxs.x, this->maxs.y);
+				this->bb_min = ImVec2(this->bb_max.x - this->bb_width, this->mins.y);
+
 
 				this->original_bb_max_y = this->bb_max.y;
 			}

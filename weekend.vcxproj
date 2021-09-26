@@ -27,7 +27,7 @@
     <ProjectGuid>{AF041675-F00D-4A72-B40F-78D0C4BB72D9}</ProjectGuid>
     <RootNamespace>weekend</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>getaxe.us</ProjectName>
+    <ProjectName>localbuild</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -100,7 +100,7 @@
     <TargetName>weekend</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PRODUCTION_LOCAL|Win32'">
-    <OutDir>E:\repos\getaxe\output\debug\</OutDir>
+    <OutDir>.\output\debug\</OutDir>
     <IntDir>.\intermediates\</IntDir>
     <LibraryPath>F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>F:\includes\nlohmann;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\clip-master;F:\includes\freetype\include</IncludePath>
@@ -218,6 +218,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalOptions>/GR- %(AdditionalOptions)</AdditionalOptions>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -387,6 +388,7 @@
     <ClCompile Include="dependencies\utilities\interfaces\interfaces_new.cpp" />
     <ClCompile Include="dependencies\utilities\modules\modules.cpp" />
     <ClCompile Include="dependencies\utilities\netvars\netvars.cpp" />
+    <ClCompile Include="dependencies\utilities\patterns\patterns.cpp" />
     <ClCompile Include="dependencies\utilities\utilities.cpp" />
     <ClCompile Include="core\main.cpp" />
     <ClCompile Include="source-sdk\math\vector3d.cpp" />
@@ -515,7 +517,10 @@
     <ClInclude Include="dependencies\utilities\fnv.hpp" />
     <ClInclude Include="dependencies\utilities\interfaces\interfaces_new.h" />
     <ClInclude Include="dependencies\utilities\json.hpp" />
+    <ClInclude Include="dependencies\utilities\literal_string.hpp" />
     <ClInclude Include="dependencies\utilities\netvars\netvars.hpp" />
+    <ClInclude Include="dependencies\utilities\obf.h" />
+    <ClInclude Include="dependencies\utilities\patterns\patterns.h" />
     <ClInclude Include="dependencies\utilities\renderer\renderer.hpp" />
     <ClInclude Include="dependencies\utilities\csgo.hpp" />
     <ClInclude Include="dependencies\utilities\singleton.hpp" />

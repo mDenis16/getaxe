@@ -13,6 +13,7 @@ namespace interfaces_manager
 	{
 		INTERFACES_ADDRESS = data;
 	}
+	
 
 	/// <summary>
 	/// Ring loop 

@@ -26,12 +26,13 @@ unsigned long WINAPI initialize(void* instance) {
 
 	console::initialize("csgo-cheat console");
 
-	interfaces_manager::init_prop_table();
-
 //#if RELEASE
 	//connection::main ( );
 
-	try { 
+	try {
+		modules_manager::init_modules();
+		interfaces_manager::init_prop_table();
+
 		interfaces::initialize();
 		visuals::handler->init ( );
 		event_handler->setup ( );
@@ -39,7 +40,6 @@ unsigned long WINAPI initialize(void* instance) {
 
 		hooks::initialize();
 		hooks::create_hooks ( );
-
 		std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
 	
 	}

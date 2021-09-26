@@ -65,7 +65,7 @@ namespace ui {
 			this->key_bind_open = !this->key_bind_open;
 
 		}
-		//this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 255, 255, 255 ), 0.f );
+		this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), 0.f );
 
 		
 		

@@ -103,13 +103,14 @@ namespace ui {
 	void small_text_input::update ( ) {
 
 		if ( this->parrent->type == object_type::slider_element ) {
-			this->mins.x = this->parrent->maxs.x - 26;
+			
+
+
+			this->maxs.x = this->parrent->maxs.x;
+			this->maxs.y = this->parrent->maxs.y;
+
+			this->mins.x = this->maxs.x - 30;
 			this->mins.y = this->parrent->mins.y + 3;
-
-
-			this->maxs.x = this->parrent->maxs.x + 4.5f;
-			this->maxs.y = this->parrent->maxs.y - 3;
-
 
 			auto s = (float) *( float * ) ( static_cast< slider * >( this->parrent )->value );
 			

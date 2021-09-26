@@ -138,6 +138,7 @@
     <ClCompile Include="core\render\gui\menu\weapons_visuals_menu.cpp" />
     <ClCompile Include="dependencies\utilities\interfaces\interfaces_new.cpp" />
     <ClCompile Include="dependencies\utilities\modules\modules.cpp" />
+    <ClCompile Include="dependencies\utilities\patterns\patterns.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -289,6 +290,9 @@
     <ClInclude Include="core\helpers\signatures.h" />
     <ClInclude Include="dependencies\utilities\stack_strings.hpp" />
     <ClInclude Include="dependencies\utilities\interfaces\interfaces_new.h" />
+    <ClInclude Include="dependencies\utilities\literal_string.hpp" />
+    <ClInclude Include="dependencies\utilities\obf.h" />
+    <ClInclude Include="dependencies\utilities\patterns\patterns.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

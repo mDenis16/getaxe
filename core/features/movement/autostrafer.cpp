@@ -583,7 +583,7 @@
 
 		if ( localdata.alive && localdata.active_weapon ) {
 			// get the max possible speed whilest we are still accurate.
-			float flMaxSpeed = local_pointer->is_scoped ( ) > 0 ? localdata.weapon_data->flMaxPlayerSpeedAlt : localdata.weapon_data->flMaxPlayerSpeed;
+			float flMaxSpeed = local_pointer->is_scoped ( ) > 0 ? localdata.weapon_data->flMaxSpeed[0] : localdata.weapon_data->flMaxSpeed[1];
 			float flDesiredSpeed = ( flMaxSpeed * 0.33000001 );
 
 			ClampMovementSpeed ( flDesiredSpeed );

@@ -1,6 +1,7 @@
 #include  "modules.hpp"
 #include  "../fnv.hpp"
 #include <Windows.h>
+#include <iostream>
 
 /// <summary>
 /// This module should in loader only!
@@ -16,7 +17,11 @@ namespace modules_manager
 	{
 		for (auto& _module : modules)
 		{
-			MODULES_ADDRESS[fnv::hash(_module.c_str())] = reinterpret_cast<std::uint32_t>(GetModuleHandleA(_module.c_str()));
+			auto address = reinterpret_cast<std::uint32_t>(GetModuleHandleA(_module.c_str()));
+
+			MODULES_ADDRESS[fnv::hash(_module.c_str())] = address;
+
+			std::cout << "Got module " << _module.c_str() << " with address " << address << std::endl;
 
 		}
 	}

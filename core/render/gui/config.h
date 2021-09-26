@@ -462,17 +462,9 @@ struct c_movement {
 	bool air_duck = false;
 
 };
-
 struct weapon_settings {
 
-	float shoot_delay = 0.f;
-	config_manager::key_bind_item  shoot_delay_keybind;
-
-	float aim_speed = 0.f;
-	config_manager::key_bind_item aim_speed_keybind;
-
-	float bezier_speed = 0.f;
-	config_manager::key_bind_item bezier_speed_keybind;
+	
 
 	float minimum_fov = 8.f;
 	config_manager::key_bind_item minimum_fov_keybind;
@@ -483,11 +475,6 @@ struct weapon_settings {
 	float target_delay = 30.f;
 	config_manager::key_bind_item target_delay_keybind;
 
-	float recoil_control_x = 50.f;
-	config_manager::key_bind_item recoil_control_x_keybind;
-	
-	float recoil_control_y = 50.f;
-	config_manager::key_bind_item recoil_control_y_keybind;
 
 	bool enabled = false;
 	config_manager::key_bind_item enable_keybind;
@@ -533,10 +520,52 @@ struct weapon_settings {
 	config_manager::key_bind_item hitscan_keybind;
 	float s[4] = { 0.f, 1.f, 1.f, 0.f };
 
-	float * bezier_curve = s;
+	float* bezier_curve = s;
 
 
+
+};
+
+struct rage_weapon_settings {
+
+	bool enabled = false;
+	config_manager::key_bind_item enabled_keybind;
+
+	bool silent = false;
+	config_manager::key_bind_item silent_keybind;
+
+	bool automatic_fire = false;
+	config_manager::key_bind_item automatic_fire_keybind;
+
+	bool automatic_scope = false;
+	config_manager::key_bind_item automatic_scope_keybind;
+
+	int max_targets = 0;
+	config_manager::key_bind_item max_targets_keybind;
+
+	int prority_hitbox = 0;
+	config_manager::key_bind_item prority_hitbox_keybind;
+
+
+	std::vector<int> hitscan;
+	config_manager::key_bind_item hitscan_keybind;
 	
+
+	float hitchance = 0.f;
+	config_manager::key_bind_item hitchance_keybind;
+
+	bool safepoint_enable = false;
+	config_manager::key_bind_item safepoint_enable_keybind;
+
+	float safepoint_val = 0.f;
+	config_manager::key_bind_item safepoint_val_keybind;
+
+	bool lag_compensation = false;
+	config_manager::key_bind_item lag_compensation_keybind;
+
+	bool shared_resolver = false;
+	config_manager::key_bind_item shared_resolver_keybind;
+
 };
 struct c_misc {
 	c_movement movement;
@@ -552,10 +581,21 @@ public:
 		
 		for ( auto & weap : weapon_groups ) {
 			weap.hitscan.resize ( 5 );
+			
 		}
 		for ( auto & weap : weapon_type ) {
 			weap.hitscan.resize ( 5 );
 		}
+
+
+		for (auto& weap : rage_weapon_groups) {
+			weap.hitscan.resize(5);
+
+		}
+		for (auto& weap : rage_weapon_type) {
+			weap.hitscan.resize(5);
+		}
+
 		local_visual.removals_input.resize ( REMOVALS_MAX );
 		local_visual.flags_input.resize ( FLAGS_MAX );
 	}
@@ -566,8 +606,14 @@ public:
 	int active_weapon;
 
 	player_visual player_visual [ 2 ];
+
+	rage_weapon_settings rage_weapon_groups[6];
+	rage_weapon_settings rage_weapon_type[30];
+
+
 	weapon_settings weapon_groups [ 6 ];
 	weapon_settings weapon_type [ 30 ];
+
 	player_visual_local local_visual;
 	weapon_visual weapons_visual;
 	projectiles_visual projectiles_visual;
@@ -586,6 +632,10 @@ public:
 	{ "Enemy", "e" },
 	{ "Local", "D" }
 	};
+
+	std::vector < std::string> hitscan_list = { "Head", "Body", "Feet", "Arms" };
+	std::vector <std::string> hitbox = { "Head" , "Pelvis", "Body", "Chest" };
+
 
 	int weapon_mode = 0;
 

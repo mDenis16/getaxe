@@ -15,6 +15,8 @@ namespace ui {
 
 		float state_change_time = 0.f;
 
+		bool hovering_extender = false;
+
 		float width = 185;
 		float height = 130;
 
