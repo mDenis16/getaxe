@@ -58,6 +58,11 @@ void CEconItem::SetPaintSeed ( float seed ) {
 	SetAttributeValue<float> ( 7, seed );
 }
 
+int CEconItem::GetPainKit()
+{
+	return getAttributeValue(6);
+}
+
 void CEconItem::SetPaintWear ( float wear ) {
 	SetAttributeValue<float> ( 8, wear );
 }

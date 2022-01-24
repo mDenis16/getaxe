@@ -10,7 +10,7 @@ namespace ui {
 		for ( size_t i = this->children.size ( ) - 1; i != ( size_t ) -1; i-- )
 			this->children.at ( i )->draw ( );
 
-		//this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), 0, 15, 5.f );
+		this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 0, 0, 255 ), 0, 0, 1.f );
 	}
 	void panel::handle ( ) {
 		
@@ -72,6 +72,11 @@ namespace ui {
 			}
 			this->width = this->maxs.x - this->mins.x;
 			this->height = this->maxs.y - this->mins.y;
+			if (this->children.empty())
+			{
+				this->width = this->height = 0;
+			}
+
 		}
 	}
 }

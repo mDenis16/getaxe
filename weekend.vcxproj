@@ -33,7 +33,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -129,7 +129,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;/std:c++latest;debug_build;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>/std:c++latest %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -168,7 +168,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PRODUCTION_LOCAL|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -180,13 +180,13 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <TreatWarningAsError>false</TreatWarningAsError>
       <AdditionalIncludeDirectories>E:\repos\mDenis16\getaxe-menu-framework\ImGui Application;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <OmitFramePointers>true</OmitFramePointers>
-      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <OmitFramePointers>false</OmitFramePointers>
+      <StringPooling>false</StringPooling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
@@ -197,9 +197,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LOCAL_BUILD|Win32'">
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>LOCAL_BUILD;IMGUI_IMPL_WIN32_DISABLE_GAMEPAD;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -209,16 +209,18 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <TreatWarningAsError>false</TreatWarningAsError>
       <AdditionalIncludeDirectories>E:\repos\mDenis16\getaxe-menu-framework\ImGui Application;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <OmitFramePointers>true</OmitFramePointers>
-      <StringPooling>true</StringPooling>
+      <OmitFramePointers>false</OmitFramePointers>
+      <StringPooling>false</StringPooling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <AdditionalOptions>/GR- %(AdditionalOptions)</AdditionalOptions>
       <MinimalRebuild>false</MinimalRebuild>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <SupportJustMyCode>true</SupportJustMyCode>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -255,6 +257,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="core\features\animations\animations_manager.cpp" />
+    <ClCompile Include="core\features\antiaim\fakelag.cpp" />
     <ClCompile Include="core\features\autowall\autowall.cpp" />
     <ClCompile Include="core\features\engine_prediction\engine_end.cpp" />
     <ClCompile Include="core\features\engine_prediction\engine_start.cpp" />
@@ -264,14 +268,21 @@
     <ClCompile Include="core\features\inventory_changer\CPlayerInventory.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSharedData.cpp" />
     <ClCompile Include="core\features\inventory_changer\CSInventoryManager.cpp" />
+    <ClCompile Include="core\features\lagcomp\lag_compensation.cpp" />
     <ClCompile Include="core\features\legitbot\lagcomp.cpp" />
     <ClCompile Include="core\features\legitbot\legitbot.cpp" />
     <ClCompile Include="core\features\legitbot\recoil_control.cpp" />
     <ClCompile Include="core\features\legitbot\target_selection.cpp" />
     <ClCompile Include="core\features\legitbot\weapon_grup_identifier.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
-    <ClCompile Include="core\features\movement\autostrafer.cpp" />
-    <ClCompile Include="core\features\setup\animations.cpp" />
+    <ClCompile Include="core\features\misc\modules\movement.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\best_point.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\hitscan_list.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\multipoint.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\record_selection.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\scan.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\target_list.cpp" />
+    <ClCompile Include="core\features\ragebot\ragebot.cpp" />
     <ClCompile Include="core\features\visuals\damage_indicator\damage_indicator.cpp" />
     <ClCompile Include="core\features\visuals\grenade\visual_grenade.cpp" />
     <ClCompile Include="core\features\visuals\LOCAL\thirdperson.cpp" />
@@ -293,6 +304,7 @@
     <ClCompile Include="core\hooks\cbaseanimation\accumulate_layers.cpp" />
     <ClCompile Include="core\hooks\cbaseanimation\build_transformations.cpp" />
     <ClCompile Include="core\hooks\cbaseanimation\do_procedural_foot_plant.cpp" />
+    <ClCompile Include="core\hooks\cbaseanimation\estimate_abs_velocity.cpp" />
     <ClCompile Include="core\hooks\cbaseanimation\should_skip_animation_frame.cpp" />
     <ClCompile Include="core\hooks\clientmode\create_move.cpp" />
     <ClCompile Include="core\hooks\clientmode\draw_fog.cpp" />
@@ -303,9 +315,11 @@
     <ClCompile Include="core\hooks\client\calc_view_model_bob.cpp" />
     <ClCompile Include="core\hooks\client\check_for_sequence_change.cpp" />
     <ClCompile Include="core\hooks\client\frame_stage_notify.cpp" />
+    <ClCompile Include="core\hooks\client\physics_simulate.cpp" />
     <ClCompile Include="core\hooks\client\write_user_cmd.cpp" />
     <ClCompile Include="core\hooks\console\sv_cheats.cpp" />
     <ClCompile Include="core\hooks\csplayer\calculate_view.cpp" />
+    <ClCompile Include="core\hooks\csplayer\do_extra_bone_processing.cpp" />
     <ClCompile Include="core\hooks\csplayer\setup_bones.cpp" />
     <ClCompile Include="core\hooks\csplayer\standard_blending_rules.cpp" />
     <ClCompile Include="core\hooks\csplayer\update_client_side_animation.cpp" />
@@ -359,6 +373,7 @@
     <ClCompile Include="core\render\gui\framework\window.cpp" />
     <ClCompile Include="core\render\gui\gui.cpp" />
     <ClCompile Include="core\render\gui\initialize.cpp" />
+    <ClCompile Include="core\render\gui\menu\antiaim_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\inventory_changer_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\legitbot_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\movement_menu.cpp" />
@@ -391,10 +406,13 @@
     <ClCompile Include="dependencies\utilities\patterns\patterns.cpp" />
     <ClCompile Include="dependencies\utilities\utilities.cpp" />
     <ClCompile Include="core\main.cpp" />
+    <ClCompile Include="source-sdk\base_animating\c_setup_bones.cpp" />
     <ClCompile Include="source-sdk\math\vector3d.cpp" />
     <ClCompile Include="source-sdk\math\view_matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\features\animations\animations_manager.h" />
+    <ClInclude Include="core\features\antiaim\fakelag.h" />
     <ClInclude Include="core\features\autowall\autowall.h" />
     <ClInclude Include="core\features\engine_prediction\engine_prediction.h" />
     <ClInclude Include="core\features\events\event_handler.h" />
@@ -403,9 +421,13 @@
     <ClInclude Include="core\features\inventory_changer\CPlayerInventory.h" />
     <ClInclude Include="core\features\inventory_changer\CSharedObject.h" />
     <ClInclude Include="core\features\inventory_changer\CSInventoryManager.h" />
+    <ClInclude Include="core\features\lagcomp\lag_compensation.h" />
     <ClInclude Include="core\features\legitbot\legitbot.h" />
-    <ClInclude Include="core\features\movement\autostrafer.h" />
-    <ClInclude Include="core\features\setup\animations.h" />
+    <ClInclude Include="core\features\misc\misc.h" />
+    <ClInclude Include="core\features\ragebot\aimbot.h" />
+    <ClInclude Include="core\features\ragebot\antiaim.h" />
+    <ClInclude Include="core\features\ragebot\net_data.h" />
+    <ClInclude Include="core\features\ragebot\ragebot.h" />
     <ClInclude Include="core\features\visuals\damage_indicator\damage_indicator.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
     <ClInclude Include="core\features\visuals\modulation\modulation.h" />
@@ -467,6 +489,7 @@
     <ClInclude Include="dependencies\interfaces\iv_render_beams.hpp" />
     <ClInclude Include="dependencies\interfaces\i_hud_chat.hpp" />
     <ClInclude Include="dependencies\interfaces\i_memalloc.h" />
+    <ClInclude Include="dependencies\interfaces\i_model_cache.h" />
     <ClInclude Include="dependencies\interfaces\i_weapon_system.hpp" />
     <ClInclude Include="dependencies\interfaces\platform.h" />
     <ClInclude Include="dependencies\interfaces\utl_memory.h" />
@@ -527,6 +550,7 @@
     <ClInclude Include="dependencies\utilities\stack_strings.hpp" />
     <ClInclude Include="dependencies\utilities\utilities.hpp" />
     <ClInclude Include="dependencies\utilities\weapon_icons.h" />
+    <ClInclude Include="source-sdk\base_animating\c_setup_bones.h" />
     <ClInclude Include="source-sdk\classes\basehandle.h" />
     <ClInclude Include="source-sdk\classes\client_class.hpp" />
     <ClInclude Include="source-sdk\classes\collideable.hpp" />
@@ -534,6 +558,7 @@
     <ClInclude Include="source-sdk\classes\c_usercmd.hpp" />
     <ClInclude Include="source-sdk\classes\ehandle.h" />
     <ClInclude Include="source-sdk\classes\entities.hpp" />
+    <ClInclude Include="source-sdk\classes\handle_entity.hpp" />
     <ClInclude Include="source-sdk\classes\ihandleentity.h" />
     <ClInclude Include="source-sdk\classes\net_channel.hpp" />
     <ClInclude Include="source-sdk\classes\recv_props.hpp" />

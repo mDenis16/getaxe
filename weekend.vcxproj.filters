@@ -76,7 +76,6 @@
     <ClCompile Include="core\render\gui\framework\config_box.cpp" />
     <ClCompile Include="core\render\gui\framework\button.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
-    <ClCompile Include="core\features\setup\animations.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\render\gui\framework\panel_container.cpp" />
     <ClCompile Include="core\render\gui\framework\panel.cpp" />
@@ -98,7 +97,6 @@
     <ClCompile Include="core\hooks\client\calc_view_model_bob.cpp" />
     <ClCompile Include="core\hooks\clientmode\draw_fog.cpp" />
     <ClCompile Include="core\features\visuals\removals\removals.cpp" />
-    <ClCompile Include="core\features\movement\autostrafer.cpp" />
     <ClCompile Include="core\features\visuals\LOCAL\thirdperson.cpp" />
     <ClCompile Include="core\render\gui\menu\legitbot_menu.cpp" />
     <ClCompile Include="core\render\gui\framework\bezier_editor.cpp" />
@@ -139,6 +137,22 @@
     <ClCompile Include="dependencies\utilities\interfaces\interfaces_new.cpp" />
     <ClCompile Include="dependencies\utilities\modules\modules.cpp" />
     <ClCompile Include="dependencies\utilities\patterns\patterns.cpp" />
+    <ClCompile Include="core\render\gui\menu\antiaim_menu.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\best_point.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\hitscan_list.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\multipoint.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\record_selection.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\scan.cpp" />
+    <ClCompile Include="core\features\ragebot\modules\target_list.cpp" />
+    <ClCompile Include="core\features\ragebot\ragebot.cpp" />
+    <ClCompile Include="core\features\lagcomp\lag_compensation.cpp" />
+    <ClCompile Include="core\features\misc\modules\movement.cpp" />
+    <ClCompile Include="core\hooks\client\physics_simulate.cpp" />
+    <ClCompile Include="core\features\animations\animations_manager.cpp" />
+    <ClCompile Include="source-sdk\base_animating\c_setup_bones.cpp" />
+    <ClCompile Include="core\hooks\csplayer\do_extra_bone_processing.cpp" />
+    <ClCompile Include="core\features\antiaim\fakelag.cpp" />
+    <ClCompile Include="core\hooks\cbaseanimation\estimate_abs_velocity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -254,7 +268,6 @@
     <ClInclude Include="core\render\gui\framework\config_box.h" />
     <ClInclude Include="core\render\gui\framework\config_item.h" />
     <ClInclude Include="core\render\gui\framework\button.h" />
-    <ClInclude Include="core\features\setup\animations.h" />
     <ClInclude Include="core\features\visuals\visuals.h" />
     <ClInclude Include="dependencies\imgui\imgui_freetype.h" />
     <ClInclude Include="core\render\gui\framework\panel_container.h" />
@@ -272,7 +285,6 @@
     <ClInclude Include="core\features\visuals\weapon\visual_weapon.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
     <ClInclude Include="core\features\events\event_handler.h" />
-    <ClInclude Include="core\features\movement\autostrafer.h" />
     <ClInclude Include="core\render\gui\framework\bezier_editor.h" />
     <ClInclude Include="core\render\gui\framework\inventory_changer.h" />
     <ClInclude Include="core\render\gui\framework\inventory_item.h" />
@@ -293,6 +305,17 @@
     <ClInclude Include="dependencies\utilities\literal_string.hpp" />
     <ClInclude Include="dependencies\utilities\obf.h" />
     <ClInclude Include="dependencies\utilities\patterns\patterns.h" />
+    <ClInclude Include="core\features\ragebot\ragebot.h" />
+    <ClInclude Include="core\features\ragebot\aimbot.h" />
+    <ClInclude Include="core\features\ragebot\antiaim.h" />
+    <ClInclude Include="core\features\ragebot\net_data.h" />
+    <ClInclude Include="core\features\lagcomp\lag_compensation.h" />
+    <ClInclude Include="core\features\misc\misc.h" />
+    <ClInclude Include="core\features\animations\animations_manager.h" />
+    <ClInclude Include="dependencies\interfaces\i_model_cache.h" />
+    <ClInclude Include="source-sdk\base_animating\c_setup_bones.h" />
+    <ClInclude Include="source-sdk\classes\handle_entity.hpp" />
+    <ClInclude Include="core\features\antiaim\fakelag.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

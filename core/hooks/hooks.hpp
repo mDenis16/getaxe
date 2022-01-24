@@ -20,8 +20,9 @@
 #define modify_eye_position_original reinterpret_cast< void( __thiscall* )( void * , void * , vec3_t &  ) >( hooks::list.at ( hooks::hook_index::modify_eye_position )->original )
 #define calculate_view_original reinterpret_cast< void ( __thiscall * )( void *, void * , vec3_t & , vec3_t & , float & , float & , float &  ) >( hooks::list.at ( hooks::hook_index::calculate_view )->original )
 //#define do_procedural_foot_plant_original reinterpret_cast< void* >( hooks::list.at ( hooks::hook_index::do_procedural_foot_plant  )->original )
-#define standard_blending_rules_original reinterpret_cast< void( __thiscall* )( player_t*, c_studio_hdr*, vec3_t*, quaternion_t*, float, int ) >( hooks::list.at ( hooks::hook_index::standard_blending_rules )->original )
+#define standard_blending_rules_original reinterpret_cast< void( __thiscall* )( player_t*, c_studio_hdr*, vec3_t*, void*, float, int ) >( hooks::list.at ( hooks::hook_index::standard_blending_rules )->original )
 #define write_user_cmd_original reinterpret_cast< bool ( __cdecl * )( void *, int, void *, int, int, bool ) >( hooks::list.at ( hooks::hook_index::write_user_cmd )->original )
+#define physics_simulate_original reinterpret_cast< void ( __cdecl * )( entity_t * ) >( hooks::list.at ( hooks::hook_index::physics_simulate )->original )
 
 #define update_client_side_animation_original reinterpret_cast< void( __thiscall* )( player_t* ) >( hooks::list.at ( hooks::hook_index::update_client_side_animation )->original )
 #define fire_event_original reinterpret_cast< void( __thiscall* )( void* ) >( hooks::list.at ( hooks::hook_index::fire_event )->original )
@@ -39,6 +40,11 @@
 #define calc_view__original  reinterpret_cast< void( __thiscall* )( void * , void * , vec3_t & , vec3_t & , float & , float & , float &  ) >( hooks::list.at ( hooks::hook_index::calc_view_original )->original )
 #define get_screen_aspect_original reinterpret_cast< float(__thiscall*)(void*, int, int) >( hooks::list.at ( hooks::hook_index::get_screen_aspect_ratio )->original )
 #define calc_view_model_bob_original reinterpret_cast< void(__thiscall*)( player_t * , void* , vec3_t &  ) >( hooks::list.at ( hooks::hook_index::calc_view_model_bob )->original )
+#define do_extra_bone_procesing_original reinterpret_cast< void(__fastcall*)(void*, void*, int , int , int , int , int , int  >)( hooks::hook_index::do_extra_bone_processing)->original )
+#define estimate_abs_velocity_original reinterpret_cast< void( __fastcall* )( player_t* , void*, vec3_t& ) >( hooks::list.at ( hooks::hook_index::estimate_abs_velocity )->original )
+//void __fastcall do_extra_bone_processing(void* this_ptr, void* edx, int a2, int a3, int a4, int a5, int a6, int a7)
+
+//#define build_jiggle_transformations_original reinterpret_cast< void ( __stdcall * ) ( void* ,void* , void*, void*, void*, void*, void*, void*) >( hooks::list.at ( hooks::hook_index::build_jiggle_transformations )->original )
 
 namespace hooks {
 
@@ -84,7 +90,10 @@ namespace hooks {
 		present,
 		reset,
 		get_screen_aspect_ratio,
-		calc_view_model_bob
+		calc_view_model_bob,
+		physics_simulate,
+		do_extra_bone_processing,
+		estimate_abs_velocity
 		/*no need to call original*/
 	};
 
@@ -111,7 +120,7 @@ namespace hooks {
 		extern void __fastcall calculate_view ( void * ecx, void * edx, vec3_t & eye_origin, vec3_t & eye_angles, float & z_near, float & z_far, float & fov );
 		extern bool __fastcall in_prediction ( void * ecx, void * edx );
 		extern void __fastcall do_procedural_foot_plant ( void * a1, void *, int a2, int a3, int a4, int a5 );
-		extern void _fastcall standard_blending_rules ( player_t * player, uint32_t, c_studio_hdr * hdr, vec3_t * pos, quaternion_t * q, const float time, int mask );
+		extern void _fastcall standard_blending_rules ( player_t * player, uint32_t, c_studio_hdr * hdr, vec3_t * pos, void * q, const float time, int mask );
 		extern bool __fastcall write_user_cmd ( void * ecx, void *, int m_nSlot, bf_write * m_pBuffer, int m_nFrom, int m_nTo, bool m_bNewCmd );
 		extern void _fastcall update_client_side_animations ( player_t * player, uint32_t );
 		extern void _fastcall fire_event ( void * ecx, void * );
@@ -131,6 +140,10 @@ namespace hooks {
 		extern float __fastcall get_screen_aspect_ratio ( void * ecx, void * edx, int width, int height );
 		extern void __fastcall calc_view_model_bob ( player_t * player, void * edx, vec3_t & position );
 		extern bool __fastcall draw_fog ( void * ecx, void * edx );
+		extern void __cdecl physics_simulate(entity_t* entity);
+		extern void __cdecl build_jiggle_transformations(void* a1, void* a2, void* a3, void* a4, void* a5, void* a6, void* a7, void* a8, void* a9);
+		extern void __fastcall do_extra_bone_processing(void* this_ptr, void* edx, int a2, int a3, int a4, int a5, int a6, int a7);
+		extern  void __fastcall estimate_abs_velocity(player_t* player, void* edx, vec3_t& velocity);
 	}
 
 

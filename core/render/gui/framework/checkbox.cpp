@@ -63,7 +63,7 @@ namespace ui {
 
 		this->handle();
 
-	//	this->renderer->AddRectFilled (this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ), 0.f );
+		this->renderer->AddRectFilled (this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ), 0.f );
 
 		float progress_alpha = ImGui::GetTime() - hover_start_time;  progress_alpha = std::clamp(progress_alpha * 3.5f, 0.f, 1.f);
 
@@ -236,7 +236,19 @@ namespace ui {
 
 		if (this->index > 0) {
 			auto& back = this->parrent->children.at(this->index - 1);
-			this->mins = ImVec2(this->parrent->mins.x + this->parrent->padding, back->maxs.y + 8);
+			float spacing = 8.f;
+			if (back->type == panel_cotainer_element)
+			{
+				auto _panel_container = static_cast<panel_container*>(back);
+				if (!_panel_container->children.empty())
+				{
+					auto _panel = static_cast<panel*>(_panel_container->children.at(*_panel_container->selected_index));
+
+					if (_panel->children.empty())
+						spacing = 0.f;
+				}
+			}
+			this->mins = ImVec2(this->parrent->mins.x + this->parrent->padding, back->maxs.y + spacing);
 			this->maxs = ImVec2(this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20);
 
 
@@ -252,14 +264,7 @@ namespace ui {
 			bool is_parent_panel = this->parrent->type == panel_element || this->parrent->type == panel_cotainer_element;
 			if (is_parent_panel) {
 
-				/*if ( this->parrent->parrent && this->parrent->parrent->children.size() > 0 ) {
-					auto previous_element = this->parrent->parrent->children.at ( this->parrent->index  - 1);
-
-					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, previous_element->maxs.y + 8 );
-				}
-				else {
-					this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 8);
-				}*/
+				
 				this->mins = ImVec2(this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y);
 				this->maxs = ImVec2(this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20);
 

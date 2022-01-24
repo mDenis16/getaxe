@@ -3,7 +3,7 @@
 
 namespace local_player {
 
-	void fix_movement ( c_usercmd * cmd, vec3_t wish_angles ) {
+	void fix_movement ( c_usercmd * cmd, vec3_t& wish_angles ) {
 		vec3_t view_fwd, view_right, view_up, cmd_fwd, cmd_right, cmd_up;
 		math::angle_vectors ( wish_angles, &view_fwd, &view_right, &view_up );
 		math::angle_vectors ( cmd->viewangles, &cmd_fwd, &cmd_right, &cmd_up );
@@ -46,8 +46,6 @@ namespace local_player {
 
 		wish_angles = cmd->viewangles;
 
-		if ( local_pointer->move_type ( ) != move_type::movetype_ladder )
-			cmd->buttons &= ~( in_forward | in_back | in_moveright | in_moveleft );
 	}
 
 	data m_data = {};
@@ -87,32 +85,19 @@ namespace local_player {
 		};
 
 
-		 
-		localdata.strafe_angles = cmd->viewangles;
-		m_data.pressing_move = ( cmd->buttons & ( in_left ) || cmd->buttons & ( in_forward ) || cmd->buttons & ( in_back ) ||
-			cmd->buttons & ( in_right ) || cmd->buttons & ( in_moveleft ) || cmd->buttons & ( in_moveright ) ||
-			cmd->buttons & ( in_jump ) );
+	
 		m_data.orig_viewangle = cmd->viewangles;
 		m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+
+
 		csgo::local_player = local_player::m_data.pointer;
+
 		m_data.alive = m_data.pointer->health ( ) > 0;
 
 
-		if ( m_data.alive && m_data.in_game ) {
+		if (local_pointer && m_data.alive && m_data.in_game ) {
 			auto original_tickbase = local_pointer->get_tick_base ( );
 			cmd->randomseed = get_random_seed ( );
-
-		//	engine_prediction->start ( local_pointer, cmd );
-
-			/*if ( shifting::_shift.shift_ticks ) {
-				if ( shifting::_shift.shift_ticks == config.ragebot_double_tap_ticks )
-					localdata.fixed_tickbase = local_pointer->get_tick_base ( ) - shifting::_shift.shift_ticks;
-				else
-					localdata.fixed_tickbase++;
-			}
-			else
-				localdata.fixed_tickbase = original_tickbase;
-				*/
 
 			m_data.active_weapon = m_data.pointer->active_weapon ( );
 			if ( m_data.active_weapon ) {
@@ -123,16 +108,11 @@ namespace local_player {
 
 			localdata.eye_position = local_pointer->get_eye_pos ( );
 
-			g_movement.JumpRelated ( );
-			g_movement.Strafe ( );
-			g_movement.AutoStop ( );
-			g_movement.slow_walk ( );
-	
+
+			engine_prediction->start(local_pointer, cmd);
 		}
 
 		m_data.backup_tickbase = local_pointer->get_tick_base ( );
-
-	
 
 		
 	}
@@ -156,9 +136,13 @@ namespace local_player {
 			localdata.last_punch = local_pointer->aim_punch_angle ( );
 		}
 
-		fix_movement ( cmd, localdata.strafe_angles );
 
-		auto & correct = local_player::m_data.data.emplace_front ( );
+		engine_prediction->end();
+
+		fix_movement ( cmd, localdata.orig_viewangle);
+
+
+		/*auto & correct = local_player::m_data.data.emplace_front ( );
 
 		correct.command_number = cmd->command_number;
 		correct.choked_commands = interfaces::clientstate->m_choked_commands + 1;
@@ -194,13 +178,13 @@ namespace local_player {
 
 				net_channel->choked_packets = backup_choke;
 			}
-		}
+		}*/
 
 
 
 	}
 	void post_predict ( c_usercmd * cmd ) {
-		if ( local_player::available ( ) ) {
+		/*if ( local_player::available ( ) ) {
 			
 
 			if ( localdata.active_weapon ) {
@@ -209,8 +193,7 @@ namespace local_player {
 
 				localdata.active_weapon->update_accuracy_penalty ( );
 
-		
 			}
-		}
+		}*/
 	}
 }

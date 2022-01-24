@@ -40,6 +40,17 @@ unsigned long WINAPI initialize(void* instance) {
 
 		hooks::initialize();
 		hooks::create_hooks ( );
+
+		static auto fnGetStaticData
+			= reinterpret_cast<C_EconItemDefinition * (__thiscall*)(void*)>(
+				utilities::pattern_scan(("client.dll"), "55 8B EC 51 53 8B D9 8B 0D ? ? ? ? 56 57 8B B9")
+				);
+
+
+		static auto fnGetStaticData2 = reinterpret_cast<C_EconItemDefinition * (__thiscall*)(void*)>(utilities::pattern_scan_rel_function("client.dll", "E8 ? ? ? ? 8B 75 F4 8D 4E FF", 1));
+
+
+		std::cout << "fnGetStaticData2 " << fnGetStaticData2 << " fnGetStaticData " << fnGetStaticData << std::endl;
 		std::this_thread::sleep_for ( std::chrono::milliseconds ( 500 ) );
 	
 	}

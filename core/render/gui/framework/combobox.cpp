@@ -316,7 +316,8 @@ namespace ui {
 		this->handle ( );
 
 
-		//this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ) );
+		this->renderer->AddRectFilled ( this->mins, this->maxs, ImColor ( 255, 0, 255, 255 ) );
+		//this->renderer->AddRectFilled(this->bb_min, this->bb_max, ImColor(255, 255, 0, 255));
 		ImVec2 middle = ImVec2 ( ( this->bb_min.x + this->bb_max.x ) / 2.f, (  this->bb_min.y * 2.f + 18.f ) / 2.f );
 		middle.y -= ImGui::CalcTextSize ( cur_text, 13.f, ui::font_widgets ).y / 2.f;
 
@@ -356,7 +357,7 @@ namespace ui {
 
 		}
 
-		this->renderer->AddRectFilled ( this->bb_min, this->bb_max, ImColor ( 27, 28, 31, (int)std::lerp(50, 160, (float )easeOutCubicc ( animation_progress )) ), 3.5f );
+		this->renderer->AddRectFilled ( this->bb_min, this->bb_max, ImColor ( 27, 28, 31, (int)std::lerp(50, 215, (float )easeOutCubicc ( animation_progress )) ), 3.5f );
 		auto prog = ( int ) ( !this->opened ? alpha : std::lerp ( 35.f, 70.f, (float)easeOutCubicc(animation_progress)) );
 
 		this->renderer->AddRect ( this->bb_min, this->bb_max, ImColor ( 255, 255, 255, prog ), 4.5f );
@@ -389,7 +390,7 @@ namespace ui {
 	
 
 
-		this->renderer->AddText ( ui::font_widgets, 13.f, ImVec2 ( this->mins.x, middle.y ), ImColor ( 255, 255, 255, 225 ), this->title->data ( ) );
+		this->renderer->AddText ( ui::font_widgets, 13.f, title_position, ImColor ( 255, 255, 255, 225 ), this->title->data ( ) );
 
 
 
@@ -515,29 +516,19 @@ namespace ui {
 	
 
 		if ( this->index > 0 ) {
-			if ( this->parrent->type == tab_element ) {
-				this->bb_width = 140;
-
-				this->mins = ImVec2 ( this->parrent->parrent->maxs.x - this->bb_width - 20, this->parrent->parrent->mins.y + 60 );
-				this->maxs = ImVec2 ( this->parrent->parrent->maxs.x, this->mins.y + 22.9f );
-
-
-				this->bb_min = ImVec2 ( this->maxs.x - this->bb_width, this->mins.y  );
-				this->bb_max = ImVec2 ( this->maxs.x, this->maxs.y );
-
-				this->original_bb_max_y = this->bb_max.y;
-			}
-			else {
+			
 				auto & back = this->parrent->children.at ( this->index - 1 );
 				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, back->maxs.y + 8 );
 				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
 
-				this->bb_max = ImVec2 ( this->maxs.x + 4.5f, this->maxs.y );
-				this->bb_min = ImVec2 ( this->maxs.x - bb_width - this->parrent->padding , this->mins.y );
+				this->bb_max = ImVec2 ( this->maxs.x , this->maxs.y );
+				this->bb_min = ImVec2 ( this->maxs.x - bb_width  , this->maxs.y - (this->maxs.y - this->mins.y + 18) / 2.f);
 
+			/*	ImVec2 middle = ImVec2((this->bb_min.x + this->bb_max.x) / 2.f, (this->bb_min.y * 2.f + 18.f) / 2.f);
+				middle.y -= ImGui::CalcTextSize(cur_text, 13.f, ui::font_widgets).y / 2.f;*/
 
 				this->original_bb_max_y = this->bb_max.y;
-			}
+			
 		}
 		else {
 			bool is_parent_panel = this->parrent->type == panel_element || this->parrent->type == panel_cotainer_element;
@@ -553,7 +544,7 @@ namespace ui {
 				}*/
 
 				this->mins = ImVec2 ( this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y );
-				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 22.9f );
+				this->maxs = ImVec2 ( this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20 );
 
 
 
@@ -566,11 +557,11 @@ namespace ui {
 
 
 				this->mins = ImVec2(this->parrent->mins.x + this->parrent->padding, this->parrent->mins.y + 40);
-				this->maxs = ImVec2(this->parrent->maxs.x - this->parrent->padding, this->mins.y + 20);
+				this->maxs = ImVec2(this->parrent->maxs.x - this->parrent->padding , this->mins.y + 20);
 
 
 				this->bb_max = ImVec2(this->maxs.x, this->maxs.y);
-				this->bb_min = ImVec2(this->bb_max.x - this->bb_width, this->mins.y);
+				this->bb_min = ImVec2(this->bb_max.x - this->bb_width, this->maxs.y - (this->maxs.y - this->mins.y + 18) / 2.f);
 
 
 				this->original_bb_max_y = this->bb_max.y;
@@ -589,6 +580,8 @@ namespace ui {
 
 		this->update_triangle ( );
 
+		title_position = ImVec2(this->mins.x, (this->mins.y + this->maxs.y) / 2.f);
+		title_position.y -= ImGui::CalcTextSize(title->data(), 13.f, ui::font_widgets).y / 2.f;
 
 		for ( auto & children : this->children )
 			children->update ( );

@@ -7,7 +7,7 @@ namespace ui {
 
 		this->handle ( );
 
-	//	this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 255 ), 0, 15, 16.f );
+		this->renderer->AddRect ( this->mins, this->maxs, ImColor ( 255, 255, 255, 255 ), 0, 15, 1.f );
 
 		if ( *this->selected_index < this->children.size() ) 
 			this->children.at ( *this->selected_index )->draw ( );
@@ -78,8 +78,16 @@ namespace ui {
 			if ( this->index > 0 ) {
 				auto & old = this->parrent->children.at ( this->index - 1 );
 
+				
 				this->mins.x = this->parrent->mins.x;
-				this->mins.y = old->maxs.y + 8.f;
+
+				
+
+				if (*this->selected_index < this->children.size() ) {
+					this->mins.y = old->maxs.y + 8.f;
+				}
+				else
+					this->mins.y = old->maxs.y;
 			}
 			else {
 				this->mins = this->parrent->mins;
@@ -87,7 +95,10 @@ namespace ui {
 			}
 			this->maxs.x = this->parrent->maxs.x;
 
-
+			if (this->children.empty())
+			{
+				this->maxs.y = this->mins.y;
+			}
 
 			this->width = this->maxs.x - this->mins.x;
 			this->height = this->maxs.y - this->mins.y;
@@ -99,6 +110,10 @@ namespace ui {
 			if ( !this->children.empty ( ) ) {
 				if ( *this->selected_index < this->children.size ( ) )
 					this->maxs.y = this->children.at ( *this->selected_index )->maxs.y;
+			}
+			else
+			{
+				this->maxs.y = this->mins.y;
 			}
 
 

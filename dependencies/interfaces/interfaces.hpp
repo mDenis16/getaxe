@@ -30,6 +30,9 @@
 #include "c_csplayerresource.h"
 #include "engine_sounds.hpp"
 #include "iv_render_beams.hpp"
+#include "i_app_system.hpp"
+#include "i_model_cache.h"
+
 
 namespace interfaces {
 	enum class interface_type { index, bruteforce };
@@ -85,6 +88,7 @@ namespace interfaces {
 	extern iv_engine_client* engine;
 	extern i_client_mode* clientmode;
 	extern i_client_state* clientstate;
+	extern IMDLCache* modelcache;
 	extern i_panel* panel;
 	extern i_surface* surface;
 	extern c_global_vars_base* globals;
@@ -100,7 +104,7 @@ namespace interfaces {
 	extern IDirect3DDevice9* directx;
 	extern i_engine_trace* trace_ray;
 	extern glow_manager_t* glow_manager;
-	extern player_game_movement* game_movement;
+	extern virtual_game_movement* game_movement;
 	extern player_prediction* prediction;
 	extern player_move_helper* move_helper;
 	extern i_weapon_system* weapon_system;
@@ -110,7 +114,6 @@ namespace interfaces {
 	extern IMemAlloc * memalloc;
 	extern c_csplayer_resource * player_resource;
 	extern i_view_render_beams* render_beams;
-	extern void* model_cache;
 	extern void* file_system;
 
 	bool initialize();

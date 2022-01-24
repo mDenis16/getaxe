@@ -16,7 +16,7 @@ namespace hooks {
 	bool unloading = false;
 
 	void CREATE_HOOK ( void * _target,  void* _detour ) {
-		list.push_back(new hook (  _target, _detour ));
+		list.push_back(new hook ( _target, _detour ));
 	}
 	
 
@@ -35,15 +35,14 @@ namespace hooks {
  				throw std::runtime_error ( std::to_string( index).c_str());
 			}
 
-			if ( MH_EnableHook ( MH_ALL_HOOKS ) != MH_OK ) {
-				throw std::runtime_error ( "failed to enable hooks." );
-			}
-
 			printf ( "hooked address %i \n", std::addressof( hook->detour ) );
 			index++;
 
 		}
 
+		if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK) {
+			throw std::runtime_error("failed to enable hooks.");
+		}
 
 		return true;
 	}
@@ -78,7 +77,7 @@ namespace hooks {
 		CREATE_HOOK ((void*)FETCH_PATTERN ( "engine.dll", "55 8B EC 81 EC ? ? ? ? 53 8B D9 89 5D F8 80" ), &callback::crc_server_check );
 		CREATE_HOOK ( get_virtual ( interfaces::console->get_convar ( "sv_cheats" ), 13 ), &callback::sv_cheats );
 		CREATE_HOOK ( get_virtual ( interfaces::engine->get_bsp_tree_query ( ), 6 ), &callback::list_leaves_in_box );
-		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 24 ), &callback::create_move );
+		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 24), &callback::create_move );
 		CREATE_HOOK ( /*FETCH_PATTERN ( "engine.dll", "55 8B EC 83 E4 C0 81 EC ? ? ? ? 53 56" )*/ nullptr, &callback::process_packet );
 		CREATE_HOOK ( get_virtual ( interfaces::panel, 41 ), &callback::paint_traverse );
 		CREATE_HOOK ( nullptr/* get_virtual ( interfaces::engine, 93 )*/, &callback::is_hltv );
@@ -86,7 +85,7 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual ( sbf, 13 ), &callback::setup_bones );
 		CREATE_HOOK ( nullptr, &callback::accumulate_layers );
 		CREATE_HOOK ( nullptr /* FETCH_PATTERN ( "client.dll", "55 8B EC 51 53 8B 5D 08 56 8B F1 57 85" )*/, &callback::check_for_sequence_change );
-		CREATE_HOOK ( (void*)FETCH_PATTERN ( "client.dll", "55 8B EC 83 E4 F0 81 EC ? ? ? ? 56 57 8B F9 8B 0D ? ? ? ? 89 7C 24 1C" ), &callback::build_transformations );
+		CREATE_HOOK ( (void*)FETCH_PATTERN ( "client.dll", "55 8B EC 83 E4 F0 81 EC ? ? ? ? 56 57 8B F9 8B 0D ? ? ? ? 89 7C 24 28" ), &callback::build_transformations );//55 8B EC 83 E4 F0 81 EC ? ? ? ? 56 57 8B F9 8B 0D ? ? ? ? 89 7C 24 28 8B 81 ? ? ? ? 89 44 24 3C 85 C0 74 2C
 		CREATE_HOOK ((void*)FETCH_PATTERN ( "client.dll", "57 8B F9 8B 07 8B 80 ? ? ? ? FF D0 84 C0 75 02 5F C3" ), &callback::should_skip_animation_frame );
 		CREATE_HOOK ( nullptr, &callback::calculate_view );//aici e cretane
 		CREATE_HOOK ( nullptr /* FETCH_PATTERN ( "client.dll", "55 8B EC 83 E4 F0 83 EC 78 56 8B F1 57 8B 56 60" )*/, &callback::do_procedural_foot_plant );
@@ -98,7 +97,7 @@ namespace hooks {
 		CREATE_HOOK ( nullptr /*get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 5 )*/, &callback::packet_start );
 		CREATE_HOOK ( nullptr /*get_virtual ( ( i_client_state * ) ( uint32_t ( interfaces::clientstate ) + 0x8 ), 6 )*/, &callback::packet_end );
 		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 18 ), &callback::override_view );
-		CREATE_HOOK ( nullptr /* FETCH_PATTERN ( "engine.dll", "55 8B EC 81 EC 64 01 00 00 53 56 8A F9" )*/, &callback::cl_move );
+		CREATE_HOOK ( nullptr /* FETCH_PATTERN ( "engine.dll", "55 8B EC 81 EC 64 01 00 00 53 56 8A F9" )*/, &callback::cl_move );//\x55\x8B\xEC\x83\xE4\xF8\x81\xEC\x00\x00\x00\x00\x53\x56\x8B\xF1\x57\x89\x74\x24 xxxxxxxx????xxxxxxxx
 		CREATE_HOOK ( nullptr /*  get_virtual ( interfaces::trace_ray, 4 )*/, &callback::clip_ray_collideable );
 		CREATE_HOOK ( get_virtual ( interfaces::render_view, 9 ), &callback::scene_end );
 		CREATE_HOOK ( nullptr, &callback::trace_ray );
@@ -107,7 +106,10 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual (d3d_device, 16 ), &reset_hook );
 		CREATE_HOOK ( get_virtual ( interfaces::engine, 101 ), &callback::get_screen_aspect_ratio );
 		CREATE_HOOK ( nullptr /*FETCH_PATTERN ( "client.dll", "55 8B EC A1 ? ? ? ? 83 EC 10 56 8B F1 B9" )*/, &callback::calc_view_model_bob );
-		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 17 ), &callback::draw_fog );
+		CREATE_HOOK ((void*)FETCH_PATTERN("client.dll", "55 8B EC 83 EC 7C 8B 0D ? ? ? ?"), &callback::physics_simulate );
+		CREATE_HOOK(get_virtual(pt, 198), &callback::do_extra_bone_processing);
+		CREATE_HOOK(get_virtual(pt, 145), &callback::estimate_abs_velocity);
+
 		wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( csgo::window, GWL_WNDPROC, ( LONG ) callback::wnd_proc );
 	}
 

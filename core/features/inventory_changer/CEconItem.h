@@ -25,6 +25,17 @@ enum ItemRarity {
 	ITEM_RARITY_ANCIENT,
 	ITEM_RARITY_IMMORTAL
 };
+union AttributeDataUnion {
+	float asFloat;
+	std::uint32_t asUint32;
+	char* asBlobPointer;
+};
+
+struct StaticAttrib {
+	std::uint16_t defIndex;
+	AttributeDataUnion value;
+	bool forceGCToGenerate;
+};
 
 class CEconItem {
 	unsigned short * GetEconItemData ( );
@@ -44,6 +55,7 @@ public:
 	void SetCustomName ( const char * name );
 	void SetCustomDesc ( const char * name );
 	void SetPaintSeed ( float seed );
+	int  GetPainKit();
 	void SetPaintKit ( float kit );
 	void SetPaintWear ( float wear );
 	void SetStatTrak ( int val );
@@ -53,6 +65,19 @@ public:
 		return fnGetItemSchema ( );
 	}
 
+	const c_utl_vector<StaticAttrib>& getStaticAttributes() noexcept
+	{
+		return *reinterpret_cast<const c_utl_vector<StaticAttrib>*>(std::uintptr_t(this) + 0x30);
+	}
+	std::uint32_t getAttributeValue(std::uint16_t attributeDefinitionIndex) noexcept
+	{
+		const auto& staticAttributes = getStaticAttributes();
+		for (int i = 0; i < staticAttributes.count(); ++i) {
+			if (staticAttributes[i].defIndex == attributeDefinitionIndex)
+				return staticAttributes[i].value.asUint32;
+		}
+		return 0;
+	}
 	template<typename TYPE>
 	void SetAttributeValue ( int index, TYPE val ) {
 	

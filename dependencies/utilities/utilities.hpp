@@ -18,8 +18,11 @@ namespace utilities {
 	inline unsigned int get_vfunc(void* pp_class, unsigned int index) {
 		return (unsigned int)(*(int**)pp_class)[index];
 	}
-	std::uint8_t* pattern_scan( const char* module_name, const char* signature ) noexcept;
 
+	std::uint32_t* pattern_scan32(const char* module_name, const char* signature) noexcept;
+
+	std::uint8_t* pattern_scan( const char* module_name, const char* signature ) noexcept;
+	std::uint32_t pattern_scan_rel_function(const char* _module, const char* signature, int offsetStartRelAddr);
 
 	std::string unicode_to_ascii( const std::wstring& unicode );
 	std::uintptr_t code_style_pattern ( const char * moduleName, std::string_view pattern, bool reportNotFound = true ) noexcept;

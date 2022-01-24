@@ -17,16 +17,21 @@
 #include "../features/inventory_changer/CPlayerInventory.h"
 #include "../features/inventory_changer/CSInventoryManager.h"
 #include "../features/events/event_handler.h"
-#include "../features/setup/animations.h"
+
 #include "../features/visuals/modulation/modulation.h"
 #include "../features/visuals/visuals.h"
-#include "../features/movement/autostrafer.h"
+#include "../features/misc/misc.h"
 #include "../features/visuals/damage_indicator/damage_indicator.h"
 #include "../render/d3dfont.h"
+#include "../features/lagcomp/lag_compensation.h"
 
-
-//features
+#include "../features/ragebot/ragebot.h"
 #include "../features/legitbot/legitbot.h"
+#include "../features/misc/misc.h"
+
+#include "../features/antiaim/fakelag.h"
+
+
 
 class feature {
 	void release ( );

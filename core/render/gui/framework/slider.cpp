@@ -28,7 +28,7 @@ namespace ui {
 
 		float val = (float)*( float*  ) this->value;
 
-		new small_text_input ( this, *( float * ) this->value, mins, maxs, ui::text_type::floats );
+		new small_text_input ( this, *( float * ) this->value, mins, maxs, _type == slider_type::floates ? ui::text_type::floats : ui::text_type::type_int);
 
 		this->parrent->add_children ( this );
 	}
@@ -37,8 +37,10 @@ namespace ui {
 
 		this->title = &text;
 		 this->value = &_value;
+
 		*( float * ) &this->value_mins = mins;
 		*( float * ) &this->value_maxs = maxs;
+
 		this->slide_type = _type;
 		this->key_bind_controller = key_bind_item;
 		this->parrent = parent;
@@ -49,8 +51,9 @@ namespace ui {
 		update ( );
 
 		//new key_bind_muie ( this, key_bind );
-		// object * parent, float & _value, float mins, float maxs, text_type _type 
-		new small_text_input ( this, (float&)*( float * )this->value, mins, maxs, ui::text_type::floats );
+		// object * parent, float & _value, float mins, float maxs, text_type _type
+	
+		new small_text_input ( this, (float&)*( float * )this->value, mins, maxs, _type == slider_type::floates ? ui::text_type::floats : ui::text_type::type_int );
 		new key_bind_muie ( this, key_bind_item );
 		this->parrent->add_children ( this );
 	}

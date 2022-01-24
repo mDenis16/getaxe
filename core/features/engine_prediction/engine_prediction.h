@@ -15,7 +15,7 @@ public:
 private:
 	float old_cur_time = 0.f;
 	float old_frame_time = 0.f;
-	void * move_data = nullptr;
+	
 	int * prediction_random_seed = 0;
 	int * prediction_player = 0;
 

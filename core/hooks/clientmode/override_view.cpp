@@ -26,7 +26,7 @@ namespace hooks::callback {
 		static vec3_t last_origin = vec3_t ( );
 		static int tick = 0;
 
-		if ( local_pointer && local_pointer->is_alive ( ) && interfaces::input->m_camera_in_third_person ) {
+		if ( local_pointer && local_pointer->is_alive ( ) && interfaces::input->m_camera_in_thirdperson) {
 		//	setup->origin.z = local_pointer->abs_origin ( ).z + 64.f;
 		
 		}

@@ -70,7 +70,7 @@ namespace ui {
 				this->text_val.pop_back ( );
 			}
 			else if ( this->text_val.length ( ) < 12 ) {
-				if ( key_pressed ( 0xBE ) ) {
+				if (this->input_type == text_type::floats && key_pressed ( 0xBE ) ) {
 					this->text_val += ".";
 					return;
 				}
@@ -84,10 +84,18 @@ namespace ui {
 			if ( key_pressed ( VK_RETURN ) ) {
 				auto parent = static_cast< slider * >( this->parrent );
 				try {
-					auto parsed = ::atof ( this->text_val.c_str ( ) );
+					if (this->input_type == text_type::floats) {
+						auto parsed = ::atof(this->text_val.c_str());
 
-					*(float*)parent->value = ( float) parsed;
+						*(float*)parent->value = (float)parsed;
+					}
+					else
+					{
+						auto parsed = std::atoi(this->text_val.c_str());
 
+						*(float*)parent->value = (int)parsed;
+						
+					}
 
 					//std::memmove ( parent->old_value, parent->value, sizeof ( parent->value ) );
 				}
@@ -112,14 +120,15 @@ namespace ui {
 			this->mins.x = this->maxs.x - 30;
 			this->mins.y = this->parrent->mins.y + 3;
 
-			auto s = (float) *( float * ) ( static_cast< slider * >( this->parrent )->value );
+				auto s = (float)*(float*)(static_cast<slider*>(this->parrent)->value);
+
+				std::stringstream stream;
+				if (s < 10.0f && this->input_type == text_type::floats)
+					stream << std::fixed << std::setprecision(1) << s;
+				else
+					stream << std::fixed << std::setprecision(0) << s;
+				this->text_val = stream.str();
 			
-			std::stringstream stream;
-			if (s < 10.0f )
-			stream << std::fixed << std::setprecision ( 1 ) << s;
-			else
-				stream << std::fixed << std::setprecision ( 0 ) << s;
-			this->text_val = stream.str ( );
 		}
 	
 	}

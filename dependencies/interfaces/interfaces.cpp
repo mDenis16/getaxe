@@ -24,7 +24,7 @@ iv_debug_overlay* interfaces::debug_overlay = nullptr;
 IDirect3DDevice9* interfaces::directx = nullptr;
 i_engine_trace* interfaces::trace_ray = nullptr;
 glow_manager_t* interfaces::glow_manager = nullptr;
-player_game_movement* interfaces::game_movement = nullptr;
+virtual_game_movement* interfaces::game_movement = nullptr;
 player_prediction* interfaces::prediction = nullptr;
 player_move_helper* interfaces::move_helper = nullptr;
 i_weapon_system* interfaces::weapon_system = nullptr;
@@ -32,9 +32,10 @@ i_hud_chat* interfaces::chat_element = nullptr;
 c_physics_api* interfaces::physics = nullptr;
 iv_engine_sound* interfaces::engine_sound = nullptr;
 IMemAlloc* interfaces::memalloc = nullptr;
+IMDLCache* interfaces::modelcache = nullptr;
 c_csplayer_resource* interfaces::player_resource = nullptr;
 i_view_render_beams* interfaces::render_beams = nullptr;
-void* interfaces::model_cache = nullptr;
+
 void* interfaces::file_system = nullptr;
 
 #pragma optimize( "", off )
@@ -94,7 +95,7 @@ bool interfaces::initialize() {
 
 		FETCH_INTERFACE(inputsystem, i_inputsytem, "InputSystemVersion001")
 
-		FETCH_INTERFACE(game_movement, player_game_movement, "GameMovement001")
+		//FETCH_INTERFACE(game_movement, player_game_movement, "GameMovement001")
 
 		FETCH_INTERFACE(prediction, player_prediction, "VClientPrediction001")
 
@@ -102,11 +103,10 @@ bool interfaces::initialize() {
 
 		FETCH_INTERFACE(trace_ray, i_engine_trace, "EngineTraceClient004")
 
-	    FETCH_INTERFACE(model_cache, void, "MDLCache004")
+	    FETCH_INTERFACE(modelcache, IMDLCache, "MDLCache004")
 
 
 		chat_element = hud_element<i_hud_chat>(("CHudChat"));
-
 
 
 
@@ -124,7 +124,7 @@ bool interfaces::initialize() {
 
 	glow_manager = (glow_manager_t*)(*(uintptr_t*)(utilities::pattern_scan("client.dll", sig_glow_manager) + 3));
 
-	move_helper = **(player_move_helper***)(utilities::pattern_scan("client.dll", sig_player_move_helper) + 2);
+	move_helper = **(player_move_helper***)(utilities::pattern_scan("client.dll", sig_player_move_helper) + 0x2);
 
 	weapon_system = *(i_weapon_system**)(utilities::pattern_scan("client.dll", sig_weapon_data) + 2);
 
@@ -135,6 +135,8 @@ bool interfaces::initialize() {
 	player_resource = **reinterpret_cast<c_csplayer_resource***>(utilities::pattern_scan(crypt_str("client.dll"), "8B 3D ? ? ? ? 85 FF 0F 84 ? ? ? ? 81 C7") + 0x2);
 
 	render_beams = *(i_view_render_beams**)(utilities::pattern_scan("client.dll", "B9 ?? ?? ?? ?? A1 ?? ?? ?? ?? FF 10 A1 ?? ?? ?? ?? B9") + 0x1);
+
+	game_movement = get_interface<virtual_game_movement, interface_type::index>("client.dll", "GameMovement001");
 
 
 	console::log("[setup] interfaces initialized!\n");

@@ -689,7 +689,7 @@ namespace visuals {
 						return false;
 					};
 
-					if ( fakeducking ( ) && player->flags ( ) & fl_onground && !animstate->m_hit_ground )
+					if ( fakeducking ( ) && player->flags ( ) & fl_onground && !animstate->m_landing )
 						flag = "fakeduck";
 
 
@@ -747,7 +747,7 @@ namespace visuals {
 					animationlayer * layer1 = &player->get_animoverlays ( ) [ 1 ];
 
 					// check if reload animation is going on.
-					if ( layer1->m_weight != 0.f && player->get_sequence_act ( layer1->m_sequence ) == 967 /* ACT_CSGO_RELOAD */ ) {
+					if ( layer1->flWeight != 0.f && player->get_sequence_act ( layer1->nSequence) == 967 /* ACT_CSGO_RELOAD */ ) {
 						flag = "RELOAD";
 						flag_object.color = ImColor ( 60, 180, 225, 255 );
 					}

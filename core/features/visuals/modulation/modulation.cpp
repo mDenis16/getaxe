@@ -21,7 +21,7 @@ namespace modulation {
 				}
 			}
 		}
-		else if ( local_pointer && local_pointer->is_alive ( ) && !interfaces::input->m_camera_in_third_person ) {
+		else if ( local_pointer && local_pointer->is_alive ( ) && !interfaces::input->m_camera_in_thirdperson ) {
 			if ( mdl.find ( "arms" ) != std::string::npos ) {
 				run_player_chams ( ecx, edx, ctx, state, info, custom_bone_to_world, skip_return, local_pointer, config.local_visual.chams [ ARMS ] );
 

@@ -166,6 +166,8 @@ namespace ui {
 
 
 			auto antiaim_sub_tab = new ui::sub_tab ( GET_STR("Anti-aim"), ICON_ANTIAIM, font_icons, 0.f, 20.f, aimbot_tab );
+			menu::antiaim::init(main_window, antiaim_sub_tab);
+
 			auto legitbot_sub_tab = new ui::sub_tab ( GET_STR("Legitbot"), ICON_LEGITBOT, font_icons, 0.f, 20.f, aimbot_tab );
 
 			menu::legitbot::init ( main_window, legitbot_sub_tab, weapons );
@@ -207,11 +209,11 @@ namespace ui {
 		auto misc_tab = new ui::tab ( GET_STR("Miscellaneus"), top_side, 13 );
 		{
 			auto movement_sub_tab = new ui::sub_tab ( GET_STR("Movement"), ICON_MOVEMENT, font_icons, 0.f, 20.f, misc_tab );
-		//	menu::movement_menu ( main_window, movement_sub_tab );
+		 	menu::movement_menu ( main_window, movement_sub_tab );
 
 
 			auto skins_sub_tab = new ui::sub_tab ( GET_STR("Skins"), ICON_SETTINGS, font_icons, 0.f, 20.f, misc_tab );
-			//menu::inventory_changer_menu ( main_window, skins_sub_tab );
+			menu::inventory_changer_menu ( main_window, skins_sub_tab );
 
 		}
 		auto settings_tab = new ui::tab (GET_STR("Settings"), top_side, 13 );
@@ -261,6 +263,7 @@ namespace ui {
 		static int last_type = 0;
 		if ( config.active_weapon != last_type ) {
 			menu::legitbot::init_values ( &config.weapon_type [ config.active_weapon ] );
+			menu::ragebot::init_values(&config.ragebot.rage_weapon_type[config.active_weapon]);
 			last_type = config.active_weapon;
 		}
 

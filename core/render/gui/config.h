@@ -121,6 +121,12 @@ enum FLAGS_LIST {
 	FLAGS_MAX
 };
 
+enum bunny_hop_type
+{
+	NONE,
+	PERFECT,
+	LEGIT
+};
 
 enum player_visual_type {
 	ENEMY,
@@ -159,7 +165,7 @@ enum chams_material {
 	CHAMS_MAX
 };
 
-enum removals {
+enum   removals {
 	REMOVALS_SCOPE,
 	REMOVALS_ZOOM,
 	REMOVALS_SMOKE,
@@ -170,6 +176,51 @@ enum removals {
 	REMOVALS_FOGS,
 	REMOVALS_MAX
 };
+enum   fakelags {
+	FAKELAG_STANDING,
+	FAKELGA_MOVING,
+	FAKELAG_INAIR,
+	FAKELAG_ONPEEK,
+	FAKELAG_ONSHOOT,
+	FAKELAG_ONLAND,
+	FAKELAG_MAXS
+};
+
+enum  BASE_YAW
+{
+	YAW_NONE,
+	BACKWARDS,
+	FREESTANDING,
+	AT_TARGET
+};
+
+enum  BASE_PITCH
+{
+	PITCH_NONE,
+	DOWN,
+	UP
+};
+enum  DESYNC_TYPE
+{
+	DESYNC_NORMAL,
+	LBY,
+	HYBRID
+};
+enum DESYNC_SIDE
+{
+	LEFT,
+	RIGHT,
+	AUTO
+};
+
+enum HITSCAN
+{
+	HITSCAN_HEAD,
+	HITSCAN_BODY,
+	HITSCAN_ARMS,
+	HITSCAN_FEETS
+};
+
 
 struct chams_visual {
 	ImColor color = ImColor( 255, 255, 255, 255);
@@ -433,38 +484,50 @@ struct world_visuals {
 };
 
 struct c_movement {
-	bool bhop = false;
-	config_manager::key_bind_item bhop_keybind;
+	int bunny_hop_type = 0;
+	config_manager::key_bind_item bunny_hop_type_keybind;
 
-	bool auto_strafe = false;
-	config_manager::key_bind_item auto_strafe_keybind;
+	float bunny_hop_hitchance = 0.f;
+	config_manager::key_bind_item bunny_hop_keybind;
 
-	bool wasd_strafe = false;
-	config_manager::key_bind_item wasd_strafe_keybind;
+	bool edge_jump = false;
+	config_manager::key_bind_item edge_jump_keybind;
 
-	bool a_strafe = false;
-	config_manager::key_bind_item a_strafe_keybind;
+	bool duck_jump = false;
+	config_manager::key_bind_item duck_jump_keybind;
+
+	bool jump_bug = false;
+	config_manager::key_bind_item jump_bug_keybind;
+
+
+	int strafe_mode_type = 0;
+	config_manager::key_bind_item strafe_mode_type_keybind;
+
+	int strafe_movement_type = 0;
+	config_manager::key_bind_item strafe_movement_type_keybind;
+
+	float strafe_hitchance = 0.f;
+	config_manager::key_bind_item strafe_hitchance_keybind;
+
+	float strafe_yaw_speed = 0.f;
+	config_manager::key_bind_item strafe_yaw_speed_keybind;
 
 	bool circle_strafe = false;
-	config_manager::key_bind_item circle_keybind;
+	config_manager::key_bind_item circle_strafe_keybind;
 
 	bool z_strafe = false;
-	config_manager::key_bind_item z_keybind;
-
-
-	float z_strafe_frequency = 1.f;
-	float z_strafer_distance = 1.f;
-
-	bool slow_walk = false;
-	config_manager::key_bind_item slow_walk_keybind;
-
-
-	bool air_duck = false;
-
+	config_manager::key_bind_item z_strafe_keybind;
 };
 struct weapon_settings {
 
-	
+	float shoot_delay = 0.f;
+	config_manager::key_bind_item  shoot_delay_keybind;
+
+	float aim_speed = 0.f;
+	config_manager::key_bind_item aim_speed_keybind;
+
+	float bezier_speed = 0.f;
+	config_manager::key_bind_item bezier_speed_keybind;
 
 	float minimum_fov = 8.f;
 	config_manager::key_bind_item minimum_fov_keybind;
@@ -475,6 +538,11 @@ struct weapon_settings {
 	float target_delay = 30.f;
 	config_manager::key_bind_item target_delay_keybind;
 
+	float recoil_control_x = 50.f;
+	config_manager::key_bind_item recoil_control_x_keybind;
+
+	float recoil_control_y = 50.f;
+	config_manager::key_bind_item recoil_control_y_keybind;
 
 	bool enabled = false;
 	config_manager::key_bind_item enable_keybind;
@@ -547,9 +615,18 @@ struct rage_weapon_settings {
 	config_manager::key_bind_item prority_hitbox_keybind;
 
 
+	bool accuracy_boost = false;
+	config_manager::key_bind_item accuracy_boost_keybind;
+
+
 	std::vector<int> hitscan;
 	config_manager::key_bind_item hitscan_keybind;
 	
+	float visible_min_dmg = 0.f;
+	config_manager::key_bind_item visible_min_dmg_keybind;
+
+	float autowall_min_dmg = 0.f;
+	config_manager::key_bind_item autowall_min_dmg_keybind;
 
 	float hitchance = 0.f;
 	config_manager::key_bind_item hitchance_keybind;
@@ -557,8 +634,17 @@ struct rage_weapon_settings {
 	bool safepoint_enable = false;
 	config_manager::key_bind_item safepoint_enable_keybind;
 
+	bool ignore_limbs_on_moving = false;
+	config_manager::key_bind_item  ignore_limbs_on_moving_keybind;
+
 	float safepoint_val = 0.f;
 	config_manager::key_bind_item safepoint_val_keybind;
+
+	float head_scale = 0.f;
+	config_manager::key_bind_item head_scale_keybind;
+
+	float point_scale = 0.f;
+	config_manager::key_bind_item point_scale_keybind;
 
 	bool lag_compensation = false;
 	config_manager::key_bind_item lag_compensation_keybind;
@@ -567,11 +653,69 @@ struct rage_weapon_settings {
 	config_manager::key_bind_item shared_resolver_keybind;
 
 };
-struct c_misc {
+struct cfg_misc {
 	c_movement movement;
 
 };
 
+struct cfg_fakelag
+{
+	float choke_limit = 0;
+	config_manager::key_bind_item choke_limit_keybind;
+	int mode = 0;
+	
+};
+struct cfg_ragebot
+{
+	bool enable = false;
+	config_manager::key_bind_item enable_keybind;
+
+	bool silent = false;
+	config_manager::key_bind_item silent_keybind;
+
+
+	bool autofire = false;
+	config_manager::key_bind_item autofire_keybind;
+
+	bool autoscope = false;
+	config_manager::key_bind_item autoscope_keybind;
+
+	rage_weapon_settings rage_weapon_groups[6];
+	rage_weapon_settings rage_weapon_type[30];
+
+	int weapon_mode = 0;
+};
+struct cfg_antiaim
+{
+	cfg_fakelag fakelag[FAKELAG_MAXS];
+	bool enable_fakelag = false;
+	config_manager::key_bind_item enable_fakelag_keybind;
+
+	int base_pitch = 0;
+	config_manager::key_bind_item base_pitch_keybind;
+
+	int base_yaw = 0;
+	config_manager::key_bind_item base_yaw_keybind;
+
+	int desync_mode = 0;
+	config_manager::key_bind_item desync_mode_keybind;
+
+	int desync_side = 0;
+	config_manager::key_bind_item desync_side_keybind;
+
+	float desync_ammount[3];
+	config_manager::key_bind_item desync_ammount_keybind[3];
+
+	bool enable_antiaim = false;
+	config_manager::key_bind_item enable_antiaim_keybind;
+
+	bool prevent_angle_storing = false;
+	config_manager::key_bind_item prevent_angle_storing_keybind;
+
+	bool enable_dodge = false;
+	config_manager::key_bind_item enable_dodge_keybind;
+
+};
 class c_config : public singleton< c_config > {
 public:
 	c_config ( ) {
@@ -588,11 +732,11 @@ public:
 		}
 
 
-		for (auto& weap : rage_weapon_groups) {
+		for (auto& weap : ragebot.rage_weapon_groups) {
 			weap.hitscan.resize(5);
 
 		}
-		for (auto& weap : rage_weapon_type) {
+		for (auto& weap : ragebot.rage_weapon_type) {
 			weap.hitscan.resize(5);
 		}
 
@@ -606,9 +750,8 @@ public:
 	int active_weapon;
 
 	player_visual player_visual [ 2 ];
+	cfg_ragebot ragebot;
 
-	rage_weapon_settings rage_weapon_groups[6];
-	rage_weapon_settings rage_weapon_type[30];
 
 
 	weapon_settings weapon_groups [ 6 ];
@@ -617,8 +760,12 @@ public:
 	player_visual_local local_visual;
 	weapon_visual weapons_visual;
 	projectiles_visual projectiles_visual;
-	c_misc misc;
-	
+	cfg_misc misc;
+	cfg_antiaim antiaim;
+	std::vector<std::string> base_yaw_list = { "none" , "backwards", "freestanding", "at target" };
+	std::vector<std::string> base_pitch_list = { "none", "up", "down" };
+	std::vector<std::string> desync_mode_list = { "none", "normal" , "lby", "hybrid" };
+	std::vector<std::string> desync_side_list = { "left" , "right", "auto" };
 
 
 	std::vector<std::string> flags_list = { "Money", "Armor", "Kit",  "Scoped", "Flashed", "Fakeduck", "Bomb", "Break LC", "Taser", "Hit", "Exploit", "Ping", "Hostage", "Defusing", "Reload", "Dormant", "Distance" };

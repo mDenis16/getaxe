@@ -40,7 +40,37 @@ using rad_euler = float[3];
 #define BONE_HAS_SAVEFRAME_POS          0x00200000    // Vector48
 #define BONE_HAS_SAVEFRAME_ROT64        0x00400000    // Quaternion64
 #define BONE_HAS_SAVEFRAME_ROT32        0x00800000    // Quaternion32
+template <typename T>
+struct bit_flag_t {
+	bit_flag_t() = default;
+	bit_flag_t(const T& value) { m_value = value; }
 
+	__forceinline bool has(const T& value) const { return m_value & value; }
+
+	__forceinline void add(const T& value) { m_value |= value; }
+
+	__forceinline void remove(const T& value) { m_value &= ~value; }
+
+	__forceinline void clear() { m_value = {}; }
+
+	__forceinline bool empty() const { return m_value == std::numeric_limits<T>::quiet_NaN(); }
+
+	__forceinline operator T() const { return m_value; }
+
+	__forceinline bit_flag_t<T>& operator=(const bit_flag_t<T>& value) {
+		m_value = value.m_value;
+
+		return *this;
+	}
+
+	__forceinline T& operator=(const T& value) {
+		m_value = value;
+
+		return m_value;
+	}
+
+	T m_value = {};
+};
 enum bone_flags {
 	bone_calculate_mask = 0x1f,
 	bone_physically_simulated = 0x01,
@@ -120,8 +150,8 @@ struct studio_bone_t {
 	int bone_controller[6];
 
 	vec3_t pos;
-	quaternion quat;
-	rad_euler rotation;
+	vec4_t quat;
+	qangle_t rotation;
 
 	vec3_t pos_scale;
 	vec3_t rot_scale;
@@ -157,7 +187,7 @@ struct studio_box_t {
 	vec3_t mins;
 	vec3_t maxs;
 	int name_index;
-	int pad01[3];
+	vec3_t	rotation;
 	float radius;
 	int pad02[4];
 };
@@ -174,7 +204,79 @@ struct studio_hitbox_set_t {
 		return (studio_box_t*)(((unsigned char*)this) + hitbox_index) + i;
 	}
 };
+struct mstudioposeparamdesc_t {
+	int						m_name_index;
+	bit_flag_t<uint32_t>	m_flags;
+	float					m_start;
+	float					m_end;
+	float					m_loop;
 
+	__forceinline const char* get_name() const { return reinterpret_cast<const char*>(this) + m_name_index; }
+};
+
+struct mstudioactivitymodifier_t {
+	int					m_name_index;
+
+	__forceinline const char* get_name() const { return m_name_index ? reinterpret_cast<const char*>(reinterpret_cast<const uint8_t*>(this) + m_name_index) : nullptr; }
+};
+struct anim_tag_t {
+	int		m_index;
+	float	m_first_cycle;
+	int		m_tag_string_offset_from_this;
+
+	__forceinline const char* get_name() { return reinterpret_cast<const char*>(this) + m_tag_string_offset_from_this; }
+};
+struct mstudioseqdesc_t {
+	char					pad0[4];
+	int						m_label_index;
+	int						m_activity_name_index;
+	bit_flag_t<uint32_t>	m_flags;
+	int						m_activity;
+	int						m_activity_weight;
+	int						m_events_count;
+	int						m_event_index;
+	vec3_t					m_obb_min;
+	vec3_t					m_obb_max;
+	int						m_blends_count;
+	int						m_anim_index;
+	int						m_movement_index;
+	int						m_group_size[2];
+	int						m_param_index[2];
+	float					m_param_start[2];
+	float					m_param_end[2];
+	int						m_param_parent;
+	float					m_fade_in_time;
+	float					m_fade_out_time;
+	int						m_local_entry_node;
+	int						m_local_exit_node;
+	bit_flag_t<uint32_t>	m_node_flags;
+	float					m_entry_phase;
+	float					m_exit_phase;
+	float					m_last_frame;
+	int						m_next_seq;
+	int						m_pose;
+	int						m_ik_rules_count;
+	int						m_auto_layers_count;
+	int						m_auto_layer_index;
+	int						m_weight_list_index;
+	int						m_pose_key_index;
+	int						m_ik_locks_count;
+	int						m_ik_lock_index;
+	int						m_key_value_index;
+	int						m_key_value_size;
+	int						m_cycle_pose_index;
+	int						m_activity_modifier_index;
+	int						m_activity_modifiers_count;
+	int						m_anim_tag_index;
+	int						m_anim_tags_count;
+	char					pad1[12];
+
+	__forceinline const anim_tag_t* get_anim_tag(int i) const { return reinterpret_cast<const anim_tag_t*>(reinterpret_cast<const uint8_t*>(this) + m_anim_tag_index) + i; }
+
+	__forceinline const mstudioactivitymodifier_t* get_activity_modifier(int i) const {
+		return m_activity_modifier_index != 0 ? reinterpret_cast<const mstudioactivitymodifier_t*>(reinterpret_cast<const uint8_t*>(this) + m_activity_modifier_index) + i : nullptr;
+	}
+};
 class studio_hdr_t {
 public:
 	int id;

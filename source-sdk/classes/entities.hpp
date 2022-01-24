@@ -7,7 +7,7 @@
 
 #include "../../dependencies/utilities/netvars/netvars.hpp"
 #include "../../core/features/inventory_changer/CEconItem.h"
-
+#include "../../source-sdk/classes/ehandle.h"
 namespace csgo {
 	extern player_t * local_player;
 
@@ -199,7 +199,7 @@ public:
 	i_client_renderable * get_renderable_virtual ( void ) {
 		return ( i_client_renderable * ) ( ( uintptr_t ) this + 0x4 );
 	}
-
+	
 	bool IsStandable ( )  {
 		if ( this->collideable()->GetSolidFlags ( ) & FSOLID_NOT_STANDABLE )
 			return false;
@@ -348,17 +348,25 @@ public:
 		return ( *( original_fn ** ) this ) [ 75 ] ( this, index );
 	}
 
-	void net_pre_data_update ( int update_type ) {
+	void  net_pre_data_update ( int update_type ) {
 		using original_fn = void ( __thiscall * )( void *, int );
 		return ( *( original_fn ** ) networkable ( ) ) [ 6 ] ( networkable ( ), update_type );
 	}
 
+	void post_data_update(int update_type) {
+		using original_fn = void(__thiscall*)(void*, int);
+		return (*(original_fn**)networkable())[7](networkable(), update_type);
+	}
+	void on_data_changed(int update_type) {
+		using original_fn = void(__thiscall*)(void*, int);
+		return (*(original_fn**)networkable())[5](networkable(), update_type);
+	}
 	void net_release ( ) {
 		using original_fn = void ( __thiscall * )( void * );
 		return ( *( original_fn ** ) networkable ( ) ) [ 1 ] ( networkable ( ) );
 	}
 	void set_local_viewangles ( vec3_t & angle ) {
-		( ( void ( __thiscall * )( void *, vec3_t & ) ) get_vfunc ( this, 372 ) )( this, angle );
+		( ( void ( __thiscall * )( void *, vec3_t & ) ) get_vfunc ( this, 373) )( this, angle );
 	}
 	int net_set_destroyed_on_recreate_entities ( ) {
 		using original_fn = int ( __thiscall * )( void * );
@@ -374,7 +382,7 @@ public:
 
 	NETVAR ( "DT_CSPlayer", "m_fFlags", flags, int );
 	OFFSET ( bool, dormant, 0xED );
-	OFFSET ( int, get_take_damage, 0x27C )
+	OFFSET(int, get_take_damage, 0x27C);
 	OFFSET ( vec3_t, old_origin, 0x3A8 );
 	NETVAR ( "DT_BaseEntity", "m_hOwnerEntity", owner_handle, unsigned long );
 	NETVAR ( "DT_BaseEntity", "m_hOwner", original_owner_handle, unsigned long );
@@ -439,7 +447,7 @@ public:
 	char pad_0x01C4 [ 0x27C ]; ///0x01C4*/
 
 	int GetEquippedPosition ( ) {
-		return *reinterpret_cast< int * >( ( uintptr_t ) this + 0x28C );
+		return *reinterpret_cast< int * >( ( uintptr_t ) this + 0x268);
 	}
 }; ///Size=0x0440
 class C_EconItemView {
@@ -459,14 +467,25 @@ public:
 	c_utl_vector<IRefCounted *> & m_VisualsDataProcessors ( );
 
 
-	
+	void Update(  )
+	{
+		//using fn = void(__vectorcall*)(void*, void*, float, float, float, void*);
+	//	static auto memory_address = reinterpret_cast<fn>(utilities::pattern_scan(("client.dll"), "55 8B EC 83 E4 F8 83 EC 18 56 57 8B F9 F3 0F 11 54 24"));
+		
+	}
 
 	C_EconItemDefinition * GetStaticData ( ) {
 		static auto fnGetStaticData
 			= reinterpret_cast< C_EconItemDefinition * ( __thiscall * )( void * ) >(
-				utilities::pattern_scan (  ( "client.dll" ), "55 8B EC 51 53 8B D9 8B ? ? ? ? ? 56 57 8B ? ? ? ? ? 85 FF 74 16" )
+				utilities::pattern_scan (  ( "client.dll" ), "55 8B EC 51 53 8B D9 8B 0D ? ? ? ? 56 57 8B B9" )
 				);
-		return fnGetStaticData ( this );
+
+
+		//static auto fnGetStaticData2 = reinterpret_cast<C_EconItemDefinition * (__thiscall*)(void*)>(utilities::pattern_scan(("client.dll"), "E8 ? ? ? ? 8B 75 F4 8D 4E FF") + 0x1);
+		static auto fnGetStaticData2 = reinterpret_cast<C_EconItemDefinition * (__thiscall*)(void*)>(utilities::pattern_scan_rel_function("client.dll", "E8 ? ? ? ? 8B 75 F4 8D 4E FF", 1));
+		std::cout << "fnGetStaticData2 " << fnGetStaticData2 << " fnGetStaticData " << fnGetStaticData << std::endl;
+
+		return fnGetStaticData2( this );
 	}
 	template <typename T>
 	static constexpr auto relativeToAbsolute ( uintptr_t address ) noexcept {
@@ -493,9 +512,18 @@ public:
 	NETVAR ( "DT_BaseViewModel", "m_hWeapon", m_hweapon, int );
 	NETVAR ( "DT_BaseViewModel", "m_hOwner", m_howner, int );
 };
-
+class econ_item_t {
+public:
+	c_utl_vector<IRefCounted*>& m_CustomMaterials() {
+		return *reinterpret_cast<c_utl_vector<IRefCounted*>*>(uintptr_t(this) + 0x14);
+	}
+	c_utl_vector<IRefCounted*>& m_VisualsDataProcessors() {
+		return *reinterpret_cast<c_utl_vector<IRefCounted*>*>(uintptr_t(this) + 0x230);
+	}
+};
 class weapon_t : public entity_t {
 public:
+	NETVAR("DT_BaseCombatWeapon", "m_Item", m_Item, econ_item_t) // <---- this line
 	NETVAR ( "DT_BaseCombatWeapon", "m_flNextPrimaryAttack", next_primary_attack, float );
 	NETVAR ( "DT_BaseCombatWeapon", "m_flNextSecondaryAttack", next_secondary_attack, float );
 	NETVAR ( "DT_BaseCombatWeapon", "m_iClip1", clip1_count, int );
@@ -509,12 +537,38 @@ public:
 	NETVAR ( "DT_WeaponCSBaseGun", "m_zoomLevel", zoom_level, float );
 	NETVAR ( "DT_WeaponCSBase", "m_fLastShotTime", m_fLastShotTime, float );
 	NETVAR ( "DT_BaseAttributableItem", "m_iItemDefinitionIndex", item_definition_index, short );
+	NETVAR("DT_BaseAttributableItem", "m_iAccountID", m_iAccountID, int);
+	NETVAR("DT_BaseAttributableItem", "m_nFallbackPaintKit", m_nFallbackPaintKit, int);
+	
+	NETVAR("DT_BaseAttributableItem", "m_iItemIDHigh", itemIDHigh, std::uint32_t);
+	NETVAR("DT_BaseAttributableItem", "m_iItemIDLow", itemIDLow, std::uint32_t);
 	NETVAR ( "DT_BaseCombatWeapon", "m_iEntityQuality", entity_quality, int );
+
 	NETVAR ( "CWeaponCSBase", "m_flPostponeFireReadyTime", get_postpone_fire_ready_time, float );
 	NETVAR ( "CWeaponCSBase", "m_fLastShotTime", last_shot_time, float );
 	NETVAR ( "DT_BaseCSGrenade", "m_fThrowTime", throw_time, float );
 	NETVAR ( "DT_BaseCSGrenade", "m_bPinPulled", pin_pulled, bool );
 	NETVAR ( "CBaseEntity", "m_hOwnerEntity", h_prev_owner, uintptr_t );
+	NETVAR(  "CBaseCombatWeapon", "m_hWeaponWorldModel", m_hWeaponWorldModel, CHandle <weapon_t>);
+	//INIT_XOREDNETVAR_SPECIFIC(m_CustomMaterials, g_netvars.get(HASH("DT_BaseCombatWeapon"), HASH("m_Item")) + 0x14);
+	using ref_vec_t = c_utl_vector< IRefCounted* >;
+
+	template< typename t >
+	__forceinline t& get(size_t offset) {
+		return *(t*)((uintptr_t)this + offset);
+	}
+
+	c_utl_vector<IRefCounted*>& m_CustomMaterials() {
+		static auto offset = *reinterpret_cast<uintptr_t*>(utilities::pattern_scan("client.dll", "83 BE ? ? ? ? ? 7F 67") + 2) - 12;
+		return *reinterpret_cast<c_utl_vector<IRefCounted*>*>(uintptr_t(this) + offset);
+	}
+
+	bool& m_bCustomMaterialInitialized() {
+		
+		return *reinterpret_cast<bool*>(uintptr_t(this) + 0x32DD);
+	}
+
+
 
 	bool is_non_aim ( ) {
 		if ( !this ) //-V704
@@ -804,6 +858,12 @@ public:
 		return (UINT*)((uintptr_t)this + (netvar_manager::get_net_var(fnv::hash("DT_CSPlayer"), fnv::hash("m_hMyWeapons"))));
 	}*/
 
+	c_studio_hdr* m_pStudioHdr()
+	{
+		static auto studio_hdr = utilities::pattern_scan(crypt_str("client.dll"), crypt_str("8B B7 ?? ?? ?? ?? 89 74 24 20"));
+		return *(c_studio_hdr**)((uintptr_t)this + *(uintptr_t*)(studio_hdr + 0x2) + 0x4);
+	}
+
 
 
 	NETVAR ( "DT_CSPlayer", "m_ArmorValue", armor, int );
@@ -841,6 +901,11 @@ public:
 		static auto m_CachedBoneData = *( DWORD * ) ( utilities::pattern_scan (  ( "client.dll" ),  ( "FF B7 ?? ?? ?? ?? 52" ) ) + 0x2 ) + 0x4;
 		return *( c_utl_vector <matrix3x4_t> * )( uintptr_t ( this ) + m_CachedBoneData );
 	}
+
+	c_utl_vector <matrix3x4a_t>& m_CachedBoneDataAligned() {
+		static auto m_CachedBoneData = *(DWORD*)(utilities::pattern_scan(("client.dll"), ("FF B7 ?? ?? ?? ?? 52")) + 0x2) + 0x4;
+		return *(c_utl_vector <matrix3x4a_t> *)(uintptr_t(this) + m_CachedBoneData);
+	}
 	POFFSET ( get_bone_accessor, CBoneAccessor, 0x26A8 )
 	
 
@@ -853,22 +918,35 @@ public:
 
 	NETVAR ( "DT_BaseAnimating", "m_flCycle",  get_cycle, float );
 	//NETVAR ( "DT_BaseAnimating", "m_flPoseParameter", m_flPoseParameter, float * );
-	 std::array<float, 24> & m_flPoseParameter ( ) {
-		 static int _m_flPoseParameter = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseAnimating" ), fnv::hash ( "m_flPoseParameter" ) );
-		 return *( std::array<float, 24> * )( uintptr_t ( this ) + _m_flPoseParameter );
-	 }
+	
 	 bool & get_clientside_animation ( ) {
 		 static auto offset = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseAnimating" ), fnv::hash ( "m_bClientSideAnimation" ) );
 		 return *reinterpret_cast< bool * >( uintptr_t ( this ) + offset );
 	 }
 
-	
-	 std::array<animationlayer, 13> anim_layers ( ) {
-		return  *( std::array<animationlayer, 13> * )( uintptr_t ( this ) + 0x2980 );
+	 CBoneAccessor& m_BoneAccessor()
+	 {
+		 static auto m_nForceBone = netvar_manager::get_net_var(fnv::hash("CBaseAnimating"), fnv::hash("m_nForceBone"));
+		 static auto BoneAccessor = m_nForceBone + 0x1C;
+
+		 return *(CBoneAccessor*)((uintptr_t)this + BoneAccessor);
 	 }
+	 std::array<float, 24> m_flPoseParameter() {
+		 static auto _m_flPoseParameter = netvar_manager::get_net_var(fnv::hash("DT_BaseAnimating"), fnv::hash("m_flPoseParameter"));
+		 return *(std::array<float, 24> *)(uintptr_t(this) + _m_flPoseParameter);
+	 }
+	 std::array<animationlayer, 13> anim_layers ( ) {
+		return  *( std::array<animationlayer, 13> * )( uintptr_t ( this ) + 0x2990);
+	 }
+	 animationlayer* get_animlayers()
+	 {
+		 return *(animationlayer**)((DWORD)this + 0x2990);
+	 }
+
 	animationlayer * get_animoverlays ( ) {
-		return *( animationlayer ** ) ( ( uintptr_t ) this + 0x2980 );
+		return *( animationlayer ** ) ( ( uintptr_t ) this + 0x2990);
 	}
+	
 	float * posparams ( ) {
 		static int _m_flPoseParameter = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseAnimating" ), fnv::hash ( "m_flPoseParameter" ) );
 		return *( float ** ) ( ( uintptr_t ) this + _m_flPoseParameter );
@@ -880,14 +958,7 @@ public:
 		return *( int * ) ( ( DWORD ) this + 0x298C );
 	}
 
-	void select_item ( const char * string, int sub_type = 0 ) {
-		static auto select_item_fn = reinterpret_cast< void ( __thiscall * )( void *, const char *, int ) >( utilities::pattern_scan ( "client.dll", "55 8B EC 56 8B F1 ? ? ? 85 C9 74 71 8B 06" ) );
-		select_item_fn ( this, string, sub_type );
-	}
-
-
-
-
+	
 	weapon_t * active_weapon ( ) {
 		static auto constexpr table_hash = fnv::hash("DT_CSPlayer");
 		static auto constexpr prop_hash = fnv::hash("m_hActiveWeapon");
@@ -915,8 +986,8 @@ public:
 
 
 		static auto lookup_bone_fn = ( int ( __thiscall * )( void *, const char * ) ) utilities::pattern_scan ( "client.dll", "555 8B EC 53 56 8B F1 57 83 BE ?? ?? ?? ?? ?? 75 14" );
-		if ( animstate->m_hit_ground || animstate->m_duck_amount != 0.f ) {
-			auto base_entity = animstate->m_entity;
+		if ( animstate->m_landing || animstate->m_duck_amount != 0.f ) {
+			auto base_entity = animstate->m_player;
 
 			auto bone_pos = reinterpret_cast< player_t * >( base_entity )->get_bone_position ( 8 );
 
@@ -998,7 +1069,7 @@ public:
 		return *( bool * ) ( ( uintptr_t ) this + use_new_animation_state_fn );
 	}
 
-
+	
 	inline bool is_enemy ( void ) {
 		if ( !csgo::local_player )
 			csgo::local_player = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
@@ -1050,7 +1121,7 @@ public:
 
 	}
 	anim_state * get_anim_state ( ) {
-		return *reinterpret_cast< anim_state ** >( this + 0x3914 );
+		return *reinterpret_cast< anim_state ** >( this + 0x9960 ); 
 	}
 	void update_state ( anim_state * state, vec3_t ang ) {
 		if ( !state )
@@ -1275,6 +1346,7 @@ public:
 
 		return *( uint32_t * ) ( ( uintptr_t ) this + most_recent_model_bone_counter );
 	}
+
 	float & m_flLastBoneSetupTime ( ) {
 		static auto invalidate_bone_cache = utilities::pattern_scan (  ( "client.dll" ),  ( "80 3D ?? ?? ?? ?? ?? 74 16 A1 ?? ?? ?? ?? 48 C7 81" ) );
 		static auto last_bone_setup_time = *( uintptr_t * ) ( invalidate_bone_cache + 0x11 );
@@ -1352,34 +1424,27 @@ public:
 
 
 	}
-	virtual_fn ( pre_think ( void ), 318, void ( __thiscall * )( void * ) ); // 55 8B EC 83 E4 F8 51 56 8B F1 8B 06
+	virtual_fn ( pre_think ( void ), 318, void ( __thiscall * )( void * ) ); // 55 8B EC 83 E4 F8 51 56 8B F1 8B 06 //636
 	virtual_fn ( think ( void ), 139, void ( __thiscall * )( void * ) ); // 8B C1 8B 50 40
 	bool physics_run_think ( int index ) {
-		static auto physics_run_think_fn = reinterpret_cast< bool ( __thiscall * )( void *, int ) >( utilities::pattern_scan ( "client.dll", "E8 ? ? ? ? 84 C0 74 0A 8B 06 8B" ) );
+		static auto physics_run_think_fn = reinterpret_cast< bool ( __thiscall * )( void *, int ) >( utilities::pattern_scan ( "client.dll", "55 8B EC 83 EC 10 53 56 57 8B F9 8B 87 ? ? ? ? C1 E8 16" ) );
 		return physics_run_think_fn ( this, index );
 	}
-
+	void select_item(const char* string, int sub_type = 0) {
+		static auto select_item_fn = reinterpret_cast<void(__thiscall*)(void*, const char*, int)>(utilities::pattern_scan("client.dll", "55 8B EC 53 8B 5D 08 57 8B F9 85 DB 74 7B"));
+		select_item_fn(this, string, sub_type);
+	}
 
 	vec3_t & abs_origin ( ) {
 		using original_fn = vec3_t & ( __thiscall * )( void * );
 		return ( *( original_fn ** ) this ) [ 10 ] ( this );
-	}
+		}
 	vec3_t & abs_angles ( ) {
 		using original_fn = vec3_t & ( __thiscall * )( void * );
 		return ( *( original_fn ** ) this ) [ 11 ] ( this );;
 	}
 
-	void BuildTransformations ( c_studio_hdr * hdr, vec3_t * pos, quaternion_t * q, const matrix3x4_t & transform, int mask, uint8_t * computed ) {
-		using BuildTransformations_t = void ( __thiscall * )( decltype( this ), c_studio_hdr *, vec3_t *, quaternion_t *, matrix3x4_t const &, int, uint8_t * );
 
-		return utilities::get_virtual_function< BuildTransformations_t > ( this, 189 )( this, hdr, pos, q, transform, mask, computed );
-	}
-
-	void StandardBlendingRules ( c_studio_hdr * hdr, vec3_t * pos, quaternion_t * q, float time, int mask ) {
-		using StandardBlendingRules_t = void ( __thiscall * )( decltype( this ), c_studio_hdr *, vec3_t *, quaternion_t *, float, int );
-
-		return utilities::get_virtual_function< StandardBlendingRules_t > ( this, 205 )( this, hdr, pos, q, time, mask );
-	}
 
 	int move_type ( ) {
 		static int type = netvar_manager::get_net_var ( fnv::hash ( "DT_BaseEntity" ), fnv::hash ( "m_nRenderMode" ) ) + 1;

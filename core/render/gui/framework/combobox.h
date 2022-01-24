@@ -8,6 +8,7 @@ namespace ui {
 		float maximumContentSize = 0.f;
 		float click_time = 0.f;
 		SecureString* title;
+		ImVec2 title_position;
 		config_manager::key_bind_item * key_bind_controller = nullptr;
 		ImVec2 bb_min;
 		bool key_bind_open = false;

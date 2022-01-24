@@ -24,12 +24,14 @@ namespace local_player {
 		bool pressing_move = false;
 		vec3_t last_lby_angle = vec3_t ( );
 		vec3_t orig_viewangle = vec3_t ( );
+		vec3_t lastViewangle = vec3_t();
 		vec3_t eye_position = vec3_t ( );
 		vec3_t head_position = vec3_t ( );
 		vec3_t velocity = vec3_t ( );
 		matrix3x4a_t left_matrix [ 128 ];
 		matrix3x4a_t right_matrix [ 128 ];
 
+		int lastFlags = 0;
 		vec3_t strafe_angles = vec3_t ( );
 
 		bool init_local_anim = false;

@@ -419,7 +419,7 @@
 	
 	
 	void c_legitbot::draw_debug ( ImDrawList * render ) {
-
+		return;
 		
 			if ( local_pointer && local_pointer->is_alive ( ) ) {
 				vec3_t view_angles, forward;

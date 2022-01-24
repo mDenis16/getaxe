@@ -44,8 +44,8 @@ namespace patterns_manager
 
 		found_pattern -= (std::uint32_t)module_handle;
 
-		auto tempmod = std::string{ _module };
-		auto temppat = std::string{ _pattern };
+		/*auto tempmod = std::string{ _module };
+		auto temppat = std::string{ _pattern };*/
 
 
 	//	SERVER_PATTERN_LIST[hash] = PatternServer{ tempmod, temppat, found_pattern };

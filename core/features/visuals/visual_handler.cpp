@@ -43,7 +43,7 @@ namespace visuals {
 
 		mtx.lock ( );
 
-		std::cout << "on_entity_created " << std::endl;
+		//std::cout << "on_entity_created " << std::endl;
 
 		if ( client_class->class_id == CCSPlayer ) {
 
@@ -99,7 +99,7 @@ namespace visuals {
 
 		entity_t * entity = reinterpret_cast< entity_t * > ( ent );
 
-		std::cout << "on_entity_deleted " << std::endl;
+		//std::cout << "on_entity_deleted " << std::endl;
 
 		int entity_index = entity->index ( );
 

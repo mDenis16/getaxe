@@ -115,10 +115,10 @@ namespace ui {
 
 	void inventory_changer::on_start() {
 		std::ifstream in("D:\\repos\\mDenis16\\getaxe-menu-framework\\Release\\skins.json"); /*this needs to be streamed from main network*/
-		std::ifstream weapons_stream("D:\\SteamLibrary\\steamapps\\common\\Counter-Strike Global Offensive\\csgo\\scripts\\items\\csgo_weaponid_dumper-master\\Debug\\weapons.json");
+		std::ifstream weapons_stream("D:\\repos\\mDenis16\\getaxe-menu-framework\\Release\\weapons.json");
 
 		archive = new c_vpk_archive();
-		static_cast<c_vpk_archive*>(archive)->load("E:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive/csgo/pak01_dir.vpk");
+		static_cast<c_vpk_archive*>(archive)->load("D:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive/csgo/pak01_dir.vpk");
 
 		nlohmann::json json_weapons;
 		weapons_stream >> json_weapons;
@@ -182,9 +182,7 @@ namespace ui {
 
 		//auto LocalInventory = g_CSInventoryManager->GetLocalPlayerInventory ( );
 
-		static int itm_id = 500;
-		itm_id++;
-
+	
 		auto Item = g_CSInventoryManager->CreateEconItem();
 
 		auto LocalInventory = *reinterpret_cast<CPlayerInventory**>(g_CSInventoryManager + local_inventory_offset);
@@ -192,11 +190,11 @@ namespace ui {
 
 		*Item->GetAccountID() = LocalInventory->GetSteamID();
 		*Item->GetDefIndex() = pkit->weapon_id;
-		*Item->GetItemID() = itm_id;
+		*Item->GetItemID() = 3000 + interfaces::globals->tick_count;
 		*Item->GetInventory() = 1;
 		*Item->GetFlags() = 0;
 		*Item->GetOriginalID() = 0;
-		//Item->AddSticker ( 0, 4, 0, 1, 1 );
+		Item->AddSticker ( 0, 4, 0, 1, 1 );
 		Item->SetStatTrak(150);
 		Item->SetPaintKit(pkit->id);
 		Item->SetPaintSeed(0);

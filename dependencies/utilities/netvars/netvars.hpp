@@ -48,6 +48,12 @@ template <typename T> T get_vfunc( void* v_table, const int i_index ) { return (
 
 #define  Assert( _exp )										((void)0)
 
+struct stored_data
+{
+    recv_prop* prop_ptr;
+    std::uint32_t class_relative_offset;
+};
+
 // table, prop, func_name, type
 #define NETVAR2(type, func_name, table, prop ) \
 	type& func_name( ) { \
@@ -93,6 +99,18 @@ template <typename T> T get_vfunc( void* v_table, const int i_index ) { return (
       return reinterpret_cast< type* >( uintptr_t( this ) + offset ); \
     }
 
+#define NETPROP(table, prop, func_name) \
+static auto func_name() ->  RecvProp* \
+{ \
+	static uintptr_t offset = 0; \
+    static constexpr auto table_hash = fnv::hash( table ); \
+    static constexpr auto prop_hash = fnv::hash( prop ); \
+	static recv_prop* prop_ptr; \
+	if(!prop_ptr) prop_ptr = netvar_manager::get_prop(table_hash, prop_hash); \
+	return prop_ptr; \
+}
+
+
 #define OFFSET(type, var, offset) \
 	type& var() { \
 		return *(type*)(uintptr_t(this) + offset); \
@@ -112,4 +130,35 @@ template <typename T> T get_vfunc( void* v_table, const int i_index ) { return (
 #define FUNC(func, sig, offset) auto func { return reinterpret_cast< sig >( offset ) FUNCARGS
 namespace netvar_manager {
 	uintptr_t get_net_var(uint32_t table, uint32_t prop);
+	recv_prop* get_prop(uint32_t table, uint32_t prop);
 }
+
+class recv_prop_hook
+{
+public:
+	recv_prop_hook(recv_prop* prop, const recv_var_proxy_fn proxy_fn) :
+		m_property(prop),
+		m_original_proxy_fn(prop->proxy_fn)
+	{
+		set_proxy_function(proxy_fn);
+	}
+
+	~recv_prop_hook()
+	{
+		m_property->proxy_fn = m_original_proxy_fn;
+	}
+
+	auto get_original_function() const -> recv_var_proxy_fn
+	{
+		return m_original_proxy_fn;
+	}
+
+	auto set_proxy_function(const recv_var_proxy_fn proxy_fn) const -> void
+	{
+		m_property->proxy_fn = proxy_fn;
+	}
+
+private:
+	recv_prop* m_property;
+	recv_var_proxy_fn m_original_proxy_fn;
+};

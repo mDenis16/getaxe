@@ -87,6 +87,8 @@ void c_legitbot::weapon_change ( ) {
 			config.active_category = weapon_category ( localdata.active_weapon );
 
 			ui::menu::legitbot::init_values ( config.weapon_mode > 0 ? &config.weapon_type [ config.active_weapon ] : &config.weapon_groups [ config.active_category ] );
+			ui::menu::ragebot::init_values(config.ragebot.weapon_mode > 0 ? &config.ragebot.rage_weapon_type[config.active_weapon] : &config.ragebot.rage_weapon_groups[config.active_category]);
+
 
 			last_weapon = localdata.active_weapon;
 		}

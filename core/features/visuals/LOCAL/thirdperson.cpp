@@ -22,9 +22,9 @@ void visuals::thirdperson ( ) {
 		oldVecAngles = vecAngles;
 	float ideal_distance = config.local_visual.thirdperson_distance;
 
-	interfaces::input->m_camera_in_third_person = config.local_visual.thirdperson;
+	interfaces::input->m_camera_in_thirdperson = config.local_visual.thirdperson;
 
-	if ( interfaces::input->m_camera_in_third_person && local_player::m_data.pointer->health ( ) > 0 ) {
+	if ( interfaces::input->m_camera_in_thirdperson && local_player::m_data.pointer->health ( ) > 0 ) {
 
 		vec3_t inverse_angles = vecAngles;
 
