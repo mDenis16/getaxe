@@ -153,6 +153,8 @@
     <ClCompile Include="core\hooks\csplayer\do_extra_bone_processing.cpp" />
     <ClCompile Include="core\features\antiaim\fakelag.cpp" />
     <ClCompile Include="core\hooks\cbaseanimation\estimate_abs_velocity.cpp" />
+    <ClCompile Include="core\features\antiaim\antiaim.cpp" />
+    <ClCompile Include="core\hooks\csplayer\should_interpolate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\features.hpp" />
@@ -316,6 +318,7 @@
     <ClInclude Include="source-sdk\base_animating\c_setup_bones.h" />
     <ClInclude Include="source-sdk\classes\handle_entity.hpp" />
     <ClInclude Include="core\features\antiaim\fakelag.h" />
+    <ClInclude Include="core\features\antiaim\antiaim.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="imgui">

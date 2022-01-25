@@ -84,7 +84,7 @@ namespace hooks {
 		CREATE_HOOK ( get_virtual ( interfaces::clientmode, 44 ), &callback::post_screen_space_fx );
 		CREATE_HOOK ( get_virtual ( sbf, 13 ), &callback::setup_bones );
 		CREATE_HOOK ( nullptr, &callback::accumulate_layers );
-		CREATE_HOOK ( nullptr /* FETCH_PATTERN ( "client.dll", "55 8B EC 51 53 8B 5D 08 56 8B F1 57 85" )*/, &callback::check_for_sequence_change );
+		CREATE_HOOK (  (void*)FETCH_PATTERN ( "client.dll", "55 8B EC 51 53 8B 5D 08 ? ? ? 57 85 DB 0F 84" ), &callback::check_for_sequence_change );
 		CREATE_HOOK ( (void*)FETCH_PATTERN ( "client.dll", "55 8B EC 83 E4 F0 81 EC ? ? ? ? 56 57 8B F9 8B 0D ? ? ? ? 89 7C 24 28" ), &callback::build_transformations );//55 8B EC 83 E4 F0 81 EC ? ? ? ? 56 57 8B F9 8B 0D ? ? ? ? 89 7C 24 28 8B 81 ? ? ? ? 89 44 24 3C 85 C0 74 2C
 		CREATE_HOOK ((void*)FETCH_PATTERN ( "client.dll", "57 8B F9 8B 07 8B 80 ? ? ? ? FF D0 84 C0 75 02 5F C3" ), &callback::should_skip_animation_frame );
 		CREATE_HOOK ( nullptr, &callback::calculate_view );//aici e cretane
@@ -109,6 +109,8 @@ namespace hooks {
 		CREATE_HOOK ((void*)FETCH_PATTERN("client.dll", "55 8B EC 83 EC 7C 8B 0D ? ? ? ?"), &callback::physics_simulate );
 		CREATE_HOOK(get_virtual(pt, 198), &callback::do_extra_bone_processing);
 		CREATE_HOOK(get_virtual(pt, 145), &callback::estimate_abs_velocity);
+		CREATE_HOOK(get_virtual(pt, 179), &callback::should_interpolate);
+
 
 		wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( csgo::window, GWL_WNDPROC, ( LONG ) callback::wnd_proc );
 	}

@@ -40,15 +40,20 @@ namespace hooks::callback {
 
 
 
+		antiaim->run(cmd);
 		fakelag->end_run(cmd, frame_pointer);
 
 
 		
 		localdata.lastFlags = local_pointer->flags();
 
-		if (fakelag->b_send_this_tick)
-			anim_manager.velocities[local_pointer->index()] = local_pointer->velocity();
+		cmd->viewangles.angle_normalize();
+		cmd->viewangles.angle_clamp();
 
+		if (fakelag->b_send_this_tick) {
+			anim_manager.velocities[local_pointer->index()] = local_pointer->velocity();
+			localdata.antiaim_yaw = cmd->viewangles.y;
+		}
 		local_player::end_tick(cmd);
 
 
@@ -57,5 +62,7 @@ namespace hooks::callback {
 		/*code bellow*/
 
 
+		return false;
 	}
+	
 }

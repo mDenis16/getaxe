@@ -907,7 +907,11 @@ public:
 		return *(c_utl_vector <matrix3x4a_t> *)(uintptr_t(this) + m_CachedBoneData);
 	}
 	POFFSET ( get_bone_accessor, CBoneAccessor, 0x26A8 )
-	
+
+	int* m_iieffects() {
+		static auto effects = *(std::int32_t*)((std::int32_t)utilities::pattern_scan("client.dll", "8B 87 ? ? ? ? C1 E8 03 C6") + 0x2);
+		return (int*)(uintptr_t(this) + effects);
+	}
 
 	OFFSET ( vec3_t, get_abs_velocity, 0x94 )
 	OFFSET ( int, Effects, 0xF0 );
@@ -1022,8 +1026,8 @@ public:
 		if ( !this )
 			return false;
 
-		this->get_bone_accessor ( )->m_ReadableBones = this->get_bone_accessor ( )->m_WritableBones = 0;
-		this->invalidate_bone_cache ( );
+		/*this->get_bone_accessor ( )->m_ReadableBones = this->get_bone_accessor ( )->m_WritableBones = 0;
+		this->invalidate_bone_cache ( );*/
 
 		using original_fn = bool ( __thiscall * )( void *, matrix3x4_t *, int, int, float );
 		return ( *( original_fn ** ) animating ( ) ) [ 13 ] ( animating ( ), out, max_bones, mask, time );
@@ -1123,6 +1127,7 @@ public:
 	anim_state * get_anim_state ( ) {
 		return *reinterpret_cast< anim_state ** >( this + 0x9960 ); 
 	}
+	POFFSET(GetBoneAccessor, CBoneAccessor, 0x26A8)
 	void update_state ( anim_state * state, vec3_t ang ) {
 		if ( !state )
 			return;
@@ -1334,7 +1339,7 @@ public:
 	void invalidate_bone_cache ( void ) {
 		static auto invalidate_bone_bache_fn = utilities::pattern_scan ( "client.dll", "80 3D ? ? ? ? ? 74 16 A1 ? ? ? ? 48 C7 81" );
 		unsigned long g_iModelBoneCounter = **( unsigned long ** ) ( invalidate_bone_bache_fn + 10 );
-		*( unsigned int * ) ( ( DWORD ) this + 0x2924 ) = 0xFF7FFFFF; // m_flLastBoneSetupTime = -FLT_MAX;
+		*( unsigned int * ) ( ( DWORD ) this + 0x2928) = 0xFF7FFFFF; // m_flLastBoneSetupTime = -FLT_MAX;
 		*( unsigned int * ) ( ( DWORD ) this + 0x2690 ) = ( g_iModelBoneCounter - 1 ); // m_iMostRecentModelBoneCounter = g_iModelBoneCounter - 1;
 
 		//m_flLastBoneSetupTime ( ) = -FLT_MAX;

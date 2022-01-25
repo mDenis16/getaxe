@@ -258,6 +258,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="core\features\animations\animations_manager.cpp" />
+    <ClCompile Include="core\features\antiaim\antiaim.cpp" />
     <ClCompile Include="core\features\antiaim\fakelag.cpp" />
     <ClCompile Include="core\features\autowall\autowall.cpp" />
     <ClCompile Include="core\features\engine_prediction\engine_end.cpp" />
@@ -321,6 +322,7 @@
     <ClCompile Include="core\hooks\csplayer\calculate_view.cpp" />
     <ClCompile Include="core\hooks\csplayer\do_extra_bone_processing.cpp" />
     <ClCompile Include="core\hooks\csplayer\setup_bones.cpp" />
+    <ClCompile Include="core\hooks\csplayer\should_interpolate.cpp" />
     <ClCompile Include="core\hooks\csplayer\standard_blending_rules.cpp" />
     <ClCompile Include="core\hooks\csplayer\update_client_side_animation.cpp" />
     <ClCompile Include="core\hooks\d3d\graphic.cpp" />
@@ -412,6 +414,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\features\animations\animations_manager.h" />
+    <ClInclude Include="core\features\antiaim\antiaim.h" />
     <ClInclude Include="core\features\antiaim\fakelag.h" />
     <ClInclude Include="core\features\autowall\autowall.h" />
     <ClInclude Include="core\features\engine_prediction\engine_prediction.h" />

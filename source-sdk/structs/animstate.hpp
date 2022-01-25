@@ -23,7 +23,7 @@ struct anim_state {
     float                   m_last_update_increment{},
         m_eye_yaw{},
         m_eye_pitch{},
-        m_foot_yaw{},
+        m_abs_yaw{},
         m_last_foot_yaw{},
         m_move_yaw{},
         m_move_yaw_ideal{},

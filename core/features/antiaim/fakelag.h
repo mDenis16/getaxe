@@ -12,7 +12,8 @@ public:
 
 	bool b_send_this_tick = false;
 	bool last_tick_status = false;
-
+	bool choke_next_tick = false;
+	bool force_choke_this_tick = false;
 };
 
 inline c_fakelag* fakelag = new c_fakelag();

@@ -13,10 +13,12 @@ namespace hooks::callback {
 		
 		if ( player ) {
 
-			if ( !( player->m_fEffects ( ) & 0x008 ) )
-				player->m_fEffects ( ) |= 0x008;
+			std::cout << " Effects " << player->Effects() << std::endl;
+
+			if ( !( player->Effects( ) & 0x008 ) )
+				player->Effects( ) |= 0x008;
 			standard_blending_rules_original ( player, hdr, pos, q, time, BONE_USED_BY_SERVER );
-			player->m_fEffects ( ) &= ~0x008;
+			player->Effects( ) &= ~0x008;
 		}
 	}
 }

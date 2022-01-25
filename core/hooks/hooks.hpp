@@ -15,7 +15,7 @@
 #define post_screen_space_fx_original reinterpret_cast< bool( __thiscall* )( uintptr_t, const view_setup_t* ) >( hooks::list.at ( hooks::hook_index::post_screen_space_fx )->original )
 #define setup_bones_original reinterpret_cast< bool( __thiscall*  )( void*, matrix3x4_t *, int, int, float ) >( hooks::list.at ( hooks::hook_index::setup_bones )->original )
 #define accumulate_layers_original reinterpret_cast< void( __thiscall* )( uintptr_t* , uintptr_t , void* , vec3_t* , float , uintptr_t*  ) >( hooks::list.at ( hooks::hook_index::accumulate_layers )->original )
-#define check_for_sequence_change_original reinterpret_cast< void ( __cdecl * )( uintptr_t * , uintptr_t * , uintptr_t * , int , bool , bool  ) >( hooks::list.at ( hooks::hook_index::check_for_sequence_change )->original )
+#define check_for_sequence_change_original reinterpret_cast< void ( __fastcall  * )( uintptr_t * , uintptr_t * , uintptr_t * , int , bool , bool  ) >( hooks::list.at ( hooks::hook_index::check_for_sequence_change )->original )
 #define build_transformations_original reinterpret_cast< void ( __fastcall * ) ( void *, void *, int, int, int, int, int, int ) >( hooks::list.at ( hooks::hook_index::build_transformations )->original )
 #define modify_eye_position_original reinterpret_cast< void( __thiscall* )( void * , void * , vec3_t &  ) >( hooks::list.at ( hooks::hook_index::modify_eye_position )->original )
 #define calculate_view_original reinterpret_cast< void ( __thiscall * )( void *, void * , vec3_t & , vec3_t & , float & , float & , float &  ) >( hooks::list.at ( hooks::hook_index::calculate_view )->original )
@@ -42,6 +42,7 @@
 #define calc_view_model_bob_original reinterpret_cast< void(__thiscall*)( player_t * , void* , vec3_t &  ) >( hooks::list.at ( hooks::hook_index::calc_view_model_bob )->original )
 #define do_extra_bone_procesing_original reinterpret_cast< void(__fastcall*)(void*, void*, int , int , int , int , int , int  >)( hooks::hook_index::do_extra_bone_processing)->original )
 #define estimate_abs_velocity_original reinterpret_cast< void( __fastcall* )( player_t* , void*, vec3_t& ) >( hooks::list.at ( hooks::hook_index::estimate_abs_velocity )->original )
+#define should_interpolate_original reinterpret_cast< bool( __thiscall* )( player_t* ) >( hooks::list.at ( hooks::hook_index::should_interpolate )->original )
 //void __fastcall do_extra_bone_processing(void* this_ptr, void* edx, int a2, int a3, int a4, int a5, int a6, int a7)
 
 //#define build_jiggle_transformations_original reinterpret_cast< void ( __stdcall * ) ( void* ,void* , void*, void*, void*, void*, void*, void*) >( hooks::list.at ( hooks::hook_index::build_jiggle_transformations )->original )
@@ -93,7 +94,8 @@ namespace hooks {
 		calc_view_model_bob,
 		physics_simulate,
 		do_extra_bone_processing,
-		estimate_abs_velocity
+		estimate_abs_velocity,
+		should_interpolate
 		/*no need to call original*/
 	};
 
@@ -144,6 +146,8 @@ namespace hooks {
 		extern void __cdecl build_jiggle_transformations(void* a1, void* a2, void* a3, void* a4, void* a5, void* a6, void* a7, void* a8, void* a9);
 		extern void __fastcall do_extra_bone_processing(void* this_ptr, void* edx, int a2, int a3, int a4, int a5, int a6, int a7);
 		extern  void __fastcall estimate_abs_velocity(player_t* player, void* edx, vec3_t& velocity);
+		extern bool __fastcall should_interpolate(player_t* player);
+
 	}
 
 

@@ -256,6 +256,9 @@ void animations_manager::on_frame_stage_after(client_frame_stage_t stage)
 						state->m_last_update_frame -= 1;
 					}
 
+					state->m_last_update_increment = std::max(0.0f, interfaces::globals->cur_time - state->m_last_update_time); // negative values possible when clocks on client and server go out of sync..
+
+
 					std::memcpy(localanim.m_realLayers.data(), local_pointer->anim_layers().data(), sizeof(animationlayer) * 13);
 
 
@@ -264,28 +267,22 @@ void animations_manager::on_frame_stage_after(client_frame_stage_t stage)
 
 					feet_wobble_fix();
 
-					auto old_flags = local_pointer->flags();
-
-					if (localdata.lastFlags & fl_onground && !(local_pointer->flags() & fl_onground))
-						local_pointer->flags() |= fl_onground;
-
 					update_anim_angle(state, localdata.lastViewangle);
 					allow_animation[local_pointer->index()] = false;
 
 
-					
 
 					if (!interfaces::clientstate->m_choked_commands) {
-						leexiePR = state->m_foot_yaw;
-						localanim.properAbsYaw = state->m_foot_yaw;
+						localanim.properAbsYaw = state->m_abs_yaw;
 						std::memcpy(localanim.m_realPoses.data(), local_player::m_data.pointer->m_flPoseParameter().data(), sizeof(float) * 24);
-						validShit = true;
 					}
 
+
+					
 					static float flAirTime[65] = { 0.f };
 					static float flLastAircheckTime[65] = { -1.f };
 
-					bool bOnGround = local_pointer->flags() & fl_onground;
+					bool bOnGround = localdata.lastFlags & fl_onground;
 
 					if (!bOnGround)
 					{
@@ -304,8 +301,7 @@ void animations_manager::on_frame_stage_after(client_frame_stage_t stage)
 						localanim.m_realPoses[PLAYER_POSE_PARAM_JUMP_FALL] = 0.f;
 					}
 
-					*localanim.realState = *local_pointer->get_anim_state();
-					local_pointer->flags() = old_flags;
+
 
 					//std::cout << "  localanim.realState->m_on_ground " << localanim.realState->m_on_ground << " flags on ground " << (local_pointer->flags() & (fl_onground | fl_partialground | fl_conveyor)) << std::endl;
 
@@ -317,26 +313,37 @@ void animations_manager::on_frame_stage_after(client_frame_stage_t stage)
 				localanim.lastTick = interfaces::globals->tick_count;
 			}
 		}
-		else if (stage == FRAME_RENDER_START)
+
+		if (stage == FRAME_RENDER_START)
 		{
 
 			allow_bones[local_pointer->index()] = true;
-			local_pointer->set_abs_angles(vec3_t(0, leexiePR, 0));
-					std::array< float, 24 > m_backupPoses;
+
+            std::array< float, 24 > m_backupPoses;
 			std::array< animationlayer, 13 > m_backupLayers;
 			anim_state m_backupState;
 
 			std::memcpy(m_backupPoses.data(), local_player::m_data.pointer->m_flPoseParameter().data(), sizeof(float) * 24);
 			memcpy(m_backupLayers.data(), local_pointer->anim_layers().data(), sizeof(animationlayer) * 13);
 			m_backupState = *local_pointer->get_anim_state();
-	
+
 
 			std::memcpy(local_player::m_data.pointer->m_flPoseParameter().data(), localanim.m_realPoses.data(), sizeof(float) * 24);
 			memcpy(local_pointer->anim_layers().data(), localanim.m_realLayers.data(), sizeof(animationlayer) * 13);
 			*local_pointer->get_anim_state() = *localanim.realState;
 
-			
+			/*local_player::m_data.pointer->GetBoneAccessor ( )->m_ReadableBones = local_player::m_data.pointer->GetBoneAccessor ( )->m_WritableBones = 0;
+
+			local_player::m_data.pointer->invalidate_bone_cache();*/
+
+			local_pointer->set_abs_angles(vec3_t(0, localanim.properAbsYaw, 0));
+			*reinterpret_cast<int*>(local_pointer + 0xA68) = interfaces::globals->frame_time;
+			float frametime = interfaces::globals->frame_time;
+			interfaces::globals->frame_time = 23.91753135f; // :^)
+
 			local_player::m_data.pointer->setup_bones(nullptr, 128, 0x7FF00, interfaces::globals->cur_time);
+
+			interfaces::globals->frame_time = frametime;
 
 			allow_bones[local_pointer->index()] = false;
 

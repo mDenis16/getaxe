@@ -30,7 +30,7 @@
 #include "../features/misc/misc.h"
 
 #include "../features/antiaim/fakelag.h"
-
+#include "../features/antiaim/antiaim.h"
 
 
 class feature {
