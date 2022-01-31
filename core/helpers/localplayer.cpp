@@ -1,9 +1,9 @@
 #include "helpers.h"
-#include "../features/features.hpp"
 
-namespace local_player {
 
-	void fix_movement ( c_usercmd * cmd, vec3_t& wish_angles ) {
+local_player* local_player::instance;
+
+	/*void fix_movement ( c_usercmd * cmd, vec3_t& wish_angles ) {
 		vec3_t view_fwd, view_right, view_up, cmd_fwd, cmd_right, cmd_up;
 		math::angle_vectors ( wish_angles, &view_fwd, &view_right, &view_up );
 		math::angle_vectors ( cmd->viewangles, &cmd_fwd, &cmd_right, &cmd_up );
@@ -46,11 +46,10 @@ namespace local_player {
 
 		wish_angles = cmd->viewangles;
 
-	}
+	}*/
 
-	data m_data = {};
 
-	void detect_game ( ) {
+	/*void detect_game ( ) {
 		static int last_tick_count = 0;
 		static bool waiting = false;
 		bool real_in_game = interfaces::engine->is_in_game ( );
@@ -72,11 +71,14 @@ namespace local_player {
 			m_data.in_game = true;
 			DEBUG_LOG ( "ARTIFICIAL IN GAME \n" );
 		}
-	}
-	void begin_tick ( c_usercmd * cmd ) {
-		csgo::cmd = cmd;
-		detect_game ( );
-	
+	}*/
+
+    
+	void local_player::begin_tick ( c_usercmd * cmd ) {
+		
+		auto m_data = i_local_data;
+
+		
 		const auto get_random_seed = [ & ] ( ) {
 			using o_fn = unsigned long ( __cdecl * )( std::uintptr_t );
 			static auto offset = utilities::pattern_scan ( "client.dll", "55 8B EC 83 E4 F8 83 EC 70 6A 58" );
@@ -90,13 +92,13 @@ namespace local_player {
 		m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 
 
-		csgo::local_player = local_player::m_data.pointer;
+		//csgo::local_player = local_player::ptr();
 
 		m_data.alive = m_data.pointer->health ( ) > 0;
 
 
-		if (local_pointer && m_data.alive && m_data.in_game ) {
-			auto original_tickbase = local_pointer->get_tick_base ( );
+		/*if (local_player::ptr() && m_data.alive && m_data.in_game ) {
+			auto original_tickbase = local_player::ptr()->get_tick_base ( );
 			cmd->randomseed = get_random_seed ( );
 
 			m_data.active_weapon = m_data.pointer->active_weapon ( );
@@ -106,65 +108,65 @@ namespace local_player {
 			}
 	
 
-			localdata.eye_position = local_pointer->get_eye_pos ( );
+			local_player::data().eye_position = local_player::ptr()->get_eye_pos ( );
 
 
-			engine_prediction->start(local_pointer, cmd);
+			engine_prediction->start(local_player::ptr(), cmd);
 		}
 
-		m_data.backup_tickbase = local_pointer->get_tick_base ( );
+		m_data.backup_tickbase = local_player::ptr()->get_tick_base ( );*/
 
 		
 	}
-	bool available ( ) {
+	bool local_player::available ( ) {
 
 		if ( !interfaces::engine->is_in_game ( ) )
 			return false;
 
-		if ( !m_data.pointer )
+		if ( !data().pointer )
 			return false;
 
-		if ( !m_data.alive )
+		if ( !data().alive )
 			return false;
 
 		return true;
 	}
 
-	void end_tick ( c_usercmd * cmd ) {
+	void local_player::end_tick ( c_usercmd * cmd ) {
 
-		if ( localdata.alive ) {
-			localdata.last_punch = local_pointer->aim_punch_angle ( );
+	/*	if ( local_player::data().alive ) {
+			local_player::data().last_punch = local_player::ptr()->aim_punch_angle ( );
 		}
 
 
-		engine_prediction->end();
+		engine_prediction->end();*/
 
-		fix_movement ( cmd, localdata.orig_viewangle);
+		//fix_movement ( cmd, local_player::data().orig_viewangle);
 
 
-		/*auto & correct = local_player::m_data.data.emplace_front ( );
+		/*auto & correct = local_player::data().data.emplace_front ( );
 
 		correct.command_number = cmd->command_number;
 		correct.choked_commands = interfaces::clientstate->m_choked_commands + 1;
 		correct.tickcount = interfaces::globals->tick_count;
 
 		if ( csgo::send_packet )
-			local_player::m_data.choked_number.clear ( );
+			local_player::data().choked_number.clear ( );
 		else
-			local_player::m_data.choked_number.emplace_back ( correct.command_number );
+			local_player::data().choked_number.emplace_back ( correct.command_number );
 
-		while ( static_cast< int >(local_player::m_data.data.size ( )) > static_cast<int>(( 2.0f / interfaces::globals->interval_per_tick ) ))
-			local_player::m_data.data.pop_back ( );
+		while ( static_cast< int >(local_player::data().data.size ( )) > static_cast<int>(( 2.0f / interfaces::globals->interval_per_tick ) ))
+			local_player::data().data.pop_back ( );
 
-		auto & out = local_player::m_data.commands.emplace_back ( );
+		auto & out = local_player::data().commands.emplace_back ( );
 
 		out.is_outgoing = csgo::send_packet;
 		out.is_used = false;
 		out.command_number = cmd->command_number;
 		out.previous_command_number = 0;
 
-		while ( static_cast< int >( local_player::m_data.commands.size ( )) > static_cast<int>( ( 1.0f / interfaces::globals->interval_per_tick )) )
-			local_player::m_data.commands.pop_front ( );
+		while ( static_cast< int >( local_player::data().commands.size ( )) > static_cast<int>( ( 1.0f / interfaces::globals->interval_per_tick )) )
+			local_player::data().commands.pop_front ( );
 
 		if ( !csgo::send_packet ) {
 			auto net_channel = interfaces::clientstate->m_net_channel;
@@ -183,17 +185,4 @@ namespace local_player {
 
 
 	}
-	void post_predict ( c_usercmd * cmd ) {
-		/*if ( local_player::available ( ) ) {
-			
-
-			if ( localdata.active_weapon ) {
-				auto backup_velocity = local_pointer->velocity ( );
-				auto backup_abs_velocity = local_pointer->get_abs_velocity ( );
-
-				localdata.active_weapon->update_accuracy_penalty ( );
-
-			}
-		}*/
-	}
-}
+	

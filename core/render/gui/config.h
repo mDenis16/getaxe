@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <vector>
 #include "../../../dependencies/utilities/json.hpp"
-#include "../../../dependencies/imgui/imgui.h"
+#include <renderlib/imgui/imgui.h>
 #include <Windows.h>
 #include <string>
 #include <vector>
@@ -96,9 +96,6 @@ public:
 
 extern config_manager * cfg_manager;
 
-
-
-#define config c_config::get ( )
 
 enum FLAGS_LIST {
 	FLAGS_MONEY,
@@ -716,7 +713,7 @@ struct cfg_antiaim
 	config_manager::key_bind_item enable_dodge_keybind;
 
 };
-class c_config : public singleton< c_config > {
+class c_config  {
 public:
 	c_config ( ) {
 		for ( size_t i = 0; i < 2; i++ ) {
@@ -788,6 +785,7 @@ public:
 
 };
 
+inline c_config config;
 
 
 extern bool menu_opened;

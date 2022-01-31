@@ -1,5 +1,13 @@
 #pragma once
-#include "../../features.hpp"
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
+
+#include <renderlib/imgui/imgui_internal.h>
+#include "../../../render/gui/gui.h"
+#include <config.h>
+
+#include "../visuals.h"
+#include "modulation.h"
 
 namespace modulation {
 
@@ -79,7 +87,6 @@ namespace modulation {
 		for ( auto & mat : materials ) 
 			mat.envmaptint = mat.mat_address->find_var ( "$envmaptint", &mat.found_env_tint );
 		
-		DEBUG_LOG ( "CHAMS INITIALIZED!" );
 	}
 	i_material * create_material ( shader_type_t shade, bool ignorez, bool wireframe ) {
 		static const std::string material_name = "game_material.vmt";

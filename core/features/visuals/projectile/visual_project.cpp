@@ -1,11 +1,16 @@
 #pragma once
 
-#include "../../../../dependencies/imgui/imgui.h"
+#include "../../helpers/helpers.h"
 
-#include "../../../../dependencies/imgui/imgui_internal.h"
-#include "../../../render/gui/gui.h"
 
-#include "../../features.hpp"
+#include <renderlib/imgui/imgui.h>
+
+#include "../visual_entities.h"
+#include "../player/visual_player.h"
+#include "../projectile/visual_projectile.h"
+#include "../weapon/visual_weapon.h"
+#include "../visuals.h"
+#include <UIFramework/framework_internal.h>
 
 namespace visuals {
 	/*
@@ -262,7 +267,7 @@ namespace visuals {
 		valid = true;
 
 		on_screen = calculate_box ( );
-		distance = localdata.eye_position.distance_to ( projectile->origin ( ) );
+		distance = local_player::data().eye_position.distance_to ( projectile->origin ( ) );
 
 		
 
@@ -276,7 +281,7 @@ namespace visuals {
 				if ( h_owner ) {
 					owner_type = h_owner->is_teammate ( ) ? 0 : 1;
 
-					if ( h_owner == local_pointer )
+					if ( h_owner == local_player::ptr() )
 						owner_type = 2;
 				}
 			}

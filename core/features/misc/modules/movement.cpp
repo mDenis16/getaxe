@@ -1,4 +1,6 @@
-#include "../../features.hpp"
+#include "../../helpers/helpers.h"
+#include "../misc.h"
+#include <config.h>
 
 void c_misc::bunnyhop(c_usercmd* cmd)
 {
@@ -18,7 +20,7 @@ void c_misc::bunnyhop(c_usercmd* cmd)
 			cmd->buttons |= in_jump;
 		}
 		else if (cmd->buttons & in_jump) {
-			if (local_player::m_data.pointer->flags() & fl_onground) {
+			if (local_player::ptr()->flags() & fl_onground) {
 				bShouldFake = bLastJumped = true;
 			}
 			else {
@@ -35,10 +37,10 @@ void c_misc::bunnyhop(c_usercmd* cmd)
 		static int hops_hit = 0;
 
 		if (!(cmd->buttons & in_jump)
-			|| (local_pointer->move_type() & move_type::movetype_ladder))
+			|| (local_player::ptr()->move_type() & move_type::movetype_ladder))
 			return;
 
-		if (!(local_pointer->flags() & fl_onground))
+		if (!(local_player::ptr()->flags() & fl_onground))
 		{
 			cmd->buttons &= ~in_jump;
 			hops_restricted = 0;
@@ -62,7 +64,7 @@ void c_misc::autostrafe(c_usercmd* cmd)
 		static vec3_t target_yaw_add = vec3_t();
 
 		static const auto cl_sidespeed = interfaces::console->get_convar("cl_sidespeed");
-		if (!(local_player::m_data.pointer->flags() & fl_onground)) {
+		if (!(local_player::ptr()->flags() & fl_onground)) {
 			bool back = cmd->buttons & in_back;
 			bool forward = cmd->buttons & in_forward;
 			bool right = cmd->buttons & in_moveleft;
@@ -98,15 +100,15 @@ void c_misc::autostrafe(c_usercmd* cmd)
 			math::interpolate_angles(target_yaw_add, yaw_add, target_yaw_add, config.misc.movement.strafe_yaw_speed * 0.01f);
 			std::cout << "target_yaw_add " << target_yaw_add.y << std::endl;
 
-			local_player::m_data.orig_viewangle.y += target_yaw_add.y;
+			local_player::data().orig_viewangle.y += target_yaw_add.y;
 			cmd->forwardmove = 0.f;
 			cmd->sidemove = 0.f;
 
-			const auto delta = math::normalize_yaw(local_player::m_data.orig_viewangle.y - RAD2DEG(atan2(local_player::m_data.pointer->velocity().y, local_player::m_data.pointer->velocity().x)));
+			const auto delta = math::normalize_yaw(local_player::data().orig_viewangle.y - RAD2DEG(atan2(local_player::ptr()->velocity().y, local_player::ptr()->velocity().x)));
 
 			cmd->sidemove = delta > 0.f ? -cl_sidespeed->get_float() : cl_sidespeed->get_float();
 
-			local_player::m_data.orig_viewangle.y = math::normalize_yaw(local_player::m_data.orig_viewangle.y - delta);
+			local_player::data().orig_viewangle.y = math::normalize_yaw(local_player::data().orig_viewangle.y - delta);
 		}
 	}
 	else if (config.misc.movement.strafe_mode_type == 2)

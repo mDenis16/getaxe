@@ -1,4 +1,7 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
+#include <config.h>
+#include "legitbot.h"
 
 
 int c_legitbot::best_target ( bool no_fov ) {
@@ -17,7 +20,8 @@ int c_legitbot::best_target ( bool no_fov ) {
 
 		if ( !entity )
 			continue;
-		if ( entity == local_player::m_data.pointer )
+
+		if ( entity == local_player::ptr() )
 			continue;
 
 
@@ -29,13 +33,13 @@ int c_legitbot::best_target ( bool no_fov ) {
 
 		vec3_t entity_eye = entity->eye_pos ( );
 
-		if ( !local_pointer->can_see_player_pos(entity, localdata.eye_position, entity_eye) )
+		if ( !local_player::ptr()->can_see_player_pos(entity, local_player::data().eye_position, entity_eye) )
 			continue;
 
 
 
-		auto angle = math::calc_angle ( localdata.eye_position, entity_eye ); angle.angle_normalize ( ); angle.angle_clamp ( );
-		auto fov = math::get_fov ( viewangle, localdata.eye_position, entity_eye );
+		auto angle = math::calc_angle ( local_player::data().eye_position, entity_eye ); angle.angle_normalize ( ); angle.angle_clamp ( );
+		auto fov = math::get_fov ( viewangle, local_player::data().eye_position, entity_eye );
 		if ( fov < min_fov ) {
 			min_fov = fov;
 			closest = entity->index();

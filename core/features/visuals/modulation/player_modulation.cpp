@@ -1,5 +1,13 @@
 #pragma once
-#include "../../features.hpp"
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
+
+
+#include "../visuals.h"
+#include <config.h>
+
+#include "modulation.h"
+
 #define player_modulation_registers void * ecx, void * edx, void * ctx, const draw_model_state_t & state, const model_render_info_t & info, matrix3x4_t * custom_bone_to_world, bool & skip_return, player_t* player, chams_visual& chams_data
 
 namespace modulation {
@@ -11,7 +19,7 @@ namespace modulation {
 
 
 		int type = player->is_teammate ( ) ? 0 : 1;
-		if ( player == local_pointer )
+		if ( player == local_player::ptr() )
 			type = 2;
 
 		/*

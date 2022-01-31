@@ -114,28 +114,11 @@ namespace ui {
 	void * window_pointer_cheat = nullptr;
 	MSG msg;
 
-	void * window_device = nullptr;
-	void * radar_window_extern = nullptr;
 	std::vector< key_bind_component *> key_bind_list;
-	ui::window * main_window = nullptr;
-	ui::window * radar_window = nullptr;
-	ImFont * font_title = nullptr;
-	ImFont * font_widgets = nullptr;
 	
-	std::deque<debug_log *> debug_logs;
-	std::deque<game_log *> game_logs;
-
-	ImFont * font_tab = nullptr;
-	ImFont * font_icons = nullptr;
-	ImFont * font_menu_icons = nullptr;
-	ImFont * weapon_icons = nullptr;
-	ImFont * menuicons = nullptr;
-    ImFont * weapon_font = nullptr;
-	ImFont * test = nullptr;
 
 	static bool init = false;
 
-	int focused_item = -1;
 	long last_time_clicked_element = 0;
 	static int weapon_id = 0;
 
@@ -224,9 +207,9 @@ namespace ui {
 
 		static bool open_radar = true;
 
-		 radar_window = new ui::window ( "Radar", 80, 80, render, open_radar, 12.f );
+		/* radar_window = new ui::window ( "Radar", 80, 80, render, open_radar, 12.f );
 		 radar_window->flags |= flags::window_resizable;
-		 radar_window_extern = radar_window;
+		 radar_window_extern = radar_window;*/
 	}
 
 	void render_debug ( ) {
@@ -305,14 +288,9 @@ namespace ui {
 		//printf ( "ssss \n" );
 	}
 
-	bool key_pressed ( const int key ) {
-		return key_state [ key ] && !prev_key_state [ key ];
-	}
-
+	
 	// ========================================================================
-	bool key_down ( const int key ) {
-		return key_state [ key ];
-	}
+
 	void to_rgb ( ImColor & original ) {
 		auto & Value = original.Value;
 
@@ -324,19 +302,7 @@ namespace ui {
 
 	}
 
-	// ========================================================================
-	bool key_released ( const int key ) {
-		return !key_state [ key ] && prev_key_state [ key ];
-	}
+	
 
-	ImVec2 get_cursor ( ) {
-		return ImGui::GetIO ( ).MousePos;
-	}
-	ImVec2 calculate_center ( ImVec2 a, ImVec2 b ) {
-		ImVec2 c;
-		c.x = ( a.x + b.x ) / 2.f;
-		c.y = ( a.y + b.y ) / 2.f;
-		return c;
-	}
 }
 

@@ -12,7 +12,7 @@ c_bestpoint c_target::best_point(c_lag_record* record) {
 	bool is_newest_record = record->simulation_time == this->simulation_time();
 
 
-	auto dist = math::calc_distance(local_pointer->origin(), this->origin(), false);
+	auto dist = math::calc_distance(local_player::ptr()->origin(), this->origin(), false);
 	float min_dmg = ragebot->cfg->autowall_min_dmg;
 
 
@@ -31,7 +31,7 @@ c_bestpoint c_target::best_point(c_lag_record* record) {
 				continue;
 
 
-			int dmg = autowall::get_damage(local_pointer, localdata.eye_position, point.pos, awall);
+			int dmg = autowall::get_damage(local_player::ptr(), local_player::data().eye_position, point.pos, awall);
 
 
 			found_fatal_hit = (dmg >= this->health() + 10) && hitbox != hitbox_head;

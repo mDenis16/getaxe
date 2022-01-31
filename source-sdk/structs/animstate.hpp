@@ -7,76 +7,68 @@ struct animstate_pose_param_cache_t {
 	void set_value ( void * e, float val );
 };
 struct anim_state {
-   /* OFFSET_VFUNC(void(__thiscall*)(decltype(this)), reset(), g_ctx->offsets().m_anim_state.m_reset);
+    char pad[3];
+    char bUnknown; //0x4
+    char pad2[87];
+    void* m_pLastBoneSetupWeapon; //0x5C
+    player_t* m_pBaseEntity; //0x60
+    void* m_pActiveWeapon; //0x64
+    void* m_pLastActiveWeapon; //0x68
+    float m_flLastClientSideAnimationUpdateTime; //0x6C
+    int m_iLastClientSideAnimationUpdateFramecount; //0x70
+    float m_flUpdateTimeDelta; //0x74
+    float m_flEyeYaw; //0x78
+    float m_flPitch; //0x7C
+    float m_flGoalFeetYaw; //0x80
+    float m_flCurrentFeetYaw; //0x84
+    float m_flCurrentTorsoYaw; //0x88
+    float m_flUnknownVelocityLean; //0x8C //changes when moving/jumping/hitting ground
+    float m_flLeanAmount; //0x90
+    char pad4[4]; //NaN
+    float m_flFeetCycle; //0x98 0 to 1
+    float m_flFeetYawRate; //0x9C 0 to 1
+    float m_fUnknown2;
+    float m_fDuckAmount; //0xA4
+    float m_fLandingDuckAdditiveSomething; //0xA8
+    float m_fUnknown3; //0xAC
+    vec3_t m_vOrigin; //0xB0, 0xB4, 0xB8
+    vec3_t m_vLastOrigin; //0xBC, 0xC0, 0xC4
+    float m_vVelocityX; //0xC8
+    float m_vVelocityY; //0xCC
+    char pad5[4];
+    float m_flUnknownFloat1; //0xD4 Affected by movement and direction
+    char pad6[8];
+    float m_flUnknownFloat2; //0xE0 //from -1 to 1 when moving and affected by direction
+    float m_flUnknownFloat3; //0xE4 //from -1 to 1 when moving and affected by direction
+    float m_unknown; //0xE8
+    float m_velocity; //0xEC
+    float flUpVelocity; //0xF0
+    float m_flSpeedNormalized; //0xF4 //from 0 to 1
+    float m_flFeetSpeedForwardsOrSideWays; //0xF8 //from 0 to 2. something  is 1 when walking, 2.something when running, 0.653 when crouch walking
+    float m_flFeetSpeedUnknownForwardOrSideways; //0xFC //from 0 to 3. something
+    float m_flTimeSinceStartedMoving; //0x100
+    float m_flTimeSinceStoppedMoving; //0x104
+    bool m_bOnGround; //0x108
+    bool m_bInHitGroundAnimation; //0x109
+    char pad7[10];
+    float m_flLastOriginZ; //0x114
+    float m_flHeadHeightOrOffsetFromHittingGroundAnimation; //0x118 from 0 to 1, is 1 when standing
+    float m_flStopToFullRunningFraction; //0x11C from 0 to 1, doesnt change when walking or crouching, only running
+    char pad8[4]; //NaN
+    float m_flMovingFraction; //0x124 affected while jumping and running, or when just jumping, 0 to 1
+    char pad9[4]; //NaN
+    float m_flUnknown3;
+    char pad10[528];
 
-    OFFSET_VFUNC(void(__vectorcall*)(decltype(this), void*, float, float, float, void*),
-        update(float pitch, float yaw), g_ctx->offsets().m_anim_state.m_update, nullptr, 0.f, yaw, pitch, nullptr);*/
+    float& time_since_in_air()
+    {
+        return *(float*)((uintptr_t)this + 0x110);
+    }
 
-    std::uint8_t            pad0[4u]{};
-    bool                    m_first_update{};
-    std::uint8_t            pad1[91u]{};
-    player_t* m_player{};
-    void* m_weapon{},
-        * m_last_weapon{};
-    float                   m_last_update_time{};
-    int                     m_last_update_frame{};
-    float                   m_last_update_increment{},
-        m_eye_yaw{},
-        m_eye_pitch{},
-        m_abs_yaw{},
-        m_last_foot_yaw{},
-        m_move_yaw{},
-        m_move_yaw_ideal{},
-        m_move_yaw_cur_to_ideal{},
-        m_time_to_align_lower_body{},
-        m_primary_cycle{},
-        m_move_weight{},
-        m_move_weight_smoothed{},
-        m_duck_amount{},
-        m_duck_additional{},
-        m_recrouch_weight{};
-    vec3_t             m_origin{},
-        m_last_origin{},
-        m_velocity{},
-        m_velocity_normalized{},
-        m_velocity_normalized_non_zero{};
-    float                   m_speed_2d{},
-        m_up_speed{},
-        m_speed_as_portion_of_run_speed{},
-        m_speed_as_portion_of_walk_speed{},
-        m_speed_as_portion_of_crouch_speed{},
-        m_time_since_started_moving{},
-        m_time_since_stopped_moving{};
-    bool                    m_on_ground{},
-        m_landing{};
-    std::uint8_t            pad6[6u]{};
-    float                   m_time_since_in_air{},
-        m_left_ground_height{},
-        m_land_anim_multiplier{},
-        m_walk_to_run_transition{};
-    std::uint8_t            pad7[4u]{};
-    float                   m_in_air_smooth_value{};
-    bool                    m_on_ladder{};
-    std::uint8_t            pad8[47u]{};
-    float                   m_velocity_test_time{};
-    vec3_t             m_last_velocity{},
-        m_dst_acceleration{},
-        m_acceleration{};
-    float                   m_acceleration_weight{};
-    std::uint8_t            pad9[12u]{};
-    float                   m_strafe_weight{};
-    std::uint8_t            pad10[4u]{};
-    float                   m_strafe_cycle{};
-    int                     m_strafe_sequence{};
-    std::uint8_t            pad11[388u]{};
-    float                   m_camera_shooth_height{};
-    bool                    m_smooth_height_valid{};
-    std::uint8_t            pad12[11u]{};
-    float                   m_aim_yaw_min{},
-        m_aim_yaw_max{},
-        m_aim_pitch_min{},
-        m_aim_pitch_max{};
-    int                     m_ver{};
+    float& yaw_desync_adjustment()
+    {
+        return *(float*)((uintptr_t)this + 0x334); //fixed shonax
+    }
 };
 class animationlayer {
 public:

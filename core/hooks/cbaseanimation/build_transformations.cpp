@@ -1,4 +1,4 @@
-#include "../../features/features.hpp"
+
 #include "../hooks.hpp"
 
 
@@ -18,13 +18,14 @@ namespace hooks::callback {
 		if ( !player->is_alive ( ) )
 			return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 
-		//if ( player == local_pointer )
+		//if ( player == local_player::ptr() )
 			//return build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 
 		bool backup = *m_isJiggleBonesEnabled;
 
 		*m_isJiggleBonesEnabled = false;
 
+	
 		build_transformations_original ( ecx, edx, a2, a3, a4, a5, a6, a7 );
 
 		*m_isJiggleBonesEnabled = backup;

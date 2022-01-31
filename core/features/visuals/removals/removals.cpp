@@ -1,4 +1,12 @@
-#include "../../features.hpp"
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
+
+#include <renderlib/imgui/imgui_internal.h>
+#include "../../../render/gui/gui.h"
+#include <config.h>
+
+#include "../visuals.h"
+
 
 namespace visuals::removals {
 	void remove_smoke ( ) {
@@ -38,9 +46,9 @@ namespace visuals::removals {
 		if ( !config.local_visual.removals_input [ REMOVALS_FLASH ] )
 			return;
 
-		if ( local_pointer && local_pointer->is_alive ( ) ) {
-			if ( local_pointer->flash_duration ( ) > 0.0f )
-				local_pointer->flash_duration ( ) = 0.0f;
+		if ( local_player::ptr() && local_player::ptr()->is_alive ( ) ) {
+			if ( local_player::ptr()->flash_duration ( ) > 0.0f )
+				local_player::ptr()->flash_duration ( ) = 0.0f;
 		}
 	}
 }

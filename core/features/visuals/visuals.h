@@ -1,14 +1,18 @@
 #pragma once
-#include "../visuals/visual_entities.h"
-#include "../visuals/player/visual_player.h"
-#include "../visuals/projectile/visual_projectile.h"
-#include "../visuals/weapon/visual_weapon.h"
-#include "../visuals/grenade/visual_grenade.h"
-#include "../visuals/radar/radar.h"
+#include <renderlib/imgui/imgui.h>
+#include <renderlib/imgui/imgui_internal.h>
 #include "../../../dependencies/interfaces/i_client_entity_list.hpp"
+#include <iostream>
+#include <d3dx9core.h>
+#include <vector>
 
+#include "visual_entities.h"
+#include "player\visual_player.h"
+#include "projectile\visual_projectile.h"
+#include "weapon\visual_weapon.h"
 namespace visuals {
 
+	
 	
 
 
@@ -18,7 +22,6 @@ namespace visuals {
 	}
 
 	void thirdperson ( );
-
 
 
 

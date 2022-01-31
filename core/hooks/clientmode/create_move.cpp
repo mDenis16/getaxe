@@ -1,4 +1,3 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 #include "../../features/animations/animations_manager.h"
 
@@ -25,43 +24,52 @@ namespace hooks::callback {
 		}
 
 
+		//csgo::cmd = cmd;
+
 		uintptr_t* frame_pointer;
 		__asm mov frame_pointer, ebp;
 
 
-		local_player::begin_tick(cmd);
+		//local_player::begin_tick(cmd);
 
 		if (interfaces::inputsystem->is_button_down(KEY_H))
 			cmd->buttons |= in_jump;
 
 		///misc.run_createmove(cmd);
 
-		fakelag->run(cmd);
+		//fakelag->run(cmd);
 
 
 
-		antiaim->run(cmd);
-		fakelag->end_run(cmd, frame_pointer);
+		//antiaim->run(cmd);
+		//fakelag->end_run(cmd, frame_pointer);
 
 
 		
-		localdata.lastFlags = local_pointer->flags();
+		local_player::data().lastFlags = local_player::ptr()->flags();
 
 		cmd->viewangles.angle_normalize();
 		cmd->viewangles.angle_clamp();
 
-		if (fakelag->b_send_this_tick) {
-			anim_manager.velocities[local_pointer->index()] = local_pointer->velocity();
-			localdata.antiaim_yaw = cmd->viewangles.y;
-		}
-		local_player::end_tick(cmd);
+		/*if (fakelag->b_send_this_tick) {
+			anim_manager.velocities[local_player::ptr()->index()] = local_player::ptr()->velocity();
+			local_player::data().antiaim_yaw = cmd->viewangles.y;
+			local_player::data().lastViewangle = cmd->viewangles;
+		}else
+		{
+			
+		}*/
+		
+		//local_player::end_tick(cmd);
 
 
-		localdata.lastViewangle = cmd->viewangles;
+		
+
+		local_player::data().should_animate = true;
 
 		/*code bellow*/
 
-
+		
 		return false;
 	}
 	

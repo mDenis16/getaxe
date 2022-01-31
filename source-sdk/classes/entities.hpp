@@ -6,7 +6,6 @@
 #include "../structs/animstate.hpp"
 
 #include "../../dependencies/utilities/netvars/netvars.hpp"
-#include "../../core/features/inventory_changer/CEconItem.h"
 #include "../../source-sdk/classes/ehandle.h"
 namespace csgo {
 	extern player_t * local_player;
@@ -474,24 +473,24 @@ public:
 		
 	}
 
-	C_EconItemDefinition * GetStaticData ( ) {
-		static auto fnGetStaticData
-			= reinterpret_cast< C_EconItemDefinition * ( __thiscall * )( void * ) >(
-				utilities::pattern_scan (  ( "client.dll" ), "55 8B EC 51 53 8B D9 8B 0D ? ? ? ? 56 57 8B B9" )
-				);
+	//C_EconItemDefinition * GetStaticData ( ) {
+	//	static auto fnGetStaticData
+	//		= reinterpret_cast< C_EconItemDefinition * ( __thiscall * )( void * ) >(
+	//			utilities::pattern_scan (  ( "client.dll" ), "55 8B EC 51 53 8B D9 8B 0D ? ? ? ? 56 57 8B B9" )
+	//			);
 
 
-		//static auto fnGetStaticData2 = reinterpret_cast<C_EconItemDefinition * (__thiscall*)(void*)>(utilities::pattern_scan(("client.dll"), "E8 ? ? ? ? 8B 75 F4 8D 4E FF") + 0x1);
-		static auto fnGetStaticData2 = reinterpret_cast<C_EconItemDefinition * (__thiscall*)(void*)>(utilities::pattern_scan_rel_function("client.dll", "E8 ? ? ? ? 8B 75 F4 8D 4E FF", 1));
-		std::cout << "fnGetStaticData2 " << fnGetStaticData2 << " fnGetStaticData " << fnGetStaticData << std::endl;
+	//	//static auto fnGetStaticData2 = reinterpret_cast<C_EconItemDefinition * (__thiscall*)(void*)>(utilities::pattern_scan(("client.dll"), "E8 ? ? ? ? 8B 75 F4 8D 4E FF") + 0x1);
+	//	static auto fnGetStaticData2 = reinterpret_cast<C_EconItemDefinition * (__thiscall*)(void*)>(utilities::pattern_scan_rel_function("client.dll", "E8 ? ? ? ? 8B 75 F4 8D 4E FF", 1));
+	//	std::cout << "fnGetStaticData2 " << fnGetStaticData2 << " fnGetStaticData " << fnGetStaticData << std::endl;
 
-		return fnGetStaticData2( this );
-	}
+	//	return fnGetStaticData2( this );
+	//}
 	template <typename T>
 	static constexpr auto relativeToAbsolute ( uintptr_t address ) noexcept {
 		return ( T ) ( address + 4 + *reinterpret_cast< std::int32_t * >( address ) );
 	}
-	CEconItem * GetSOCData ( ) {
+	/*CEconItem * GetSOCData ( ) {
 		if ( !this )return nullptr;
 		static bool no_init = false;
 		static CEconItem * ( __thiscall * getSOCData )( C_EconItemView * itemView );
@@ -502,7 +501,7 @@ public:
 		}
 
 		return getSOCData ( this );
-	}
+	}*/
 };
 
 class base_view_model_t : public entity_t {
@@ -844,8 +843,6 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_iShotsFired", shots_fired, int );
 	NETVAR ( "DT_CSPlayer", "m_angEyeAngles", eye_angles, vec3_t );
 	 
-	NETVAR ( "DT_BaseAnimating", "m_bClientSideAnimation", m_bClientSideAnimation, bool );
-	
 
 	NETVAR_PTR("DT_CSPlayer", "m_hMyWearables", get_wearables, UINT);
 
@@ -892,7 +889,9 @@ public:
 	NETVAR ( "DT_CSPlayer", "m_flDuckAmount", duck_amount, float );
 	NETVAR ( "DT_CSPlayer", "m_bHasHeavyArmor", has_heavy_armor, bool );
 	NETVAR ( "DT_SmokeGrenadeProjectile", "m_nSmokeEffectTickBegin", smoke_grenade_tick_begin, int );
-	
+
+	NETVAR("DT_BaseAnimating", "m_bClientSideAnimation ", m_bClientSideAnimation, bool);
+
 	NETVAR ( "DT_CSPlayer", "m_nTickBase", get_tick_base, int);
 	NETVAR ( "DT_CSPlayer", "m_nNextThinkTick", m_nNextThinkTick, int )
 	NETVAR ( "DT_BaseEntity", "m_fEffects", m_fEffects, int );
@@ -935,8 +934,8 @@ public:
 
 		 return *(CBoneAccessor*)((uintptr_t)this + BoneAccessor);
 	 }
-	 std::array<float, 24> m_flPoseParameter() {
-		 static auto _m_flPoseParameter = netvar_manager::get_net_var(fnv::hash("DT_BaseAnimating"), fnv::hash("m_flPoseParameter"));
+	 std::array<float, 24>& m_flPoseParameter() {
+		 static auto _m_flPoseParameter = netvar_manager::get_net_var(fnv::hash("CCSPlayer"), fnv::hash("m_flPoseParameter"));
 		 return *(std::array<float, 24> *)(uintptr_t(this) + _m_flPoseParameter);
 	 }
 	 std::array<animationlayer, 13> anim_layers ( ) {
@@ -988,7 +987,7 @@ public:
 
 	void modify_eye_pos ( anim_state * animstate, vec3_t * pos ) {
 
-
+		/*return;
 		static auto lookup_bone_fn = ( int ( __thiscall * )( void *, const char * ) ) utilities::pattern_scan ( "client.dll", "555 8B EC 53 56 8B F1 57 83 BE ?? ?? ?? ?? ?? 75 14" );
 		if ( animstate->m_landing || animstate->m_duck_amount != 0.f ) {
 			auto base_entity = animstate->m_player;
@@ -1008,7 +1007,7 @@ public:
 
 				( *pos ).z += ( ( bone_pos.z - ( *pos ).z ) * ( ( ( some_factor * some_factor ) * 3.f ) - ( ( ( some_factor * some_factor ) * 2.f ) * some_factor ) ) );
 			}
-		}
+		}*/
 	}
 
 	vec3_t eye_pos ( ) {

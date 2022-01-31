@@ -1,4 +1,8 @@
-#include "../features.hpp"
+
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
+#include <config.h>
+#include "legitbot.h"
 
 void c_legitbot::manipulate_lagcomp ( ) {
 	if ( current_cmd->buttons & in_attack ) {
@@ -80,8 +84,8 @@ c_record_t * c_legitbot::find_bestlagcomp ( player_t * entity ) {
 	float min_fov = 180.f; c_record_t * best = nullptr;
 	vec3_t viewangle = vec3_t ( ); interfaces::engine->get_view_angles ( viewangle );
 	for ( auto & rec : records [ entity->index ( ) ] ) {
-		auto angle = math::calc_angle ( localdata.eye_position, entity->get_hitbox_position ( hitbox_head, rec->bone ) );
-		auto fov = math::get_fov ( viewangle, angle, localdata.eye_position.distance_to ( entity->origin ( ) ) );
+		auto angle = math::calc_angle ( local_player::data().eye_position, entity->get_hitbox_position ( hitbox_head, rec->bone ) );
+		auto fov = math::get_fov ( viewangle, angle, local_player::data().eye_position.distance_to ( entity->origin ( ) ) );
 
 		if ( fov < min_fov ) {
 			min_fov = fov;

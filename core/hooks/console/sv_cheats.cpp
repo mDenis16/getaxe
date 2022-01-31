@@ -1,4 +1,3 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 
 
@@ -14,7 +13,7 @@ namespace hooks::callback {
 		if ( !interfaces::engine->is_in_game ( ) )
 			return sv_cheats_original ( ecx );
 
-		if ( local_pointer ) {
+		if ( local_player::ptr() ) {
 			static auto cam_think = utilities::pattern_scan ( "client.dll", "85 C0 75 30 38 86" );
 
 			if ( _ReturnAddress ( ) == cam_think )

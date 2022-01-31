@@ -1,4 +1,11 @@
-﻿#include "../features.hpp"
+﻿#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
+#include <config.h>
+
+#include "legitbot.h"
+#include "../visuals/visuals.h"
+
+
 #include <deque>
 
     c_legitbot * legitbot = new c_legitbot ( );
@@ -43,12 +50,12 @@
 		static vec3_t old_angles = vec3_t ( );
 
 		
-		aim_angles = math::calc_angle ( localdata.eye_position, position );
+		aim_angles = math::calc_angle ( local_player::data().eye_position, position );
 	
 
 		aim_angles.angle_normalize ( );
 		aim_angles.angle_clamp ( );
-		vec3_t hitbox_angle = math::calc_angle ( localdata.eye_position, hitbox );
+		vec3_t hitbox_angle = math::calc_angle ( local_player::data().eye_position, hitbox );
 		hitbox_angle.angle_normalize ( );
 		hitbox_angle.angle_clamp ( );
 
@@ -100,7 +107,7 @@
 				aim_spd = std::clamp(settings->aim_speed - speed * .1f, 1.f, 100.f);
 
 
-				if (local_player::m_data.last_mouse_x != 0 || local_player::m_data.last_mouse_y != 0) {
+				if (local_player::data().last_mouse_x != 0 || local_player::data().last_mouse_y != 0) {
 
 					aim_spd = 15;
 					std::cout << "Low smoothing " << std::endl;
@@ -126,7 +133,7 @@
 			//}
 		
 
-			std::cout << "Mouse x " << local_player::m_data.last_mouse_x << "  Mouse y " << local_player::m_data.last_mouse_y << std::endl;
+			std::cout << "Mouse x " << local_player::data().last_mouse_x << "  Mouse y " << local_player::data().last_mouse_y << std::endl;
 			//std::cout << "Aim speed " << aim_spd << std::endl;
 
 			current_cmd->viewangles = CerpAngle(current_cmd->viewangles, aim_angles, aim_spd * 0.01f, aim_spd * 0.01f);
@@ -171,7 +178,7 @@
 
 		
 
-		if ( !localdata.alive || !localdata.active_weapon || localdata.active_weapon->is_non_aim ( ) ) {
+		if ( !local_player::data().alive || !local_player::data().active_weapon || local_player::data().active_weapon->is_non_aim ( ) ) {
 			return;
 		}
 
@@ -217,7 +224,7 @@
 
 			if ( valid_target && active_target && settings->aim_speed > 1.f  && active_target->is_alive()) {
 				if ( first_aim ) {
-					float angle_to_enemy = math::calc_angle ( local_pointer->origin ( ), active_target->origin ( ) ).y;
+					float angle_to_enemy = math::calc_angle ( local_player::ptr()->origin ( ), active_target->origin ( ) ).y;
 					original_angle = math::normalize_yaw ( angle_to_enemy );
 				}
 				static auto predict_origin = [ ] ( vec3_t origin, vec3_t velocity, int ticks ) {
@@ -233,7 +240,7 @@
 
 				vec3_t target_hitbox = active_target->get_hitbox_position ( hitbox_head );
 
-				if ( !target_hitbox.is_zero ( ) && local_pointer->can_see_player_pos ( active_target, localdata.eye_position, target_hitbox ) ) {
+				if ( !target_hitbox.is_zero ( ) && local_player::ptr()->can_see_player_pos ( active_target, local_player::data().eye_position, target_hitbox ) ) {
 
 
 					hitbox = predict_origin ( active_target->get_hitbox_position ( hitbox_head ), active_target->velocity ( ), predict_ticks );
@@ -283,12 +290,12 @@
 				trace_filter filter;
 				vec3_t forward_dir = math::angle_vector ( cmd->viewangles );
 
-				vec3_t forward = localdata.eye_position + ( forward_dir * 8192.f );
-				filter.skip = local_player::m_data.pointer;
-				ray.initialize ( local_player::m_data.eye_position, forward );
+				vec3_t forward = local_player::data().eye_position + ( forward_dir * 8192.f );
+				filter.skip = local_player::ptr();
+				ray.initialize ( local_player::data().eye_position, forward );
 
 				interfaces::trace_ray->trace_ray ( ray, MASK_SHOT | CONTENTS_GRATE, &filter, &trace );
-				//if ( trace.entity == active_target && local_pointer->can_shoot_time(interfaces::globals->cur_time) )
+				//if ( trace.entity == active_target && local_player::ptr()->can_shoot_time(interfaces::globals->cur_time) )
 					//cmd->buttons |= in_attack;
 			}
 			 
@@ -313,11 +320,11 @@
 		vec3_t view_angles = current_cmd->viewangles;
 
 		
-		vec3_t current_punch = local_player::m_data.pointer->aim_punch_angle ( );
+		vec3_t current_punch = local_player::ptr()->aim_punch_angle ( );
 		view_angles.x += current_punch.x * 2.0;
 		view_angles.y += current_punch.y * 2.0;
 
-		vec3_t head_start = local_pointer->eye_pos ( );
+		vec3_t head_start = local_player::ptr()->eye_pos ( );
 
 		float distance_to_hitbox = head_start.distance_to ( hitbox );
 
@@ -332,7 +339,7 @@
 
 		vec3_t forward = head_start + ( forward_dirrection * distance_to_hitbox );
 
-		float angle_to_enemy = math::calc_angle ( local_pointer->origin ( ), active_target->origin ( ) ).y;
+		float angle_to_enemy = math::calc_angle ( local_player::ptr()->origin ( ), active_target->origin ( ) ).y;
 		angle_to_enemy = math::normalize_yaw ( angle_to_enemy );
 
 
@@ -421,9 +428,9 @@
 	void c_legitbot::draw_debug ( ImDrawList * render ) {
 		return;
 		
-			if ( local_pointer && local_pointer->is_alive ( ) ) {
+			if ( local_player::ptr() && local_player::ptr()->is_alive ( ) ) {
 				vec3_t view_angles, forward;
-				vec3_t local = local_pointer->eye_pos ( );
+				vec3_t local = local_player::ptr()->eye_pos ( );
 
 				interfaces::engine->get_view_angles ( view_angles );
 				view_angles.angle_normalize ( ); view_angles.angle_clamp ( );
@@ -452,10 +459,10 @@
 				}
 			}
 
-		if ( valid_target && !hitbox.is_zero ( ) && local_pointer && local_pointer->is_alive ( ) ) {
+		if ( valid_target && !hitbox.is_zero ( ) && local_player::ptr() && local_player::ptr()->is_alive ( ) ) {
 
 			vec3_t view_angles, forward;
-			vec3_t local = local_pointer->eye_pos ( );
+			vec3_t local = local_player::ptr()->eye_pos ( );
 
 			interfaces::engine->get_view_angles ( view_angles );
 

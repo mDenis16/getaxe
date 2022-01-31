@@ -1,5 +1,7 @@
 #pragma once
 
+struct weapon_settings;
+
 class c_record_t {
 public:
 	c_record_t( ){ }

@@ -1,4 +1,6 @@
 #pragma once
+class CEconItem;
+
 class CSharedObjectTypeCache {
 public:
 

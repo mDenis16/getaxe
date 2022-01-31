@@ -1,6 +1,6 @@
-#include "../../features/features.hpp"
-#include "../hooks.hpp"
 
+#include "../hooks.hpp"
+#include <config.h>
 
 namespace hooks::callback {
 	void __stdcall paint_traverse ( unsigned int panel, bool force_repaint, bool allow_force ) {
@@ -13,7 +13,7 @@ namespace hooks::callback {
 		{
 
 			/*interfaces::engine->get_screen_size ( csgo::screen_width, csgo::screen_height );
-			if ( interfaces::engine->is_in_game ( ) && interfaces::engine->is_connected ( ) && local_pointer && local_pointer->is_alive ( ) ) {
+			if ( interfaces::engine->is_in_game ( ) && interfaces::engine->is_connected ( ) && local_player::ptr() && local_player::ptr()->is_alive ( ) ) {
 
 
 				for ( int i = 1; i <= interfaces::globals->max_clients; i++ ) {

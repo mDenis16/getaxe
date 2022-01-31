@@ -1,23 +1,20 @@
-#include "../../features/features.hpp"
-
-
 #include "../hooks.hpp"
 
 
 namespace hooks::callback {
 	void __fastcall packet_end ( void * ecx, void * )
 	{
-		/*local_player::m_data.pointer = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
+		/*local_player::ptr() = reinterpret_cast< player_t * >( interfaces::entity_list->get_client_entity ( interfaces::engine->get_local_player ( ) ) );
 
-		if ( !local_player::m_data.pointer->is_alive ( ) )  //-V807
+		if ( !local_player::ptr()->is_alive ( ) )  //-V807
 		{
-			local_player::m_data.data.clear ( );
+			local_player::data().data.clear ( );
 			return packet_end_original ( ecx );
 		}
 
 		if ( *( int * ) ( ( uintptr_t ) ecx + 0x164 ) == *( int * ) ( ( uintptr_t ) ecx + 0x16C ) ) {
 			auto ack_cmd = *( int * ) ( ( uintptr_t ) ecx + 0x4D2C );
-			auto correct = std::find_if ( local_player::m_data.data.begin ( ), local_player::m_data.data.end ( ),
+			auto correct = std::find_if ( local_player::data().data.begin ( ), local_player::data().data.end ( ),
 				[ &ack_cmd ] ( const local_player::correction_data & other_data ) {
 				return other_data.command_number == ack_cmd;
 			}
@@ -25,13 +22,13 @@ namespace hooks::callback {
 
 			auto netchannel = interfaces::engine->get_net_channel_info ( );
 
-			if ( netchannel && correct != local_player::m_data.data.end ( ) ) {
-				if ( local_player::m_data.last_velocity_modifier > local_player::m_data.pointer->m_flVelocityModifier ( ) + 0.1f ) {
-					auto weapon = local_player::m_data.pointer->active_weapon ( );
+			if ( netchannel && correct != local_player::data().data.end ( ) ) {
+				if ( local_player::data().last_velocity_modifier > local_player::ptr()->m_flVelocityModifier ( ) + 0.1f ) {
+					auto weapon = local_player::ptr()->active_weapon ( );
 
 					if ( !weapon || weapon->item_definition_index ( ) != weapon_revolver && !weapon->is_grenade ( ) ) //-V648
 					{
-						for ( auto & number : local_player::m_data.choked_number ) {
+						for ( auto & number : local_player::data().choked_number ) {
 							auto cmd = &interfaces::input->m_commands [ number % 150 ];
 							auto verified = &interfaces::input->m_verified [ number % 150 ];
 
@@ -45,7 +42,7 @@ namespace hooks::callback {
 					}
 				}
 
-				local_player::m_data.last_velocity_modifier = local_player::m_data.pointer->m_flVelocityModifier ( );
+				local_player::data().last_velocity_modifier = local_player::ptr()->m_flVelocityModifier ( );
 			}
 		}*/
 

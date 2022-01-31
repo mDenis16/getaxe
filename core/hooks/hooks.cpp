@@ -1,13 +1,11 @@
 #pragma once
-#include "../../dependencies/utilities/csgo.hpp"
-#include "../features/features.hpp"
+#include "hooks.hpp"
 #pragma comment (lib, "d3d9.lib")
 #pragma comment (lib, "d3dx9.lib")
 
 #include <d3dx9.h>
-#include "../../dependencies/imgui/impl/imgui_impl_dx9.h"
-#include "../../dependencies/imgui/impl/imgui_impl_win32.h"
-
+#include <renderlib/imgui/impl/imgui_impl_dx9.h>"
+#include <renderlib/imgui/impl/imgui_impl_win32.h>"
 
 
 
@@ -112,7 +110,7 @@ namespace hooks {
 		CREATE_HOOK(get_virtual(pt, 179), &callback::should_interpolate);
 
 
-		wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( csgo::window, GWL_WNDPROC, ( LONG ) callback::wnd_proc );
+		//wndproc_original = ( WNDPROC ) SetWindowLongPtrA ( csgo::window, GWL_WNDPROC, ( LONG ) callback::wnd_proc );
 	}
 
 	void release ( ) {
@@ -131,7 +129,7 @@ namespace hooks {
 
 
 		MH_Uninitialize ( );
-		SetWindowLongA ( csgo::window, GWLP_WNDPROC, long ( wndproc_original ) );
+		//SetWindowLongA ( csgo::window, GWLP_WNDPROC, long ( wndproc_original ) );
 	}
 }
 

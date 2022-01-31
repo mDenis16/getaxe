@@ -1,11 +1,12 @@
 #pragma once
 
-#include "../../../../dependencies/imgui/imgui.h"
+#include <renderlib/imgui/imgui.h>
 
-#include "../../../../dependencies/imgui/imgui_internal.h"
+#include <renderlib/imgui/imgui_internal.h>
 #include "../../../render/gui/gui.h"
+#include "../../../helpers/helpers.h"
+#include "../visuals.h"
 
-#include "../../features.hpp"
 
 namespace visuals {
 	void visual_weapon_t::render_name ( ) {
@@ -231,7 +232,7 @@ namespace visuals {
 		valid = true;
 
 		on_screen = calculate_box ( );
-		distance = localdata.eye_position.distance_to ( weapon->origin ( ) );
+		distance = local_player::data().eye_position.distance_to ( weapon->origin ( ) );
 
 		auto weapon_index = weapon->item_definition_index ( );
 

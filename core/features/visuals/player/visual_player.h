@@ -1,4 +1,5 @@
 #pragma once
+#include <config.h>
 namespace visuals {
 	class visual_player : public visual_data {
 	public:

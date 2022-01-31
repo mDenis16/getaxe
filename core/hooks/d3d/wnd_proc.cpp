@@ -1,9 +1,8 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 #include <d3dx9.h>
 
-#include "../../../dependencies/imgui/imgui.h"
-#include "../../../dependencies/imgui/impl/imgui_impl_dx9.h"
+#include <renderlib/imgui/imgui.h>
+#include <renderlib/imgui/impl/imgui_impl_win32.h>
 
 //extern LRESULT ImGui_ImplDX9_WndProcHandler ( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 extern LRESULT ImGui_ImplWin32_WndProcHandler ( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );

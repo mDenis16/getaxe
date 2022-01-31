@@ -86,7 +86,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>F:\includes\fonts;F:\includes\clip-master;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;E:\repos\mDenis16\getaxe-menu-framework\ImGui Application</IncludePath>
+    <IncludePath>D:\repos\axeus.net\ui-framework-lib\UIFramework;F:\includes\fonts;F:\includes\clip-master;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;E:\repos\mDenis16\getaxe-menu-framework\ImGui Application</IncludePath>
     <LibraryPath>"F:\includes\boost_1_73_0\stage\lib";$(LibraryPath)</LibraryPath>
     <OutDir>.\output\debug\</OutDir>
     <IntDir>.\intermediates\</IntDir>
@@ -95,15 +95,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>E:\repos\getaxe\output\debug\</OutDir>
     <IntDir>.\intermediates\</IntDir>
-    <LibraryPath>F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>F:\includes\nlohmann;F:\includes\cef-master\include;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\ultralight\include;F:\includes\clip-master;F:\includes\freetype\include</IncludePath>
+    <LibraryPath>F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;D:\repos\axeus.net\render-lib\renderlib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\includes\nlohmann;F:\includes\cef-master\include;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\ultralight\include;F:\includes\clip-master;F:\includes\freetype\include;D:\repos\axeus.net\render-lib\renderlib</IncludePath>
     <TargetName>weekend</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PRODUCTION_LOCAL|Win32'">
     <OutDir>.\output\debug\</OutDir>
     <IntDir>.\intermediates\</IntDir>
-    <LibraryPath>F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>F:\includes\nlohmann;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\clip-master;F:\includes\freetype\include</IncludePath>
+    <LibraryPath>D:\repos\axeus.net\ui-framework-lib\UIFramework\Debug\;D:\repos\axeus.net\render-lib\renderlib\Debug;F:\includes\ultralight\lib;F:\includes\boost_1_73_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\includes\nlohmann;F:\includes\jsoncpp\include;F:\includes\dx9\Include;$(IncludePath);F:\includes\websocketpp-master;F:\includes\boost_1_73_0;F:\includes\clip-master;D:\repos\getaxe\core\render\gui;F:\includes\freetype\include;D:\repos\getaxe\dependencies\utilities;D:\repos\axeus.net\render-lib;D:\repos\axeus.net\ui-framework-lib</IncludePath>
     <TargetName>weekend</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LOCAL_BUILD|Win32'">
@@ -163,15 +163,16 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>renderlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='PRODUCTION_LOCAL|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>PRODUCTION_LOCAL;IMGUI_IMPL_WIN32_DISABLE_GAMEPAD;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
@@ -192,6 +193,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>UIFramework.lib;renderlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LOCAL_BUILD|Win32'">
@@ -277,13 +279,6 @@
     <ClCompile Include="core\features\legitbot\weapon_grup_identifier.cpp" />
     <ClCompile Include="core\features\misc\misc.cpp" />
     <ClCompile Include="core\features\misc\modules\movement.cpp" />
-    <ClCompile Include="core\features\ragebot\modules\best_point.cpp" />
-    <ClCompile Include="core\features\ragebot\modules\hitscan_list.cpp" />
-    <ClCompile Include="core\features\ragebot\modules\multipoint.cpp" />
-    <ClCompile Include="core\features\ragebot\modules\record_selection.cpp" />
-    <ClCompile Include="core\features\ragebot\modules\scan.cpp" />
-    <ClCompile Include="core\features\ragebot\modules\target_list.cpp" />
-    <ClCompile Include="core\features\ragebot\ragebot.cpp" />
     <ClCompile Include="core\features\visuals\damage_indicator\damage_indicator.cpp" />
     <ClCompile Include="core\features\visuals\grenade\visual_grenade.cpp" />
     <ClCompile Include="core\features\visuals\LOCAL\thirdperson.cpp" />
@@ -293,7 +288,6 @@
     <ClCompile Include="core\features\visuals\player\visual_player.cpp" />
     <ClCompile Include="core\features\visuals\projectile\visual_project.cpp" />
     <ClCompile Include="core\features\visuals\projectile_prediction.cpp" />
-    <ClCompile Include="core\features\visuals\radar\radar.cpp" />
     <ClCompile Include="core\features\visuals\removals\removals.cpp" />
     <ClCompile Include="core\features\visuals\visuals.cpp" />
     <ClCompile Include="core\features\visuals\visual_handler.cpp" />
@@ -347,32 +341,6 @@
     <ClCompile Include="core\hooks\traceray\trace_ray.cpp" />
     <ClCompile Include="core\render\d3dfont.cpp" />
     <ClCompile Include="core\render\gui\config.cpp" />
-    <ClCompile Include="core\render\gui\framework\bezier_editor.cpp" />
-    <ClCompile Include="core\render\gui\framework\bind_manager.cpp" />
-    <ClCompile Include="core\render\gui\framework\button.cpp" />
-    <ClCompile Include="core\render\gui\framework\checkbox.cpp" />
-    <ClCompile Include="core\render\gui\framework\child_window.cpp" />
-    <ClCompile Include="core\render\gui\framework\colorpicker.cpp" />
-    <ClCompile Include="core\render\gui\framework\combobox.cpp" />
-    <ClCompile Include="core\render\gui\framework\combo_item.cpp" />
-    <ClCompile Include="core\render\gui\framework\config_box.cpp" />
-    <ClCompile Include="core\render\gui\framework\config_item.cpp" />
-    <ClCompile Include="core\render\gui\framework\element.cpp" />
-    <ClCompile Include="core\render\gui\framework\element_extender.cpp" />
-    <ClCompile Include="core\render\gui\framework\inventory_changer.cpp" />
-    <ClCompile Include="core\render\gui\framework\inventory_item.cpp" />
-    <ClCompile Include="core\render\gui\framework\keybind.cpp" />
-    <ClCompile Include="core\render\gui\framework\key_selector.cpp" />
-    <ClCompile Include="core\render\gui\framework\multibox.cpp" />
-    <ClCompile Include="core\render\gui\framework\panel.cpp" />
-    <ClCompile Include="core\render\gui\framework\panel_container.cpp" />
-    <ClCompile Include="core\render\gui\framework\slider.cpp" />
-    <ClCompile Include="core\render\gui\framework\small_text_input.cpp" />
-    <ClCompile Include="core\render\gui\framework\sub_tab.cpp" />
-    <ClCompile Include="core\render\gui\framework\sub_window.cpp" />
-    <ClCompile Include="core\render\gui\framework\tab.cpp" />
-    <ClCompile Include="core\render\gui\framework\text_input.cpp" />
-    <ClCompile Include="core\render\gui\framework\window.cpp" />
     <ClCompile Include="core\render\gui\gui.cpp" />
     <ClCompile Include="core\render\gui\initialize.cpp" />
     <ClCompile Include="core\render\gui\menu\antiaim_menu.cpp" />
@@ -386,12 +354,6 @@
     <ClCompile Include="core\render\gui\menu\visuals_world_menu.cpp" />
     <ClCompile Include="core\render\gui\menu\weapons_visuals_menu.cpp" />
     <ClCompile Include="core\render\render.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
-    <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="dependencies\imgui\impl\imgui_impl_dx9.cpp" />
-    <ClCompile Include="dependencies\imgui\impl\imgui_impl_win32.cpp" />
     <ClCompile Include="dependencies\math\PolynomialSolver.cpp" />
     <ClCompile Include="dependencies\minhook\buffer.cpp" />
     <ClCompile Include="dependencies\minhook\hde\hde32.cpp" />
@@ -408,7 +370,6 @@
     <ClCompile Include="dependencies\utilities\patterns\patterns.cpp" />
     <ClCompile Include="dependencies\utilities\utilities.cpp" />
     <ClCompile Include="core\main.cpp" />
-    <ClCompile Include="source-sdk\base_animating\c_setup_bones.cpp" />
     <ClCompile Include="source-sdk\math\vector3d.cpp" />
     <ClCompile Include="source-sdk\math\view_matrix.cpp" />
   </ItemGroup>
@@ -419,7 +380,7 @@
     <ClInclude Include="core\features\autowall\autowall.h" />
     <ClInclude Include="core\features\engine_prediction\engine_prediction.h" />
     <ClInclude Include="core\features\events\event_handler.h" />
-    <ClInclude Include="core\features\features.hpp" />
+    <ClInclude Include="core\features\overlay.hpp" />
     <ClInclude Include="core\features\inventory_changer\CEconItem.h" />
     <ClInclude Include="core\features\inventory_changer\CPlayerInventory.h" />
     <ClInclude Include="core\features\inventory_changer\CSharedObject.h" />
@@ -430,7 +391,6 @@
     <ClInclude Include="core\features\ragebot\aimbot.h" />
     <ClInclude Include="core\features\ragebot\antiaim.h" />
     <ClInclude Include="core\features\ragebot\net_data.h" />
-    <ClInclude Include="core\features\ragebot\ragebot.h" />
     <ClInclude Include="core\features\visuals\damage_indicator\damage_indicator.h" />
     <ClInclude Include="core\features\visuals\grenade\visual_grenade.h" />
     <ClInclude Include="core\features\visuals\modulation\modulation.h" />
@@ -449,44 +409,12 @@
     <ClInclude Include="core\hooks\hooks.hpp" />
     <ClInclude Include="core\render\d3dfont.h" />
     <ClInclude Include="core\render\gui\config.h" />
-    <ClInclude Include="core\render\gui\framework\bezier_editor.h" />
-    <ClInclude Include="core\render\gui\framework\button.h" />
-    <ClInclude Include="core\render\gui\framework\checkbox.h" />
-    <ClInclude Include="core\render\gui\framework\child_window.h" />
-    <ClInclude Include="core\render\gui\framework\colorpicker.h" />
-    <ClInclude Include="core\render\gui\framework\combobox.h" />
-    <ClInclude Include="core\render\gui\framework\combo_item.h" />
-    <ClInclude Include="core\render\gui\framework\config_box.h" />
-    <ClInclude Include="core\render\gui\framework\config_item.h" />
-    <ClInclude Include="core\render\gui\framework\element.h" />
-    <ClInclude Include="core\render\gui\framework\element_extender.h" />
-    <ClInclude Include="core\render\gui\framework\inventory_changer.h" />
-    <ClInclude Include="core\render\gui\framework\inventory_item.h" />
-    <ClInclude Include="core\render\gui\framework\keybind.h" />
-    <ClInclude Include="core\render\gui\framework\key_selector.h" />
-    <ClInclude Include="core\render\gui\framework\multibox.h" />
-    <ClInclude Include="core\render\gui\framework\panel.h" />
-    <ClInclude Include="core\render\gui\framework\panel_container.h" />
-    <ClInclude Include="core\render\gui\framework\slider.h" />
-    <ClInclude Include="core\render\gui\framework\small_text_input.h" />
-    <ClInclude Include="core\render\gui\framework\sub_tab.h" />
-    <ClInclude Include="core\render\gui\framework\tab.h" />
-    <ClInclude Include="core\render\gui\framework\text_input.h" />
-    <ClInclude Include="core\render\gui\framework\window.h" />
     <ClInclude Include="core\render\gui\gui.h" />
     <ClInclude Include="core\render\gui\includes.h" />
     <ClInclude Include="core\scripting\duktape.h" />
     <ClInclude Include="core\scripting\duk_config.h" />
     <ClInclude Include="dependencies\common_includes.hpp" />
-    <ClInclude Include="dependencies\imgui\imconfig.h" />
-    <ClInclude Include="dependencies\imgui\imgui.h" />
     <ClInclude Include="dependencies\imgui\imgui_freetype.h" />
-    <ClInclude Include="dependencies\imgui\imgui_internal.h" />
-    <ClInclude Include="dependencies\imgui\impl\imgui_impl_dx9.h" />
-    <ClInclude Include="dependencies\imgui\impl\imgui_impl_win32.h" />
-    <ClInclude Include="dependencies\imgui\imstb_rectpack.h" />
-    <ClInclude Include="dependencies\imgui\imstb_textedit.h" />
-    <ClInclude Include="dependencies\imgui\imstb_truetype.h" />
     <ClInclude Include="dependencies\interfaces\c_csplayerresource.h" />
     <ClInclude Include="dependencies\interfaces\engine_sounds.hpp" />
     <ClInclude Include="dependencies\interfaces\iv_render_beams.hpp" />
@@ -553,7 +481,6 @@
     <ClInclude Include="dependencies\utilities\stack_strings.hpp" />
     <ClInclude Include="dependencies\utilities\utilities.hpp" />
     <ClInclude Include="dependencies\utilities\weapon_icons.h" />
-    <ClInclude Include="source-sdk\base_animating\c_setup_bones.h" />
     <ClInclude Include="source-sdk\classes\basehandle.h" />
     <ClInclude Include="source-sdk\classes\client_class.hpp" />
     <ClInclude Include="source-sdk\classes\collideable.hpp" />

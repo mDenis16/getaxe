@@ -1,4 +1,18 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+
+
+#include <renderlib/imgui/imgui.h>
+
+
+#include "visual_entities.h"
+#include "player\visual_player.h"
+#include "grenade\visual_grenade.h"
+#include "projectile\visual_projectile.h"
+#include "weapon\visual_weapon.h"
+#include "visuals.h"
+
+#include "../legitbot/legitbot.h"
+
 
 
 namespace visuals {
@@ -198,12 +212,12 @@ namespace visuals {
 
 	void c_handler::local_player ( ) {
 
-		/*	if ( local_player::m_data.pointer != local_player::m_data.old_pointer ) {
+		/*	if ( local_player::ptr() != local_player::data().old_pointer ) {
 
 				visual_player * data = new visual_player ( );
-				data->index = local_player::m_data.pointer->index ( );
-				data->entity = local_player::m_data.pointer;
-				data->player = reinterpret_cast< player_t * >( local_player::m_data.pointer );
+				data->index = local_player::ptr()->index ( );
+				data->entity = local_player::ptr();
+				data->player = reinterpret_cast< player_t * >( local_player::ptr() );
 
 
 				/*local player should be at 0 in list*/
@@ -215,7 +229,7 @@ namespace visuals {
 						entity_list.at ( 0 ) = data;
 					}
 
-					local_player::m_data.old_pointer = local_player::m_data.pointer;
+					local_player::data().old_pointer = local_player::ptr();
 				}*/
 
 	}

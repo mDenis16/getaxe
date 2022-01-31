@@ -1,6 +1,12 @@
-#include "../../features.hpp"
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
 #include "../../../render/gui/gui.h"
 
+
+#include "../visuals.h"
+#include "damage_indicator.h"
+#include <UIFramework/framework_internal.h>
+#include <config.h>
 
 damage_log::damage_log ( const int & _dmg, const vec3_t & _pos ) {
 	dmg = _dmg;

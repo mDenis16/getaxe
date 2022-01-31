@@ -1,11 +1,20 @@
 #pragma once
 
-#include "../../../../dependencies/imgui/imgui.h"
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
 
-#include "../../../../dependencies/imgui/imgui_internal.h"
-#include "../../../render/gui/gui.h"
+#include <renderlib/imgui/imgui_internal.h>
+#include <UIFramework/framework_internal.h>
 
-#include "../../features.hpp"
+#include <config.h>
+
+#include "../visual_entities.h"
+#include "../player/visual_player.h"
+#include "../projectile/visual_projectile.h"
+#include "../weapon/visual_weapon.h"
+#include "../grenade/visual_grenade.h"
+#include "../visuals.h"
+
 
 namespace visuals {
 	/*
@@ -127,7 +136,7 @@ namespace visuals {
 	bool visual_grenade::is_intersected ( ) {
 		std::vector<vec3_t> points; points.reserve ( 4 );
 
-		float angle = math::calc_angle ( localdata.eye_position, origin ).y;
+		float angle = math::calc_angle ( local_player::data().eye_position, origin ).y;
 		vec3_t view;
 		interfaces::engine->get_view_angles ( view );
 		view.x = 0;
@@ -143,7 +152,7 @@ namespace visuals {
 		vec3_t viewangle;
 		interfaces::engine->get_view_angles ( viewangle );
 		vec3_t forward = math::angle_vector ( viewangle );
-		vec3_t end = localdata.eye_position + forward * 4092.f;
+		vec3_t end = local_player::data().eye_position + forward * 4092.f;
 
 		vec3_t ht;
 		vec3_t m, a;
@@ -209,7 +218,7 @@ namespace visuals {
 			static auto yaws  = { 90.f, -90.f };
 
 			for ( auto & yaw : yaws ) {
-				float y = math::normalize_yaw ( math::calc_angle ( localdata.eye_position, origin ).y - yaw );
+				float y = math::normalize_yaw ( math::calc_angle ( local_player::data().eye_position, origin ).y - yaw );
 				float a = DEG2RAD ( y );
 
 				vec3_t location ( 160.f * cos ( a ) + origin.x, 160.f * sin ( a ) + origin.y, origin.z );
@@ -226,14 +235,14 @@ namespace visuals {
 			vec3_t viewangle;
 			interfaces::engine->get_view_angles ( viewangle );
 			vec3_t forward = math::angle_vector ( viewangle );
-			vec3_t end = localdata.eye_position + forward * 8192.f;
+			vec3_t end = local_player::data().eye_position + forward * 8192.f;
 
 			vec3_t ht;
 			vec3_t m, a;
 			m = points.at ( 1 );
 			a = points.at ( 2 );
 
-			bool intersect = CheckLineBox ( m, a, localdata.eye_position, end, ht);
+			bool intersect = CheckLineBox ( m, a, local_player::data().eye_position, end, ht);
 			
 			if ( intersect )
 				clr = ImColor ( 255, 255, 255, 255 );
@@ -307,14 +316,14 @@ namespace visuals {
 
 		
 
-			warning = ( localdata.eye_position - origin ).length ( ) < flRadius;
+			warning = ( local_player::data().eye_position - origin ).length ( ) < flRadius;
 
 			valid = true;
 
 			if ( class_id == 157 )
 				flRadius = 156;
 
-			distance = localdata.eye_position.distance_to ( grenade->origin ( ) );
+			distance = local_player::data().eye_position.distance_to ( grenade->origin ( ) );
 
 			if ( this->class_id == 157 && flRadius != lastRadius) {
 				float step = M_PI_F * 2.0f / static_cast< float >( 30 );
@@ -482,7 +491,7 @@ namespace visuals {
 			interfaces::engine->get_screen_size ( width, height );
 
 			auto screenCenter = ImVec2 ( width * 0.5f, height * 0.5f );
-			auto angleYawRad = DEG2RAD ( viewAngles.y - math::calc_angle ( localdata.eye_position, origin ).y - 90.0f );
+			auto angleYawRad = DEG2RAD ( viewAngles.y - math::calc_angle ( local_player::data().eye_position, origin ).y - 90.0f );
 
 			ImVec2 base_pos;
 
@@ -519,7 +528,7 @@ namespace visuals {
 
 			offscreen_points.at ( count ) = ( ImVec2 ( base_pos.x, base_pos.y - cfg->out_of_pov_base_size * 2.f ) );
 
-			auto rot = viewAngles.y - math::calc_angle ( localdata.eye_position, origin ).y;// -90.0f;
+			auto rot = viewAngles.y - math::calc_angle ( local_player::data().eye_position, origin ).y;// -90.0f;
 
 			rot = math::normalize_yaw ( rot );
 

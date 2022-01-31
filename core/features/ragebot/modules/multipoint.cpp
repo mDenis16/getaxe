@@ -37,7 +37,7 @@ c_multipoint c_target::populate_multipoint(const int& hit_box, c_lag_record* rec
 	point.damage = 0;
 
 
-	vec3_t current_angles = math::calc_angle(mp.center, localdata.eye_position);
+	vec3_t current_angles = math::calc_angle(mp.center, local_player::data().eye_position);
 
 	vec3_t forward = math::angle_vector(current_angles);
 

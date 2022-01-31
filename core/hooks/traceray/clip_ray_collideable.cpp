@@ -1,4 +1,4 @@
-#include "../../features/features.hpp"
+
 #include "../hooks.hpp"
 
 
@@ -13,7 +13,7 @@ namespace hooks::callback {
 
 			auto v9 = ( player_t * ) ( uintptr_t ( pCollide ) - 4 );
 
-			if ( v9 == local_pointer ) {
+			if ( v9 == local_player::ptr() ) {
 				printf ( "modify local traceray \n" );
 				pCollide->maxs ( ).z += 5;
 				pCollide->maxs ( ).z -= 5;

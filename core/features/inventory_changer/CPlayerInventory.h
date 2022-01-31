@@ -1,5 +1,9 @@
 #pragma once
 
+class CEconItem;
+class C_EconItemView;
+class CSharedObjectTypeCache;
+
 class CPlayerInventory {
 
 public:

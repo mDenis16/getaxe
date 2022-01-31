@@ -1,5 +1,4 @@
 //55 8B EC 83 E4 F8 81 EC ? ? ? ? 8B 45 10 56 8B 75 0C F3 0F 11 54 24 ? F3 0F 10 18
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 
 #define JIGGLE_IS_FLEXIBLE				0x01

@@ -1,4 +1,7 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+#include "fakelag.h"
+#include "config.h"
+
 
 void c_fakelag::run(c_usercmd* cmd)
 {

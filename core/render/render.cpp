@@ -1,29 +1,34 @@
-#include "../features/features.hpp"
-#include "../../dependencies/imgui/imgui.h"
-#include "../../dependencies/imgui/impl/imgui_impl_dx9.h"
+#include "../helpers/helpers.h"
+#include <UIFramework/framework_internal.h>
 #include <d3dx9.h>
-#include "gui/gui.h"
-#include "../../dependencies/imgui/impl/imgui_impl_win32.h"
 
+#include <renderlib/imgui/imgui.h>
+#include <renderlib/imgui/impl/imgui_impl_dx9.h>
+
+#include <renderlib/imgui/impl/imgui_impl_win32.h>
+#include "d3dfont.h"
+#include "../features/visuals/visuals.h"
+#include "../features/overlay.hpp"
 
 namespace overlay {
 	std::vector<std::shared_ptr<c_font>> fonts;
 
 	 IDirect3DDevice9 * dev;
 	 D3DVIEWPORT9 port;
-	namespace fonts_ns {
-	
-			std::shared_ptr<c_font> esp = std::make_shared<c_font> ( "Tahoma", 9, 300 );
-			std::shared_ptr<c_font> esp_small = std::make_shared<c_font> ( "Smallest Pixel-7", 9, 400 ); //Visitor TT2 VRK", 11, 400
-			std::shared_ptr<c_font> lby = std::make_shared<c_font> ( "Verdana", 18, 600 ); // "Porter", 27, 800 
-			std::shared_ptr<c_font> controlfont = std::make_shared<c_font> ( "Verdana", 10, 700 );
-			std::shared_ptr<c_font> tabfont = std::make_shared<c_font> ( "Tahoma", 10, 400 );
-			std::shared_ptr<c_font> tabfontthicc = std::make_shared<c_font> ( "Tahoma", 10, 800 );
-			std::shared_ptr<c_font> subtabfont = std::make_shared<c_font> ( "Verdana", 10, 800 );
-			std::shared_ptr<c_font> smallfont = std::make_shared<c_font> ( "Tahoma", 6, 400 );
-			std::shared_ptr<c_font> keybindfont = std::make_shared<c_font> ( "Verdana", 6, 400 );
-		
-	}
+
+	 namespace fonts_ns {
+
+		 std::shared_ptr<c_font> esp = std::make_shared<c_font>("Tahoma", 9, 300);
+		 std::shared_ptr<c_font> esp_small = std::make_shared<c_font>("Smallest Pixel-7", 9, 400); //Visitor TT2 VRK", 11, 400
+		 std::shared_ptr<c_font> lby = std::make_shared<c_font>("Verdana", 18, 600); // "Porter", 27, 800 
+		 std::shared_ptr<c_font> controlfont = std::make_shared<c_font>("Verdana", 10, 700);
+		 std::shared_ptr<c_font> tabfont = std::make_shared<c_font>("Tahoma", 10, 400);
+		 std::shared_ptr<c_font> tabfontthicc = std::make_shared<c_font>("Tahoma", 10, 800);
+		 std::shared_ptr<c_font> subtabfont = std::make_shared<c_font>("Verdana", 10, 800);
+		 std::shared_ptr<c_font> smallfont = std::make_shared<c_font>("Tahoma", 6, 400);
+		 std::shared_ptr<c_font> keybindfont = std::make_shared<c_font>("Verdana", 6, 400);
+
+	 }
 	static std::vector<unsigned char> weaponicons =
 	{
 		0x00, 0x01, 0x00, 0x00, 0x00, 0x0E, 0x00, 0x80, 0x00, 0x03, 0x00, 0x60, 0x46, 0x46, 0x54, 0x4D,

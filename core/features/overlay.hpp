@@ -5,48 +5,34 @@
 #include "../../core/render/gui/config.h"
 #include <optional>
 
-#define DEBUG_LOG printf
-#define local_pointer local_player::m_data.pointer
-#define localdata local_player::m_data
+//#define DEBUG_LOG printf
+//#define local_player::ptr() local_player::data().pointer
+//#define local_player::data() local_player::data()
+//
+//#include "../features/engine_prediction/engine_prediction.h"
+//#include "../features/autowall/autowall.h"
+//
+//
+//#include "../features/inventory_changer/CSharedObject.h"
+//#include "../features/inventory_changer/CPlayerInventory.h"
+//#include "../features/inventory_changer/CSInventoryManager.h"
+//#include "../features/events/event_handler.h"
+//
+//#include "../features/visuals/modulation/modulation.h"
+//#include "../features/visuals/visuals.h"
+//#include "../features/misc/misc.h"
+//#include "../features/visuals/damage_indicator/damage_indicator.h"
+//#include "../render/d3dfont.h"
+//#include "../features/lagcomp/lag_compensation.h"
+//
+//#include "../features/ragebot/ragebot.h"
+//#include "../features/legitbot/legitbot.h"
+//#include "../features/misc/misc.h"
+//
+//#include "../features/antiaim/fakelag.h"
 
-#include "../features/engine_prediction/engine_prediction.h"
-#include "../features/autowall/autowall.h"
 
-
-#include "../features/inventory_changer/CSharedObject.h"
-#include "../features/inventory_changer/CPlayerInventory.h"
-#include "../features/inventory_changer/CSInventoryManager.h"
-#include "../features/events/event_handler.h"
-
-#include "../features/visuals/modulation/modulation.h"
-#include "../features/visuals/visuals.h"
-#include "../features/misc/misc.h"
-#include "../features/visuals/damage_indicator/damage_indicator.h"
-#include "../render/d3dfont.h"
-#include "../features/lagcomp/lag_compensation.h"
-
-#include "../features/ragebot/ragebot.h"
-#include "../features/legitbot/legitbot.h"
-#include "../features/misc/misc.h"
-
-#include "../features/antiaim/fakelag.h"
-#include "../features/antiaim/antiaim.h"
-
-
-class feature {
-	void release ( );
-};
-
-namespace features {
-	void initialize ( );
-	void release ( );
-
-}
-
-namespace event_manager {
-	void round_prestart ( i_game_event * );
-	void round_end ( i_game_event * );
-}
+class c_font;
 
 namespace overlay {
 	namespace fonts_ns

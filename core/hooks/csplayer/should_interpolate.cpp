@@ -1,4 +1,3 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 
 
@@ -14,7 +13,7 @@ namespace hooks::callback {
 
         bool result = should_interpolate_original(player);
 
-        if (player == local_pointer) {
+        if (player == local_player::ptr()) {
         	return false;
         }
 

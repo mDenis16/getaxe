@@ -1,4 +1,3 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 namespace hooks::callback {
 	bool __fastcall write_user_cmd ( void * ecx, void *, int m_nSlot, bf_write * m_pBuffer, int m_nFrom, int m_nTo, bool m_bNewCmd ) {

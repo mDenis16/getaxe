@@ -1,4 +1,3 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 namespace hooks::callback {
 	void __cdecl physics_simulate( entity_t* entity ) {

@@ -1,4 +1,5 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+#include "engine_prediction.h"
 
 c_engine_prediction * engine_prediction = new c_engine_prediction ( );
 
@@ -21,7 +22,7 @@ void c_engine_prediction::run_think ( ) {
 	if ( *GetNextThinkTick != -1 && *GetNextThinkTick > 0 && *GetNextThinkTick <= player->get_tick_base ( ) )
 	{
 		*GetNextThinkTick = -1;
-		SetNextThink((std::uint32_t*)local_pointer, 0);
+		SetNextThink((std::uint32_t*)local_player::ptr(), 0);
 	}
 
 	
@@ -45,8 +46,7 @@ void c_engine_prediction::start(player_t* _player, c_usercmd* cmd) {
 	if (!interfaces::modelcache)
 		return;
 
-	if (!local_player::available())
-		return;
+	
 	if (!interfaces::game_movement)
 		return;
 
@@ -138,7 +138,7 @@ void c_engine_prediction::start(player_t* _player, c_usercmd* cmd) {
 	if (*GetNextThinkTick != -1 && *GetNextThinkTick > 0 && *GetNextThinkTick <= player->get_tick_base())
 	{
 		*GetNextThinkTick = -1;
-		SetNextThink((std::uint32_t*)local_pointer, 0);
+		SetNextThink((std::uint32_t*)local_player::ptr(), 0);
 		player->think();
 	}
 

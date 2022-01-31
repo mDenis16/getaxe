@@ -79,12 +79,6 @@ public:
 		return 0;
 	}
 	template<typename TYPE>
-	void SetAttributeValue ( int index, TYPE val ) {
-	
-		auto v15 = reinterpret_cast< DWORD * >( get_item_schema ( ) );
-		auto v16 = *reinterpret_cast< DWORD * >( v15 [ 72 ] + 4 * index );
+	void SetAttributeValue(int index, TYPE val);
 
-		static auto fn_set_dynamic_attribute_value = reinterpret_cast< int ( __thiscall * )( CEconItem *, DWORD, void * ) >( utilities::pattern_scan(  "client.dll" , "55 8B EC 83 E4 F8 83 EC 3C 53 8B 5D 08 56 57 6A 00" ) );
-		fn_set_dynamic_attribute_value ( this, v16, &val );
-	}
 };

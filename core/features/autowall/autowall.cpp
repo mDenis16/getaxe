@@ -1,4 +1,5 @@
-﻿#include "../features.hpp"
+﻿#include "../../helpers/helpers.h"
+#include "autowall.h"
 
 #define MAX_COORD_FLOAT		16'384.f			// max world coordinates
 #define MIN_COORD_FLOAT		-MAX_COORD_FLOAT	// min world coordinates
@@ -31,7 +32,7 @@ int autowall::get_damage ( player_t * from, const vec3_t & start, const vec3_t &
 
 bool VectortoVectorVisible ( vec3_t src, vec3_t point ) {
 	trace_t TraceInit;
-	autowall::TraceLine ( src, point, MASK_SOLID, local_player::m_data.pointer, &TraceInit );
+	autowall::TraceLine ( src, point, MASK_SOLID, local_player::ptr(), &TraceInit );
 	trace_t Trace;
 	autowall::TraceLine ( src, point, MASK_SOLID, TraceInit.entity, &Trace );
 
@@ -47,7 +48,7 @@ bool autowall::can_hit_float_point ( const vec3_t & point, const vec3_t & source
 	vec3_t vecDirection;
 	vec3_t vecDelta = point - source;
 
-	csgo::in_trace = true;
+	/*csgo::in_trace = true;*/
 	// setup data
 	FireBulletData_t data;
 
@@ -58,7 +59,7 @@ bool autowall::can_hit_float_point ( const vec3_t & point, const vec3_t & source
 	vecDirection.normalize_in_place ( );
 	data.vecDir = vecDirection;
 
-	auto pWeapon = local_player::m_data.pointer->active_weapon ( );
+	auto pWeapon = local_player::ptr()->active_weapon ( );
 
 	if ( pWeapon == nullptr )
 		return false;
@@ -71,9 +72,9 @@ bool autowall::can_hit_float_point ( const vec3_t & point, const vec3_t & source
 	data.flCurrentDamage = ( float ) weaponData->iDamage;
 	float trace_length_remaining = weaponData->flRange;
 	vec3_t end = data.vecPosition + ( data.vecDir * trace_length_remaining );
-	TraceLine ( data.vecPosition, end, MASK_SHOT | CONTENTS_HITBOX, local_player::m_data.pointer, &data.enterTrace );
+	TraceLine ( data.vecPosition, end, MASK_SHOT | CONTENTS_HITBOX, local_player::ptr(), &data.enterTrace );
 
-	csgo::in_trace = false;
+	/*csgo::in_trace = false;*/
 	if ( VectortoVectorVisible ( data.vecPosition, point ) )
 		return true;
 

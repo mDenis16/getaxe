@@ -1,4 +1,15 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+
+
+#include <renderlib/imgui/imgui.h>
+
+
+#include "visual_entities.h"
+#include "player\visual_player.h"
+#include "projectile\visual_projectile.h"
+#include "weapon\visual_weapon.h"
+#include "visuals.h"
+
 
 
 namespace visuals {

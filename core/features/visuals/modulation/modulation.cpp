@@ -1,5 +1,15 @@
 #pragma once
-#include "../../features.hpp"
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
+
+#include <renderlib/imgui/imgui_internal.h>
+#include "../../../render/gui/gui.h"
+#include <config.h>
+
+#include "../visuals.h"
+#include <config.h>
+#include "modulation.h"
+
 
 namespace modulation {
 
@@ -21,13 +31,13 @@ namespace modulation {
 				}
 			}
 		}
-		else if ( local_pointer && local_pointer->is_alive ( ) && !interfaces::input->m_camera_in_thirdperson ) {
+		else if ( local_player::ptr() && local_player::ptr()->is_alive ( ) && !interfaces::input->m_camera_in_thirdperson ) {
 			if ( mdl.find ( "arms" ) != std::string::npos ) {
-				run_player_chams ( ecx, edx, ctx, state, info, custom_bone_to_world, skip_return, local_pointer, config.local_visual.chams [ ARMS ] );
+				run_player_chams ( ecx, edx, ctx, state, info, custom_bone_to_world, skip_return, local_player::ptr(), config.local_visual.chams [ ARMS ] );
 
 			}
 			else if ( mdl.find ( "arms" ) == std::string::npos || mdl.find ( "sleeve" ) == std::string::npos )
-				run_player_chams ( ecx, edx, ctx, state, info, custom_bone_to_world, skip_return, local_pointer, config.local_visual.chams [ WEAPON ] );
+				run_player_chams ( ecx, edx, ctx, state, info, custom_bone_to_world, skip_return, local_player::ptr(), config.local_visual.chams [ WEAPON ] );
 		}
 	}
 
@@ -53,7 +63,7 @@ namespace modulation {
 				
 				auto type = reinterpret_cast<player_t*>(entity)->is_teammate ( ) ? 0 : 1;
 
-				if ( entity == local_pointer )
+				if ( entity == local_player::ptr() )
 					type = 2;
 
 				glow_visual * cfg;

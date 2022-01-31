@@ -1,8 +1,14 @@
-#include "../features.hpp"
-#include "../../../dependencies/imgui/imgui.h"
+#include "../../helpers/helpers.h"
 
-#include "../../../dependencies/imgui/imgui_internal.h"
-#include "../../render/gui/gui.h"
+
+#include <renderlib/imgui/imgui.h>
+
+
+#include "visual_entities.h"
+#include "player\visual_player.h"
+#include "projectile\visual_projectile.h"
+#include "weapon\visual_weapon.h"
+#include "visuals.h"
 
 static const float SmokeGrenadeRadius_InfernoAffectingZ = 120.0f;
 // When interacting with fire on the same plane we don't want alpha depth-fighting

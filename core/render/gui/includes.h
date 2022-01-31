@@ -3,8 +3,9 @@
 #include <vector>
 #include <memory>
 
-#include "../../../dependencies/imgui/imgui.h"
-#include "../../../dependencies/imgui/imgui_internal.h"
+#include <renderlib/imgui/imgui.h>
+#include <renderlib/imgui/imgui_internal.h>
+
 #include "../../../dependencies/utilities/vpk_parser.h"
 #include "../../../dependencies/utilities/stack_strings.hpp"
 
@@ -13,30 +14,32 @@
 
 #include "gui.h"
 
-#include "framework/element.h"
-#include "framework/window.h"
-#include "framework/tab.h"
-#include "framework/sub_tab.h"
-#include "framework/child_window.h"
-#include "framework/checkbox.h"
-#include "framework/keybind.h"
-#include "framework/key_selector.h"
-#include "framework/colorpicker.h"
-#include "framework/text_input.h"
-#include "framework/small_text_input.h"
-#include "framework/combobox.h"
-#include "framework/combo_item.h"
-#include "framework/multibox.h"
-#include "framework/slider.h"
-#include "framework/config_item.h"
-#include "framework/config_box.h"
-#include "framework/button.h"
-#include "framework/panel.h"
-#include "framework/panel_container.h"
-#include "framework/element_extender.h"
-#include "framework/bezier_editor.h"
-#include "framework/inventory_changer.h"
-#include "framework/inventory_item.h"
+#include <UIFramework/framework_public.h>
+
+//#include "framework/element.h"
+//#include "framework/window.h"
+//#include "framework/tab.h"
+//#include "framework/sub_tab.h"
+//#include "framework/child_window.h"
+//#include "framework/checkbox.h"
+//#include "framework/keybind.h"
+//#include "framework/key_selector.h"
+//#include "framework/colorpicker.h"
+//#include "framework/text_input.h"
+//#include "framework/small_text_input.h"
+//#include "framework/combobox.h"
+//#include "framework/combo_item.h"
+//#include "framework/multibox.h"
+//#include "framework/slider.h"
+//#include "framework/config_item.h"
+//#include "framework/config_box.h"
+//#include "framework/button.h"
+//#include "framework/panel.h"
+//#include "framework/panel_container.h"
+//#include "framework/element_extender.h"
+//#include "framework/bezier_editor.h"
+//#include "framework/inventory_changer.h"
+//#include "framework/inventory_item.h"
 
 
 

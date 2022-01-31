@@ -21,7 +21,7 @@ namespace ui {
 
 			float child_rounding = 15.f;
 
-			auto& cfg = c_config::get().projectiles_visual;
+			auto& cfg = config.projectiles_visual;
 
 			auto main_tab = new ui::child_window(GET_STR("Projectiles Assist"), 45.f, 50.f, ImColor(23, 24, 27, 255), visuals_window, float_side::none, child_rounding, 15.f);
 

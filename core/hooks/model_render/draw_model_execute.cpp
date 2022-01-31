@@ -1,6 +1,8 @@
 #pragma once
-#include "../../features/features.hpp"
+
 #include "../hooks.hpp"
+#include <config.h>
+#include "../../features/visuals/modulation/modulation.h"
 
 namespace hooks::callback {
 

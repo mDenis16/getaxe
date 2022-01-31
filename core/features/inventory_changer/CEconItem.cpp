@@ -1,5 +1,8 @@
+#include <Windows.h>
 
-#include "../features.hpp"
+#include "../../../dependencies/utilities/utilities.hpp"
+
+#include "CEconItem.h"
 
 uint32_t * CEconItem::GetAccountID ( ) {
 	return reinterpret_cast< uint32_t * >( this + 0x1C );
@@ -36,7 +39,15 @@ void CEconItem::UpdateEquippedState ( unsigned int state ) {
 
 	fnUpdateEquippedState ( this, state );
 }
+template<typename TYPE>
+void CEconItem::SetAttributeValue(int index, TYPE val) {
 
+	auto v15 = reinterpret_cast<DWORD*>(get_item_schema());
+	auto v16 = *reinterpret_cast<DWORD*>(v15[72] + 4 * index);
+
+	static auto fn_set_dynamic_attribute_value = reinterpret_cast<int(__thiscall*)(CEconItem*, DWORD, void*)>(utilities::pattern_scan("client.dll", "55 8B EC 83 E4 F8 83 EC 3C 53 8B 5D 08 56 57 6A 00"));
+	fn_set_dynamic_attribute_value(this, v16, &val);
+}
 void CEconItem::AddSticker ( int index, int kit, float wear, float scale, float rotation ) {
 	SetAttributeValue<int> ( 113 + 4 * index, kit );
 	SetAttributeValue<float> ( 114 + 4 * index, wear );

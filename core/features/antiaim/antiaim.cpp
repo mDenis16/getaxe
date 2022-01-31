@@ -1,16 +1,24 @@
-#include "../features.hpp"
+
+//#include "../../dependencies/utilities/csgo.hpp"
+#include "../../helpers/helpers.h"
+
+
+#include "antiaim.h"
+
+#include "config.h"
+#include "fakelag.h"
 
 void c_antiaim::run(c_usercmd* cmd)
 {
-	auto weapon = local_player::m_data.pointer->active_weapon();
+	auto weapon = local_player::ptr()->active_weapon();
 
 	if (!interfaces::engine->is_connected() || !interfaces::engine->is_in_game())
 		return;
 
-	if (!local_player::m_data.pointer->is_alive())
+	if (!local_player::data().pointer->is_alive())
 		return;
 
-	if (!local_player::m_data.pointer->active_weapon())
+	if (!local_player::data().pointer->active_weapon())
 		return;
 
 
@@ -35,13 +43,14 @@ void c_antiaim::run(c_usercmd* cmd)
 
 
 	cmd->viewangles.angle_normalize();
-	cmd->viewangles.angle_clamp();
+	cmd->viewangles.angle_clamp(); 
 }
 
 bool c_antiaim::allow(c_usercmd* ucmd) {
 
 
-	auto local = local_player::m_data.pointer;
+	auto local = local_player::ptr();
+
 	if (!local && !local->is_alive())
 		return false;
 
@@ -90,10 +99,10 @@ void c_antiaim::yaw_desync(c_usercmd* cmd)
 		switch (config.antiaim.desync_side)
 		{
 	    case 0:
-		cmd->viewangles.y = localdata.antiaim_yaw - config.antiaim.desync_ammount[0];
+		cmd->viewangles.y -=  config.antiaim.desync_ammount[0];
 		break;
 		case 1:
-			cmd->viewangles.y = localdata.antiaim_yaw + config.antiaim.desync_ammount[0];
+			cmd->viewangles.y +=  config.antiaim.desync_ammount[0];
 			break;
 		default:break;
 		}

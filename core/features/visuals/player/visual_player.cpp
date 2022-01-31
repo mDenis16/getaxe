@@ -1,11 +1,17 @@
 #pragma once
+#include "../../helpers/helpers.h"
 
-#include "../../../../dependencies/imgui/imgui.h"
 
-#include "../../../../dependencies/imgui/imgui_internal.h"
-#include "../../../render/gui/gui.h"
+#include <renderlib/imgui/imgui.h>
 
-#include "../../features.hpp"
+
+
+#include "../visuals.h"
+#include <UIFramework/framework_internal.h>
+#include "../../overlay.hpp"
+#include "../../../render/d3dfont.h"
+
+
 
 namespace visuals {
 	void visual_player::render_range ( ) {
@@ -458,7 +464,7 @@ namespace visuals {
 
 		type = player->is_teammate ( ) ? 0 : 1;
 
-		if ( player == local_pointer )
+		if ( player == local_player::ptr() )
 			type = 2;
 
 		if ( type > 1 )
@@ -494,7 +500,7 @@ namespace visuals {
 		old_health = health;
 		
 		on_screen = calculate_box ( );
-		distance = localdata.eye_position.distance_to ( player->abs_origin ( ) );
+		distance = local_player::data().eye_position.distance_to ( player->abs_origin ( ) );
 
 		if ( never_seen ) {
 			in_animation = true;
@@ -671,9 +677,9 @@ namespace visuals {
 						static auto stored_tick = 0;
 						static int crouched_ticks [ 65 ];
 
-						if ( animstate->m_duck_amount ) //-V550
+						if ( animstate->m_fDuckAmount ) //-V550
 						{
-							if ( animstate->m_duck_amount < 0.9f && animstate->m_duck_amount > 0.5f ) //-V550
+							if ( animstate->m_fDuckAmount < 0.9f && animstate->m_fDuckAmount > 0.5f ) //-V550
 							{
 								if ( stored_tick != interfaces::globals->tick_count ) {
 									crouched_ticks [ player->index ( ) ]++;
@@ -689,7 +695,7 @@ namespace visuals {
 						return false;
 					};
 
-					if ( fakeducking ( ) && player->flags ( ) & fl_onground && !animstate->m_landing )
+					if ( fakeducking ( ) && player->flags ( ) & fl_onground && !animstate->m_bOnGround )
 						flag = "fakeduck";
 
 
@@ -759,7 +765,7 @@ namespace visuals {
 					break;
 				case FLAGS_DISTANCE:
 					flag = "distance ";
-					flag += std::to_string ( ( int ) origin.distance_to ( localdata.eye_position ) );
+					flag += std::to_string ( ( int ) origin.distance_to ( local_player::data().eye_position ) );
 					break;
 				case FLAGS_MAX:
 					break;
@@ -807,7 +813,7 @@ namespace visuals {
 			interfaces::engine->get_screen_size ( width, height );
 
 			auto screenCenter = ImVec2 ( width * 0.5f, height * 0.5f );
-			auto angleYawRad = DEG2RAD ( viewAngles.y - math::calc_angle ( localdata.eye_position, origin ).y - 90.0f );
+			auto angleYawRad = DEG2RAD ( viewAngles.y - math::calc_angle ( local_player::data().eye_position, origin ).y - 90.0f );
 
 
 			base_pos.x = screenCenter.x + ( ( ( ( width - ( cfg->out_of_pov_base_size * 3 ) ) * 0.5f ) * ( cfg->out_of_pov_radius / 100.0f ) ) * cos ( angleYawRad ) ) + ( int ) ( 6.0f * ( ( ( float ) cfg->out_of_pov_base_size - 4.0f ) / 16.0f ) );
@@ -843,7 +849,7 @@ namespace visuals {
 
 			offscreen_points.at ( count ) = ( ImVec2 ( base_pos.x, base_pos.y - cfg->out_of_pov_base_size * 2.f ) );
 
-			auto rot = viewAngles.y - math::calc_angle ( localdata.eye_position, origin ).y;// -90.0f;
+			auto rot = viewAngles.y - math::calc_angle ( local_player::data().eye_position, origin ).y;// -90.0f;
 
 			rot = math::normalize_yaw ( rot );
 

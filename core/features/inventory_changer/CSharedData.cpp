@@ -1,6 +1,8 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+#include "CSharedObject.h"
+#include "CEconItem.h"
 
-
+ 
 void CSharedObjectTypeCache::AddObject ( void * obj ) {
 	typedef void ( __thiscall * tOriginal )( void *, void * );
 	utilities::call_virtual<tOriginal> ( this, 1 )( this, obj );

@@ -1,6 +1,9 @@
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
 
-
-#include "../features.hpp"
+#include "config.h"
+#include "includes.h"
+#include "legitbot.h"
 
 bool c_legitbot::is_pistol ( void * weapon ) {
 	if ( !weapon )
@@ -80,17 +83,17 @@ int c_legitbot::weapon_category ( weapon_t * weapon ) {
 	return 0;
 }
 void c_legitbot::weapon_change ( ) {
-	if ( localdata.alive && localdata.active_weapon ) {
+	if ( local_player::data().alive && local_player::data().active_weapon ) {
 		//std::cout << " config.active_category " << config.active_category << std::endl;
-		if ( localdata.active_weapon != last_weapon ) {
+		if (local_player::data().active_weapon != last_weapon ) {
 
-			config.active_category = weapon_category ( localdata.active_weapon );
+			config.active_category = weapon_category (local_player::data().active_weapon );
 
 			ui::menu::legitbot::init_values ( config.weapon_mode > 0 ? &config.weapon_type [ config.active_weapon ] : &config.weapon_groups [ config.active_category ] );
 			ui::menu::ragebot::init_values(config.ragebot.weapon_mode > 0 ? &config.ragebot.rage_weapon_type[config.active_weapon] : &config.ragebot.rage_weapon_groups[config.active_category]);
 
 
-			last_weapon = localdata.active_weapon;
+			last_weapon = local_player::data().active_weapon;
 		}
 	}
 }

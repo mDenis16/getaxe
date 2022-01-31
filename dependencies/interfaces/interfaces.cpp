@@ -110,36 +110,36 @@ bool interfaces::initialize() {
 
 
 
-		/*custom interfaces*/
-		clientmode = **reinterpret_cast<i_client_mode***>((*reinterpret_cast<uintptr_t**>(client))[10] + 5);
+	//	/*custom interfaces*/
+	//	clientmode = **reinterpret_cast<i_client_mode***>((*reinterpret_cast<uintptr_t**>(client))[10] + 5);
 
-	globals = **reinterpret_cast<c_global_vars_base***>((*reinterpret_cast<uintptr_t**>(client))[11] + 10);
-
-
-	clientstate = **(i_client_state***)(utilities::pattern_scan("engine.dll", sig_client_state) + 1);
-
-	directx = **(IDirect3DDevice9***)(utilities::pattern_scan("shaderapidx9.dll", sig_directx) + 1);
-
-	input = *(i_input**)(utilities::pattern_scan("client.dll", sig_input) + 1);
-
-	glow_manager = (glow_manager_t*)(*(uintptr_t*)(utilities::pattern_scan("client.dll", sig_glow_manager) + 3));
-
-	move_helper = **(player_move_helper***)(utilities::pattern_scan("client.dll", sig_player_move_helper) + 0x2);
-
-	weapon_system = *(i_weapon_system**)(utilities::pattern_scan("client.dll", sig_weapon_data) + 2);
-
-	file_system = get_interface<void, interface_type::index>("filesystem_stdio.dll", "VFileSystem017");
-
-	memalloc = *reinterpret_cast<IMemAlloc**>(GetProcAddress(GetModuleHandle(("tier0.dll")), ("g_pMemAlloc")));
-
-	player_resource = **reinterpret_cast<c_csplayer_resource***>(utilities::pattern_scan(crypt_str("client.dll"), "8B 3D ? ? ? ? 85 FF 0F 84 ? ? ? ? 81 C7") + 0x2);
-
-	render_beams = *(i_view_render_beams**)(utilities::pattern_scan("client.dll", "B9 ?? ?? ?? ?? A1 ?? ?? ?? ?? FF 10 A1 ?? ?? ?? ?? B9") + 0x1);
-
-	game_movement = get_interface<virtual_game_movement, interface_type::index>("client.dll", "GameMovement001");
+	//globals = **reinterpret_cast<c_global_vars_base***>((*reinterpret_cast<uintptr_t**>(client))[11] + 10);
 
 
-	console::log("[setup] interfaces initialized!\n");
+	//clientstate = **(i_client_state***)(utilities::pattern_scan("engine.dll", sig_client_state) + 1);
+
+	//directx = **(IDirect3DDevice9***)(utilities::pattern_scan("shaderapidx9.dll", sig_directx) + 1);
+
+	//input = *(i_input**)(utilities::pattern_scan("client.dll", sig_input) + 1);
+
+	//glow_manager = (glow_manager_t*)(*(uintptr_t*)(utilities::pattern_scan("client.dll", sig_glow_manager) + 3));
+
+	//move_helper = **(player_move_helper***)(utilities::pattern_scan("client.dll", sig_player_move_helper) + 0x2);
+
+	//weapon_system = *(i_weapon_system**)(utilities::pattern_scan("client.dll", sig_weapon_data) + 2);
+
+	//file_system = get_interface<void, interface_type::index>("filesystem_stdio.dll", "VFileSystem017");
+
+	//memalloc = *reinterpret_cast<IMemAlloc**>(GetProcAddress(GetModuleHandle(("tier0.dll")), ("g_pMemAlloc")));
+
+	//player_resource = **reinterpret_cast<c_csplayer_resource***>(utilities::pattern_scan(crypt_str("client.dll"), "8B 3D ? ? ? ? 85 FF 0F 84 ? ? ? ? 81 C7") + 0x2);
+
+	//render_beams = *(i_view_render_beams**)(utilities::pattern_scan("client.dll", "B9 ?? ?? ?? ?? A1 ?? ?? ?? ?? FF 10 A1 ?? ?? ?? ?? B9") + 0x1);
+
+	//game_movement = get_interface<virtual_game_movement, interface_type::index>("client.dll", "GameMovement001");
+
+
+	//console::log("[setup] interfaces initialized!\n");
 
 
 	return true;

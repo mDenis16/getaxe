@@ -1,6 +1,12 @@
-#include "../../features.hpp"
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
 
+#include <renderlib/imgui/imgui_internal.h>
 #include "../../../render/gui/gui.h"
+#include <config.h>
+#include "../visuals.h"
+#include "radar.h"
+
 
 namespace visuals {
 
@@ -70,7 +76,7 @@ namespace visuals {
 	}
 
 	ImVec2 radar_engine::MapToRadar ( const ImVec2 & mappos ) {
-		auto * LocalEntity = local_pointer;
+		auto * LocalEntity = local_player::ptr();
 
 		if ( !LocalEntity )
 			return ImVec2 ( 0, 0 );
@@ -196,9 +202,9 @@ namespace visuals {
 
 			if ( !interfaces::engine->is_in_game ( ) )
 				return;
-			if ( !local_pointer )
+			if ( !local_player::ptr() )
 				return;
-			if ( !local_pointer->is_alive ( ) )
+			if ( !local_player::ptr()->is_alive ( ) )
 				return;
 
 			if ( !isValidMap )
@@ -243,7 +249,7 @@ namespace visuals {
 
 						auto player = reinterpret_cast< visual_player * >( entity );
 
-						if ( player->valid && !player->dormant && player->health > 0 && player->player != local_pointer ) {
+						if ( player->valid && !player->dormant && player->health > 0 && player->player != local_player::ptr() ) {
 							const auto  origin = player->origin;
 							ImVec2 map = WorldToMap ( origin );
 							ImVec2 radar = MapToRadar ( map );
@@ -308,8 +314,8 @@ namespace visuals {
 			
 			*/
 
-			if ( local_pointer && local_pointer->is_alive ( ) ) {
-				ImVec2 map = WorldToMap ( local_pointer->origin ( ) );
+			if ( local_player::ptr() && local_player::ptr()->is_alive ( ) ) {
+				ImVec2 map = WorldToMap ( local_player::ptr()->origin ( ) );
 
 				
 

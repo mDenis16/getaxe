@@ -1,4 +1,11 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+
+#include "CSharedObject.h"
+#include "../../../dependencies/utilities/utilities.hpp"
+#include "CEconItem.h"
+#include "CPlayerInventory.h"
+
+
 
 void CPlayerInventory::RemoveItem ( uint64_t ID ) {
 	static auto fnRemoveItem

@@ -1,8 +1,16 @@
+#include "../../helpers/helpers.h"
+#include <renderlib/imgui/imgui.h>
 
-#include "../../features.hpp"
+#include <renderlib/imgui/imgui_internal.h>
+#include "../../../render/gui/gui.h"
+#include <config.h>
+
+
+#include "../visuals.h"
+
 
 void visuals::thirdperson ( ) {
-	if ( !local_player::m_data.pointer )
+	if ( !local_player::ptr() )
 		return;
 	if ( !interfaces::engine->is_in_game ( ) )
 		return;
@@ -24,7 +32,7 @@ void visuals::thirdperson ( ) {
 
 	interfaces::input->m_camera_in_thirdperson = config.local_visual.thirdperson;
 
-	if ( interfaces::input->m_camera_in_thirdperson && local_player::m_data.pointer->health ( ) > 0 ) {
+	if ( interfaces::input->m_camera_in_thirdperson && local_player::ptr()->health ( ) > 0 ) {
 
 		vec3_t inverse_angles = vecAngles;
 
@@ -37,7 +45,7 @@ void visuals::thirdperson ( ) {
 		ray_t ray;
 
 
-		ray.initialize ( local_player::m_data.pointer->abs_origin ( ) + local_player::m_data.pointer->view_offset ( ), ( local_player::m_data.pointer->abs_origin ( ) + local_player::m_data.pointer->view_offset ( ) ) + ( direction * ( ideal_distance + 25.f ) ) );
+		ray.initialize ( local_player::ptr()->abs_origin ( ) + local_player::ptr()->view_offset ( ), ( local_player::ptr()->abs_origin ( ) + local_player::ptr()->view_offset ( ) ) + ( direction * ( ideal_distance + 25.f ) ) );
 		interfaces::trace_ray->trace_ray ( ray, MASK_SHOT_HULL, &filter, &trace );
 
 

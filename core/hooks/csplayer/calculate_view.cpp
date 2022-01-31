@@ -1,4 +1,3 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 
 
@@ -8,7 +7,7 @@ namespace hooks::callback {
 		
 		const auto player = reinterpret_cast< player_t * >( this_pointer );
 
-		if ( player != local_pointer )
+		if ( player != local_player::ptr() )
 			return calculate_view_original ( this_pointer, edx, eye_origin, eye_angles, z_near, z_far, fov );
 
 		const auto old_use_new_animation_state = player->use_new_animation_state ( );

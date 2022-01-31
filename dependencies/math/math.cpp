@@ -1,5 +1,5 @@
 #include "../utilities/csgo.hpp"
-#include "../../core/features/features.hpp"
+
 
 #define sin math::fast_sin
 #define cos math::fast_cos
@@ -887,7 +887,7 @@ vec3_t math::vector_divide ( vec3_t & a, vec3_t & b ) {
 
 bool math::screen_transform ( const vec3_t & point, vec3_t & screen ) {
 	static std::uint32_t pmatrix = *( std::uint32_t * ) ( ( std::uint32_t ) utilities::pattern_scan ( "client.dll", "0F 10 05 ? ? ? ? 8D 85 ? ? ? ? B9" ) + 3 ) + 176;
-	printf ( "pmatrix %i width, height %i %i \n", pmatrix, csgo::screen_width, csgo::screen_height );
+	
 	auto & matrix = *( view_matrix3x4_t * ) pmatrix;
 
 	float w = matrix [ 3 ][ 0 ] * point [ 0 ] + matrix [ 3 ][ 1 ] * point [ 1 ] + matrix [ 3 ][ 2 ] * point [ 2 ] + matrix [ 3 ][ 3 ];

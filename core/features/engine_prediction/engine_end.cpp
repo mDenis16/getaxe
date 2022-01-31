@@ -1,4 +1,6 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+#include "engine_prediction.h"
+
 
 void c_engine_prediction::end ( ) {
 	if (player) {

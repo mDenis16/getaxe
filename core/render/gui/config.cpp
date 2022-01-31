@@ -3,11 +3,15 @@
 #include "../../../dependencies/utilities/base64.h"
 #include "../../../dependencies/utilities/crypt_str.h"
 #include <shlobj.h>
-#include "framework/element.h"
+#include <renderlib/imgui/imgui.h>
+#include <UIFramework/elements/element.h>
 #include <iostream>
 #include <fstream>
 #include  <iomanip>
 #include "gui.h"
+#include "config.h"
+
+#include <UIFramework/framework_public.h>
 
 
 bool menu_opened = true;

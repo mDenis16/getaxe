@@ -1,4 +1,3 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
 
 static constexpr auto BONE_USED_BY_SERVER = BONE_USED_BY_HITBOX | BONE_USED_BY_VERTEX_LOD0 | BONE_USED_BY_VERTEX_LOD1 | BONE_USED_BY_VERTEX_LOD2;
@@ -12,8 +11,7 @@ namespace hooks::callback {
 
 		
 		if ( player ) {
-
-			std::cout << " Effects " << player->Effects() << std::endl;
+			
 
 			if ( !( player->Effects( ) & 0x008 ) )
 				player->Effects( ) |= 0x008;

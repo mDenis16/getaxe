@@ -1,9 +1,10 @@
-#include "../../features/features.hpp"
 #include "../hooks.hpp"
-#include "../../../dependencies/imgui/imgui.h"
-#include "../../../dependencies/imgui/impl/imgui_impl_dx9.h"
-#include "../../../dependencies/imgui/impl/imgui_impl_win32.h"
-
+#include <renderlib/imgui/imgui.h>
+#include <renderlib/imgui/impl/imgui_impl_dx9.h>
+#include <renderlib/imgui/impl/imgui_impl_win32.h>
+#include "../../features/visuals/visuals.h"
+#include "../../features/visuals/damage_indicator/damage_indicator.h"
+#include "../../features/overlay.hpp"
 
 namespace hooks::callback {
 	long __stdcall  present_hook ( IDirect3DDevice9 * device ) {
@@ -30,8 +31,8 @@ namespace hooks::callback {
 		visuals::handler->on_render ( );
 		dmg_indicator->on_render ( );
 		overlay::present ( device, visuals::render );
-		if ( visuals::radar )
-			visuals::radar->on_render ( );
+		/*if ( visuals::radar )
+			visuals::radar->on_render ( );*/
 
 		ImGui::Render ( );
 		ImGui_ImplDX9_RenderDrawData ( ImGui::GetDrawData ( ) );

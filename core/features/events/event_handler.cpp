@@ -1,4 +1,9 @@
-#include "../features.hpp"
+#include "../../helpers/helpers.h"
+#include "event_handler.h"
+#include <config.h>
+
+#include "../visuals/damage_indicator/damage_indicator.h"
+
 
 #pragma comment( lib, "Winmm.lib" )
 
@@ -55,7 +60,7 @@ void c_event_listener::fire_game_event ( i_game_event * m_event ) {
 
 		int type = ent->is_teammate ( ) ? 0 : 1;
 
-		if ( ent == local_pointer )
+		if ( ent == local_player::ptr() )
 			type = 2;
 
 		if ( type > 1 )
@@ -111,7 +116,7 @@ void c_event_listener::fire_game_event ( i_game_event * m_event ) {
 		if ( !attacker )
 			return;
 
-		if ( attacker != local_pointer )
+		if ( attacker != local_player::ptr() )
 			return;
 
 
@@ -131,7 +136,7 @@ void c_event_listener::fire_game_event ( i_game_event * m_event ) {
 		if( !ent )
 			return;
 
-		auto local = local_pointer;
+		auto local = local_player::ptr();
 
 		if( !local || ent == local )
 			return;
@@ -140,7 +145,7 @@ void c_event_listener::fire_game_event ( i_game_event * m_event ) {
 
 		int type = ent->is_teammate ( ) ? 0 : 1;
 
-		if ( ent == local_pointer )
+		if ( ent == local_player::ptr() )
 			return;
 
 

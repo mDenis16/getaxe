@@ -1,6 +1,7 @@
-#include "../../features/features.hpp"
-#include "../hooks.hpp"
 
+#include "../hooks.hpp"
+#include <config.h>
+#include "../../features/visuals/modulation/modulation.h"
 
 namespace hooks::callback {
 	void __stdcall scene_end ( ) {
@@ -15,23 +16,23 @@ namespace hooks::callback {
 		}
 
 		static const auto mat = interfaces::material_system->find_material ( "dev/glow_armsrace.vmt", nullptr );
-		if ( local_pointer ) {
+		if ( local_player::ptr() ) {
 
-			vec3_t abs_origin = local_pointer->abs_origin ( );
+			vec3_t abs_origin = local_player::ptr()->abs_origin ( );
 			interfaces::model_render->override_material ( visuals::chams::materials.at ( config.visuals_modulation_enemy_material ) );
 			interfaces::render_view->modulate_color ( config.visuals_modulation_enemy_xyz_color );
-			local_pointer->set_abs_origin ( csgo::real_origin );
-			local_pointer->draw_model ( 0x0, 255 );
+			local_player::ptr()->set_abs_origin ( csgo::real_origin );
+			local_player::ptr()->draw_model ( 0x0, 255 );
 			interfaces::model_render->override_material ( nullptr );
-			local_pointer->set_abs_origin ( abs_origin );
+			local_player::ptr()->set_abs_origin ( abs_origin );
 		}*/
 
 		if ( !interfaces::engine->is_connected ( ) || !interfaces::engine->is_in_game ( ) ) {
 			scene_end_original ( interfaces::render_view );
 			return;
 		}
-		if ( local_pointer && local_pointer->is_alive ( ) ) {
-			auto hViewModel = local_pointer->view_model ( );
+		if ( local_player::ptr() && local_player::ptr()->is_alive ( ) ) {
+			auto hViewModel = local_player::ptr()->view_model ( );
 			if ( hViewModel != 0xFFFFFFFF && modulation::materials.at ( 0 ).mat_address ) {
 				auto pViewModel = reinterpret_cast< base_view_model_t * >( interfaces::entity_list->get_client_entity_handle ( hViewModel ) );
 				if ( pViewModel ) {

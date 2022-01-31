@@ -1,12 +1,13 @@
-#include "../../features/features.hpp"
+#include "../../helpers/helpers.h"
 #include "../hooks.hpp"
-
+#include "../../features/visuals/visuals.h"
+#include <config.h>
 
 namespace hooks::callback {
 	void __fastcall override_view ( void * ecx, void *, view_setup_t * setup ) {
 		/*if ( interfaces::engine->is_in_game( ) ) {
 	*
-			if ( local_player::m_data.pointer && local_player::m_data.pointer->is_alive( ) && variables::visuals::fov > 0 )
+			if ( local_player::ptr() && local_player::ptr()->is_alive( ) && variables::visuals::fov > 0 )
 				setup->fov = 90 + variables::visuals::fov;
 		}*/
 
@@ -15,9 +16,9 @@ namespace hooks::callback {
 		visuals::thirdperson ( );
 
 
-		if ( config.local_visual.removals_input [ REMOVALS_RECOIL ] && local_player::m_data.pointer && local_player::m_data.pointer->is_alive ( ) ) {
-			vec3_t viewPunch = local_player::m_data.pointer->punch_angle ( );
-			vec3_t aimPunch = local_player::m_data.pointer->aim_punch_angle ( );
+		if ( config.local_visual.removals_input [ REMOVALS_RECOIL ] && local_player::ptr() && local_player::ptr()->is_alive ( ) ) {
+			vec3_t viewPunch = local_player::ptr()->punch_angle ( );
+			vec3_t aimPunch = local_player::ptr()->aim_punch_angle ( );
 
 			setup->angles [ 0 ] -= ( viewPunch [ 0 ] + ( aimPunch [ 0 ] * 2 * 0.4499999f ) );
 			setup->angles [ 1 ] -= ( viewPunch [ 1 ] + ( aimPunch [ 1 ] * 2 * 0.4499999f ) );
@@ -26,15 +27,15 @@ namespace hooks::callback {
 		static vec3_t last_origin = vec3_t ( );
 		static int tick = 0;
 
-		if ( local_pointer && local_pointer->is_alive ( ) && interfaces::input->m_camera_in_thirdperson) {
-		//	setup->origin.z = local_pointer->abs_origin ( ).z + 64.f;
+		if ( local_player::ptr() && local_player::ptr()->is_alive ( ) && interfaces::input->m_camera_in_thirdperson) {
+		//	setup->origin.z = local_player::ptr()->abs_origin ( ).z + 64.f;
 		
 		}
-		if ( local_pointer && local_pointer->is_alive ( ) ) {
-			auto weapon = local_pointer->active_weapon ( );
+		if ( local_player::ptr() && local_player::ptr()->is_alive ( ) ) {
+			auto weapon = local_player::ptr()->active_weapon ( );
 
 			if ( weapon ) {
-				if ( !local_pointer->is_scoped ( ))
+				if ( !local_player::ptr()->is_scoped ( ))
 					setup->fov += config.local_visual.view_model_distance;
 				else if (config.local_visual.removals_input[ REMOVALS_ZOOM ]) {
 					if ( weapon->zoom_level ( ) == 1 )

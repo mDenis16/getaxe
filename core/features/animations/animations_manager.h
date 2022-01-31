@@ -33,6 +33,9 @@ public:
 	void on_frame_stage_before(client_frame_stage_t stage);
 	void on_frame_stage_after(client_frame_stage_t stage);
 
+	void on_create_move();
+
+	void animsamp();
 
 	void call_before(client_frame_stage_t stage);
 	void call_after(client_frame_stage_t stage);
